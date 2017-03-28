@@ -1,0 +1,16 @@
+platform :ios, '10.0'
+
+target 'DemoTabbedApplication' do
+  use_frameworks!
+
+  pod 'QMobileDataStore', :path => '../../../QMobileDataStore'
+  pod 'QMobileUI', :path => '../../'
+  
+  pod 'SwiftyJSON'
+  pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
+  
+  pod 'DZNEmptyDataSet'
+  pod 'DisplaySwitcher'
+  pod 'Kingfisher'
+  pod 'IBAnimatable'
+end

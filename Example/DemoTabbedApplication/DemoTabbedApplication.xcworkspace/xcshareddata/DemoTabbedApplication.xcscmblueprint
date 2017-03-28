@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "2780DDC3845555946461DE31A3D303E5A5FF41A2",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "D07E09318049CE8748D6B1CD432D952099E41941" : 9223372036854775807,
+    "2780DDC3845555946461DE31A3D303E5A5FF41A2" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "27B8C9B4-AA1F-436C-8528-D55445EF76F1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "D07E09318049CE8748D6B1CD432D952099E41941" : "QMobileDataStore\/",
+    "2780DDC3845555946461DE31A3D303E5A5FF41A2" : "QMobileUI\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "DemoTabbedApplication",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Example\/DemoTabbedApplication\/DemoTabbedApplication.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/eric.marchand:emarchand@gitfusion.wakanda.io\/qmobile\/QMobileUI",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2780DDC3845555946461DE31A3D303E5A5FF41A2"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/eric.marchand:emarchand@gitfusion.wakanda.io\/qmobile\/QMobileDataStore",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D07E09318049CE8748D6B1CD432D952099E41941"
+    }
+  ]
+}

@@ -1,0 +1,840 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */; };
+		480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434E1E842198007C90DD /* UIScreen+QMobile.swift */; };
+		480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43501E84225C007C90DD /* UISwitch+QMobile.swift */; };
+		480B43531E842289007C90DD /* UIDevice+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43521E842289007C90DD /* UIDevice+QMobile.swift */; };
+		480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */; };
+		480B43571E842448007C90DD /* Platform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43561E842448007C90DD /* Platform.swift */; };
+		480B43591E842546007C90DD /* CGRect+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43581E842546007C90DD /* CGRect+QMobile.swift */; };
+		480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */; };
+		480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435C1E842699007C90DD /* NSObject+QMobile.swift */; };
+		480B435F1E842EF9007C90DD /* UIViewCell+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */; };
+		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
+		483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA821E826C9900FAF84B /* UIView+QMobile.swift */; };
+		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
+		483FDA871E82836700FAF84B /* UITableViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */; };
+		483FDA891E8283DA00FAF84B /* DetailsFormController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA881E8283DA00FAF84B /* DetailsFormController.swift */; };
+		483FDA8B1E82842000FAF84B /* DetailsFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8A1E82842000FAF84B /* DetailsFormViewController.swift */; };
+		483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */; };
+		483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */; };
+		483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */; };
+		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
+		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
+		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
+		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D584711E7831B2006F56B5 /* DataSourceTests.swift */; };
+		48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */; };
+		48D584801E783447006F56B5 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847A1E783447006F56B5 /* DataSource.swift */; };
+		48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */; };
+		48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */; };
+		48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */; };
+		48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */; };
+		48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */; };
+		48EE077E1E7AED4200A8546E /* ListFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077D1E7AED4200A8546E /* ListFormTableViewController.swift */; };
+		48EE07801E7AED7100A8546E /* ListFormCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077F1E7AED7100A8546E /* ListFormCollectionViewController.swift */; };
+		48EE07861E7AEF1A00A8546E /* ListFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE07851E7AEF1A00A8546E /* ListFormViewController.swift */; };
+		72405F536F0AE2F3F9097094 /* Pods_QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49623674D6C314A3EF303ACE /* Pods_QMobileUI.framework */; };
+		FFDFCF5016E769D177195C9B /* Pods_QMobileUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58648E3C7DAF90DF3222A58 /* Pods_QMobileUITests.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		48D584751E7831B2006F56B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48D584551E7830E1006F56B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 48D5845D1E7830E1006F56B5;
+			remoteInfo = QMobileUI;
+		};
+		48EE07871E7AF57000A8546E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48D584551E7830E1006F56B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 48EE07811E7AEDAD00A8546E;
+			remoteInfo = swiftlint;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0068C3D303D7689BC21B28A5 /* Pods-QMobileUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QMobileUI.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QMobileUI/Pods-QMobileUI.debug.xcconfig"; sourceTree = "<group>"; };
+		1A62293CA9DB15411E3BC8FE /* Pods-QMobileUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QMobileUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-QMobileUITests/Pods-QMobileUITests.release.xcconfig"; sourceTree = "<group>"; };
+		480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+BackgroundColors.swift"; sourceTree = "<group>"; };
+		480B434E1E842198007C90DD /* UIScreen+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+QMobile.swift"; sourceTree = "<group>"; };
+		480B43501E84225C007C90DD /* UISwitch+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISwitch+QMobile.swift"; sourceTree = "<group>"; };
+		480B43521E842289007C90DD /* UIDevice+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+QMobile.swift"; sourceTree = "<group>"; };
+		480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+QMobile.swift"; sourceTree = "<group>"; };
+		480B43561E842448007C90DD /* Platform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Platform.swift; sourceTree = "<group>"; };
+		480B43581E842546007C90DD /* CGRect+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGRect+QMobile.swift"; sourceTree = "<group>"; };
+		480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard+QMobile.swift"; sourceTree = "<group>"; };
+		480B435C1E842699007C90DD /* NSObject+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+QMobile.swift"; sourceTree = "<group>"; };
+		480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewCell+QMobile.swift"; sourceTree = "<group>"; };
+		48268C5B1E8136E9000F7719 /* Binder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binder.swift; sourceTree = "<group>"; };
+		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
+		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
+		483FDA821E826C9900FAF84B /* UIView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+QMobile.swift"; sourceTree = "<group>"; };
+		483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IndexPath+QMobile.swift"; sourceTree = "<group>"; };
+		483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewController+QMobile.swift"; sourceTree = "<group>"; };
+		483FDA881E8283DA00FAF84B /* DetailsFormController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsFormController.swift; sourceTree = "<group>"; };
+		483FDA8A1E82842000FAF84B /* DetailsFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsFormViewController.swift; sourceTree = "<group>"; };
+		483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceEntry.swift; sourceTree = "<group>"; };
+		483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+QMobile.swift"; sourceTree = "<group>"; };
+		483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+QMobile.swift"; sourceTree = "<group>"; };
+		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
+		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		48D5845E1E7830E1006F56B5 /* QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		48D584611E7830E1006F56B5 /* QMobileUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QMobileUI.h; sourceTree = "<group>"; };
+		48D584621E7830E1006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		48D584711E7831B2006F56B5 /* DataSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceTests.swift; sourceTree = "<group>"; };
+		48D584731E7831B2006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		48D5847A1E783447006F56B5 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
+		48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+FetchedResultsControllerDelegate.swift"; sourceTree = "<group>"; };
+		48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UICollectionViewDataSource.swift"; sourceTree = "<group>"; };
+		48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UITableViewDataSource.swift"; sourceTree = "<group>"; };
+		48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceCollectionHeaderView.swift; sourceTree = "<group>"; };
+		48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceDelegate.swift; sourceTree = "<group>"; };
+		48EE077D1E7AED4200A8546E /* ListFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormTableViewController.swift; sourceTree = "<group>"; };
+		48EE077F1E7AED7100A8546E /* ListFormCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormCollectionViewController.swift; sourceTree = "<group>"; };
+		48EE07851E7AEF1A00A8546E /* ListFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormViewController.swift; sourceTree = "<group>"; };
+		49623674D6C314A3EF303ACE /* Pods_QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E07251F9B4B9AE4AB1C1151 /* Pods-QMobileUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QMobileUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QMobileUITests/Pods-QMobileUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		C58648E3C7DAF90DF3222A58 /* Pods_QMobileUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QMobileUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFABD83615C0F56F9ED29904 /* Pods-QMobileUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QMobileUI.release.xcconfig"; path = "Pods/Target Support Files/Pods-QMobileUI/Pods-QMobileUI.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		48D5845A1E7830E1006F56B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72405F536F0AE2F3F9097094 /* Pods_QMobileUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48D5846C1E7831B2006F56B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
+				FFDFCF5016E769D177195C9B /* Pods_QMobileUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		480B6B721E7FD1C500D1E583 /* DetailsFormController */ = {
+			isa = PBXGroup;
+			children = (
+				483FDA881E8283DA00FAF84B /* DetailsFormController.swift */,
+				483FDA931E828BE600FAF84B /* Impl */,
+			);
+			name = DetailsFormController;
+			sourceTree = "<group>";
+		};
+		48268C5A1E8136D1000F7719 /* Bind */ = {
+			isa = PBXGroup;
+			children = (
+				48268C5B1E8136E9000F7719 /* Binder.swift */,
+				48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */,
+				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
+			);
+			name = Bind;
+			sourceTree = "<group>";
+		};
+		483FDA811E826C8A00FAF84B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */,
+				480B43581E842546007C90DD /* CGRect+QMobile.swift */,
+				480B435C1E842699007C90DD /* NSObject+QMobile.swift */,
+				483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */,
+				483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */,
+				480B434E1E842198007C90DD /* UIScreen+QMobile.swift */,
+				483FDA821E826C9900FAF84B /* UIView+QMobile.swift */,
+				483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */,
+				480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */,
+				483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */,
+				480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */,
+				480B43501E84225C007C90DD /* UISwitch+QMobile.swift */,
+				480B43521E842289007C90DD /* UIDevice+QMobile.swift */,
+				480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */,
+				480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */,
+				480B43561E842448007C90DD /* Platform.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		483FDA921E828BDE00FAF84B /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				48EE077D1E7AED4200A8546E /* ListFormTableViewController.swift */,
+				48EE077F1E7AED7100A8546E /* ListFormCollectionViewController.swift */,
+			);
+			name = Impl;
+			sourceTree = "<group>";
+		};
+		483FDA931E828BE600FAF84B /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				483FDA8A1E82842000FAF84B /* DetailsFormViewController.swift */,
+			);
+			name = Impl;
+			sourceTree = "<group>";
+		};
+		485CCDB01E7977FF00CDB2B3 /* Quality */ = {
+			isa = PBXGroup;
+			children = (
+				485CCDB11E79781700CDB2B3 /* .swiftlint.yml */,
+			);
+			name = Quality;
+			sourceTree = "<group>";
+		};
+		48D584541E7830E1006F56B5 = {
+			isa = PBXGroup;
+			children = (
+				48D584691E7830F9006F56B5 /* Sources */,
+				48D5846A1E783169006F56B5 /* Xcode */,
+				48D584701E7831B2006F56B5 /* Tests */,
+				485CCDB01E7977FF00CDB2B3 /* Quality */,
+				48D5845F1E7830E1006F56B5 /* Products */,
+				DD35C2B4C165BFF9B4731BCB /* Pods */,
+				57B8E23CC459C05AFF97D6F9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		48D5845F1E7830E1006F56B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				48D5845E1E7830E1006F56B5 /* QMobileUI.framework */,
+				48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		48D584601E7830E1006F56B5 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				48D584611E7830E1006F56B5 /* QMobileUI.h */,
+				48D584621E7830E1006F56B5 /* Info.plist */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		48D584691E7830F9006F56B5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				483FDA811E826C8A00FAF84B /* Extensions */,
+				48268C5A1E8136D1000F7719 /* Bind */,
+				48EE07751E7ADEC000A8546E /* DataSource */,
+				48EE07791E7AE98900A8546E /* ViewController */,
+				483FDA7F1E826C6F00FAF84B /* Temp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		48D5846A1E783169006F56B5 /* Xcode */ = {
+			isa = PBXGroup;
+			children = (
+				48D584601E7830E1006F56B5 /* iOS */,
+			);
+			path = Xcode;
+			sourceTree = "<group>";
+		};
+		48D584701E7831B2006F56B5 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				48D584711E7831B2006F56B5 /* DataSourceTests.swift */,
+				48D584731E7831B2006F56B5 /* Info.plist */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		48EE07751E7ADEC000A8546E /* DataSource */ = {
+			isa = PBXGroup;
+			children = (
+				48D5847A1E783447006F56B5 /* DataSource.swift */,
+				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
+				48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */,
+				48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */,
+				48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */,
+				48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */,
+			);
+			name = DataSource;
+			sourceTree = "<group>";
+		};
+		48EE07791E7AE98900A8546E /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				48EE077B1E7AE9B500A8546E /* ListFormViewController */,
+				480B6B721E7FD1C500D1E583 /* DetailsFormController */,
+				48EE077A1E7AE9A600A8546E /* LogInViewController */,
+			);
+			name = ViewController;
+			sourceTree = "<group>";
+		};
+		48EE077A1E7AE9A600A8546E /* LogInViewController */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = LogInViewController;
+			sourceTree = "<group>";
+		};
+		48EE077B1E7AE9B500A8546E /* ListFormViewController */ = {
+			isa = PBXGroup;
+			children = (
+				48EE07851E7AEF1A00A8546E /* ListFormViewController.swift */,
+				483FDA921E828BDE00FAF84B /* Impl */,
+			);
+			name = ListFormViewController;
+			sourceTree = "<group>";
+		};
+		57B8E23CC459C05AFF97D6F9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				49623674D6C314A3EF303ACE /* Pods_QMobileUI.framework */,
+				C58648E3C7DAF90DF3222A58 /* Pods_QMobileUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DD35C2B4C165BFF9B4731BCB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0068C3D303D7689BC21B28A5 /* Pods-QMobileUI.debug.xcconfig */,
+				CFABD83615C0F56F9ED29904 /* Pods-QMobileUI.release.xcconfig */,
+				6E07251F9B4B9AE4AB1C1151 /* Pods-QMobileUITests.debug.xcconfig */,
+				1A62293CA9DB15411E3BC8FE /* Pods-QMobileUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		48D5845B1E7830E1006F56B5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXLegacyTarget section */
+		48EE07811E7AEDAD00A8546E /* swiftlint */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = autocorrect;
+			buildConfigurationList = 48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/swiftlint;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = swiftlint;
+			passBuildSettingsInEnvironment = 1;
+			productName = swiftlint;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		48D5845D1E7830E1006F56B5 /* QMobileUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48D584661E7830E1006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUI" */;
+			buildPhases = (
+				93FC3714FC7F589C701A0D56 /* [CP] Check Pods Manifest.lock */,
+				48D584591E7830E1006F56B5 /* Sources */,
+				48D5845A1E7830E1006F56B5 /* Frameworks */,
+				48D5845B1E7830E1006F56B5 /* Headers */,
+				48D5845C1E7830E1006F56B5 /* Resources */,
+				8FA606A20578B2028B6F5033 /* [CP] Copy Pods Resources */,
+				485CCDAF1E796EBC00CDB2B3 /* swiftlint */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				48EE07881E7AF57000A8546E /* PBXTargetDependency */,
+			);
+			name = QMobileUI;
+			productName = QMobileUI;
+			productReference = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		48D5846E1E7831B2006F56B5 /* QMobileUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUITests" */;
+			buildPhases = (
+				DC25178178369AC23DD5EDC5 /* [CP] Check Pods Manifest.lock */,
+				48D5846B1E7831B2006F56B5 /* Sources */,
+				48D5846C1E7831B2006F56B5 /* Frameworks */,
+				48D5846D1E7831B2006F56B5 /* Resources */,
+				79A4F5B0F81A0D1BC999AF2B /* [CP] Embed Pods Frameworks */,
+				9894EB884FCD3D420C78F2BD /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				48D584761E7831B2006F56B5 /* PBXTargetDependency */,
+			);
+			name = QMobileUITests;
+			productName = QMobileUITests;
+			productReference = 48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		48D584551E7830E1006F56B5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Eric Marchand";
+				TargetAttributes = {
+					48D5845D1E7830E1006F56B5 = {
+						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0820;
+						ProvisioningStyle = Automatic;
+					};
+					48D5846E1E7831B2006F56B5 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+					48EE07811E7AEDAD00A8546E = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 48D584581E7830E1006F56B5 /* Build configuration list for PBXProject "QMobileUI" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 48D584541E7830E1006F56B5;
+			productRefGroup = 48D5845F1E7830E1006F56B5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				48D5845D1E7830E1006F56B5 /* QMobileUI */,
+				48D5846E1E7831B2006F56B5 /* QMobileUITests */,
+				48EE07811E7AEDAD00A8546E /* swiftlint */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		48D5845C1E7830E1006F56B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48D5846D1E7831B2006F56B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		485CCDAF1E796EBC00CDB2B3 /* swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = swiftlint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		79A4F5B0F81A0D1BC999AF2B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-QMobileUITests/Pods-QMobileUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8FA606A20578B2028B6F5033 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-QMobileUI/Pods-QMobileUI-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		93FC3714FC7F589C701A0D56 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9894EB884FCD3D420C78F2BD /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-QMobileUITests/Pods-QMobileUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DC25178178369AC23DD5EDC5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		48D584591E7830E1006F56B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
+				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
+				48EE077E1E7AED4200A8546E /* ListFormTableViewController.swift in Sources */,
+				483FDA871E82836700FAF84B /* UITableViewController+QMobile.swift in Sources */,
+				480B435F1E842EF9007C90DD /* UIViewCell+QMobile.swift in Sources */,
+				483FDA891E8283DA00FAF84B /* DetailsFormController.swift in Sources */,
+				480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */,
+				483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */,
+				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
+				48EE07861E7AEF1A00A8546E /* ListFormViewController.swift in Sources */,
+				480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */,
+				480B43571E842448007C90DD /* Platform.swift in Sources */,
+				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
+				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
+				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
+				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
+				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,
+				480B43591E842546007C90DD /* CGRect+QMobile.swift in Sources */,
+				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
+				48EE07801E7AED7100A8546E /* ListFormCollectionViewController.swift in Sources */,
+				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
+				480B43531E842289007C90DD /* UIDevice+QMobile.swift in Sources */,
+				48D584801E783447006F56B5 /* DataSource.swift in Sources */,
+				48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */,
+				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,
+				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
+				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
+				483FDA8B1E82842000FAF84B /* DetailsFormViewController.swift in Sources */,
+				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
+				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,
+				480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48D5846B1E7831B2006F56B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		48D584761E7831B2006F56B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 48D5845D1E7830E1006F56B5 /* QMobileUI */;
+			targetProxy = 48D584751E7831B2006F56B5 /* PBXContainerItemProxy */;
+		};
+		48EE07881E7AF57000A8546E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 48EE07811E7AEDAD00A8546E /* swiftlint */;
+			targetProxy = 48EE07871E7AF57000A8546E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		48D584641E7830E1006F56B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		48D584651E7830E1006F56B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		48D584671E7830E1006F56B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0068C3D303D7689BC21B28A5 /* Pods-QMobileUI.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Xcode/iOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		48D584681E7830E1006F56B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFABD83615C0F56F9ED29904 /* Pods-QMobileUI.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Xcode/iOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		48D584781E7831B2006F56B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6E07251F9B4B9AE4AB1C1151 /* Pods-QMobileUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		48D584791E7831B2006F56B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A62293CA9DB15411E3BC8FE /* Pods-QMobileUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		48EE07831E7AEDAD00A8546E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48EE07841E7AEDAD00A8546E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		48D584581E7830E1006F56B5 /* Build configuration list for PBXProject "QMobileUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48D584641E7830E1006F56B5 /* Debug */,
+				48D584651E7830E1006F56B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48D584661E7830E1006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48D584671E7830E1006F56B5 /* Debug */,
+				48D584681E7830E1006F56B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48D584781E7831B2006F56B5 /* Debug */,
+				48D584791E7831B2006F56B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48EE07831E7AEDAD00A8546E /* Debug */,
+				48EE07841E7AEDAD00A8546E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 48D584551E7830E1006F56B5 /* Project object */;
+}
