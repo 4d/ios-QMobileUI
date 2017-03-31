@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
                    Present records
                    DESC
 
-  s.homepage     = "http://git.4d.com/QMobileUI"
+  s.homepage     = "https://project.wakanda.org/issues/88563"
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "10.0"
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.source       = { :git => "http://git.4d.com/QMobileUI.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://gitfusion.wakanda.io/qmobile/QMobileUI.git", :tag => "#{s.version}" }
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 

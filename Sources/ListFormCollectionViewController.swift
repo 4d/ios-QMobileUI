@@ -26,6 +26,7 @@ open class ListFormCollectionViewController: UICollectionViewController, ListFor
     @IBInspectable public var searchableField: String = "name"
 
     open override func viewDidLoad() {
+        super.viewDidLoad()
         guard let _ = self.collectionView else { fatalError("CollectionView is nil") }
 
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)

@@ -1,0 +1,33 @@
+PODS:
+  - Prephirences (3.0.1):
+    - Prephirences/Core (= 3.0.1)
+    - Prephirences/Keys (= 3.0.1)
+  - Prephirences/Core (3.0.1)
+  - Prephirences/Keys (3.0.1):
+    - Prephirences/Core
+  - QMobileDataStore (0.0.1):
+    - Prephirences
+    - Result
+    - XCGLogger
+  - Result (3.2.1)
+  - XCGLogger (4.0.0):
+    - XCGLogger/Core (= 4.0.0)
+  - XCGLogger/Core (4.0.0)
+
+DEPENDENCIES:
+  - QMobileDataStore (from `../QMobileDataStore`)
+  - XCGLogger (~> 4.0.0)
+
+EXTERNAL SOURCES:
+  QMobileDataStore:
+    :path: "../QMobileDataStore"
+
+SPEC CHECKSUMS:
+  Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
+  QMobileDataStore: cd5e450e07a7471e413348ea0ca524fc597fbbd3
+  Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
+  XCGLogger: 38063ea89b4c8b23232d18efd2e12eb0005f3ea4
+
+PODFILE CHECKSUM: b6080d12aac3be43d62532b4690e2537a330359b
+
+COCOAPODS: 1.2.0

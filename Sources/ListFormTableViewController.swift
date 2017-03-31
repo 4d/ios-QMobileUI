@@ -24,6 +24,7 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
     @IBInspectable public var searchableField: String = "name" 
 
     open override func viewDidLoad() {
+        super.viewDidLoad()
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
 
@@ -33,9 +34,15 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
-        searchBar?.delegate = self
 
         installRefreshControll()
+
+        if let searchBar = searchBar {
+            searchBar.delegate = self
+            if searchBar.superview == nil {
+                self.navigationItem.titleView = searchBar
+            }
+        }
     }
 
     open func indexPath(for cell: Any?) -> IndexPath? {

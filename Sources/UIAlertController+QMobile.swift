@@ -23,3 +23,8 @@ public extension UIAlertController {
 public func Alert(title: String, message: String) {
     UIAlertController.show(title: title, message: message)
 }
+
+public func Alert(title: String, error: Error) {
+    Alert(title: title, message: "\(error)")
+}
+

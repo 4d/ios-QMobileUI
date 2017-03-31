@@ -10,12 +10,53 @@ import Foundation
 
 open class DetailsFormViewController: UIViewController, DetailsFormController {
 
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        
+        // Configure table bar, COULD DO : do it automatically if to buttons already in bar
+        //self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(image: UIImage(named: "previous")!, style: .plain, target: self, action: #selector(DetailsFormViewController.previousRecord(_:))),
+            UIBarButtonItem(image: UIImage(named: "next")!, style: .plain, target: self, action: #selector(DetailsFormViewController.nextRecord(_:)))
+        ]
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(DetailsFormViewController.swipeLeft(_:)))
+        swipeLeft.direction = .left
+        self.view.addGestureRecognizer(swipeLeft)
+       
+        let swipRight = UISwipeGestureRecognizer(target: self, action: #selector(DetailsFormViewController.swipeRight(_:)))
+        swipRight.direction = .right
+        self.view.addGestureRecognizer(swipRight)
+        
+        //swipeLeft.delegate = self
+        //swipRight.delegate = self
+
+    }
+    
+    @IBAction open func previousRecord(_ sender: Any!) {
+         // TODO anination, like transitioning on self...
+        // could use segue
+         self.previousRecord()
+    }
+    @IBAction open func nextRecord(_ sender: Any!) {
+        self.nextRecord()
+    }
+    
+    func swipeLeft(_ sender: UISwipeGestureRecognizer!) {
+        self.previousRecord(sender)
+    }
+    func swipeRight(_ sender: UISwipeGestureRecognizer!) {
+        self.nextRecord(sender)
+    }
+    
 }
 
 open class DetailsFormTableViewController: UITableViewController, DetailsFormController {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
 
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -27,6 +68,9 @@ open class DetailsFormTableViewController: UITableViewController, DetailsFormCon
 
         return staticCell
     }
+    
+    
+    
 
 }
 

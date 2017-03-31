@@ -39,6 +39,7 @@ extension ListFormViewController {
                 return name
             }
         }
+        logger.error("Looking for class \(className) to determine the type of records to load. But no class with this name found in the project. Check your data model.")
         abstractMethod(className: className)
     }
 
