@@ -20,10 +20,30 @@ public extension UILabel {
             text = newValue ? "yes": "no"
         }
     }
-
 }
-public extension String {
 
+extension UIBarButtonItem {
+    
+    open var bindTo: Binder! {
+        if let view = value(forKey: "view") as? UIView { // a button?
+            /*if let rootView = view.rootView { // a bar?
+              
+                return rootView.bindTo
+            }*/
+            return view.bindTo
+        }
+        return nil
+    }
+    
+    open override func value(forUndefinedKey key: String) -> Any? {
+        return bindTo
+    }
+    
+}
+
+
+public extension String {
+    
     public var firstLetter: String {
         guard let firstLetter = self.characters.first else {
             return ""

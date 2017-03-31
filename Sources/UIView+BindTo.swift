@@ -59,6 +59,14 @@ public extension UIView {
     }
 }
 
+extension UIView {
+    // Trying to avoid app crash if bad binding
+    open override func setValue(_ value: Any?, forUndefinedKey key: String) {
+        logger.warning("Trying to set value '\(String(describing: value))' on key '\(key)' on view '\(self)")
+    }
+
+}
+
 // MARK: view hierarchy
 public extension UIView {
 

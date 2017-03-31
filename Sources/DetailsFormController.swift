@@ -14,6 +14,8 @@ public protocol DetailsFormController: class {
     // the root view
     var view: UIView! {get}
 
+    var hasPreviousRecord: Bool {get set}
+    var hasNextRecord: Bool {get set}
 }
 
 extension DetailsFormController {
@@ -40,6 +42,8 @@ extension DetailsFormController {
 
                 // update the view (if not done auto by seting the index)
                 self.view.record = table.record
+
+                checkActions(table)
             }
         }
     }
@@ -52,16 +56,21 @@ extension DetailsFormController {
 
                 // update the view (if not done auto by seting the index)
                 self.view.record = table.record
+
+                checkActions(table)
             }
         }
     }
-
+    
     public func firstRecord() {
         if let table = self.view.table {
             table.indexPath = IndexPath.firstRow
 
             // update the view (if not done auto by seting the index)
             self.view.record = table.record
+
+            
+            checkActions(table)
         }
     }
 
@@ -71,6 +80,25 @@ extension DetailsFormController {
 
             // update the view (if not done auto by seting the index)
             self.view.record = table.record
+
+            checkActions(table)
+        }
+    }
+    
+    func checkActions(_ table: DataSourceEntry) {
+        self.hasPreviousRecord = table.hasPrevious
+        self.hasNextRecord = table.hasNext
+    }
+
+    public func deleteRecord() {
+        if let table = self.view.table {
+            if let record = table.record?.record as? Record {
+                let _ = dataStore.perform(.background) { context, save in
+                    context.delete(record: record)
+                }
+            } else {
+                logger.warning("Failed to get selected record for deletion")
+            }
         }
     }
 

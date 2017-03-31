@@ -35,8 +35,9 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
 
-        installRefreshControll()
+        self.installRefreshControll()
 
+        // Install seachbar into navigation bar if any
         if let searchBar = searchBar {
             searchBar.delegate = self
             if searchBar.superview == nil {
@@ -72,8 +73,18 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
             if let indexPath = self.indexPath(for: sender) {
                 let table = DataSourceEntry(dataSource: self.dataSource)
                 table.indexPath = indexPath
-                segue.destination.view.table = table
-                segue.destination.view.record = table.record
+                
+                var destination = segue.destination
+                if let navigation = destination as? UINavigationController {
+                    navigation.navigationBar.table = table
+                    navigation.navigationBar.record = table.record
+                    
+                    if let first = navigation.viewControllers.first {
+                        destination = first
+                    }
+                }
+                destination.view.table = table
+                destination.view.record = table.record
             }
         /*} else {
             logger.warning("Transition \(segue.identifier) unknown. Please use \(self.selectedSegueIdentifier) to transmit data to next controller")
@@ -85,6 +96,16 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
         DispatchQueue.main.after(2) {
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    @IBAction func scrollToTheTop(_ sender: Any?) {
+        tableView.setContentOffset(CGPoint.zero, animated: true)
+    }
+
+    @IBAction func scrollToLastRow(_ sender: Any?) {
+        if let indexPath = self.dataSource.lastIndexPath {
+            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
 

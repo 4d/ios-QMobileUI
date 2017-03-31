@@ -67,8 +67,17 @@ open class ListFormCollectionViewController: UICollectionViewController, ListFor
             if let indexPath = self.indexPath(for: sender) {
                 let table = DataSourceEntry(dataSource: self.dataSource)
                 table.indexPath = indexPath
-                segue.destination.view.table = table
-                segue.destination.view.record = table.record
+                
+                var destination = segue.destination
+                if let navigation = destination as? UINavigationController {
+                    navigation.navigationBar.table = table
+                    navigation.navigationBar.record = table.record
+                    if let first = navigation.viewControllers.first {
+                        destination = first
+                    }
+                }
+                destination.view.table = table
+                destination.view.record = table.record
             }
         /*}*/
     }

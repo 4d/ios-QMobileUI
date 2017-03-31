@@ -104,9 +104,23 @@ open class Binder: NSObject {
             entryKeyPaths.append(key)
 
             // create the binder entry
-            let entry = KeyPathEntry(keyPath: entryKeyPaths.joined(separator: "."), viewKey: viewKey, view: self.view, localVarKey: localVarKey)
-            currentRecordView?.bindTo.entries.append(entry)
-            currentRecordView?.bindTo.updateView(for: entry) // XXX check if call is necessary or didSet on currentRecords is enought
+            let newEntryKeyPath = entryKeyPaths.joined(separator: ".")
+            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
+            if let bindTo = currentRecordView?.bindTo {
+                
+                for entry in entries {
+                    if entry.keyPath == newEntry.keyPath {
+                        logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(String(describing: currentRecordView))")
+                        return // already set
+                    } else if newEntry.keyPath.contains(entry.keyPath) {
+                        logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
+                    }else if entry.keyPath.contains(newEntry.keyPath) {
+                        logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
+                    }
+                }
+                bindTo.entries.append(newEntry)
+                bindTo.updateView(for: newEntry) // XXX check if call is necessary or didSet on currentRecords is enought, maybe check status loaded
+            }
         }
     }
 
