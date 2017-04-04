@@ -35,13 +35,13 @@ extension DataSource: UICollectionViewDataSource {
 
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if let keyPath = self.fetchedResultsController.sectionNameKeyPath {
-            if self.cachedSectionNames.isEmpty || indexPath.section >= self.cachedSectionNames.count {
+            if collectionChanges.cachedSectionNames.isEmpty || indexPath.section >= collectionChanges.cachedSectionNames.count {
                 self.cacheSectionNames(using: keyPath)
             }
 
             var title: Any?
-            if !self.cachedSectionNames.isEmpty && indexPath.section < self.cachedSectionNames.count {
-                title = self.cachedSectionNames[indexPath.section]
+            if !collectionChanges.cachedSectionNames.isEmpty && indexPath.section < collectionChanges.cachedSectionNames.count {
+                title = collectionChanges.cachedSectionNames[indexPath.section]
             }
             if let view = self.delegate?.dataSource?(self, collectionView: collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath, withTitle: title) {
                 return view
@@ -65,7 +65,7 @@ extension DataSource: UICollectionViewDataSource {
             logger.error("KeyPath \(keyPath) should be included in the fetchRequest's sortDescriptors to know if the keyPath is ascending or descending, but there is not sort descriptors.")
             return
         }
-        
+
         for sortDescriptor in sortDescriptors where sortDescriptor.key == keyPath {
             keyPathascending = sortDescriptor.ascending
         }
@@ -75,7 +75,7 @@ extension DataSource: UICollectionViewDataSource {
         }
 
         let result = self.fetchedResultsController.fetchKeyPath(keyPath, ascending: ascending)
-        self.cachedSectionNames.append(contentsOf: result)
+        collectionChanges.cachedSectionNames.append(contentsOf: result)
     }
 
 }
@@ -95,4 +95,103 @@ extension DataSource: UICollectionViewDataSourcePrefetching {
         }
     }
 
+}
+
+// MARK: UICollectionView - update using a list of changes
+// struct to manage collection cell updates
+struct CollectionChanges {
+    internal var objectChanges: [FetchedResultsChangeType: Set<IndexPath>] = [FetchedResultsChangeType: Set<IndexPath>]()
+    internal var sectionChanges: [FetchedResultsChangeType: IndexSet] = [FetchedResultsChangeType: IndexSet]()
+    internal var cachedSectionNames: [Any] = [Any]()
+
+    mutating func beginUpdates() {
+        self.sectionChanges = [FetchedResultsChangeType: IndexSet]()
+        self.objectChanges = [FetchedResultsChangeType: Set<IndexPath>]()
+    }
+
+    mutating func endUpdates(collectionView: UICollectionView) {
+        // Check moves
+        if let moves = self.objectChanges[.move], !moves.isEmpty {
+            var updatedMoves = Set<IndexPath>()
+            if let insertSections = self.sectionChanges[.insert], let deleteSections = self.sectionChanges[.delete] {
+                var generator = moves.makeIterator()
+                guard let fromIndexPath = generator.next() else {
+                    assertionFailure("fromIndexPath not found. Moves: \(moves), inserted sections: \(insertSections), deleted sections: \(deleteSections)")
+                    return
+                }
+                guard let toIndexPath = generator.next() else {
+                    assertionFailure("toIndexPath not found. Moves: \(moves), inserted sections: \(insertSections), deleted sections: \(deleteSections)")
+                    return
+                }
+                if deleteSections.contains((fromIndexPath as NSIndexPath).section) {
+                    if insertSections.contains((toIndexPath as NSIndexPath).section) == false {
+                        if var changeSet = self.objectChanges[.insert] {
+                            changeSet.insert(toIndexPath)
+                            self.objectChanges[.insert] = changeSet
+                        } else {
+                            self.objectChanges[.insert] = [toIndexPath]
+                        }
+                    }
+                } else if insertSections.contains((toIndexPath as NSIndexPath).section) {
+                    if var changeSet = self.objectChanges[.delete] {
+                        changeSet.insert(fromIndexPath)
+                        self.objectChanges[.delete] = changeSet
+                    } else {
+                        self.objectChanges[.delete] = [fromIndexPath]
+                    }
+                } else {
+                    for move in moves {
+                        updatedMoves.insert(move as IndexPath)
+                    }
+                }
+            }
+            if !updatedMoves.isEmpty {
+                self.objectChanges[.move] = updatedMoves
+            } else {
+                self.objectChanges.removeValue(forKey: .move)
+            }
+        }
+
+        collectionView.update(with: self)
+    }
+}
+
+extension UICollectionView {
+
+    func update(with change: CollectionChanges, completion: ((Bool) -> Swift.Void)? = nil) {
+        self.performBatchUpdates({
+            if let deletedSections = change.sectionChanges[.delete] {
+                self.deleteSections(deletedSections as IndexSet)
+            }
+
+            if let insertedSections = change.sectionChanges[.insert] {
+                self.insertSections(insertedSections as IndexSet)
+            }
+
+            if let deleteItems = change.objectChanges[.delete] {
+                self.deleteItems(at: Array(deleteItems))
+            }
+
+            if let insertedItems = change.objectChanges[.insert] {
+                self.insertItems(at: Array(insertedItems))
+            }
+
+            if let reloadItems = change.objectChanges[.update] {
+                self.reloadItems(at: Array(reloadItems))
+            }
+            if let moveItems = change.objectChanges[.move] {
+                var generator = moveItems.makeIterator()
+                guard let fromIndexPath = generator.next() else {
+                    assertionFailure("fromIndexPath not found. Move items: \(moveItems)")
+                    return
+                }
+                guard let toIndexPath = generator.next() else {
+                    assertionFailure("toIndexPath not found. Move items: \(moveItems)")
+                    return
+                }
+                self.moveItem(at: fromIndexPath as IndexPath, to: toIndexPath as IndexPath)
+            }
+        }, completion:  completion)
+
+    }
 }

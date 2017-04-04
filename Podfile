@@ -5,10 +5,9 @@ target 'QMobileUI' do
 
   pod 'QMobileDataStore', :path => '../QMobileDataStore'
 
-  ## Alerte
-  #pod 'SwiftMessages'
-  ## Log
-  pod 'XCGLogger', '~> 4.0.0'
+  pod 'Kingfisher' # image download and caching
+  pod 'XCGLogger', '~> 4.0.0' # Log
+  #pod 'SwiftMessages' # display message and alert
 
   target 'QMobileUITests' do
     inherit! :search_paths

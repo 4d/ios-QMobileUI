@@ -107,14 +107,14 @@ open class Binder: NSObject {
             let newEntryKeyPath = entryKeyPaths.joined(separator: ".")
             let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
             if let bindTo = currentRecordView?.bindTo {
-                
+
                 for entry in entries {
                     if entry.keyPath == newEntry.keyPath {
                         logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(String(describing: currentRecordView))")
                         return // already set
                     } else if newEntry.keyPath.contains(entry.keyPath) {
                         logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
-                    }else if entry.keyPath.contains(newEntry.keyPath) {
+                    } else if entry.keyPath.contains(newEntry.keyPath) {
                         logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
                     }
                 }

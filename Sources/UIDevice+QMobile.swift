@@ -6,7 +6,7 @@
 //  Copyright © 2017 Eric Marchand. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 // MARK: - Current
 public extension UIDevice {

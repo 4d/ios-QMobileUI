@@ -1,0 +1,7 @@
+git "https://gitfusion.wakanda.io/qmobile/QMobileDataStore.git" "HEAD"
+
+github "onevcat/Kingfisher" # image download
+github "DaveWoodCom/XCGLogger" # logger
+github "phimage/Prephirences" # settings
+
+# github 'SwiftKickMobile/SwiftMessages' # display message

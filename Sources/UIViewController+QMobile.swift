@@ -10,6 +10,12 @@ import Foundation
 
 extension UIViewController {
 
+    @IBAction open func previousPage(_ sender: Any!) {
+        self.dismiss(animated: true) {
+
+        }
+    }
+
     static func topViewController(_ viewController: UIViewController) -> UIViewController {
         guard let presentedViewController = viewController.presentedViewController else {
             return viewController

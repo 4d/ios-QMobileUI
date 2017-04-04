@@ -9,17 +9,21 @@
 import Foundation
 import QMobileDataStore
 
-public protocol DetailsFormController: class {
+public protocol DetailsForm: class {
 
-    // the root view
+    // the root view of form
     var view: UIView! {get}
 
+    /// @return: true if the is previous record
     var hasPreviousRecord: Bool {get set}
+    /// @return: true if the is next record
     var hasNextRecord: Bool {get set}
+
 }
 
-extension DetailsFormController {
+extension DetailsForm {
 
+    // MARK: model info from DataSource
     public var dataSource: DataSource? {
         return self.view.table?.dataSource
     }
@@ -61,7 +65,7 @@ extension DetailsFormController {
             }
         }
     }
-    
+
     public func firstRecord() {
         if let table = self.view.table {
             table.indexPath = IndexPath.firstRow
@@ -69,7 +73,6 @@ extension DetailsFormController {
             // update the view (if not done auto by seting the index)
             self.view.record = table.record
 
-            
             checkActions(table)
         }
     }
@@ -84,16 +87,24 @@ extension DetailsFormController {
             checkActions(table)
         }
     }
-    
+
+    func checkActions() {
+        if let table = self.view.table {
+            checkActions(table)
+        } else {
+            assertionFailure("No table set when loading")
+        }
+    }
+
     func checkActions(_ table: DataSourceEntry) {
         self.hasPreviousRecord = table.hasPrevious
         self.hasNextRecord = table.hasNext
     }
 
-    public func deleteRecord() {
+    /*public*/ func deleteRecord() {
         if let table = self.view.table {
             if let record = table.record?.record as? Record {
-                let _ = dataStore.perform(.background) { context, save in
+                _ = dataStore.perform(.background) { context, _ in
                     context.delete(record: record)
                 }
             } else {

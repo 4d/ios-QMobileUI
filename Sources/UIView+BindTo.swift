@@ -27,7 +27,7 @@ public extension UIView {
         }
     }
 
-    public var hasBindTo: Bool {
+    dynamic public var hasBindTo: Bool {
         let bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         return bindTo != nil
     }
@@ -42,7 +42,7 @@ public extension UIView {
         }
     }
 
-    public var hasRecord: Bool {
+    dynamic public var hasRecord: Bool {
         if !hasBindTo {
             return false
         }
@@ -57,6 +57,12 @@ public extension UIView {
             self.bindTo.table = newValue
         }
     }
+
+    // Allow to bind using 'transformer' key
+    public var transformer: Binder! {
+        return self.bindTo
+    }
+
 }
 
 extension UIView {

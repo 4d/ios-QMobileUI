@@ -48,10 +48,10 @@ extension UIApplication {
 }
 
 extension UIApplicationDelegate {
-    
-    public static var shared : UIApplicationDelegate {
+
+    public static var shared: UIApplicationDelegate {
         //swiftlint:disable force_cast
         return UIApplication.shared.delegate!
     }
-    
+
 }

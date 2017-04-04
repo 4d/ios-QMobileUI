@@ -86,16 +86,9 @@ public class DataSource: NSObject {
 
     // CLEAN: do two convenience init and one private
 
-    // MARK: - Cache for collection view
-    // CLEAN create a class or struct to manage collection cell updates
-    internal lazy var objectChanges: [FetchedResultsChangeType: Set<IndexPath>] = {
-        return [FetchedResultsChangeType: Set<IndexPath>]()
-    }()
-    internal lazy var sectionChanges: [FetchedResultsChangeType: IndexSet] = {
-        return [FetchedResultsChangeType: IndexSet]()
-    }()
-    internal lazy var cachedSectionNames: [Any] = {
-        return [Any]()
+    // Cache for collection view
+    internal lazy var collectionChanges: CollectionChanges = {
+        return CollectionChanges()
     }()
 
     // MARK: - Variables and shortcut on internal fetchedResultsController
@@ -106,7 +99,7 @@ public class DataSource: NSObject {
             return self.fetchedResultsController.fetchRequest.predicate
         }
         set {
-            self.cachedSectionNames.removeAll()
+            collectionChanges.cachedSectionNames.removeAll()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.predicate = newValue
@@ -122,7 +115,7 @@ public class DataSource: NSObject {
             return self.fetchedResultsController.fetchRequest.sortDescriptors
         }
         set {
-            self.cachedSectionNames.removeAll()
+            collectionChanges.cachedSectionNames.removeAll()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.sortDescriptors = sortDescriptors
@@ -164,7 +157,73 @@ public class DataSource: NSObject {
         return self.fetchedResultsController.tableName
     }
 
-    // MARK: functions about IndexPath
+    // MARK: Cell configuration
+
+    /// Configure a table or collection cell
+    func configure(_ cell: UIView, indexPath: IndexPath) {
+        if let record = self.record(at: indexPath) {
+            if let tableView = self.tableView, let cell = cell as? UITableViewCell {
+                cell.tableView = tableView
+                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) != nil {
+                    self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
+                } else if let configuration = self.tableConfigurationBlock {
+                    configuration(cell, record, indexPath)
+                } else {
+                    logger.warning("No cell configuration for \(self)")
+                }
+            } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
+                cell.collectionView = collectionView
+                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) != nil {
+                    self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
+                } else if let configuration = self.collectionConfigurationBlock {
+                    configuration(cell, record, indexPath)
+                } else {
+                    logger.warning("No cell configuration for \(self)")
+                }
+            }
+        }
+    }
+
+    /// Reload cells at specific index path
+    public func reloadCells(at indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            if let tableView = self.tableView {
+                if let cell = tableView.cellForRow(at: indexPath) {
+                    self.configure(cell, indexPath: indexPath)
+                }
+            } else if let collectionView = self.collectionView {
+                if let cell = collectionView.cellForItem(at: indexPath) {
+                    self.configure(cell, indexPath: indexPath)
+                }
+            }
+        }
+    }
+
+    // MARK: source functions
+
+    /// Do a fetch
+    public func performFetch() {
+        do {
+            collectionChanges.cachedSectionNames.removeAll()
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            logger.error("Error fetching records \(error)")
+        }
+    }
+
+    public func refresh() {
+        self.performFetch()
+        self.tableView?.reloadData() // CLEAN maybe not necessary if fetch notify table to reload
+        if let visibleIndexPaths = self.collectionView?.indexPathsForVisibleItems, !visibleIndexPaths.isEmpty {
+            self.collectionView?.reloadItems(at: visibleIndexPaths)
+        }
+    }
+
+}
+
+// MARK: functions about IndexPath
+extension DataSource {
+
     public func hasNext(at indexPath: IndexPath) -> Bool {
         let numberOfSections = self.numberOfSections
         if numberOfSections == 0 {
@@ -268,13 +327,13 @@ public class DataSource: NSObject {
     }
 
     /*public func isLastInLine(indexPath: IndexPath) -> Bool {
-        let nextIndexPath = indexPath.nextRowInSection
-
-        if let cellAttributes = collectionView.layout.layoutAttributesForItem(at: indexPath), let nextCellAttributes = self.layoutAttributesForItem(at: nextIndexPath) {
-            return !(cellAttributes.frame.minY == nextCellAttributes.frame.minY)
-        }
-        return false
-    }*/
+     let nextIndexPath = indexPath.nextRowInSection
+     
+     if let cellAttributes = collectionView.layout.layoutAttributesForItem(at: indexPath), let nextCellAttributes = self.layoutAttributesForItem(at: nextIndexPath) {
+     return !(cellAttributes.frame.minY == nextCellAttributes.frame.minY)
+     }
+     return false
+     }*/
 
     func inBounds(indexPath: IndexPath) -> Bool {
         return self.fetchedResultsController.inBounds(indexPath: indexPath)
@@ -282,68 +341,6 @@ public class DataSource: NSObject {
 
     public func indexPath(for record: Record) -> IndexPath? {
         return self.fetchedResultsController.indexPath(for: record)
-    }
-
-    // MARK: Cell configuration
-
-    /// Configure a table or collection cell
-    func configure(_ cell: UIView, indexPath: IndexPath) {
-        if let record = self.record(at: indexPath) {
-            if let tableView = self.tableView, let cell = cell as? UITableViewCell {
-                cell.tableView = tableView
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) != nil {
-                    self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
-                } else if let configuration = self.tableConfigurationBlock {
-                    configuration(cell, record, indexPath)
-                } else {
-                    logger.warning("No cell configuration for \(self)")
-                }
-            } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
-                cell.collectionView = collectionView
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) != nil {
-                    self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
-                } else if let configuration = self.collectionConfigurationBlock {
-                    configuration(cell, record, indexPath)
-                } else {
-                    logger.warning("No cell configuration for \(self)")
-                }
-            }
-        }
-    }
-
-    /// Reload cells at specific index path
-    public func reloadCells(at indexPaths: [IndexPath]) {
-        for indexPath in indexPaths {
-            if let tableView = self.tableView {
-                if let cell = tableView.cellForRow(at: indexPath) {
-                    self.configure(cell, indexPath: indexPath)
-                }
-            } else if let collectionView = self.collectionView {
-                if let cell = collectionView.cellForItem(at: indexPath) {
-                    self.configure(cell, indexPath: indexPath)
-                }
-            }
-        }
-    }
-
-    // MARK: source functions
-
-    /// Do a fetch
-    public func performFetch() {
-        do {
-            self.cachedSectionNames.removeAll()
-            try self.fetchedResultsController.performFetch()
-        } catch {
-            logger.error("Error fetching records \(error)")
-        }
-    }
-
-    public func refresh() {
-        self.performFetch()
-        self.tableView?.reloadData() // CLEAN maybe not necessary if fetch notify table to reload
-        if let visibleIndexPaths = self.collectionView?.indexPathsForVisibleItems, !visibleIndexPaths.isEmpty {
-            self.collectionView?.reloadItems(at: visibleIndexPaths)
-        }
     }
 
 }

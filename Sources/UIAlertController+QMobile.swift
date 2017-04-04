@@ -10,7 +10,7 @@ import UIKit
 
 public extension UIAlertController {
 
-    public static func show(title: String, message: String, cancelTitle: String = "OK") {
+    fileprivate static func show(title: String, message: String?, cancelTitle: String = "OK") {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
@@ -20,11 +20,12 @@ public extension UIAlertController {
 }
 
 /// Display an alert message
-public func Alert(title: String, message: String) {
+public func alert(title: String, message: String? = nil) {
     UIAlertController.show(title: title, message: message)
 }
 
-public func Alert(title: String, error: Error) {
-    Alert(title: title, message: "\(error)")
+public func alert(title: String, error: Error) {
+    alert(title: title, message: "\(error)")
 }
 
+// XXX could be replaced with framework SwiftMessages

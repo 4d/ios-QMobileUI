@@ -1,5 +1,5 @@
 //
-//  ListFormTableViewController.swift
+//  ListFormTable.swift
 //  QMobileUI
 //
 //  Created by Eric Marchand on 16/03/2017.
@@ -10,7 +10,7 @@ import Foundation
 import QMobileDataStore
 
 @IBDesignable
-open class ListFormTableViewController: UITableViewController, ListFormViewController {
+open class ListFormTable: UITableViewController, ListForm {
 
     public var dataSource: DataSource! = nil
 
@@ -21,8 +21,9 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
     @IBOutlet public var searchBar: UISearchBar!
 
     public var searchActive: Bool = false
-    @IBInspectable public var searchableField: String = "name" 
+    @IBInspectable public var searchableField: String = "name"
 
+    // MARK: override
     open override func viewDidLoad() {
         super.viewDidLoad()
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
@@ -34,7 +35,6 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
-
         self.installRefreshControll()
 
         // Install seachbar into navigation bar if any
@@ -43,6 +43,24 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
             if searchBar.superview == nil {
                 self.navigationItem.titleView = searchBar
             }
+        }
+    }
+
+    open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let indexPath = self.indexPath(for: sender) {
+            let table = DataSourceEntry(dataSource: self.dataSource)
+            table.indexPath = indexPath
+
+            var destination = segue.destination
+            if let navigation = destination as? UINavigationController {
+                navigation.navigationBar.table = table
+                navigation.navigationBar.record = table.record
+                if let first = navigation.viewControllers.first {
+                    destination = first
+                }
+            }
+            destination.view.table = table
+            destination.view.record = table.record
         }
     }
 
@@ -68,37 +86,16 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
         return defaultTableName
     }
 
-    open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        /*if segue.identifier == selectedSegueIdentifier {*/
-            if let indexPath = self.indexPath(for: sender) {
-                let table = DataSourceEntry(dataSource: self.dataSource)
-                table.indexPath = indexPath
-                
-                var destination = segue.destination
-                if let navigation = destination as? UINavigationController {
-                    navigation.navigationBar.table = table
-                    navigation.navigationBar.record = table.record
-                    
-                    if let first = navigation.viewControllers.first {
-                        destination = first
-                    }
-                }
-                destination.view.table = table
-                destination.view.record = table.record
-            }
-        /*} else {
-            logger.warning("Transition \(segue.identifier) unknown. Please use \(self.selectedSegueIdentifier) to transmit data to next controller")
-        }*/
-    }
+    // MARK: IBAction
 
     @IBAction func refresh(_ sender: Any?) {
-        // TODO refresh using remote source
+        // TODO refresh using remote source??
         DispatchQueue.main.after(2) {
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
         }
     }
-    
+
     @IBAction func scrollToTheTop(_ sender: Any?) {
         tableView.setContentOffset(CGPoint.zero, animated: true)
     }
@@ -116,29 +113,32 @@ open class ListFormTableViewController: UITableViewController, ListFormViewContr
 }
 
 // MARK: DataSourceSearchable
-extension ListFormTableViewController: DataSourceSearchable {
+extension ListFormTable: DataSourceSearchable {
+
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-        
+
         if !searchText.isEmpty {
-            
             dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
         } else {
             dataSource?.predicate = nil
         }
         dataSource?.performFetch()
-        
-        // TODO API here could load more from network
+
+        // XXX API here could load more from network
     }
+
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
     }
-    
+
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
     }
 
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        dataSource?.predicate = nil
+        dataSource?.performFetch()
     }
 }

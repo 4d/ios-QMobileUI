@@ -13,6 +13,9 @@ public class DataSourceEntry: NSObject {
 
     open var dataSource: DataSource
     open var indexPath: IndexPath? {
+        willSet {
+            //
+        }
         didSet {
             recordCache = nil
         }
@@ -93,6 +96,19 @@ public class DataSourceEntry: NSObject {
 
     open var lastIndexPath: IndexPath? {
         return self.dataSource.lastIndexPath
+    }
+
+    // MARK: KVO for computed properties
+    public override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+        var keyPaths = super.keyPathsForValuesAffectingValue(forKey: key)
+
+        if key == "hasNext" || key == "hasPrevious" || key == "row" || key == "rowString" || key == "section" {
+            keyPaths.insert("indexPath")
+        } else if key == "count" || key == "hasPrevious" || key == "isEmpty"  || key == "isNotEmpty" || key == "name" {
+            keyPaths.insert("dataSource")
+        }
+
+        return keyPaths
     }
 
 }
