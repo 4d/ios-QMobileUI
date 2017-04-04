@@ -27,7 +27,7 @@ public extension UILabel {
             self.text = DateFormatter.rfc822.string(from: date)
         }
     }
-    
+
     dynamic public var shortDate: Date? {
         get {
             guard let text = self.text else {
@@ -43,7 +43,7 @@ public extension UILabel {
             self.text = DateFormatter.shortDate.string(from: date)
         }
     }
-    
+
     dynamic public var mediumDate: Date? {
         get {
             guard let text = self.text else {
@@ -59,7 +59,7 @@ public extension UILabel {
             self.text = DateFormatter.mediumDate.string(from: date)
         }
     }
-    
+
     dynamic public var longDate: Date? {
         get {
             guard let text = self.text else {
