@@ -12,13 +12,11 @@ import DZNEmptyDataSet
 
 /// Generated controller for Entity table.
 /// Do not edit name or override tableName
-class EntityListFormTableViewController: ListFormTableViewController {
+class EntityListFormTableViewController: ListFormTable {
     
-    /* Uncomment if you rename the controller
     public override var tableName: String {
         return "Entity"
     }
-    */
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,23 +25,25 @@ class EntityListFormTableViewController: ListFormTableViewController {
         self.tableView.emptyDataSetSource = self
         self.tableView.emptyDataSetDelegate = self
     }
-}
-
-
-extension EntityListFormTableViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     
-    public func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString!{
+    public func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         return NSAttributedString(string: "no result, here could load remote data...")
     }
     
+    public func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString!{
+        return NSAttributedString(string: "no result, here could load remote data...")
+        
+    }
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
         return .white
     }
-    
+
     func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
         return true
     }
+
 }
+
 
 
 public enum VariableNamingFormat {

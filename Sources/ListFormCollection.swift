@@ -39,9 +39,9 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
-        searchBar?.delegate = self
-
         self.installRefreshControll()
+        self.installDataEmptyView()
+        self.installSearchBar()
     }
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -78,6 +78,21 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
             // swiftlint:disable force_cast
             self.collectionView?.addSubview(refreshControl!)
+        }
+    }
+    
+    open func installDataEmptyView() {
+        self.collectionView?.emptyDataSetSource = self
+        self.collectionView?.emptyDataSetDelegate = self
+    }
+    
+    open func installSearchBar() {
+        // Install seachbar into navigation bar if any
+        if let searchBar = searchBar {
+            searchBar.delegate = self
+            if searchBar.superview == nil {
+                self.navigationItem.titleView = searchBar
+            }
         }
     }
 

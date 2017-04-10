@@ -26,6 +26,7 @@ open class ListFormTable: UITableViewController, ListForm {
     // MARK: override
     open override func viewDidLoad() {
         super.viewDidLoad()
+
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
 
@@ -36,14 +37,8 @@ open class ListFormTable: UITableViewController, ListForm {
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
         self.installRefreshControll()
-
-        // Install seachbar into navigation bar if any
-        if let searchBar = searchBar {
-            searchBar.delegate = self
-            if searchBar.superview == nil {
-                self.navigationItem.titleView = searchBar
-            }
-        }
+        self.installDataEmptyView()
+        self.installSearchBar()
     }
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -59,6 +54,7 @@ open class ListFormTable: UITableViewController, ListForm {
                     destination = first
                 }
             }
+            
             destination.view.table = table
             destination.view.record = table.record
         }
@@ -78,6 +74,26 @@ open class ListFormTable: UITableViewController, ListForm {
             self.refreshControl = UIRefreshControl()
             refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         }
+    }
+    
+    open func installDataEmptyView() {
+        self.tableView.emptyDataSetSource = self
+        self.tableView.emptyDataSetDelegate = self
+    }
+    
+    open func installSearchBar() {
+        // Install seachbar into navigation bar if any
+        if let searchBar = searchBar {
+            searchBar.delegate = self
+            if searchBar.superview == nil {
+                self.navigationItem.titleView = searchBar
+            }
+        }
+    }
+
+    /// little function to remove table footer ie. separator
+    open func noFooterView() {
+        self.tableView.tableFooterView = UIView()
     }
 
     /// The table name for this controller.

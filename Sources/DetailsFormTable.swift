@@ -64,7 +64,7 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
         }
     }
 
-    func installSwipeGestureRecognizer() {
+    open func installSwipeGestureRecognizer() {
         guard isViewLoaded else {
             return
         }

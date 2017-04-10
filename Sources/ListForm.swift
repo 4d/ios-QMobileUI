@@ -8,8 +8,9 @@
 
 import Foundation
 import QMobileDataStore
+import DZNEmptyDataSet
 
-public protocol ListForm: class {
+public protocol ListForm: class, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }

@@ -31,6 +31,8 @@ Pod::Spec.new do |s|
   # ――― Project Settings ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 
   s.dependency "XCGLogger"
+  s.dependency "Kingfisher"
+  s.dependency "DZNEmptyDataSet"
   s.dependency "QMobileDataStore"
 
 end

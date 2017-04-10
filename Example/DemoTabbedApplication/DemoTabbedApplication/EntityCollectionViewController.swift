@@ -10,7 +10,7 @@ import UIKit
 import QMobileUI
 import DisplaySwitcher
 
-class EntityCollectionViewController: ListFormCollectionViewController {
+class EntityCollectionViewController: ListFormCollection {
     private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
     private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
     
@@ -18,7 +18,7 @@ class EntityCollectionViewController: ListFormCollectionViewController {
         super.viewDidLoad()
         
         self.collectionView?.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        self.collectionView?.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)
+        ///self.collectionView?.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)
     
     
         //self.collectionView?.collectionViewLayout = CoverFlowLayout()
@@ -27,7 +27,10 @@ class EntityCollectionViewController: ListFormCollectionViewController {
         
        //self.collectionView?.collectionViewLayout = listLayout
         
-        print(self.refreshControl)
+        self.collectionView?.emptyDataSetSource = self
+        self.collectionView?.emptyDataSetDelegate = self
+        
+        print(self.refreshControl ?? "")
     }
 
     func collectionView(collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
@@ -65,4 +68,20 @@ class EntityCollectionViewController: ListFormCollectionViewController {
         isTransitionAvailable = true
     }
     
+}
+
+import DZNEmptyDataSet
+extension EntityCollectionViewController {
+    
+    public func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString!{
+        return NSAttributedString(string: "no result, here could load remote data...")
+    }
+    
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
+        return .white
+    }
+    
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
+        return true
+    }
 }

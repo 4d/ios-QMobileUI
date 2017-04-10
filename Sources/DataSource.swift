@@ -213,9 +213,20 @@ public class DataSource: NSObject {
 
     public func refresh() {
         self.performFetch()
-        self.tableView?.reloadData() // CLEAN maybe not necessary if fetch notify table to reload
-        if let visibleIndexPaths = self.collectionView?.indexPathsForVisibleItems, !visibleIndexPaths.isEmpty {
-            self.collectionView?.reloadItems(at: visibleIndexPaths)
+        
+        // CLEAN maybe not necessary if fetch notify table to reload
+        reloadData()
+    }
+    
+    func reloadData() {
+        switch viewType {
+        case .table:
+            self.tableView?.reloadData()
+        case .collection:
+            self.collectionView?.reloadData()
+            /*if let visibleIndexPaths = self.collectionView?.indexPathsForVisibleItems, !visibleIndexPaths.isEmpty {
+             self.collectionView?.reloadItems(at: visibleIndexPaths)
+             }*/
         }
     }
 

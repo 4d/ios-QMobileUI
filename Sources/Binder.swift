@@ -285,6 +285,14 @@ fileprivate class KeyPathEntry {
         self.viewKey = viewKey
         self.view = view
         self.localVarKey = localVarKey
+        
+        if viewKey.contains(",") {
+            let split = viewKey.components(separatedBy: ",")
+            self.viewKey = split.first ?? viewKey
+            if let transformerName = split[safe: 1] {
+                transformer = ValueTransformer(forName: NSValueTransformerName(transformerName))
+            }
+        }
     }
 
 }

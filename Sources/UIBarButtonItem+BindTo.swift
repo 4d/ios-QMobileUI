@@ -17,7 +17,7 @@ extension UIBarButtonItem {
             /* view.rootView  // a bar? */
             return view.bindTo
         }
-        logger.debug("UIBarButtonItem \(self) is not attached to a view. Cannot bind")
+        logger.debug("UIBarButtonItem \(self) is not attached to a view. Maybe not visible. Cannot bind")
         return nil
     }
 

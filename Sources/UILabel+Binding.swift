@@ -190,14 +190,14 @@ public extension UILabel {
             guard let text = self.text else {
                 return nil
             }
-            return NumberFormatter.spellOut.number(from: text)
+            return NumberFormatter.ordinal.number(from: text)
         }
         set {
             guard let number = newValue else {
                 self.text = nil
                 return
             }
-            self.text = NumberFormatter.spellOut.string(from: number)
+            self.text = NumberFormatter.ordinal.string(from: number)
 
         }
     }
