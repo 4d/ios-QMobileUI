@@ -213,11 +213,11 @@ public class DataSource: NSObject {
 
     public func refresh() {
         self.performFetch()
-        
+
         // CLEAN maybe not necessary if fetch notify table to reload
         reloadData()
     }
-    
+
     func reloadData() {
         switch viewType {
         case .table:

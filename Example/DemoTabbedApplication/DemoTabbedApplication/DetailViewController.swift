@@ -10,10 +10,19 @@ import UIKit
 import QMobileUI
 
 class EntityDetailsFormTableViewController: DetailsFormTable {
-
-    override func viewWillAppear(_ animated: Bool) {
+    
+    override func onWillAppear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
         self.navigationController?.setToolbarHidden(false, animated: animated)
     }
+    
+}
 
+
+class EntityDetailsFormViewController: DetailsFormBare {
+    
+    override func onWillAppear(_ animated: Bool) {
+         
+    }
+    
 }

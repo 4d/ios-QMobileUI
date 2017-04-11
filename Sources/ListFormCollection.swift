@@ -14,19 +14,19 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     public var dataSource: DataSource! = nil
 
-    @IBInspectable public var selectedSegueIdentifier: String = "showDetail"
+    @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
 
-    @IBInspectable public var hasRefreshControl: Bool = true
+    @IBInspectable open var hasRefreshControl: Bool = true
      public var refreshControl: UIRefreshControl?
     /// Optional section for table using one field name
-    @IBInspectable public var sectionFieldname: String?
+    @IBInspectable open var sectionFieldname: String?
 
-    @IBOutlet public var searchBar: UISearchBar!
+    @IBOutlet open var searchBar: UISearchBar!
     public var searchActive: Bool = false
-    @IBInspectable public var searchableField: String = "name"
+    @IBInspectable open var searchableField: String = "name"
 
     // MARK: override
-    open override func viewDidLoad() {
+    final public override func viewDidLoad() {
         super.viewDidLoad()
         guard let collectionView = self.collectionView  else { fatalError("CollectionView is nil") }
 
@@ -42,7 +42,31 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
+
+        onLoad()
     }
+
+    final public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        onWillAppear(animated)
+    }
+
+    final public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        onDidAppear(animated)
+    }
+
+    final public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onWillDisappear(animated)
+    }
+
+    final public override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onDidDisappear(animated)
+    }
+
+    // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         /*if segue.identifier == selectedSegueIdentifier {*/ // code commented, here we can filter on segue name
@@ -64,10 +88,21 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         /*}*/
     }
 
+    // MARK: Collection View
+
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // For a selection default behaviour is to show detail...
         self.performSegue(withIdentifier: selectedSegueIdentifier, sender: collectionView)
     }
+
+    // MARK: Events
+    open func onLoad() {}
+    open func onWillAppear(_ animated: Bool) {}
+    open func onDidAppear(_ animated: Bool) {}
+    open func onWillDisappear(_ animated: Bool) {}
+    open func onDidDisappear(_ animated: Bool) {}
+
+    // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
@@ -80,12 +115,12 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             self.collectionView?.addSubview(refreshControl!)
         }
     }
-    
+
     open func installDataEmptyView() {
         self.collectionView?.emptyDataSetSource = self
         self.collectionView?.emptyDataSetDelegate = self
     }
-    
+
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
         if let searchBar = searchBar {

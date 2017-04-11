@@ -5,12 +5,13 @@ target 'DemoTabbedApplication' do
 
   pod 'QMobileDataStore', :path => '../../../QMobileDataStore'
   pod 'QMobileUI', :path => '../../'
-  
+
   pod 'SwiftyJSON'
   pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
-  
+
   pod 'DZNEmptyDataSet'
   pod 'DisplaySwitcher'
   pod 'Kingfisher'
   pod 'IBAnimatable'
+  #pod 'ValueTransformerKit', :git => 'https://github.com/phimage/ValueTransformerKit.git'
 end

@@ -14,17 +14,17 @@ open class ListFormTable: UITableViewController, ListForm {
 
     public var dataSource: DataSource! = nil
 
-    @IBInspectable public var selectedSegueIdentifier: String = "showDetail"
-    @IBInspectable public var hasRefreshControl: Bool = true
+    @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
+    @IBInspectable open var hasRefreshControl: Bool = true
     /// Optional section for table using one field name
-    @IBInspectable public var sectionFieldname: String?
-    @IBOutlet public var searchBar: UISearchBar!
+    @IBInspectable open var sectionFieldname: String?
+    @IBOutlet open var searchBar: UISearchBar!
 
     public var searchActive: Bool = false
-    @IBInspectable public var searchableField: String = "name"
+    @IBInspectable open var searchableField: String = "name"
 
     // MARK: override
-    open override func viewDidLoad() {
+    final public override func viewDidLoad() {
         super.viewDidLoad()
 
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
@@ -39,7 +39,31 @@ open class ListFormTable: UITableViewController, ListForm {
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
+
+        onLoad()
     }
+
+    final public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        onWillAppear(animated)
+    }
+
+    final public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        onDidAppear(animated)
+    }
+
+    final public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onWillDisappear(animated)
+    }
+
+    final public override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onDidDisappear(animated)
+    }
+
+    // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let indexPath = self.indexPath(for: sender) {
@@ -54,19 +78,20 @@ open class ListFormTable: UITableViewController, ListForm {
                     destination = first
                 }
             }
-            
+
             destination.view.table = table
             destination.view.record = table.record
         }
     }
 
-    open func indexPath(for cell: Any?) -> IndexPath? {
-        if let cell = cell as? UITableViewCell {
-            // return self.tableView?.indexPathForSelectedRow
-            return self.tableView?.indexPath(for: cell)
-        }
-        return nil
-    }
+    // MARK: Events
+    open func onLoad() {}
+    open func onWillAppear(_ animated: Bool) {}
+    open func onDidAppear(_ animated: Bool) {}
+    open func onWillDisappear(_ animated: Bool) {}
+    open func onDidDisappear(_ animated: Bool) {}
+
+    // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
@@ -75,12 +100,12 @@ open class ListFormTable: UITableViewController, ListForm {
             refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         }
     }
-    
+
     open func installDataEmptyView() {
         self.tableView.emptyDataSetSource = self
         self.tableView.emptyDataSetDelegate = self
     }
-    
+
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
         if let searchBar = searchBar {
@@ -96,10 +121,21 @@ open class ListFormTable: UITableViewController, ListForm {
         self.tableView.tableFooterView = UIView()
     }
 
+    // MARK: Utility
+
     /// The table name for this controller.
     /// By default generated from first word in controller name.
     open var tableName: String {
         return defaultTableName
+    }
+
+    /// Find the index of specific table cell
+    open func indexPath(for cell: Any?) -> IndexPath? {
+        if let cell = cell as? UITableViewCell {
+            // return self.tableView?.indexPathForSelectedRow
+            return self.tableView?.indexPath(for: cell)
+        }
+        return nil
     }
 
     // MARK: IBAction

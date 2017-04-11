@@ -1,0 +1,72 @@
+PODS:
+  - DisplaySwitcher (1.0.1)
+  - DZNEmptyDataSet (1.8.1)
+  - IBAnimatable (3.1.3)
+  - Kingfisher (3.6.2)
+  - ObjcExceptionBridging (1.0.1):
+    - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
+  - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
+  - Prephirences (3.0.1):
+    - Prephirences/Core (= 3.0.1)
+    - Prephirences/Keys (= 3.0.1)
+  - Prephirences/Core (3.0.1)
+  - Prephirences/Keys (3.0.1):
+    - Prephirences/Core
+  - QMobileDataStore (0.0.1):
+    - Prephirences
+    - Result
+    - XCGLogger
+  - QMobileUI (0.0.1):
+    - DZNEmptyDataSet
+    - Kingfisher
+    - QMobileDataStore
+    - XCGLogger
+  - Result (3.2.1)
+  - StyleKit (0.5.0)
+  - SwiftyJSON (3.1.4)
+  - XCGLogger (5.0.1):
+    - XCGLogger/Core (= 5.0.1)
+  - XCGLogger/Core (5.0.1):
+    - ObjcExceptionBridging
+
+DEPENDENCIES:
+  - DisplaySwitcher
+  - DZNEmptyDataSet
+  - IBAnimatable
+  - Kingfisher
+  - QMobileDataStore (from `../../../QMobileDataStore`)
+  - QMobileUI (from `../../`)
+  - StyleKit (from `https://github.com/146BC/StyleKit.git`, branch `develop`)
+  - SwiftyJSON
+
+EXTERNAL SOURCES:
+  QMobileDataStore:
+    :path: ../../../QMobileDataStore
+  QMobileUI:
+    :path: ../../
+  StyleKit:
+    :branch: develop
+    :git: https://github.com/146BC/StyleKit.git
+
+CHECKOUT OPTIONS:
+  StyleKit:
+    :commit: 69a96e20e543babf30efee70722c6c1155c1eafd
+    :git: https://github.com/146BC/StyleKit.git
+
+SPEC CHECKSUMS:
+  DisplaySwitcher: 5f725284c28cdf22ea7ba2eee8e8f7e7cb9cdf87
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
+  IBAnimatable: ad640d47659cbbfa4cf88a127fdc663b2ec4c66a
+  Kingfisher: 2c94e72c6830622c71d06adf4ea024c37d316830
+  ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
+  Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
+  QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
+  QMobileUI: eaa2408e37a3c25c1c688677c8f43d148ce627a6
+  Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
+  StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
+
+PODFILE CHECKSUM: a70ba6ec267d9d83a1563c9cddafaa16a57681c3
+
+COCOAPODS: 1.2.0

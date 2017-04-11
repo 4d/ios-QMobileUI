@@ -34,4 +34,15 @@ extension UIViewController {
         return topViewController(presentedViewController)
     }
 
+    func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer?) {
+        if let gestureRecognizer = gestureRecognizer {
+            self.view.addGestureRecognizer(gestureRecognizer)
+        }
+    }
+    func removeGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer?) {
+        if let gestureRecognizer = gestureRecognizer {
+            self.view.removeGestureRecognizer(gestureRecognizer)
+        }
+    }
+
 }

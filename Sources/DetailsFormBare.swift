@@ -1,14 +1,14 @@
 //
-//  DetailsFormTable.swift
+//  DetailsFormBare.swift
 //  QMobileUI
 //
-//  Created by Eric Marchand on 03/04/2017.
+//  Created by Eric Marchand on 22/03/2017.
 //  Copyright © 2017 Eric Marchand. All rights reserved.
 //
 
 import UIKit
 
-open class DetailsFormTable: UITableViewController, DetailsForm {
+open class DetailsFormBare: UIViewController, DetailsForm {
 
     dynamic open var hasPreviousRecord: Bool = false
     dynamic open var hasNextRecord: Bool = false
@@ -42,64 +42,45 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
         onDidDisappear(animated)
     }
 
-    // MARK: TableView
-    open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Install data into each table cell
-        let staticCell = super.tableView(tableView, cellForRowAt: indexPath)
-        staticCell.tableView = self.tableView
-        staticCell.record = self.tableView.record
-        staticCell.table = self.tableView.table
-
-        return staticCell
-    }
-
     // MARK: Events
     open func onLoad() {}
     open func onWillAppear(_ animated: Bool) {}
     open func onDidAppear(_ animated: Bool) {}
     open func onWillDisappear(_ animated: Bool) {}
     open func onDidDisappear(_ animated: Bool) {}
-    open func onWillNextRecord() {}
+
+    /*
+    open func installNavigationItems() {
+        // Configure  table bar, COULD DO : do it automatically if no buttons already in bar, if boolean set ?
+        /*self.navigationItem.rightBarButtonItems = [,
+         UIBarButtonItem(image: UIImage(named: "next")!, style: .plain, target: self, action: #selector(DetailsFormViewController.nextRecord(_:)))
+         UIBarButtonItem(image: UIImage(named: "previous")!, style: .plain, target: self, action: #selector(DetailsFormViewController.previousRecord(_:)))
+         ]*/
+    }*/
 
     // MARK: IBAction
 
     @IBAction open func previousRecord(_ sender: Any!) {
+        // TODO animation, like transitioning on self...
+        // could use segue do do that but it will put more info into storyboard and navigation will be confusing
         self.previousRecord()
-        checkNavigationBar()
-        checkTable()
+        self.checkNavigationBar()
     }
 
     @IBAction open func nextRecord(_ sender: Any!) {
         self.nextRecord()
         checkNavigationBar()
-        checkTable()
     }
 
     @IBAction func deleteRecord(_ sender: Any!) {
         self.deleteRecord()
         checkNavigationBar()
-        checkTable()
         // XXX DELETE go to previous or next record? keep current index? if no more records dismiss view
-
     }
 
     func checkNavigationBar() {
         checkActions()
         self.navigationController?.navigationBar.bindTo.updateView()
-    }
-
-    func checkTable() {
-        // updateView on root don't affect all cell...
-        // do reload data will work on this static table
-
-        self.tableView.reloadData()
-
-        /*
-        // we could also browse all cells and call update
-        for cell in self.cells {
-            cell.bindTo.updateView()
-        }
-        */
     }
 
     // MARK: Swipe gesture

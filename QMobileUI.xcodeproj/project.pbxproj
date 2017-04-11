@@ -37,11 +37,13 @@
 		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
 		483FDA871E82836700FAF84B /* UITableViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */; };
 		483FDA891E8283DA00FAF84B /* DetailsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA881E8283DA00FAF84B /* DetailsForm.swift */; };
-		483FDA8B1E82842000FAF84B /* DetailsFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8A1E82842000FAF84B /* DetailsFormView.swift */; };
+		483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8A1E82842000FAF84B /* DetailsFormBare.swift */; };
 		483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */; };
 		483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */; };
 		483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */; };
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
+		488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
+		488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -123,12 +125,13 @@
 		483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IndexPath+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewController+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA881E8283DA00FAF84B /* DetailsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsForm.swift; sourceTree = "<group>"; };
-		483FDA8A1E82842000FAF84B /* DetailsFormView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsFormView.swift; sourceTree = "<group>"; };
+		483FDA8A1E82842000FAF84B /* DetailsFormBare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsFormBare.swift; sourceTree = "<group>"; };
 		483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceEntry.swift; sourceTree = "<group>"; };
 		483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+QMobile.swift"; sourceTree = "<group>"; };
 		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNEmptyDataSet.framework; path = Carthage/Build/iOS/DZNEmptyDataSet.framework; sourceTree = "<group>"; };
 		48D5845E1E7830E1006F56B5 /* QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D584611E7830E1006F56B5 /* QMobileUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QMobileUI.h; sourceTree = "<group>"; };
 		48D584621E7830E1006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,6 +163,7 @@
 			files = (
 				48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
+				488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */,
 				48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */,
 				48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
@@ -177,6 +181,7 @@
 				48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
+				488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */,
 				48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */,
 			);
@@ -270,7 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				483FDA881E8283DA00FAF84B /* DetailsForm.swift */,
-				483FDA8A1E82842000FAF84B /* DetailsFormView.swift */,
+				483FDA8A1E82842000FAF84B /* DetailsFormBare.swift */,
 				480392C61E929DA3008CF992 /* DetailsFormTable.swift */,
 			);
 			name = DetailsForm;
@@ -410,6 +415,7 @@
 		57B8E23CC459C05AFF97D6F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */,
 				48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */,
 				48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */,
 				48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */,
@@ -612,7 +618,7 @@
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
-				483FDA8B1E82842000FAF84B /* DetailsFormView.swift in Sources */,
+				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
 				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,

@@ -18,8 +18,7 @@ class EntityListFormTableViewController: ListFormTable {
         return "Entity"
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func onLoad() {
         //self.tableView.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)
         
         self.tableView.emptyDataSetSource = self
@@ -43,7 +42,6 @@ class EntityListFormTableViewController: ListFormTable {
     }
 
 }
-
 
 
 public enum VariableNamingFormat {

@@ -42,7 +42,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mgV-Xp-KDz" customClass="AnimatableImageView" customModule="IBAnimatable">
-                                            <rect key="frame" x="271" y="5" width="96" height="93"/>
+                                            <rect key="frame" x="271" y="4" width="96" height="93"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="1" green="0.19330972480305397" blue="0.14042873793378052" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="tintColor" red="0.98641413450000004" green="0.38229611520000001" blue="0.035431139170000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -214,7 +214,7 @@
                         <rightBarButtonItems>
                             <barButtonItem title="&gt;" id="nzv-hU-Tdg">
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasNext" value="isEnabled"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasNext" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="nextRecord:" destination="xGZ-Dq-mYF" id="BEu-6P-1AH"/>
@@ -222,7 +222,7 @@
                             </barButtonItem>
                             <barButtonItem title="&lt;" id="wFd-O4-IIs">
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasPrevious" value="isEnabled"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasPrevious" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="previousRecord:" destination="xGZ-Dq-mYF" id="VhU-yJ-n6r"/>
@@ -233,7 +233,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8We-U2-OtK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2978" y="-343"/>
+            <point key="canvasLocation" x="3153" y="-287"/>
         </scene>
         <!--Entity List Category Table controller-->
         <scene sceneID="oCE-VK-MNw">
@@ -294,7 +294,7 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="Zpx-P2-MSF" kind="show" id="gPQ-4Z-i4A"/>
+                                    <segue destination="zv7-xL-hLX" kind="show" action="showDetailViewController:sender:" id="ci1-Yj-Otm"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -314,7 +314,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bha-jc-bLA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1257" y="1261"/>
+            <point key="canvasLocation" x="1590" y="1209"/>
         </scene>
         <!--Table Section-->
         <scene sceneID="PIL-BC-Zv1">
@@ -404,9 +404,6 @@
                                     <constraint firstItem="uqq-Qv-o1B" firstAttribute="leading" secondItem="WgB-kj-5kM" secondAttribute="leadingMargin" constant="16" id="c0a-dj-cMM"/>
                                 </constraints>
                                 <size key="customSize" width="151" height="295"/>
-                                <connections>
-                                    <segue destination="Zpx-P2-MSF" kind="show" identifier="showDetail" action="showDetailViewController:sender:" id="SHO-Om-JvO"/>
-                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
@@ -431,7 +428,56 @@
                     <textInputTraits key="textInputTraits"/>
                 </searchBar>
             </objects>
-            <point key="canvasLocation" x="2012" y="1308"/>
+            <point key="canvasLocation" x="1305" y="501"/>
+        </scene>
+        <!--Entity Details Form View Controller-->
+        <scene sceneID="QzU-Ul-d2t">
+            <objects>
+                <viewController id="Med-DC-cxV" customClass="EntityDetailsFormViewController" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="OPf-Rd-yge"/>
+                        <viewControllerLayoutGuide type="bottom" id="o7g-rh-5eS"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="vaf-Nr-Whl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iGn-xT-VWc">
+                                <rect key="frame" x="73" y="233" width="273" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.record.string" value="text"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="XV7-VR-3dT"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MEz-RM-kHe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3564" y="1169"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Mwm-eI-XUm">
+            <objects>
+                <navigationController id="zv7-xL-hLX" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="rai-1c-ygk">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Med-DC-cxV" kind="relationship" relationship="rootViewController" id="7O6-Gy-qf7"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="A4g-u3-hhX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2538" y="1277"/>
         </scene>
         <!--Table-->
         <scene sceneID="5kh-Db-Kac">
@@ -516,6 +562,5 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="T0V-l1-IQS"/>
-        <segue reference="SHO-Om-JvO"/>
     </inferredMetricsTieBreakers>
 </document>
