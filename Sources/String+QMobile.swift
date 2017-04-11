@@ -44,7 +44,6 @@ extension String {
     }
 
     var camelFirst: String? {
-
         var newString: String = ""
 
         let upperCase = CharacterSet.uppercaseLetters
@@ -63,4 +62,72 @@ extension String {
         return newString
     }
 
+}
+
+extension String {
+
+    public enum Case {
+        case lower
+        case upper
+        case capitalized
+        case upperCamel
+        case lowerCamel
+        case snake
+        case kebab
+    }
+
+    func to(case stringCase: Case) -> String {
+        switch stringCase {
+        case .lower:
+            return self.lowercased()
+        case .upper:
+            return self.uppercased()
+        case .capitalized:
+            return self.capitalized
+        case .upperCamel:
+            return self.camelcased(uppercaseFirst: true)
+        case .lowerCamel:
+            return self.camelcased(uppercaseFirst: false)
+        case .snake:
+            return self.underscored()
+        case .kebab:
+            return self.kebabCased()
+        }
+    }
+
+    public func camelcased(uppercaseFirst: Bool = false) -> String {
+        return self.replacingMatches(of: " +", with: "_")
+            .components(separatedBy: "_")
+            .enumerated().map { (index, part) in
+                if index == 0 && !uppercaseFirst {
+                    return part.lowercased()
+                } else {
+                    return part.capitalized
+                }
+            }.joined()
+    }
+
+    private func joiningWords(with separator: String) -> String {
+        return self
+            .replacingMatches(of: "([A-Z]+)([A-Z][a-z])", with: "$1\(separator)$2")
+            .replacingMatches(of: "([a-z\\d])([A-Z])", with: "$1\(separator)$2")
+            .replacingMatches(of: "[- ]", with: separator)
+    }
+
+    public func underscored() -> String {
+        return self.joiningWords(with: "_").lowercased()
+    }
+
+    public func kebabCased() -> String {
+        return self.joiningWords(with: "-").lowercased()
+    }
+
+    func replacingMatches(of pattern: String, options: NSRegularExpression.MatchingOptions = [], with template: String) -> String {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern)
+            return regex.stringByReplacingMatches(in: self, options: options, range: NSRange(0..<self.characters.count), withTemplate: template)
+        } catch _ {
+            return self
+        }
+    }
 }

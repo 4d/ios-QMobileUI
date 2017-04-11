@@ -15,7 +15,7 @@ open class ListFormTable: UITableViewController, ListForm {
     public var dataSource: DataSource! = nil
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
-    @IBInspectable open var hasRefreshControl: Bool = true
+    @IBInspectable open var hasRefreshControl: Bool = false
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
     @IBOutlet open var searchBar: UISearchBar!
