@@ -14,8 +14,8 @@ class EntityCollectionViewController: ListFormCollection {
     private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
     private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func onLoad() {
+        super.onLoad()
         
         self.collectionView?.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         ///self.collectionView?.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)

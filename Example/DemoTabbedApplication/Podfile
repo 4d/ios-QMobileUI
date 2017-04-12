@@ -13,5 +13,6 @@ target 'DemoTabbedApplication' do
   pod 'DisplaySwitcher'
   pod 'Kingfisher'
   pod 'IBAnimatable'
+  pod 'Guitar'
   #pod 'ValueTransformerKit', :git => 'https://github.com/phimage/ValueTransformerKit.git'
 end

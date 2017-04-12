@@ -105,7 +105,7 @@ open class Binder: NSObject {
 
             // create the binder entry
             let newEntryKeyPath = entryKeyPaths.joined(separator: ".")
-            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
+            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey.viewKeyCased, view: self.view, localVarKey: localVarKey)
             if let bindTo = currentRecordView?.bindTo {
 
                 for entry in entries {

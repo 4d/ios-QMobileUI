@@ -92,7 +92,7 @@ open class TimeFormatter {
              dateFormatter.timeStyle = newValue
         }
     }
-    
+
     open var timeFormat: String? {
         return dateFormatter.dateFormat
         // do not add `set` without checking if it's a correct time only format

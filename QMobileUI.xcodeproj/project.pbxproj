@@ -46,6 +46,12 @@
 		488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
+		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
+		48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
+		48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
+		48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */; };
+		48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */; };
+		48A62CDF1E9E78FD002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D584711E7831B2006F56B5 /* DataSourceTests.swift */; };
 		48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */; };
@@ -132,10 +138,15 @@
 		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNEmptyDataSet.framework; path = Carthage/Build/iOS/DZNEmptyDataSet.framework; sourceTree = "<group>"; };
+		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
+		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
+		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
+		48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexPathTests.swift; sourceTree = "<group>"; };
+		48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISwipeGestureRecognizerDirection+QMobile.swift"; sourceTree = "<group>"; };
 		48D5845E1E7830E1006F56B5 /* QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D584611E7830E1006F56B5 /* QMobileUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QMobileUI.h; sourceTree = "<group>"; };
 		48D584621E7830E1006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		48D5846F1E7831B2006F56B5 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D584711E7831B2006F56B5 /* DataSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceTests.swift; sourceTree = "<group>"; };
 		48D584731E7831B2006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		48D5847A1E783447006F56B5 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
@@ -161,6 +172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */,
 				48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */,
@@ -175,6 +187,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */,
 				48FB2CDA1E93A22600F4F685 /* Quick.framework in Frameworks */,
 				48FB2CD61E93A22600F4F685 /* Kingfisher.framework in Frameworks */,
 				48FB2CE11E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
@@ -259,6 +272,7 @@
 				480392BE1E929593008CF992 /* UIRefreshControl+QMobile.swift */,
 				480392C21E9298B3008CF992 /* UIImageView+Qmobile.swift */,
 				480B43521E842289007C90DD /* UIDevice+QMobile.swift */,
+				48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */,
 			);
 			name = UIKit;
 			sourceTree = "<group>";
@@ -327,7 +341,7 @@
 			isa = PBXGroup;
 			children = (
 				48D5845E1E7830E1006F56B5 /* QMobileUI.framework */,
-				48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */,
+				48D5846F1E7831B2006F56B5 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -365,8 +379,11 @@
 		48D584701E7831B2006F56B5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				48D584711E7831B2006F56B5 /* DataSourceTests.swift */,
 				48D584731E7831B2006F56B5 /* Info.plist */,
+				48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */,
+				48D584711E7831B2006F56B5 /* DataSourceTests.swift */,
+				48A62CC41E9E27E8002A76C2 /* StringTests.swift */,
+				48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -415,6 +432,7 @@
 		57B8E23CC459C05AFF97D6F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				48A62CC81E9E486A002A76C2 /* Guitar.framework */,
 				488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */,
 				48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */,
 				48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */,
@@ -478,22 +496,23 @@
 			productReference = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		48D5846E1E7831B2006F56B5 /* QMobileUITests */ = {
+		48D5846E1E7831B2006F56B5 /* Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUITests" */;
+			buildConfigurationList = 48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
 				48D5846B1E7831B2006F56B5 /* Sources */,
 				48D5846C1E7831B2006F56B5 /* Frameworks */,
 				48D5846D1E7831B2006F56B5 /* Resources */,
+				48A62CC71E9E30AE002A76C2 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				48D584761E7831B2006F56B5 /* PBXTargetDependency */,
 			);
-			name = QMobileUITests;
+			name = Tests;
 			productName = QMobileUITests;
-			productReference = 48D5846F1E7831B2006F56B5 /* QMobileUITests.xctest */;
+			productReference = 48D5846F1E7831B2006F56B5 /* Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -502,7 +521,7 @@
 		48D584551E7830E1006F56B5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0820;
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Eric Marchand";
 				TargetAttributes = {
@@ -534,7 +553,7 @@
 			projectRoot = "";
 			targets = (
 				48D5845D1E7830E1006F56B5 /* QMobileUI */,
-				48D5846E1E7831B2006F56B5 /* QMobileUITests */,
+				48D5846E1E7831B2006F56B5 /* Tests */,
 				48EE07811E7AEDAD00A8546E /* swiftlint */,
 			);
 		};
@@ -572,6 +591,28 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
+		48A62CC71E9E30AE002A76C2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/DZNEmptyDataSet.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Quick.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/QMobileDataStore.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ObjcExceptionBridging.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Prephirences.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/XCGLogger.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Guitar.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -596,6 +637,7 @@
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
+				48A62CDF1E9E78FD002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
@@ -632,7 +674,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */,
+				48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */,
 				48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */,
+				48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -874,7 +919,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUITests" */ = {
+		48D584771E7831B2006F56B5 /* Build configuration list for PBXNativeTarget "Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				48D584781E7831B2006F56B5 /* Debug */,
@@ -893,6 +938,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */,
+			);
+			currentVersion = 48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */;
+			path = QMobileDataStoreTests.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 48D584551E7830E1006F56B5 /* Project object */;
 }

@@ -4,6 +4,6 @@ github "onevcat/Kingfisher" # image download
 github "dzenbot/DZNEmptyDataSet" # display information if data set empty
 github "DaveWoodCom/XCGLogger" # logger
 github "phimage/Prephirences" # settings
-
+github "ArtSabintsev/Guitar" # string extension, camel cased etc...
 
 # github 'SwiftKickMobile/SwiftMessages' # display message

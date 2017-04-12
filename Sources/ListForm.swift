@@ -35,10 +35,9 @@ extension ListForm {
         let clazz = type(of: self)
         let className = stringFromClass(clazz)
 
-        if let name = className.camelFirst {
-            if NSClassFromString(name) != nil { // check entity
-                return name
-            }
+        let name = className.camelFirst
+        if NSClassFromString(name) != nil { // check entity
+            return name
         }
         logger.error("Looking for class \(className) to determine the type of records to load. But no class with this name found in the project. Check your data model.")
         abstractMethod(className: className)

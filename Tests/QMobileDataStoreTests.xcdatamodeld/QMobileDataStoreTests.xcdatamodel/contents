@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
+        <attribute name="attribute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="attribute1" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="attribute2" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="attribute9" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="boolean" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="decimal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="double" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="float" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="string" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Entity1" representedClassName="Entity1" syncable="YES" codeGenerationType="class">
+        <attribute name="attribute" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="attribute1" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Entity2" representedClassName="Entity2" syncable="YES" codeGenerationType="class"/>
+    <entity name="Entity3" representedClassName="Entity3" syncable="YES" codeGenerationType="class"/>
+    <entity name="Entity4" representedClassName="Entity4" syncable="YES" codeGenerationType="class"/>
+    <elements>
+        <element name="Entity" positionX="-567" positionY="-90" width="128" height="195"/>
+        <element name="Entity1" positionX="-425" positionY="-90" width="128" height="75"/>
+        <element name="Entity2" positionX="-423" positionY="-0" width="128" height="45"/>
+        <element name="Entity3" positionX="-423" positionY="54" width="128" height="45"/>
+        <element name="Entity4" positionX="-425" positionY="117" width="128" height="45"/>
+    </elements>
+</model>

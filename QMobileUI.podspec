@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
   s.dependency "XCGLogger"
   s.dependency "Kingfisher"
   s.dependency "DZNEmptyDataSet"
+  s.dependency "Guitar"
   s.dependency "QMobileDataStore"
 
 end

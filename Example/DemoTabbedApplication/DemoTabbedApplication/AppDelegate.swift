@@ -82,16 +82,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func fillModel() {
         
+        
         self.testadd(200)
+        
     }
     
     func testadd(_ max: Int) {
         let added = dataStore.perform(.background) { context, save in
             for i in 0...max {
+                let date = Date()
                 let record = context.create(in: "Entity")
-                record?["string"] = "string \(i) test \(Date())"
+                record?["string"] = "string \(i) test "
                 record?["bool"] = i % 2 == 0
                 record?["integer"] = i
+                record?["date"] = date
+                record?["time"] = date.timeIntervalSince1970
 
                 record?["category"] = "\(i % 10)"
 
