@@ -10,30 +10,32 @@ import UIKit
 
 private var xoAssociationKey: UInt8 = 0
 public typealias BindedRecord = AnyObject // XXX replace by Record?
-public extension UIView {
+extension UIView {
 
-    public var bindTo: Binder! {
-        get {
-            var bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
-            if bindTo == nil { // XXX check multithread  safety
-                bindTo = Binder(view: self)
-                self.bindTo = bindTo
-            }
-            bindTo?.resetKeyPath()
-            return bindTo
-        }
-        set(newValue) {
-            objc_setAssociatedObject(self, &xoAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-        }
+    #if TARGET_INTERFACE_BUILDER
+    open var bindTo: Binder {
+        return Binder(view: self)
     }
+    #else
+    open var bindTo: Binder {
+        var bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
+        if bindTo == nil { // XXX check multithread  safety
+            bindTo = Binder(view: self)
+            objc_setAssociatedObject(self, &xoAssociationKey, bindTo, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+        bindTo?.resetKeyPath()
+        //swiftlint:disable:next force_cast
+        return bindTo!
+    }
+    #endif
 
-    dynamic public var hasBindTo: Bool {
+    dynamic open var hasBindTo: Bool {
         let bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         return bindTo != nil
     }
 
     // MARK: data
-    public var record: BindedRecord? {
+    open var record: BindedRecord? {
         get {
             return self.bindTo.record
         }
@@ -42,14 +44,14 @@ public extension UIView {
         }
     }
 
-    dynamic public var hasRecord: Bool {
+    dynamic open var hasRecord: Bool {
         if !hasBindTo {
             return false
         }
         return record != nil
     }
 
-    public var table: DataSourceEntry? {
+    open var table: DataSourceEntry? {
         get {
             return self.bindTo.table
         }
@@ -58,17 +60,14 @@ public extension UIView {
         }
     }
 
-    // Allow to bind using 'transformer' key
-    public var transformer: Binder! {
-        return self.bindTo
-    }
-
 }
 
 extension UIView {
     // Trying to avoid app crash if bad binding
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
-        logger.warning("Trying to set value '\(String(describing: value))' on key '\(key)' on view '\(self)")
+        #if !TARGET_INTERFACE_BUILDER
+            logger.warning("Trying to set value '\(String(describing: value))' on key '\(key)' on view '\(self)")
+        #endif
     }
 
 }

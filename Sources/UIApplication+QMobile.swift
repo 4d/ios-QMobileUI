@@ -12,15 +12,15 @@ import Prephirences
 extension UIApplication {
 
     open static var appName: String {
-        // swiftlint:disable force_cast
+        // swiftlint:disable:next force_cast
         return Bundle.main[.CFBundleDisplayName] as! String
     }
     open static var appVersion: String {
-        // swiftlint:disable force_cast
+        // swiftlint:disable:next force_cast
         return Bundle.main[.CFBundleShortVersionString] as! String
     }
     open static var build: String {
-        // swiftlint:disable force_cast
+        // swiftlint:disable:next force_cast
         return Bundle.main[.CFBundleVersion] as! String
     }
     open static var versionBuild: String {
@@ -50,7 +50,7 @@ extension UIApplication {
 extension UIApplicationDelegate {
 
     public static var shared: UIApplicationDelegate {
-        //swiftlint:disable force_cast
+        //swiftlint:disable:next force_cast
         return UIApplication.shared.delegate!
     }
 

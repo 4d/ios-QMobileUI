@@ -13,7 +13,7 @@ open class QApplication: UIApplication {
 
     // MARK: singleton
     open override class var shared: QApplication {
-        // swiftlint:disable force_cast
+        // swiftlint:disable:next force_cast
         return UIApplication.shared as! QApplication
     }
 

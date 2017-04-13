@@ -53,12 +53,13 @@ public extension UIView {
 // MARK: - Frame
 public extension UIView {
 
-    // swiftlint:disable variable_name
+    // swiftlint:disable:next identifier_name
     public var x: CGFloat {
         get { return frame.x }
         set { frame = frame.with(x: newValue) }
     }
 
+    // swiftlint:disable:next identifier_name
     public var y: CGFloat {
         get { return frame.y }
         set { frame = frame.with(y: newValue) }

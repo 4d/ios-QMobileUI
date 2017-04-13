@@ -36,13 +36,16 @@ open class Binder: NSObject {
     fileprivate var keyPaths = [String]()
 
     // MARK: init
-    internal init(view: UIView) {
+    public init(view: UIView) {
         self.view = view
     }
 
     // MARK: override KVC codding
     open override func value(forUndefinedKey key: String) -> Any? {
-        logger.debug("Bind \(key)")
+        #if !TARGET_INTERFACE_BUILDER
+            logger.debug("Bind \(key)")
+        #endif
+
         // record undefined for setValue
         self.keyPaths.append(key)
         return self
@@ -58,7 +61,22 @@ open class Binder: NSObject {
     }
 
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
-        if let viewKey = value as? String, let view = self.view {
+        if let string = value as? String {
+            let viewKey = string.viewKeyCased
+            #if TARGET_INTERFACE_BUILDER
+                if ui.ibAttritutable == nil {
+                    if let attributable = view as? IBAttributable {
+                        ui.ibAttritutable = "[]\(key)"
+                    }
+                }
+            #else
+                createEntry(for: viewKey, key: key)
+            #endif
+        }
+    }
+
+    fileprivate func createEntry(for viewKey: String, key: String) {
+        if let view = self.view {
 
             var currentRecordView: UIView? = view
 
@@ -105,7 +123,7 @@ open class Binder: NSObject {
 
             // create the binder entry
             let newEntryKeyPath = entryKeyPaths.joined(separator: ".")
-            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey.viewKeyCased, view: self.view, localVarKey: localVarKey)
+            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
             if let bindTo = currentRecordView?.bindTo {
 
                 for entry in entries {
@@ -256,9 +274,7 @@ open class Binder: NSObject {
             return nil
         }
     ]
-}
-
-extension Binder/*: CustomStringConvertible*/ {
+    // CustomStringConvertible
 
     open override var description: String {
         return "\(super.description), view: \(String(describing: self.view?.description)), record: \(String(describing: self.record)), entries: \(self.entries)"
@@ -294,7 +310,6 @@ fileprivate class KeyPathEntry {
             }
         }
     }
-
 }
 
 // MARK : KeyPathParser

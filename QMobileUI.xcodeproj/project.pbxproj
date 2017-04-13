@@ -32,6 +32,8 @@
 		480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */; };
 		480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435C1E842699007C90DD /* NSObject+QMobile.swift */; };
 		480B435F1E842EF9007C90DD /* UIViewCell+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */; };
+		48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */; };
+		48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
 		483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA821E826C9900FAF84B /* UIView+QMobile.swift */; };
 		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
@@ -124,6 +126,9 @@
 		480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard+QMobile.swift"; sourceTree = "<group>"; };
 		480B435C1E842699007C90DD /* NSObject+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+QMobile.swift"; sourceTree = "<group>"; };
 		480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewCell+QMobile.swift"; sourceTree = "<group>"; };
+		48112D491E9FB11000A3A88C /* .slather.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .slather.yml; sourceTree = "<group>"; };
+		48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+QMobile.swift"; sourceTree = "<group>"; };
+		48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBAttributable.swift; sourceTree = "<group>"; };
 		48268C5B1E8136E9000F7719 /* Binder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binder.swift; sourceTree = "<group>"; };
 		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
@@ -273,6 +278,7 @@
 				480392C21E9298B3008CF992 /* UIImageView+Qmobile.swift */,
 				480B43521E842289007C90DD /* UIDevice+QMobile.swift */,
 				48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */,
+				48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */,
 			);
 			name = UIKit;
 			sourceTree = "<group>";
@@ -303,6 +309,7 @@
 				48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */,
 				480392AD1E92930A008CF992 /* UIBarButtonItem+BindTo.swift */,
 				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
+				48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */,
 			);
 			name = Bind;
 			sourceTree = "<group>";
@@ -321,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				485CCDB11E79781700CDB2B3 /* .swiftlint.yml */,
+				48112D491E9FB11000A3A88C /* .slather.yml */,
 			);
 			name = Quality;
 			sourceTree = "<group>";
@@ -640,7 +648,9 @@
 				48A62CDF1E9E78FD002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
+				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
+				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
 				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,

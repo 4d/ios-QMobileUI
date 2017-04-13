@@ -116,7 +116,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
             self.refreshControl = UIRefreshControl()
             refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-            // swiftlint:disable force_cast
+            // swiftlint:disable:next force_cast
             self.collectionView?.addSubview(refreshControl!)
         }
     }

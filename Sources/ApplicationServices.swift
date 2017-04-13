@@ -121,7 +121,7 @@ public extension UIApplicationDelegate {
 // Remap notifications to all services
 fileprivate extension Notification {
     var application: UIApplication {
-        //swiftlint:disable force_cast
+        //swiftlint:disable:next force_cast
         return self.object as! UIApplication
     }
 }
@@ -171,7 +171,9 @@ private extension ApplicationServices {
     }
 
     @objc func application(openUrlWithOptions notification: Notification) {
+        //swiftlint:disable:next force_cast
         let url = notification.userInfo![UserInfoKey.openUrl] as! URL
+        //swiftlint:disable:next force_cast
         let options = notification.userInfo![UserInfoKey.openUrlOptions] as! [UIApplicationOpenURLOptionsKey : Any]
         services.forEach { service in
             service.application?(notification.application, open: url, options: options)
@@ -179,9 +181,10 @@ private extension ApplicationServices {
     }
 
     @objc func application(didRegisterForRemoteWithDeviceToken notification: Notification) {
-        let data = notification.userInfo![UserInfoKey.deviceToken] as! Data
-        services.forEach { service in
-            service.application?(notification.application, didRegisterForRemoteNotificationsWithDeviceToken: data)
+        if let data = notification.userInfo?[UserInfoKey.deviceToken] as? Data {
+            services.forEach { service in
+                service.application?(notification.application, didRegisterForRemoteNotificationsWithDeviceToken: data)
+            }
         }
     }
 
