@@ -36,9 +36,18 @@ public class DataSource: NSObject {
 
     // MARK: Customization
     /// Allow to configure each table cell with selected record
-    open var tableConfigurationBlock: ((_ cell: UITableViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)?
+    open var tableConfigurationBlock: ((_ cell: UITableViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)? {
+        willSet {
+            assert(self.viewType == .table)
+        }
+    }
+
     /// Allow to configure each collection cell with selected record
-    open var collectionConfigurationBlock: ((_ cell: UICollectionViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)?
+    open var collectionConfigurationBlock: ((_ cell: UICollectionViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)? {
+        willSet {
+            assert(self.viewType == .collection)
+        }
+    }
 
     open weak var delegate: DataSourceDelegate?
 

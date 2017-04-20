@@ -9,24 +9,26 @@
 import Foundation
 import UIKit
 
-private var xoAssociationeKey: UInt8 = 0
 @IBDesignable
 class IBLabel: UILabel {
 
-    public var bindTest: IBLabelBinder! {
+
+
+}
+
+private var xoAssociationeKey: UInt8 = 0
+extension UIView {
+    public var bindTest: IBLabelBinder {
         get {
             var bindTo = objc_getAssociatedObject(self, &xoAssociationeKey) as? IBLabelBinder
             if bindTo == nil { // XXX check multithread  safety
                 bindTo = IBLabelBinder(view: self)
-                self.bindTest = bindTo
+                objc_setAssociatedObject(self, &xoAssociationeKey, bindTo, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
-            return bindTo
-        }
-        set(newValue) {
-            objc_setAssociatedObject(self, &xoAssociationeKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            return bindTo!
         }
     }
-
+    
 }
 
 

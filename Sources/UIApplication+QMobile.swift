@@ -9,6 +9,7 @@
 import Foundation
 import Prephirences
 
+// MARK: App informations
 extension UIApplication {
 
     open static var appName: String {
@@ -31,8 +32,67 @@ extension UIApplication {
         }
         return "v\(version)"
     }
+
 }
 
+// MARK: Shared application shortcut
+extension UIApplicationDelegate {
+
+    public static var shared: UIApplicationDelegate {
+        //swiftlint:disable:next force_cast
+        return UIApplication.shared.delegate!
+    }
+
+}
+
+extension UIApplication {
+
+    static func redirectToAppSettings() {
+        if let url = URL(string: UIApplicationOpenSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    open class var isLandscapeOrientation: Bool {
+        return UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)
+    }
+
+    open class var isUserRegisteredForRemoteNotifications: Bool {
+        if #available(iOS 8.0, *) {
+            return UIApplication.shared.isRegisteredForRemoteNotifications
+        } else {
+            // Fallback on earlier versions
+            return true
+        }
+    }
+
+}
+
+// MARK: responder
+
+extension UIApplication {
+
+    // dismiss Keyboard
+    class func resignFirstResponder() {
+        UIApplication.shared.sendAction(#selector(resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+
+    private struct CurrentResponder {
+        static weak var currentResponder: UIResponder?
+    }
+
+    class func currentFirstResponder() -> UIResponder? {
+        CurrentResponder.currentResponder = nil
+        UIApplication.shared.sendAction(#selector(findFirstResponder(_:)), to: nil, from: nil, for: nil)
+        return CurrentResponder.currentResponder
+    }
+
+    func findFirstResponder(_ sender: AnyObject?) {
+        CurrentResponder.currentResponder = self
+    }
+}
+
+// MARK: Controller
 extension UIApplication {
     // Do not call in app extension, UIApplication.shared not exist
     open static var topViewController: UIViewController? {
@@ -45,13 +105,4 @@ extension UIApplication {
         }
         return UIViewController.topViewController(rootController)
     }
-}
-
-extension UIApplicationDelegate {
-
-    public static var shared: UIApplicationDelegate {
-        //swiftlint:disable:next force_cast
-        return UIApplication.shared.delegate!
-    }
-
 }

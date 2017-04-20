@@ -16,8 +16,11 @@ public class ApplicationServices {
 
     public class var instance: ApplicationServices { return applicationServices }
 
-    public func register(_ services: ApplicationService) {
-        self.services.append(services)
+    public func register(_ service: ApplicationService) {
+        services.append(service)
+    }
+    public func unregister(_ service: ApplicationService) {
+        services.delete(service)
     }
     // prevent external init ie. singleton
     fileprivate init() {}
@@ -83,13 +86,13 @@ extension ApplicationServices {
 }
 
 // Special notifications
-private struct UserInfoKey {
+struct ApplicationServiceUserInfoKey {
     static let openUrl = "__openUrl"
     static let openUrlOptions = "__openUrlOptions"
     static let deviceToken = "__deviceToken"
 }
 
-private extension Notification.Name {
+extension Notification.Name {
 
     static let UIApplicationOpenUrlWithOptions: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
     //swiftlint:disable:next identifier_name
@@ -100,7 +103,7 @@ private extension Notification.Name {
 public extension UIApplicationDelegate {
 
     static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NotificationCenter.default.post(name: .UIApplicationDidRegisterForRemoteWithDeviceToken, object: application, userInfo: [UserInfoKey.deviceToken: deviceToken])
+        NotificationCenter.default.post(name: .UIApplicationDidRegisterForRemoteWithDeviceToken, object: application, userInfo: [ApplicationServiceUserInfoKey.deviceToken: deviceToken])
     }
 
     /*func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -108,7 +111,7 @@ public extension UIApplicationDelegate {
     }*/
 
     static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        NotificationCenter.default.post(name: .UIApplicationOpenUrlWithOptions, object: app, userInfo: [UserInfoKey.openUrl: url, UserInfoKey.openUrlOptions: options])
+        NotificationCenter.default.post(name: .UIApplicationOpenUrlWithOptions, object: app, userInfo: [ApplicationServiceUserInfoKey.openUrl: url, ApplicationServiceUserInfoKey.openUrlOptions: options])
         return true
     }
 
@@ -171,17 +174,17 @@ private extension ApplicationServices {
     }
 
     @objc func application(openUrlWithOptions notification: Notification) {
-        //swiftlint:disable:next force_cast
-        let url = notification.userInfo![UserInfoKey.openUrl] as! URL
-        //swiftlint:disable:next force_cast
-        let options = notification.userInfo![UserInfoKey.openUrlOptions] as! [UIApplicationOpenURLOptionsKey : Any]
+        guard let url = notification.userInfo?[ApplicationServiceUserInfoKey.openUrl] as? URL,
+            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplicationOpenURLOptionsKey : Any] else {
+                return
+        }
         services.forEach { service in
             service.application?(notification.application, open: url, options: options)
         }
     }
 
     @objc func application(didRegisterForRemoteWithDeviceToken notification: Notification) {
-        if let data = notification.userInfo?[UserInfoKey.deviceToken] as? Data {
+        if let data = notification.userInfo?[ApplicationServiceUserInfoKey.deviceToken] as? Data {
             services.forEach { service in
                 service.application?(notification.application, didRegisterForRemoteNotificationsWithDeviceToken: data)
             }

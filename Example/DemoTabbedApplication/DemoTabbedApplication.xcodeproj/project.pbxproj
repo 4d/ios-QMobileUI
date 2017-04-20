@@ -10,6 +10,7 @@
 		480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43461E83FAB8007C90DD /* Entity+TestImage.swift */; };
 		480B43491E840208007C90DD /* style.json in Resources */ = {isa = PBXBuildFile; fileRef = 480B43481E840208007C90DD /* style.json */; };
 		48112D4E1E9FB7E900A3A88C /* IBImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4D1E9FB7E900A3A88C /* IBImageView.swift */; };
+		48112D521E9FC10500A3A88C /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48112D511E9FC10500A3A88C /* Storyboard.storyboard */; };
 		48268C261E802581000F7719 /* Entity+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C251E802581000F7719 /* Entity+CoreData.swift */; };
 		485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */; };
 		485CCDC21E79836800CDB2B3 /* EntityTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485CCDC11E79836800CDB2B3 /* EntityTableViewController.swift */; };
@@ -17,6 +18,7 @@
 		485CCDC71E79836800CDB2B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485CCDC51E79836800CDB2B3 /* Main.storyboard */; };
 		485CCDC91E79836800CDB2B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 485CCDC81E79836800CDB2B3 /* Assets.xcassets */; };
 		485CCDCC1E79836800CDB2B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485CCDCA1E79836800CDB2B3 /* LaunchScreen.storyboard */; };
+		48639DF31EA766DF00D52E08 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48639DF21EA766DF00D52E08 /* main.swift */; };
 		487559EA1E9F7DE8005D3F8F /* IB.h in Headers */ = {isa = PBXBuildFile; fileRef = 487559E81E9F7DE8005D3F8F /* IB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		487559ED1E9F7DE8005D3F8F /* IB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 487559E61E9F7DE7005D3F8F /* IB.framework */; };
 		487559EE1E9F7DE8005D3F8F /* IB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 487559E61E9F7DE7005D3F8F /* IB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -57,6 +59,7 @@
 		480B43461E83FAB8007C90DD /* Entity+TestImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+TestImage.swift"; sourceTree = "<group>"; };
 		480B43481E840208007C90DD /* style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = style.json; sourceTree = "<group>"; };
 		48112D4D1E9FB7E900A3A88C /* IBImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBImageView.swift; sourceTree = "<group>"; };
+		48112D511E9FC10500A3A88C /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		48268C251E802581000F7719 /* Entity+CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+CoreData.swift"; sourceTree = "<group>"; };
 		485CCDBC1E79836800CDB2B3 /* DemoTabbedApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoTabbedApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +69,7 @@
 		485CCDC81E79836800CDB2B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		485CCDCB1E79836800CDB2B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		485CCDCD1E79836800CDB2B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		48639DF21EA766DF00D52E08 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		487559C61E9F5994005D3F8F /* IBLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBLabel.swift; sourceTree = "<group>"; };
 		487559E61E9F7DE7005D3F8F /* IB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		487559E81E9F7DE8005D3F8F /* IB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IB.h; sourceTree = "<group>"; };
@@ -130,10 +134,12 @@
 		485CCDBE1E79836800CDB2B3 /* DemoTabbedApplication */ = {
 			isa = PBXGroup;
 			children = (
+				48639DF21EA766DF00D52E08 /* main.swift */,
 				485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */,
 				48A041DF1E798C6E0098A54C /* Model */,
 				48A041E01E798C7A0098A54C /* Controller */,
 				485CCDC51E79836800CDB2B3 /* Main.storyboard */,
+				48112D511E9FC10500A3A88C /* Storyboard.storyboard */,
 				485CCDC81E79836800CDB2B3 /* Assets.xcassets */,
 				485CCDCA1E79836800CDB2B3 /* LaunchScreen.storyboard */,
 				485CCDCD1E79836800CDB2B3 /* Info.plist */,
@@ -285,6 +291,7 @@
 				485CCDC91E79836800CDB2B3 /* Assets.xcassets in Resources */,
 				485CCDC71E79836800CDB2B3 /* Main.storyboard in Resources */,
 				480B43491E840208007C90DD /* style.json in Resources */,
+				48112D521E9FC10500A3A88C /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +359,7 @@
 			files = (
 				485CCDC41E79836800CDB2B3 /* EntityCollectionViewController.swift in Sources */,
 				48A041E21E798CD20098A54C /* Entity.swift in Sources */,
+				48639DF31EA766DF00D52E08 /* main.swift in Sources */,
 				48A168BF1E7AC27200AA525B /* EntityTableCategoryViewController.swift in Sources */,
 				48268C261E802581000F7719 /* Entity+CoreData.swift in Sources */,
 				48A168BD1E7A95DC00AA525B /* DetailViewController.swift in Sources */,

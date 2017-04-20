@@ -24,4 +24,8 @@ open class QApplication: UIApplication {
         return done
     }
 
+    open override func sendEvent(_ event: UIEvent) {
+        super.sendEvent(event)
+    }
+
 }

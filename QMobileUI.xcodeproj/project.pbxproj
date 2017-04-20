@@ -44,6 +44,8 @@
 		483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */; };
 		483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */; };
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
+		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
+		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
@@ -54,6 +56,7 @@
 		48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */; };
 		48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */; };
 		48A62CDF1E9E78FD002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */; };
+		48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D584711E7831B2006F56B5 /* DataSourceTests.swift */; };
 		48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */; };
@@ -142,12 +145,15 @@
 		483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+QMobile.swift"; sourceTree = "<group>"; };
 		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
+		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNEmptyDataSet.framework; path = Carthage/Build/iOS/DZNEmptyDataSet.framework; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
 		48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexPathTests.swift; sourceTree = "<group>"; };
 		48A62CDD1E9E78C5002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISwipeGestureRecognizerDirection+QMobile.swift"; sourceTree = "<group>"; };
+		48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+QMobile.swift"; sourceTree = "<group>"; };
 		48D5845E1E7830E1006F56B5 /* QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D584611E7830E1006F56B5 /* QMobileUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QMobileUI.h; sourceTree = "<group>"; };
 		48D584621E7830E1006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -254,9 +260,10 @@
 				483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */,
 				480392AB1E9292C0008CF992 /* String+QMobile.swift */,
 				480392B51E929423008CF992 /* URL+QMobile.swift */,
-				480392C41E929AAC008CF992 /* Dictionary+QMobile.swift */,
 				480392CA1E92A181008CF992 /* NumberFormatter+QMobile.swift */,
 				480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */,
+				480392C41E929AAC008CF992 /* Dictionary+QMobile.swift */,
+				487DE2C51EA0B21A005E385B /* Array+QMobile.swift */,
 			);
 			name = Foundation;
 			sourceTree = "<group>";
@@ -268,8 +275,9 @@
 				480B434E1E842198007C90DD /* UIScreen+QMobile.swift */,
 				483FDA821E826C9900FAF84B /* UIView+QMobile.swift */,
 				483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */,
-				480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */,
+				48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */,
 				483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */,
+				480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */,
 				480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */,
 				480B43501E84225C007C90DD /* UISwitch+QMobile.swift */,
 				480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */,
@@ -392,6 +400,7 @@
 				48D584711E7831B2006F56B5 /* DataSourceTests.swift */,
 				48A62CC41E9E27E8002A76C2 /* StringTests.swift */,
 				48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */,
+				487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -638,11 +647,13 @@
 				480392C71E929DA3008CF992 /* DetailsFormTable.swift in Sources */,
 				480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */,
 				483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */,
+				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */,
 				480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */,
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
+				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
 				48A62CDF1E9E78FD002A76C2 /* UISwipeGestureRecognizerDirection+QMobile.swift in Sources */,
@@ -688,6 +699,7 @@
 				48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */,
 				48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */,
 				48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */,
+				487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

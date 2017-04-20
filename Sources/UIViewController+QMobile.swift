@@ -34,6 +34,13 @@ extension UIViewController {
         return topViewController(presentedViewController)
     }
 
+    open var firstController: UIViewController {
+        if let navigation = self as? UINavigationController {
+            return (navigation.viewControllers.first ?? self)
+        }
+        return self
+    }
+
     func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer?) {
         if let gestureRecognizer = gestureRecognizer {
             self.view.addGestureRecognizer(gestureRecognizer)

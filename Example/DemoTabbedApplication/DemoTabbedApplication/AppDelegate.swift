@@ -47,7 +47,6 @@ open class UppercaseValueTransformer: ValueTransformer {
     }
 }
 
-@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?

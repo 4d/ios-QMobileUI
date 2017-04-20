@@ -1,8 +1,8 @@
 PODS:
   - DisplaySwitcher (1.0.1)
   - DZNEmptyDataSet (1.8.1)
-  - Guitar (0.0.15)
-  - IBAnimatable (3.1.3)
+  - Guitar (0.1.0)
+  - IBAnimatable (4.0.0)
   - Kingfisher (3.6.2)
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
@@ -59,8 +59,8 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   DisplaySwitcher: 5f725284c28cdf22ea7ba2eee8e8f7e7cb9cdf87
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
-  Guitar: 6eae65aac816bb707dde499453d69d2b724eccd9
-  IBAnimatable: ad640d47659cbbfa4cf88a127fdc663b2ec4c66a
+  Guitar: b1a10bebf767430fce0f284c60fd8c4423dcbdb7
+  IBAnimatable: 63997e8a6cdb233249a3b57cfff2feb535fb01ff
   Kingfisher: 2c94e72c6830622c71d06adf4ea024c37d316830
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
