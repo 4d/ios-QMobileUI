@@ -11,77 +11,33 @@ import XCGLogger
 import QMobileDataStore
 import QMobileUI
 import StyleKit
+import RandomKit
+public extension Random {
+    
+    static func random() -> Self {
+        return self.random(using: &Xoroshiro.default)
+    }
+}
 
 let logger = XCGLogger(identifier: NSStringFromClass(AppDelegate.self), includeDefaultDestinations: true)
 
-
-class BoolTransformer: ValueTransformer {
-    
-    open override func transformedValue(_ value: Any?) -> Any?{
-        guard let value = value else {
-            return nil
-        }
-        return String(describing: value)
-    }
-
-    
-    open override func reverseTransformedValue(_ value: Any?) -> Any? {
-        guard let value = value as? String else {
-            return nil
-        }
-        return Bool(value)
-    }
-
-}
-
-open class UppercaseValueTransformer: ValueTransformer {
-    open override func transformedValue(_ value: Any?) -> Any?{
-        guard let string = value as? String else {
-            return nil
-        }
-        return string.uppercased()
-    }
-
-    open override class func allowsReverseTransformation() -> Bool {
-        return false
-    }
-}
-
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        /*dataStore.drop { [unowned self] result in
-            print(result)
-        }*/
         
-        dataStore.load { [unowned self] result in
-            logger.info("loading data store \(result)")
+        // ApplicationServices.instance.register(ApplicationStyleKit.instance)
+        
+        DispatchQueue.main.after(15) {
             
-         
-           
-             self.fillModel()
+            self.fillModel()
         }
-        ValueTransformer.setValueTransformer(UppercaseValueTransformer(), forName: NSValueTransformerName("uppercase"))
 
-        ValueTransformer.setValueTransformer(BoolTransformer(), forName: NSValueTransformerName("BoolToString"))
-
-        
-        
-       /* if let styleFile = Bundle.main.url(forResource: "style", withExtension: "json") {
-
-            StyleKit(fileUrl: styleFile, logLevel: .debug)?.apply()
-
-        }*/
-        
-        
         return true
     }
     
     func fillModel() {
-        
-        
         self.testadd(200)
         
     }
@@ -91,11 +47,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for i in 0...max {
                 let date = Date()
                 let record = context.create(in: "Entity")
-                record?["string"] = "string \(i) test "
+                record?["string"] = UUID.init().uuidString
                 record?["bool"] = i % 2 == 0
                 record?["integer"] = i
                 record?["date"] = date
                 record?["time"] = date.timeIntervalSince1970
+                
+                record?["alpha"] = String.random()
+                record?["blob"] = Data()
+                record?["bool"] = Bool.random()
+                record?["category"] = String.random()
+                record?["date"] = Date()
+                record?["float"] = Float.random()
+                record?["iD"] = Int32.random()
+                record?["image"] = Data()
+                record?["integer"] = Int16.random()
+                record?["integer64"] = Int64.random()
+                record?["longInteger"] = Int32.random()
+                record?["object"] = [:]
+                record?["real"] = Double.random()
+                record?["text"] = String.random()
+                record?["time"] = Int64.random()
 
                 record?["category"] = "\(i % 10)"
 
@@ -124,9 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        dataStore.save { result in
-            logger.info("\(result)")
-        }
+
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -137,11 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 
-        dataStore.save { result in
-            logger.info("\(result)")
-        }
     }
 
 }

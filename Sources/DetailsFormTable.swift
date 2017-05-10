@@ -96,7 +96,7 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
         // updateView on root don't affect all cell...
         // do reload data will work on this static table
 
-        self.tableView.reloadData()
+        self.tableView?.reloadData()
 
         /*
         // we could also browse all cells and call update

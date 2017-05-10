@@ -12,7 +12,7 @@ import QMobileDataStore
 public protocol DetailsForm: class {
 
     // the root view of form
-    var view: UIView! {get}
+    var view: UIView! {get set}
 
     /// @return: true if the is previous record
     var hasPreviousRecord: Bool {get set}
@@ -114,4 +114,53 @@ extension DetailsForm {
         }
     }
 
+}
+
+// MARK: transtion on self
+extension DetailsForm {
+
+    public func transitionOnSelf(duration: TimeInterval, options: UIViewAnimationOptions = [], changeViewContent: () -> Void) {
+        var initialView: UIView?
+        if self.view is TransitionContainerViewType {
+            initialView = self.view?.subviews.first
+        } else {
+            /*if let view = self.view {
+                let container = TransitionContainerView()
+                self.view = container
+                container.addSubview(view)
+                container.viewAdded(view)
+                initialView = view
+            }*/
+        }
+
+        if let initialView = initialView,
+            let snapshotView = initialView.snapshotView(afterScreenUpdates: false),
+            let container = self.view as? TransitionContainerViewType {
+            self.view?.addSubview(snapshotView)
+            container.snapshotViewAdded(view)
+            changeViewContent()
+            UIView.transition(from: snapshotView, to: initialView, duration: 1, options: options) { _ in
+                snapshotView.removeFromSuperview()
+                // Could add here a call to a completionHandler
+            }
+        } else {
+            changeViewContent()
+        }
+    }
+
+}
+
+public protocol TransitionContainerViewType {
+    func viewAdded(_ view: UIView)
+    func snapshotViewAdded(_ view: UIView)
+}
+
+class TransitionContainerView: UIView, TransitionContainerViewType {
+
+    func viewAdded(_ view: UIView) {
+        self.table = view.table
+        self.record = view.record
+    }
+    func snapshotViewAdded(_ view: UIView) {
+    }
 }

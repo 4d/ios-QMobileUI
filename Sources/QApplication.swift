@@ -11,11 +11,18 @@ import Foundation
 // Root class of QMobile application
 open class QApplication: UIApplication {
 
-    // MARK: singleton
-    open override class var shared: QApplication {
-        // swiftlint:disable:next force_cast
-        return UIApplication.shared as! QApplication
+    public override init() {
+        super.init()
+        self.initServices()
     }
+
+    // MARK: singleton
+    /*
+     open override class var shared: QApplication {
+     // swiftlint:disable:next force_cast
+     return UIApplication.shared as! QApplication
+     }
+ 
 
     // MARK: override
     open override func sendAction(_ action: Selector, to target: Any?, from sender: Any?, for event: UIEvent?) -> Bool {
@@ -26,6 +33,26 @@ open class QApplication: UIApplication {
 
     open override func sendEvent(_ event: UIEvent) {
         super.sendEvent(event)
+    }
+  */
+
+    func initServices() {
+        let services = ApplicationServices.instance
+
+        // Logger
+        services.register(ApplicationLogger.instance)
+
+        // Load preferences
+        services.register(ApplicationPreferences.instance)
+
+        // Log all logging step
+        services.register(ApplicationStepLogging.instance)
+
+        // Load the mobile database
+        services.register(ApplicationLoadDataStore.instance)
+
+        // Load transformers for formatting
+        services.register(ApplicationValueTransformers.instance)
     }
 
 }

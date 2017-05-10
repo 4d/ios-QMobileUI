@@ -23,6 +23,7 @@ class ApplicationServicesTests: XCTestCase {
     }
     
     func _testServiceReceiveNotifications() {
+        // TODO make an UI test target to have an application
         let services = ApplicationServices.instance
         let service = ApplicationServiceMock.test
         service.clear()

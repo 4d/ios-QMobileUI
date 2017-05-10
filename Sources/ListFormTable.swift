@@ -33,6 +33,8 @@ open class ListFormTable: UITableViewController, ListForm {
         dataSource.tableConfigurationBlock = { [unowned self] cell, record, index in
             self.configureListFormView(cell, record, index)
         }
+        
+        dataSource.delegate = self
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
@@ -93,6 +95,11 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    /// Called before starting a refresh
+    open func onRefreshBegin() {}
+    /// Called after a refresh
+    open func onRefreshEnd() {}
+
     // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
@@ -143,10 +150,13 @@ open class ListFormTable: UITableViewController, ListForm {
     // MARK: IBAction
 
     @IBAction func refresh(_ sender: Any?) {
-        // TODO refresh using remote source??
-        DispatchQueue.main.after(2) {
+        onRefreshBegin()
+
+        let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
+        _ = dataSync.sync { _ in
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
+            self.onRefreshEnd()
         }
     }
 
@@ -163,7 +173,23 @@ open class ListFormTable: UITableViewController, ListForm {
     /*public func scrollToLastRow(animated:Bool) {
         self.scrollToRow(at: dataSource.lastIndexPath, at: .bottom, animated: animated)
     }*/
+    
+   /* open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        var headerCellIdentifier = "EntityHeader"
+        
+        if let value = self.dataSource.delegate?.dataSource?(self.dataSource, headCellIdentifierFor: section) {
+            headerCellIdentifier = value
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: headerCellIdentifier)
+        
+        return cell
+    }*/
+    
+}
 
+public class TableSectionHeader: UITableViewHeaderFooterView {
+   // @IBOutlet weak var titleLabel: UILabel!
 }
 
 // MARK: DataSourceSearchable

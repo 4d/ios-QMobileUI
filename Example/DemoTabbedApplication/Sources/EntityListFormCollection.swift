@@ -10,7 +10,7 @@ import UIKit
 import QMobileUI
 import DisplaySwitcher
 
-class EntityCollectionViewController: ListFormCollection {
+class EntityListFormCollection: ListFormCollection {
     private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
     private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
     
@@ -68,20 +68,4 @@ class EntityCollectionViewController: ListFormCollection {
         isTransitionAvailable = true
     }
     
-}
-
-import DZNEmptyDataSet
-extension EntityCollectionViewController {
-    
-    public func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString!{
-        return NSAttributedString(string: "no result, here could load remote data...")
-    }
-    
-    func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
-        return .white
-    }
-    
-    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
-        return true
-    }
 }

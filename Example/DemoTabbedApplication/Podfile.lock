@@ -1,9 +1,17 @@
 PODS:
+  - Alamofire (4.4.0)
+  - BrightFutures (5.2.0):
+    - Result (~> 3.2)
   - DisplaySwitcher (1.0.1)
   - DZNEmptyDataSet (1.8.1)
-  - Guitar (0.1.0)
+  - Guitar (0.2.0)
   - IBAnimatable (4.0.0)
-  - Kingfisher (3.6.2)
+  - Kingfisher (3.7.2)
+  - Moya (8.0.3):
+    - Moya/Core (= 8.0.3)
+  - Moya/Core (8.0.3):
+    - Alamofire (~> 4.1)
+    - Result (~> 3.0)
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
@@ -13,38 +21,63 @@ PODS:
   - Prephirences/Core (3.0.1)
   - Prephirences/Keys (3.0.1):
     - Prephirences/Core
+  - QMobileAPI (0.0.2):
+    - Moya
+    - QMobileDataStore
+    - SwiftyJSON
+    - XCGLogger
   - QMobileDataStore (0.0.1):
     - Prephirences
     - Result
+    - XCGLogger
+  - QMobileDataSync (0.0.1):
+    - Prephirences
+    - QMobileAPI
+    - QMobileDataStore
     - XCGLogger
   - QMobileUI (0.0.1):
     - DZNEmptyDataSet
     - Guitar
     - Kingfisher
     - QMobileDataStore
+    - QMobileDataSync
+    - ValueTransformerKit
     - XCGLogger
+  - RandomKit (4.5.2):
+    - ShiftOperations
   - Result (3.2.1)
+  - ShiftOperations (1.0.0)
   - StyleKit (0.5.0)
   - SwiftyJSON (3.1.4)
+  - ValueTransformerKit (0.0.1)
   - XCGLogger (5.0.1):
     - XCGLogger/Core (= 5.0.1)
   - XCGLogger/Core (5.0.1):
     - ObjcExceptionBridging
 
 DEPENDENCIES:
+  - BrightFutures
   - DisplaySwitcher
   - DZNEmptyDataSet
   - Guitar
   - IBAnimatable
   - Kingfisher
+  - QMobileAPI (from `../../../QMobileAPI`)
   - QMobileDataStore (from `../../../QMobileDataStore`)
+  - QMobileDataSync (from `../../../QMobileDataSync`)
   - QMobileUI (from `../../`)
+  - RandomKit
   - StyleKit (from `https://github.com/146BC/StyleKit.git`, branch `develop`)
   - SwiftyJSON
+  - ValueTransformerKit
 
 EXTERNAL SOURCES:
+  QMobileAPI:
+    :path: ../../../QMobileAPI
   QMobileDataStore:
     :path: ../../../QMobileDataStore
+  QMobileDataSync:
+    :path: ../../../QMobileDataSync
   QMobileUI:
     :path: ../../
   StyleKit:
@@ -57,20 +90,28 @@ CHECKOUT OPTIONS:
     :git: https://github.com/146BC/StyleKit.git
 
 SPEC CHECKSUMS:
+  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
   DisplaySwitcher: 5f725284c28cdf22ea7ba2eee8e8f7e7cb9cdf87
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
-  Guitar: b1a10bebf767430fce0f284c60fd8c4423dcbdb7
+  Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
   IBAnimatable: 63997e8a6cdb233249a3b57cfff2feb535fb01ff
-  Kingfisher: 2c94e72c6830622c71d06adf4ea024c37d316830
+  Kingfisher: 5ddc4ac715615cc200de9fdc54ab1511061ea650
+  Moya: d3721622e3cc0cc2f038d69a258686f0b66e7252
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
+  QMobileAPI: 412971177dfd0218bf81dff5ffa1fd0afaefa1f8
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
-  QMobileUI: 359c61a28fff6579b98a7a2d15be4c3dbb49ccfd
+  QMobileDataSync: c974b21434e56088fac84f4975269b30a4036c0d
+  QMobileUI: 547a3dc8d3e4c69cac88424f7051b57b5798b614
+  RandomKit: 2a79a94e5e51e83154dde02feb05dfb2229861f4
   Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
+  ShiftOperations: 0c77c06851e7976c2665d601b46af123dbffeade
   StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  ValueTransformerKit: 4f4ef5383455fde5d01076dfb7016fb5c4874899
   XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
 
-PODFILE CHECKSUM: fa17063bb7fc13920f9278e6b0fe29fc63a921e2
+PODFILE CHECKSUM: 7744f7bf51622213aa277f765e7e1bfb10acaf5d
 
 COCOAPODS: 1.2.0

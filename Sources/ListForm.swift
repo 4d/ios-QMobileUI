@@ -10,7 +10,7 @@ import Foundation
 import QMobileDataStore
 import DZNEmptyDataSet
 
-public protocol ListForm: class, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+public protocol ListForm: class, DataSourceDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }

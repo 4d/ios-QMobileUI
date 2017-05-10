@@ -4,6 +4,8 @@ target 'DemoTabbedApplication' do
   use_frameworks!
 
   pod 'QMobileDataStore', :path => '../../../QMobileDataStore'
+  pod 'QMobileDataSync', :path => '../../../QMobileDataSync'
+  pod 'QMobileAPI', :path => '../../../QMobileAPI'
   pod 'QMobileUI', :path => '../../'
 
   pod 'SwiftyJSON'
@@ -14,5 +16,8 @@ target 'DemoTabbedApplication' do
   pod 'Kingfisher'
   pod 'IBAnimatable'
   pod 'Guitar'
-  #pod 'ValueTransformerKit', :git => 'https://github.com/phimage/ValueTransformerKit.git'
+  pod 'ValueTransformerKit'
+  pod 'RandomKit'
+  pod 'BrightFutures'
+
 end

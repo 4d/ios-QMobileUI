@@ -39,6 +39,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
+        dataSource.delegate = self
+
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
@@ -104,6 +106,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    /// Called before starting a refresh
+    open func onRefreshBegin() {}
+    /// Called after a refresh
+    open func onRefreshEnd() {}
+
     // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
@@ -148,10 +155,13 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     // MARK: IBActions
     @IBAction func refresh(_ sender: Any?) {
-        // TODO refresh using remote source
-        DispatchQueue.main.after(2) {
+        onRefreshBegin()
+
+        let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
+        _ = dataSync.sync { _ in
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
+            self.onRefreshEnd()
         }
     }
 }

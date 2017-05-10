@@ -86,17 +86,17 @@ extension ApplicationServices {
 }
 
 // Special notifications
-struct ApplicationServiceUserInfoKey {
-    static let openUrl = "__openUrl"
-    static let openUrlOptions = "__openUrlOptions"
-    static let deviceToken = "__deviceToken"
+public struct ApplicationServiceUserInfoKey {
+    public static let openUrl = "__openUrl"
+    public static let openUrlOptions = "__openUrlOptions"
+    public static let deviceToken = "__deviceToken"
 }
 
 extension Notification.Name {
 
-    static let UIApplicationOpenUrlWithOptions: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
+    public static let UIApplicationOpenUrlWithOptions: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
     //swiftlint:disable:next identifier_name
-    static let UIApplicationDidRegisterForRemoteWithDeviceToken: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
+    public static let UIApplicationDidRegisterForRemoteWithDeviceToken: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
 
 }
 // create missing notifications

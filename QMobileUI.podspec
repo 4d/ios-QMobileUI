@@ -34,6 +34,8 @@ Pod::Spec.new do |s|
   s.dependency "Kingfisher"
   s.dependency "DZNEmptyDataSet"
   s.dependency "Guitar"
+  s.dependency "ValueTransformerKit"
   s.dependency "QMobileDataStore"
+  s.dependency "QMobileDataSync"
 
 end

@@ -80,7 +80,7 @@ open class Binder: NSObject {
 
             var currentRecordView: UIView? = view
 
-            var entryKeyPaths = [String]()
+            var entryKeyPathArray = [String]()
 
             // Look up potential other view hierarchy using path component parsing
             var localVarKey: String? = nil
@@ -92,7 +92,7 @@ open class Binder: NSObject {
                     if localVarKey == nil {
                         currentRecordView = self.view(for: currentRecordView, pathComponent: pathComponent)
                     } else {
-                        entryKeyPaths.append(pathComponent)
+                        entryKeyPathArray.append(pathComponent)
                     }
                 }
             }
@@ -119,11 +119,20 @@ open class Binder: NSObject {
             }
             self.resetKeyPath()
 
-            entryKeyPaths.append(key)
+            entryKeyPathArray.append(key)
 
             // create the binder entry
-            let newEntryKeyPath = entryKeyPaths.joined(separator: ".")
-            let newEntry = KeyPathEntry(keyPath: newEntryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
+            var entryKeyPath = entryKeyPathArray.joined(separator: ".")
+
+            let temp = entryKeyPath.components(separatedBy: ",")
+            if let first = temp.first {
+                entryKeyPath = first
+            }
+            let newEntry = KeyPathEntry(keyPath: entryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
+            if let second = temp.second {
+                newEntry.transformer = ValueTransformer(forName: NSValueTransformerName(second))
+            }
+
             if let bindTo = currentRecordView?.bindTo {
 
                 for entry in entries {
@@ -349,4 +358,8 @@ fileprivate class KeyPathParser {
     }
     // XXX do it for string if <function>[<arg>] zith string arg
 
+}
+
+private extension Array {
+    var second: Element? { return self.count > 1 ? self[1] : nil }
 }

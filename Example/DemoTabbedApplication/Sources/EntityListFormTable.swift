@@ -12,7 +12,7 @@ import DZNEmptyDataSet
 
 /// Generated controller for Entity table.
 /// Do not edit name or override tableName
-class EntityListFormTableViewController: ListFormTable {
+class EntityListFormTable: ListFormTable {
     
     public override var tableName: String {
         return "Entity"
@@ -21,28 +21,13 @@ class EntityListFormTableViewController: ListFormTable {
     override func onLoad() {
         //self.tableView.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)
         
-        self.tableView.emptyDataSetSource = self
-        self.tableView.emptyDataSetDelegate = self
-    }
-    
-    public func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        return NSAttributedString(string: "no result, here could load remote data...")
-    }
-    
-    public func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString!{
-        return NSAttributedString(string: "no result, here could load remote data...")
+        //self.tableView.emptyDataSetSource = self
+        //self.tableView.emptyDataSetDelegate = self
         
-    }
-    func backgroundColor(forEmptyDataSet scrollView: UIScrollView!) -> UIColor! {
-        return .white
-    }
-
-    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView!) -> Bool {
-        return true
+       // self.tableView.sect
     }
 
 }
-
 
 public enum VariableNamingFormat {
     case camelCase

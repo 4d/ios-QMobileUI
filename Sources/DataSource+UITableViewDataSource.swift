@@ -16,6 +16,7 @@ extension DataSource: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
         return self.fetchedResultsController.numberOfRecords(in: section)
     }
 
@@ -50,8 +51,8 @@ extension DataSource: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:tableView:titleForHeaderInSection:))) == true {
-            return self.delegate?.dataSource?(self, tableView: tableView, titleForHeaderInSection: section)
+        if let title = self.delegate?.dataSource?(self, tableView: tableView, titleForHeaderInSection: section) {
+            return title
         }
         return self.fetchedResultsController.sectionName(section) ?? ""
     }

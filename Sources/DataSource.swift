@@ -10,8 +10,6 @@ import UIKit
 import QMobileDataStore
 import XCGLogger
 
-let logger = XCGLogger(identifier: NSStringFromClass(DataSource.self), includeDefaultDestinations: true)
-
 /// Class to present data to table or collection views
 public class DataSource: NSObject {
 
@@ -173,7 +171,7 @@ public class DataSource: NSObject {
         if let record = self.record(at: indexPath) {
             if let tableView = self.tableView, let cell = cell as? UITableViewCell {
                 cell.tableView = tableView
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) != nil {
+                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) == true {
                     self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
                 } else if let configuration = self.tableConfigurationBlock {
                     configuration(cell, record, indexPath)
@@ -182,7 +180,7 @@ public class DataSource: NSObject {
                 }
             } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
                 cell.collectionView = collectionView
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) != nil {
+                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) == true {
                     self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
                 } else if let configuration = self.collectionConfigurationBlock {
                     configuration(cell, record, indexPath)
