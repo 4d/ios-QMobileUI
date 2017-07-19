@@ -50,8 +50,42 @@ extension UIImageView {
             return self.kf.webURL
         }
         set {
-            self.kf.indicatorType = .activity
+            if newValue != nil {
+                self.kf.indicatorType = .activity
+            }
             self.kf.setImage(with: newValue)
+        }
+    }
+
+}
+
+import QMobileAPI
+import QMobileDataSync
+
+extension UIImageView {
+
+    public var restImage: [String: Any]? {
+        get {
+            if let webURL =  self.webURL {
+                var uri = webURL.absoluteString
+                // remove the base url
+                uri = uri.replacingOccurrences(of: DataSync.instance.rest.rest.baseURL.absoluteString, with: "")
+                let deffered = Deffered(uri: uri, image: true)
+                return deffered.dictionary
+            }
+            return nil
+        }
+        set {
+            if let dico = newValue, let uri = ImportableParser.parseImage(dico) {
+                self.kf.indicatorType = .activity
+                let fullUri = DataSync.instance.rest.rest.baseURL.absoluteString + uri
+                if let url = URL(string: fullUri) {
+                    self.kf.setImage(with: url)
+                }
+                
+            } else {
+                self.kf.indicatorType = .none
+            }
         }
     }
 
