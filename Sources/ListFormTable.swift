@@ -33,7 +33,7 @@ open class ListFormTable: UITableViewController, ListForm {
         dataSource.tableConfigurationBlock = { [unowned self] cell, record, index in
             self.configureListFormView(cell, record, index)
         }
-        
+
         dataSource.delegate = self
 
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
@@ -153,11 +153,11 @@ open class ListFormTable: UITableViewController, ListForm {
         onRefreshBegin()
 
         let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
-        _ = dataSync.sync { _ in
+        /*_ = dataSync.sync { _ in
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
             self.onRefreshEnd()
-        }
+        }*/
     }
 
     @IBAction func scrollToTheTop(_ sender: Any?) {
@@ -173,7 +173,7 @@ open class ListFormTable: UITableViewController, ListForm {
     /*public func scrollToLastRow(animated:Bool) {
         self.scrollToRow(at: dataSource.lastIndexPath, at: .bottom, animated: animated)
     }*/
-    
+
    /* open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         var headerCellIdentifier = "EntityHeader"
         
@@ -185,7 +185,7 @@ open class ListFormTable: UITableViewController, ListForm {
         
         return cell
     }*/
-    
+
 }
 
 public class TableSectionHeader: UITableViewHeaderFooterView {

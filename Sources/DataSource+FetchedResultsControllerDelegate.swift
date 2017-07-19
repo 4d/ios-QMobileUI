@@ -57,8 +57,15 @@ extension DataSource: FetchedResultsControllerDelegate {
             switch type {
             case .insert:
                 if let newIndexPath = newIndexPath {
-                    tableView.insertRows(at: [newIndexPath], with: rowAnimationType)
-                    self.delegate?.dataSource?(self, didInsertRecord: record, atIndexPath: newIndexPath)
+
+                    //FIXME: iOS 9 Bug!
+                    if indexPath != newIndexPath {
+
+                        tableView.insertRows(at: [newIndexPath], with: rowAnimationType)
+                        self.delegate?.dataSource?(self, didInsertRecord: record, atIndexPath: newIndexPath)
+                    } else {
+                        logger.warning()
+                    }
                 }
             case .delete:
                 if let indexPath = indexPath {

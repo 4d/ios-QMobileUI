@@ -18,9 +18,11 @@ extension Entity {
     dynamic public var url: URL {
         return URL(string: self.urlString)!
     }
+
     dynamic public var boolString: String {
         return String(bool)
     }
+
 }
 
 /*

@@ -11,13 +11,13 @@ target 'DemoTabbedApplication' do
   pod 'SwiftyJSON'
   pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
 
-  pod 'DZNEmptyDataSet'
-  pod 'DisplaySwitcher'
   pod 'Kingfisher'
   pod 'IBAnimatable'
   pod 'Guitar'
   pod 'ValueTransformerKit'
   pod 'RandomKit'
   pod 'BrightFutures'
+
+  pod 'Watchdog'
 
 end

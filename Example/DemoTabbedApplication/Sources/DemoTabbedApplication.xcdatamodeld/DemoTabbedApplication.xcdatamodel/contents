@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
         <attribute name="alpha" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="blob" optional="YES" attributeType="Binary" syncable="YES"/>
@@ -13,11 +13,18 @@
         <attribute name="integer64" optional="YES" attributeType="Integer 64" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="longInteger" optional="YES" attributeType="Integer 32" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="object" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="qmobile__STAMP" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="real" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="time" optional="YES" attributeType="Integer 64" usesScalarValueType="YES" syncable="YES"/>
     </entity>
+    <entity name="Entity1" representedClassName="Entity1" syncable="YES" codeGenerationType="class">
+        <attribute name="field_3" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="iD" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="titre" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
-        <element name="Entity" positionX="-15390" positionY="-4221" width="189" height="268"/>
+        <element name="Entity" positionX="-15390" positionY="-4221" width="189" height="283"/>
+        <element name="Entity1" positionX="-16184" positionY="-4212" width="128" height="88"/>
     </elements>
 </model>

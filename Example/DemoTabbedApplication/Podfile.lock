@@ -1,15 +1,14 @@
 PODS:
-  - Alamofire (4.4.0)
+  - Alamofire (4.5.0)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
-  - DisplaySwitcher (1.0.1)
   - DZNEmptyDataSet (1.8.1)
   - Guitar (0.2.0)
-  - IBAnimatable (4.0.0)
-  - Kingfisher (3.7.2)
-  - Moya (8.0.3):
-    - Moya/Core (= 8.0.3)
-  - Moya/Core (8.0.3):
+  - IBAnimatable (4.1.0)
+  - Kingfisher (3.10.2)
+  - Moya (8.0.5):
+    - Moya/Core (= 8.0.5)
+  - Moya/Core (8.0.5):
     - Alamofire (~> 4.1)
     - Result (~> 3.0)
   - ObjcExceptionBridging (1.0.1):
@@ -21,9 +20,8 @@ PODS:
   - Prephirences/Core (3.0.1)
   - Prephirences/Keys (3.0.1):
     - Prephirences/Core
-  - QMobileAPI (0.0.2):
+  - QMobileAPI (0.1.0):
     - Moya
-    - QMobileDataStore
     - SwiftyJSON
     - XCGLogger
   - QMobileDataStore (0.0.1):
@@ -31,6 +29,7 @@ PODS:
     - Result
     - XCGLogger
   - QMobileDataSync (0.0.1):
+    - BrightFutures
     - Prephirences
     - QMobileAPI
     - QMobileDataStore
@@ -43,13 +42,16 @@ PODS:
     - QMobileDataSync
     - ValueTransformerKit
     - XCGLogger
-  - RandomKit (4.5.2):
-    - ShiftOperations
-  - Result (3.2.1)
-  - ShiftOperations (1.0.0)
+  - RandomKit (5.1.0):
+    - ShiftOperations (~> 1.0.2)
+    - Threadly (~> 1.0)
+  - Result (3.2.3)
+  - ShiftOperations (1.0.2)
   - StyleKit (0.5.0)
   - SwiftyJSON (3.1.4)
+  - Threadly (1.2.0)
   - ValueTransformerKit (0.0.1)
+  - Watchdog (3.0)
   - XCGLogger (5.0.1):
     - XCGLogger/Core (= 5.0.1)
   - XCGLogger/Core (5.0.1):
@@ -57,8 +59,6 @@ PODS:
 
 DEPENDENCIES:
   - BrightFutures
-  - DisplaySwitcher
-  - DZNEmptyDataSet
   - Guitar
   - IBAnimatable
   - Kingfisher
@@ -70,6 +70,7 @@ DEPENDENCIES:
   - StyleKit (from `https://github.com/146BC/StyleKit.git`, branch `develop`)
   - SwiftyJSON
   - ValueTransformerKit
+  - Watchdog
 
 EXTERNAL SOURCES:
   QMobileAPI:
@@ -90,28 +91,29 @@ CHECKOUT OPTIONS:
     :git: https://github.com/146BC/StyleKit.git
 
 SPEC CHECKSUMS:
-  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
-  DisplaySwitcher: 5f725284c28cdf22ea7ba2eee8e8f7e7cb9cdf87
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
-  IBAnimatable: 63997e8a6cdb233249a3b57cfff2feb535fb01ff
-  Kingfisher: 5ddc4ac715615cc200de9fdc54ab1511061ea650
-  Moya: d3721622e3cc0cc2f038d69a258686f0b66e7252
+  IBAnimatable: 0fd2c9fd38c4798d71bcc18dbd87d473a7df2577
+  Kingfisher: 7297492bf8cec9b2e2dee3519f2219948580d98e
+  Moya: c37eec09a098ba9991b5a963b291fc5704bdb9ef
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
-  QMobileAPI: 412971177dfd0218bf81dff5ffa1fd0afaefa1f8
+  QMobileAPI: 152378e81cd0fcb8a746d33736be8f6fda89fc28
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
-  QMobileDataSync: c974b21434e56088fac84f4975269b30a4036c0d
+  QMobileDataSync: 7604b52d01ff4d7aac86cff9a4dc01090c3e9353
   QMobileUI: 547a3dc8d3e4c69cac88424f7051b57b5798b614
-  RandomKit: 2a79a94e5e51e83154dde02feb05dfb2229861f4
-  Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
-  ShiftOperations: 0c77c06851e7976c2665d601b46af123dbffeade
+  RandomKit: 300a73d10e84efcd5efd450a7c56ceeec7d27dbb
+  Result: 128640a6347e8d2ae48b142556739a2d13f90ce6
+  ShiftOperations: 702c9aa98d3b20d98dceb71dd8437b562f7ab3ad
   StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  Threadly: b772ed7c1ff4a3f03eb4600bbc5ef83b3be5cb29
   ValueTransformerKit: 4f4ef5383455fde5d01076dfb7016fb5c4874899
+  Watchdog: 141185b6b3a332a9f5721ea42dfa9681cf2d7c6b
   XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
 
-PODFILE CHECKSUM: 7744f7bf51622213aa277f765e7e1bfb10acaf5d
+PODFILE CHECKSUM: e15226924d669642fac5cf4f60ff865ba6ea1cf7
 
 COCOAPODS: 1.2.0

@@ -12,6 +12,8 @@ import QMobileDataStore
 import QMobileUI
 import StyleKit
 import RandomKit
+import Watchdog
+
 public extension Random {
     
     static func random() -> Self {
@@ -24,7 +26,10 @@ let logger = XCGLogger(identifier: NSStringFromClass(AppDelegate.self), includeD
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-
+    static let threshold = 0.4
+    let watchdog = Watchdog(threshold: AppDelegate.threshold) {
+        logger.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮")
+    }
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // ApplicationServices.instance.register(ApplicationStyleKit.instance)
@@ -34,11 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.fillModel()
         }
 
+        
+        
         return true
     }
     
     func fillModel() {
-        self.testadd(200)
+       // self.testadd(20000)
         
     }
     

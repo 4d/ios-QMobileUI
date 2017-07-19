@@ -8,11 +8,10 @@
 
 import UIKit
 import QMobileUI
-import DisplaySwitcher
 
 class EntityListFormCollection: ListFormCollection {
-    private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
-    private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
+    //private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
+   // private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
     
     override func onLoad() {
         super.onLoad()
@@ -33,14 +32,14 @@ class EntityListFormCollection: ListFormCollection {
         print(self.refreshControl ?? "")
     }
 
-    func collectionView(collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
+    /*func collectionView(collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
         let customTransitionLayout = TransitionLayout(currentLayout: fromLayout, nextLayout: toLayout)
         return customTransitionLayout
-    }
+    }*/
     
     // MARK: - Actions   
     fileprivate var isTransitionAvailable = true
-    fileprivate var layoutState: LayoutState = .list
+   // fileprivate var layoutState: LayoutState = .list
     
     private let animationDuration: TimeInterval = 0.3
     
@@ -48,7 +47,7 @@ class EntityListFormCollection: ListFormCollection {
         if !isTransitionAvailable {
             return
         }
-        let transitionManager: TransitionManager
+        /*let transitionManager: TransitionManager
         if layoutState == .list {
             layoutState = .grid
             transitionManager = TransitionManager(duration: animationDuration, collectionView: collectionView!, destinationLayout: gridLayout, layoutState: layoutState)
@@ -56,7 +55,7 @@ class EntityListFormCollection: ListFormCollection {
             layoutState = .list
             transitionManager = TransitionManager(duration: animationDuration, collectionView: collectionView!, destinationLayout: listLayout, layoutState: layoutState)
         }
-        transitionManager.startInteractiveTransition()
+        transitionManager.startInteractiveTransition()*/
         //rotationButton.isSelected = layoutState == .list
         //rotationButton.animationDuration = animationDuration
     }
