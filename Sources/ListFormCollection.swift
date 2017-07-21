@@ -16,6 +16,9 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
 
+    @IBOutlet open var nextButton: UIButton?
+    @IBOutlet open var previousButton: UIButton?
+    
     @IBInspectable open var hasRefreshControl: Bool = false
      public var refreshControl: UIRefreshControl?
     /// Optional section for table using one field name
@@ -67,7 +70,42 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
     }
+    
+    @IBAction open func scrollToTheTop(_ sender: Any?) {
+        collectionView?.setContentOffset(CGPoint.zero, animated: true)
+    }
+    
+    @IBAction open func scrollToLastRow(_ sender: Any?) {
+        if let indexPath = self.dataSource.lastIndexPath {
+            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+    }
 
+    //action go to next section
+    @IBAction func nextHeader(_ sender: UIButton){
+        let lastSectionIndex = collectionView?.numberOfSections
+        let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] //self.collectionView.indexPathsForVisibleRows?[1]
+        if (firstVisibleIndexPath?.section)! < lastSectionIndex! - 1 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
+        } else {
+            nextButton?.alpha = 0.2
+        }
+    }
+    
+    //action back to previous section
+    @IBAction func previousItem(_ sender: Any?) {
+        let firstVisibleIndexPath = collectionView?.indexPathsForVisibleItems[1]
+        if (firstVisibleIndexPath?.section)! > 0 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
+        } else {
+            previousButton?.alpha = 0.2
+        }
+    }
+    
     // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
