@@ -20,6 +20,9 @@ open class ListFormTable: UITableViewController, ListForm {
     @IBInspectable open var sectionFieldname: String?
     @IBOutlet open var searchBar: UISearchBar!
 
+    @IBOutlet open var nextButton: UIButton?
+    @IBOutlet open var previousButton: UIButton?
+    
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
@@ -149,7 +152,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     // MARK: IBAction
 
-    @IBAction func refresh(_ sender: Any?) {
+    @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
 
         let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
@@ -160,13 +163,39 @@ open class ListFormTable: UITableViewController, ListForm {
         }*/
     }
 
-    @IBAction func scrollToTheTop(_ sender: Any?) {
+    @IBAction open func scrollToTheTop(_ sender: Any?) {
         tableView.setContentOffset(CGPoint.zero, animated: true)
     }
 
-    @IBAction func scrollToLastRow(_ sender: Any?) {
+    @IBAction open func scrollToLastRow(_ sender: Any?) {
         if let indexPath = self.dataSource.lastIndexPath {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
+    //action go to next section
+    @IBAction func nextHeader(_ sender: UIButton){
+        let lastSectionIndex = tableView.numberOfSections
+        let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
+        if (firstVisibleIndexPath?.section)! < lastSectionIndex - 1 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!+1), at: .top, animated: true)
+        } else {
+            nextButton?.alpha = 0.2
+            
+        }
+    }
+    
+    //action back to previous section
+    @IBAction func previousItem(_ sender: Any?) {
+        let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
+        if (firstVisibleIndexPath?.section)! > 0 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
+        } else {
+            previousButton?.alpha = 0.2
         }
     }
 
