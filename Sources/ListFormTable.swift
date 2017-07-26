@@ -26,6 +26,12 @@ open class ListFormTable: UITableViewController, ListForm {
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
+    @IBInspectable open var showSection: Bool = true {
+        didSet{
+            DataSource.showSection =  showSection
+        }
+    }
+    
     // MARK: override
     final public override func viewDidLoad() {
         super.viewDidLoad()

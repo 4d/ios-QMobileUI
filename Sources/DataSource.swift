@@ -16,7 +16,7 @@ public class DataSource: NSObject {
     public enum ViewType {
         case table, collection
     }
-
+    static open var showSection:Bool = true
     // MARK: Views
 
     open var viewType: ViewType

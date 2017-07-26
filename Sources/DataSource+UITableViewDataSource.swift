@@ -37,11 +37,13 @@ extension DataSource: UITableViewDataSource {
     // MARK: Sections and Headers 
 
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        if let titles = self.delegate?.sectionIndexTitlesForDataSource?(self, tableView: tableView) {
-            return titles
-        } else if let keyPath = self.fetchedResultsController.sectionNameKeyPath {
-            let result = self.fetchedResultsController.fetchKeyPath(keyPath, ascending: true)
-            return result.map { "\($0)"}
+        if DataSource.showSection == true {
+            if let titles = self.delegate?.sectionIndexTitlesForDataSource?(self, tableView: tableView) {
+                return titles
+            } else if let keyPath = self.fetchedResultsController.sectionNameKeyPath {
+                let result = self.fetchedResultsController.fetchKeyPath(keyPath, ascending: true)
+                return result.map { "\($0)"}
+            }
         }
         return nil
     }
