@@ -18,7 +18,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
-    
     @IBInspectable open var hasRefreshControl: Bool = false
      public var refreshControl: UIRefreshControl?
     /// Optional section for table using one field name
@@ -43,12 +42,14 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
         dataSource.delegate = self
-
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
 
         onLoad()
+        if( searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty){
+            self.searchBar.isHidden = true
+        }
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -70,11 +71,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
     }
-    
+
     @IBAction open func scrollToTheTop(_ sender: Any?) {
         collectionView?.setContentOffset(CGPoint.zero, animated: true)
     }
-    
+
     @IBAction open func scrollToLastRow(_ sender: Any?) {
         if let indexPath = self.dataSource.lastIndexPath {
             self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
@@ -82,7 +83,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     //action go to next section
-    @IBAction func nextHeader(_ sender: UIButton){
+    @IBAction func nextHeader(_ sender: UIButton) {
         let lastSectionIndex = collectionView?.numberOfSections
         let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] //self.collectionView.indexPathsForVisibleRows?[1]
         if (firstVisibleIndexPath?.section)! < lastSectionIndex! - 1 {
@@ -93,7 +94,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             nextButton?.alpha = 0.2
         }
     }
-    
+
     //action back to previous section
     @IBAction func previousItem(_ sender: Any?) {
         let firstVisibleIndexPath = collectionView?.indexPathsForVisibleItems[1]
@@ -105,7 +106,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             previousButton?.alpha = 0.2
         }
     }
-    
+
     // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

@@ -70,7 +70,7 @@ extension UIImageView {
                 var uri = webURL.absoluteString
                 // remove the base url
                 uri = uri.replacingOccurrences(of: DataSync.instance.rest.rest.baseURL.absoluteString, with: "")
-                let deffered = Deffered(uri: uri, image: true)
+                let deffered = Deferred(uri: uri, image: true)
                 return deffered.dictionary
             }
             return nil
@@ -82,7 +82,7 @@ extension UIImageView {
                 if let url = URL(string: fullUri) {
                     self.kf.setImage(with: url)
                 }
-                
+
             } else {
                 self.kf.indicatorType = .none
             }

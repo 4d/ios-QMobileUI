@@ -22,16 +22,16 @@ open class ListFormTable: UITableViewController, ListForm {
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
-    
+
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
-    @IBInspectable open var showSection: Bool = true {
-        didSet{
-            DataSource.showSection =  showSection
+    @IBInspectable open var showSectionBar: Bool = true {
+        didSet {
+            DataSource.showSection =  showSectionBar
         }
     }
-    
+
     // MARK: override
     final public override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,10 +50,11 @@ open class ListFormTable: UITableViewController, ListForm {
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
-
         onLoad()
+        if( searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty){
+            searchBar.isHidden = true
+        }
     }
-
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onWillAppear(animated)
@@ -180,7 +181,7 @@ open class ListFormTable: UITableViewController, ListForm {
     }
 
     //action go to next section
-    @IBAction func nextHeader(_ sender: UIButton){
+    @IBAction func nextHeader(_ sender: UIButton) {
         let lastSectionIndex = tableView.numberOfSections
         let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
         if (firstVisibleIndexPath?.section)! < lastSectionIndex - 1 {
@@ -189,10 +190,10 @@ open class ListFormTable: UITableViewController, ListForm {
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!+1), at: .top, animated: true)
         } else {
             nextButton?.alpha = 0.2
-            
+
         }
     }
-    
+
     //action back to previous section
     @IBAction func previousItem(_ sender: Any?) {
         let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
@@ -232,14 +233,14 @@ extension ListFormTable: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-
-        if !searchText.isEmpty {
-            dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
-        } else {
-            dataSource?.predicate = nil
+        if (searchableField.trimmingCharacters(in: .whitespacesAndNewlines) != ""){
+            if !searchText.isEmpty {
+                dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
+            } else {
+                dataSource?.predicate = nil
+            }
+            dataSource?.performFetch()
         }
-        dataSource?.performFetch()
-
         // XXX API here could load more from network
     }
 
