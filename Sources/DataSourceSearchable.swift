@@ -15,3 +15,12 @@ public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchContro
     var searchableField: String { get }
 
 }
+
+extension DataSourceSearchable {
+
+    var isSearchBarMustBeHidden: Bool {
+        // Hide if search field name is empty
+        return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+}

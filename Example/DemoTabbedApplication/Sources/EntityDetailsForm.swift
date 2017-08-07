@@ -11,7 +11,7 @@ import QMobileUI
 import IBAnimatable
 
 class EntityDetailsFormTable: DetailsFormTable {
-    
+
     var transitionType: TranstionOnSelf = .curl
     var transitionDuration: TimeInterval = 0.5
 
@@ -19,13 +19,13 @@ class EntityDetailsFormTable: DetailsFormTable {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
         self.navigationController?.setToolbarHidden(false, animated: animated)
     }
-    
+
     @IBAction open override func previousRecord(_ sender: Any!) {
         transitionOnSelf(duration: transitionDuration, options: [transitionType.left]) {
             super.previousRecord(sender)
         }
     }
-    
+
     @IBAction open override func nextRecord(_ sender: Any!) {
         transitionOnSelf(duration: transitionDuration, options: [transitionType.right]) {
             super.nextRecord(sender)
@@ -35,19 +35,19 @@ class EntityDetailsFormTable: DetailsFormTable {
 }
 
 class EntityDetailsForm: DetailsFormBare {
-    
+
     var transitionType: TranstionOnSelf = .flip
     var transitionDuration: TimeInterval = 0.5
-    
+
     override func onWillAppear(_ animated: Bool) {
-         
+
     }
 
     @IBAction open override func previousRecord(_ sender: Any!) {
         transitionOnSelf(duration: transitionDuration, options: [transitionType.left]) {
             super.previousRecord(sender)
         }
-        
+
        /*let presenter = TransitionPresenterManager.shared.retrievePresenter(transitionAnimationType: .flip(from: .left))
 
         if let tran = AnimatorFactory.makeAnimator(transitionAnimationType: .flip(from: .left), transitionDuration: 0.5) {
@@ -55,7 +55,7 @@ class EntityDetailsForm: DetailsFormBare {
         }
         */
     }
-    
+
     @IBAction open override func nextRecord(_ sender: Any!) {
         transitionOnSelf(duration: transitionDuration, options: [transitionType.right]) {
               super.nextRecord(sender)
@@ -65,8 +65,7 @@ class EntityDetailsForm: DetailsFormBare {
     func viewCenter(_ sender: Any) -> CGPoint? {
         if let view = sender as? UIView {
             return  view.center
-        }
-        else if let item = sender as? UIBarItem, let view = item.value(forKey: "view") as? UIView {
+        } else if let item = sender as? UIBarItem, let view = item.value(forKey: "view") as? UIView {
             return  view.center
         }
         return nil
@@ -93,5 +92,3 @@ extension TranstionOnSelf {
         }
     }
 }
-
-

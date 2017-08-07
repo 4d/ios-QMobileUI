@@ -51,10 +51,12 @@ open class ListFormTable: UITableViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         onLoad()
-        if( searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty){
+        if isSearchBarMustBeHidden {
             searchBar.isHidden = true
         }
     }
+
+    
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onWillAppear(animated)
@@ -162,8 +164,8 @@ open class ListFormTable: UITableViewController, ListForm {
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
 
-        let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
-        /*_ = dataSync.sync { _ in
+       /* let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
+        _ = dataSync.sync { _ in
             self.dataSource.performFetch()
             self.refreshControl?.endRefreshing()
             self.onRefreshEnd()
@@ -230,10 +232,10 @@ public class TableSectionHeader: UITableViewHeaderFooterView {
 
 // MARK: DataSourceSearchable
 extension ListFormTable: DataSourceSearchable {
-
+    
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-        if (searchableField.trimmingCharacters(in: .whitespacesAndNewlines) != ""){
+        if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
             } else {
@@ -243,7 +245,7 @@ extension ListFormTable: DataSourceSearchable {
         }
         // XXX API here could load more from network
     }
-
+    
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
     }

@@ -47,7 +47,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installSearchBar()
 
         onLoad()
-        if( searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty){
+        if isSearchBarMustBeHidden {
             self.searchBar.isHidden = true
         }
     }
@@ -210,14 +210,16 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-
-        if !searchText.isEmpty {
-            dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
-        } else {
-            dataSource?.predicate = nil
+        
+        if !isSearchBarMustBeHidden {
+            if !searchText.isEmpty {
+                dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
+            } else {
+                dataSource?.predicate = nil
+            }
+            dataSource?.performFetch()
         }
-        dataSource?.performFetch()
-
+        
         // XXX API here could load more from network
     }
 

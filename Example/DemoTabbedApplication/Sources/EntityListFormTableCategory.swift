@@ -10,18 +10,11 @@ import UIKit
 import QMobileUI
 
 class EntityListFormTableCategory: EntityListFormTable {
-    
 
-    
     override func onLoad() {
-        self.dataSource.delegate = self
-    
+
+      //  self.dataSource.delegate = self
+
     }
-    
-}
-extension EntityListFormTableCategory {
-    
-    @objc func sectionIndexTitlesForDataSource(_ dataSource: DataSource, tableView: UITableView) -> [String]{
-        return ["test"]
-    }
+
 }

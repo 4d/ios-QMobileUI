@@ -249,12 +249,14 @@
 			buildConfigurationList = 485CCDD01E79836800CDB2B3 /* Build configuration list for PBXNativeTarget "DemoTabbedApplication" */;
 			buildPhases = (
 				A2983F782752784BC0595D6D /* [CP] Check Pods Manifest.lock */,
+				48F216F61F385817003BCF40 /* swiftlint autocorrect */,
 				485CCDB81E79836800CDB2B3 /* Sources */,
 				485CCDB91E79836800CDB2B3 /* Frameworks */,
 				485CCDBA1E79836800CDB2B3 /* Resources */,
 				D76FFCBE3C4B7A0E31616D3B /* [CP] Embed Pods Frameworks */,
 				B2844C49E54AE97100F32B04 /* [CP] Copy Pods Resources */,
 				487559F21E9F7DE8005D3F8F /* Embed Frameworks */,
+				48F216F51F38580C003BCF40 /* swiftlint  */,
 			);
 			buildRules = (
 			);
@@ -322,6 +324,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		48F216F51F38580C003BCF40 /* swiftlint  */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "swiftlint ";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		48F216F61F385817003BCF40 /* swiftlint autocorrect */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "swiftlint autocorrect";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint autocorrect\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
 		A2983F782752784BC0595D6D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

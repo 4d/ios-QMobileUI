@@ -13,7 +13,7 @@ import QMobileUI
 
 @IBDesignable
 class ListFormTable: QMobileUI.ListFormTable {
-    
+
     @IBInspectable open override var sectionFieldname: String? {
         get {
             return super.sectionFieldname
@@ -22,7 +22,7 @@ class ListFormTable: QMobileUI.ListFormTable {
             super.sectionFieldname = newValue
         }
     }
-    
+
     @IBInspectable open override var selectedSegueIdentifier: String {
         get {
             return super.selectedSegueIdentifier
@@ -40,8 +40,8 @@ class ListFormTable: QMobileUI.ListFormTable {
             super.searchableField = newValue
         }
     }
-    
-    @IBOutlet open override var searchBar: UISearchBar!{
+
+    @IBOutlet open override var searchBar: UISearchBar! {
         get {
             return super.searchBar
         }
@@ -53,7 +53,7 @@ class ListFormTable: QMobileUI.ListFormTable {
 
 @IBDesignable
 class ListFormCollection: QMobileUI.ListFormCollection {
-    
+
     @IBInspectable open override var sectionFieldname: String? {
         get {
             return super.sectionFieldname
@@ -62,7 +62,7 @@ class ListFormCollection: QMobileUI.ListFormCollection {
             super.sectionFieldname = newValue
         }
     }
-    
+
     @IBInspectable open override var selectedSegueIdentifier: String {
         get {
             return super.selectedSegueIdentifier
@@ -71,7 +71,7 @@ class ListFormCollection: QMobileUI.ListFormCollection {
             super.selectedSegueIdentifier = newValue
         }
     }
-    
+
     @IBInspectable open override var searchableField: String {
         get {
             return super.searchableField
@@ -81,7 +81,7 @@ class ListFormCollection: QMobileUI.ListFormCollection {
         }
     }
 
-    @IBOutlet open override var searchBar: UISearchBar!{
+    @IBOutlet open override var searchBar: UISearchBar! {
         get {
             return super.searchBar
         }
@@ -94,7 +94,7 @@ class ListFormCollection: QMobileUI.ListFormCollection {
 
 @IBDesignable
 class DetailsFormBare: QMobileUI.DetailsFormBare {
-    
+
     @IBInspectable open override var hasSwipeGestureRecognizer: Bool {
         get {
             return super.hasSwipeGestureRecognizer
@@ -108,7 +108,7 @@ class DetailsFormBare: QMobileUI.DetailsFormBare {
 
 @IBDesignable
 class DetailsFormTable: QMobileUI.DetailsFormTable {
-    
+
     @IBInspectable open override var hasSwipeGestureRecognizer: Bool {
         get {
             return super.hasSwipeGestureRecognizer
@@ -137,5 +137,5 @@ extension UILabel {
     open override var bindTo: Binder {
         return super.bindTo
     }
-    
+
 }
