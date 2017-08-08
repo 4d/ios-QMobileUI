@@ -9,6 +9,7 @@
 import Foundation
 import QMobileDataStore
 import XCGLogger
+import Prephirences
 
 class ApplicationLogger: NSObject {}
 
@@ -19,31 +20,133 @@ extension ApplicationLogger: ApplicationService {
     static var instance: ApplicationService = ApplicationLogger()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
-        // TODO configure logging framework here, default level, default destination, etc...
-        // Could be done using userdefaults for some basic features
 
-        // logger.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: "path/to/file", fileLevel: .debug)
+        let logPref = ProxyPreferences(preferences:  Preferences, key: "log.")
 
-        // TODO setup all frameworks logger...
+        let showThreadName = logPref["showThreadName"] as? Bool ?? true
+        let showLevel = logPref["showLevel"] as? Bool ?? true
+        let showFileNames = logPref["showFileNames"] as? Bool ?? true
+        let showLineNumbers = logPref["showLineNumbers"] as? Bool ?? true
+        let showFunctionName = logPref["showFunctionName"] as? Bool ?? true
+        let showDate = logPref["showDate"] as? Bool ?? true
+        let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
+        let writeToFile: String? = logPref["writeToFile"] as? String
+        let autorotate = logPref["autorotate"] as? Bool ?? true
+        let maxFileSize = logPref["maxFileSize"] as? UInt64
+        let maxLogFiles = logPref["maxLogFiles"] as? UInt8
 
+        let levelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "level")
+        levelPref.transformation = XCGLogger.Level.preferenceTransformation
         #if DEBUG
-            let prePostFixLogFormatter = PrePostFixLogFormatter()
-            prePostFixLogFormatter.apply(prefix: "🗯🗯🗯", postfix: "", to: .verbose)
-            prePostFixLogFormatter.apply(prefix: "🔹🔹🔹", postfix: "", to: .debug)
-            prePostFixLogFormatter.apply(prefix: "ℹ️ℹ️ℹ️", postfix: "", to: .info)
-            prePostFixLogFormatter.apply(prefix: "⚠️⚠️⚠️", postfix: "", to: .warning)
-            prePostFixLogFormatter.apply(prefix: "‼️‼️‼️", postfix: "", to: .error)
-            prePostFixLogFormatter.apply(prefix: "💣💣💣", postfix: "", to: .severe)
-            logger.formatters = [prePostFixLogFormatter]
-
-            logger.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, fileLevel: .debug)
+            let level: XCGLogger.Level = levelPref.value ?? .debug
         #else
-            logger.setup(level: .info, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, fileLevel: .debug)
-
-            // Could write to a files, write in database
-            /*if let consoleLog = logger.logDestination(XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination {
-                consoleLog.logQueue = XCGLogger.logQueue
-            }*/
+            let level: XCGLogger.Level = levelPref.value ?? .info
         #endif
+
+        let fileLevelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "fileLevel")
+        fileLevelPref.transformation = XCGLogger.Level.preferenceTransformation
+        #if DEBUG
+            let fileLevel: XCGLogger.Level? = fileLevelPref.value
+        #else
+            let fileLevel: XCGLogger.Level? = fileLevelPref.value
+        #endif
+
+        let formatterPref: Preference<LogFormatter> = logPref.preference(forKey: "formatter")
+        formatterPref.transformation = LogFormatter.preferenceTransformation
+        #if DEBUG
+            let formatter: LogFormatter? = formatterPref.value ?? LogFormatter.emoticon
+        #else
+            let formatter: LogFormatter? = formatterPref.value
+        #endif
+
+        logger.outputLevel = level
+
+        if let destination = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination {
+            destination.showLogIdentifier = showLogIdentifier
+            destination.showFunctionName = showFunctionName
+            destination.showThreadName = showThreadName
+            destination.showLevel = showLevel
+            destination.showFileName = showFileNames
+            destination.showLineNumber = showLineNumbers
+            destination.showDate = showDate
+            destination.outputLevel = level
+
+            if let formatter = formatter {
+                destination.formatters = [formatter.formatter]
+            }
+            #if DEBUG
+                // immediate
+            #else
+                destination.logQueue = XCGLogger.logQueue
+            #endif
+        }
+
+        if let writeToFile = writeToFile {
+            let destination: FileDestination
+            if autorotate {
+                destination = FileDestination(writeToFile: writeToFile, identifier: XCGLogger.Constants.fileDestinationIdentifier)
+            } else {
+                let autodestination = AutoRotatingFileDestination(writeToFile: writeToFile, identifier: XCGLogger.Constants.fileDestinationIdentifier, shouldAppend: true, appendMarker: nil, archiveSuffixDateFormatter: nil)
+
+                if let maxFileSize = maxFileSize {
+                    autodestination.targetMaxFileSize = maxFileSize
+                }
+                if let maxLogFiles = maxLogFiles {
+                    autodestination.targetMaxLogFiles = maxLogFiles
+                }
+                autodestination.autoRotationCompletion = { _ in
+                     #if DEBUG
+                    print("Log autorotation")
+                     #endif
+                }
+                destination = autodestination
+            }
+            destination.showLogIdentifier = showLogIdentifier
+            destination.showFunctionName = showFunctionName
+            destination.showThreadName = showThreadName
+            destination.showLevel = showLevel
+            destination.showFileName = showFileNames
+            destination.showLineNumber = showLineNumbers
+            destination.showDate = showDate
+            destination.outputLevel = fileLevel ?? level
+            destination.logQueue = XCGLogger.logQueue
+
+            if let formatter = formatter {
+                destination.formatters = [formatter.formatter]
+            }
+
+            logger.add(destination: destination)
+        }
+
+        logger.logAppDetails()
     }
+
+    enum LogFormatter: String {
+        case emoticon
+        case ansi
+
+        var formatter: LogFormatterProtocol {
+            switch self {
+            case .emoticon:
+                let prePostFixLogFormatter = PrePostFixLogFormatter()
+                prePostFixLogFormatter.apply(prefix: "🗯🗯🗯", postfix: "", to: .verbose)
+                prePostFixLogFormatter.apply(prefix: "🔹🔹🔹", postfix: "", to: .debug)
+                prePostFixLogFormatter.apply(prefix: "ℹ️ℹ️ℹ️", postfix: "", to: .info)
+                prePostFixLogFormatter.apply(prefix: "⚠️⚠️⚠️", postfix: "", to: .warning)
+                prePostFixLogFormatter.apply(prefix: "‼️‼️‼️", postfix: "", to: .error)
+                prePostFixLogFormatter.apply(prefix: "💣💣💣", postfix: "", to: .severe)
+                return prePostFixLogFormatter
+            case .ansi:
+                let ansiColorLogFormatter: ANSIColorLogFormatter = ANSIColorLogFormatter()
+                ansiColorLogFormatter.colorize(level: .verbose, with: .colorIndex(number: 244), options: [.faint])
+                ansiColorLogFormatter.colorize(level: .debug, with: .black)
+                ansiColorLogFormatter.colorize(level: .info, with: .blue, options: [.underline])
+                ansiColorLogFormatter.colorize(level: .warning, with: .red, options: [.faint])
+                ansiColorLogFormatter.colorize(level: .error, with: .red, options: [.bold])
+                ansiColorLogFormatter.colorize(level: .severe, with: .white, on: .red)
+                return ansiColorLogFormatter
+            }
+        }
+    }
+
 }

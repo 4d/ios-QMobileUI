@@ -291,8 +291,9 @@ open class Binder: NSObject {
 
 }
 
-// MARK : KeyPathEntry
-fileprivate class KeyPathEntry {
+// MARK: KeyPathEntry
+
+private class KeyPathEntry {
 
     // the key path to get data from binded object
     var keyPath: String
@@ -321,8 +322,8 @@ fileprivate class KeyPathEntry {
     }
 }
 
-// MARK : KeyPathParser
-fileprivate class KeyPathParser {
+// MARK: KeyPathParser
+private class KeyPathParser {
 
     var function: String
     var block: (_ view: UIView?, _ keyPathComponent: String) -> UIView?

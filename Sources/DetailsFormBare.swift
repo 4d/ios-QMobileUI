@@ -66,7 +66,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     // MARK: IBAction
 
     @IBAction open func previousRecord(_ sender: Any!) {
-        // TODO animation, like transitioning on self...
+        // XXX here could add animation, like transitioning on self...
         // could use segue do do that but it will put more info into storyboard and navigation will be confusing
         self.previousRecord()
         self.checkNavigationBar()

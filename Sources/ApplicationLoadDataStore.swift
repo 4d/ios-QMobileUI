@@ -17,6 +17,7 @@ import Moya // Cancellable
 /// Load the mobile database
 class ApplicationLoadDataStore: NSObject {
 
+    // shared instance of data sync object for all QMoble application
     let dataSync: DataSync = DataSync.instance
 }
 
@@ -24,20 +25,22 @@ extension ApplicationLoadDataStore: ApplicationService {
 
     static var instance: ApplicationService = ApplicationLoadDataStore()
 
+    static var castedInstance: ApplicationLoadDataStore {
+         // swiftlint:disable:next force_cast
+        return instance as! ApplicationLoadDataStore
+    }
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
 
         if let mustDrop = Preferences["dataStore.drop.atStart"] as? Bool, mustDrop {
-            // drop data when application will terminate
-            // TODO fix drop if not already loaded...
+
+            // drop before loading
             drop { [weak self] in
                 self?.load()
             }
 
         } else {
-            logger.debug("Mobile database will be loaded")
-            drop { [weak self] in
-                self?.load()
-            }
+            self.load()
         }
     }
 
@@ -72,7 +75,9 @@ extension ApplicationLoadDataStore {
             case .success:
                 logger.info("Mobile database has been loaded")
                 // Import static data TODO must be done using task ordonanceur or listeners
-                self.importData()
+                 _ = self.dataSync.sync { _ in
+
+                }
             }
         }
     }
@@ -101,19 +106,8 @@ extension ApplicationLoadDataStore {
         }
     }
 
-    /// Temorary load data from files
-    func importData() -> Cancellable {
-        return dataSync.loadTable { _ in
-            // TODO no need to sync if failed to load table structures??
-            _ = self.dataSync.sync { _ in
-
-            }
-        }
-    }
-
 }
 
-public func dataSync() {
-     _ = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync.sync { _ in
-    }
+public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHander) -> Cancellable? {
+     return ApplicationLoadDataStore.castedInstance.dataSync.sync(completionHandler)
 }

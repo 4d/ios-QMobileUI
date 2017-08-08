@@ -19,3 +19,7 @@ line_length:
 function_body_length:
 - 55
 - 80
+
+file_length:
+- 590
+- 600

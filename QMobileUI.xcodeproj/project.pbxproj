@@ -538,17 +538,45 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
-		48EE07811E7AEDAD00A8546E /* swiftlint */ = {
+		489C15C41F39AEAB004844F3 /* carthage update */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "update --platform ios";
+			buildConfigurationList = 489C15C71F39AEAB004844F3 /* Build configuration list for PBXLegacyTarget "carthage update" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/carthage;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = "carthage update";
+			passBuildSettingsInEnvironment = 1;
+			productName = "carthage update";
+		};
+		489C15C81F39AF78004844F3 /* jazzy */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "";
+			buildConfigurationList = 489C15C91F39AF78004844F3 /* Build configuration list for PBXLegacyTarget "jazzy" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/jazzy;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = jazzy;
+			passBuildSettingsInEnvironment = 1;
+			productName = jazzy;
+		};
+		48EE07811E7AEDAD00A8546E /* swiftlint autocorrect */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = autocorrect;
-			buildConfigurationList = 48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint" */;
+			buildConfigurationList = 48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint autocorrect" */;
 			buildPhases = (
 			);
 			buildToolPath = /usr/local/bin/swiftlint;
 			buildWorkingDirectory = "";
 			dependencies = (
 			);
-			name = swiftlint;
+			name = "swiftlint autocorrect";
 			passBuildSettingsInEnvironment = 1;
 			productName = swiftlint;
 		};
@@ -604,6 +632,16 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Eric Marchand";
 				TargetAttributes = {
+					489C15C41F39AEAB004844F3 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 37UG5W39Z2;
+						ProvisioningStyle = Automatic;
+					};
+					489C15C81F39AF78004844F3 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 37UG5W39Z2;
+						ProvisioningStyle = Automatic;
+					};
 					48D5845D1E7830E1006F56B5 = {
 						CreatedOnToolsVersion = 8.2.1;
 						LastSwiftMigration = 0820;
@@ -633,7 +671,9 @@
 			targets = (
 				48D5845D1E7830E1006F56B5 /* QMobileUI */,
 				48D5846E1E7831B2006F56B5 /* Tests */,
-				48EE07811E7AEDAD00A8546E /* swiftlint */,
+				48EE07811E7AEDAD00A8546E /* swiftlint autocorrect */,
+				489C15C41F39AEAB004844F3 /* carthage update */,
+				489C15C81F39AF78004844F3 /* jazzy */,
 			);
 		};
 /* End PBXProject section */
@@ -788,12 +828,66 @@
 		};
 		48EE07881E7AF57000A8546E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 48EE07811E7AEDAD00A8546E /* swiftlint */;
+			target = 48EE07811E7AEDAD00A8546E /* swiftlint autocorrect */;
 			targetProxy = 48EE07871E7AF57000A8546E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		489C15C51F39AEAB004844F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		489C15C61F39AEAB004844F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		489C15CA1F39AF78004844F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		489C15CB1F39AF78004844F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		48D584641E7830E1006F56B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1002,6 +1096,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		489C15C71F39AEAB004844F3 /* Build configuration list for PBXLegacyTarget "carthage update" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				489C15C51F39AEAB004844F3 /* Debug */,
+				489C15C61F39AEAB004844F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		489C15C91F39AF78004844F3 /* Build configuration list for PBXLegacyTarget "jazzy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				489C15CA1F39AF78004844F3 /* Debug */,
+				489C15CB1F39AF78004844F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		48D584581E7830E1006F56B5 /* Build configuration list for PBXProject "QMobileUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1029,7 +1139,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint" */ = {
+		48EE07821E7AEDAD00A8546E /* Build configuration list for PBXLegacyTarget "swiftlint autocorrect" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				48EE07831E7AEDAD00A8546E /* Debug */,

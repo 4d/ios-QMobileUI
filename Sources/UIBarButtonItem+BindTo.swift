@@ -9,7 +9,7 @@
 import Foundation
 
 // An UIBarButtonItem is not a view, so binding information must be look in attached view
-fileprivate let kView = "vi" + "ew"
+private let kView = "vi" + "ew"
 extension UIBarButtonItem {
 
     open var bindTo: Binder! {
