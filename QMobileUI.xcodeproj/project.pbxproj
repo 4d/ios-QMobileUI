@@ -46,7 +46,6 @@
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
-		488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
@@ -91,7 +90,6 @@
 		48FB2CD61E93A22600F4F685 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD21E93A22600F4F685 /* Kingfisher.framework */; };
 		48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
 		48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
-		48FB2CDA1E93A22600F4F685 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD41E93A22600F4F685 /* Quick.framework */; };
 		48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDB1E93A23900F4F685 /* Result.framework */; };
 		48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDB1E93A23900F4F685 /* Result.framework */; };
 		48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */; };
@@ -165,7 +163,6 @@
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
-		488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNEmptyDataSet.framework; path = Carthage/Build/iOS/DZNEmptyDataSet.framework; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
@@ -202,7 +199,6 @@
 		48EE07851E7AEF1A00A8546E /* ListForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListForm.swift; sourceTree = "<group>"; };
 		48FB2CD21E93A22600F4F685 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		48FB2CD31E93A22600F4F685 /* Prephirences.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Prephirences.framework; path = Carthage/Build/iOS/Prephirences.framework; sourceTree = "<group>"; };
-		48FB2CD41E93A22600F4F685 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
 		48FB2CDB1E93A23900F4F685 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
@@ -238,7 +234,6 @@
 				48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
 				48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */,
 				48E49CF91EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
-				48FB2CDA1E93A22600F4F685 /* Quick.framework in Frameworks */,
 				48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF21EB9D293002B60AF /* QMobileDataSync.framework in Frameworks */,
 				48E49CF51EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
@@ -248,7 +243,6 @@
 				48FB2CE11E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
 				48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
-				488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */,
 				48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -513,14 +507,12 @@
 				48E49CF31EB9D8B0002B60AF /* QMobileAPI.framework */,
 				48E49CF01EB9D28D002B60AF /* QMobileDataSync.framework */,
 				48A62CC81E9E486A002A76C2 /* Guitar.framework */,
-				488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */,
 				48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */,
 				48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */,
 				48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */,
 				48FB2CDB1E93A23900F4F685 /* Result.framework */,
 				48FB2CD21E93A22600F4F685 /* Kingfisher.framework */,
 				48FB2CD31E93A22600F4F685 /* Prephirences.framework */,
-				48FB2CD41E93A22600F4F685 /* Quick.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
