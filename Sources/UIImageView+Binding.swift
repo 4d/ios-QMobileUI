@@ -53,7 +53,12 @@ extension UIImageView {
             if newValue != nil {
                 self.kf.indicatorType = .activity
             }
-            self.kf.setImage(with: newValue)
+            // could add a processor
+            // https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#built-in-processors-of-kingfisher
+            // let processor = BlurImageProcessor(blurRadius: 4) >> RoundCornerImageProcessor(cornerRadius: 20)
+            // options: [.processor(processor)] // , .cacheOriginalImage
+
+            self.kf.setImage(with: newValue, placeholder: nil, options: nil)
         }
     }
 

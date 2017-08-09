@@ -45,18 +45,20 @@ open class ListFormTable: UITableViewController, ListForm {
 
         dataSource.delegate = self
 
+       // self.tableView.delegate = self
+
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
+        self.installDataSourcePrefetching()
         onLoad()
         if isSearchBarMustBeHidden {
             searchBar.isHidden = true
         }
     }
 
-    
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onWillAppear(animated)
@@ -75,6 +77,25 @@ open class ListFormTable: UITableViewController, ListForm {
     final public override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
+    }
+
+    // MARK: table view delegate
+    open override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        super.tableView(tableView, didSelectRowAt: indexPath)
+        if let record = dataSource.record(at: indexPath) {
+            onClicked(record: record, at: indexPath)
+        }
+    }
+
+    //var triggerTreshold = 10
+    open override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
+
+       /* Could load more data if pagination 
+         if (self.dataSource.items.count - triggerTreshold) == indexPath.row
+            && indexPath.row > triggerTreshold {
+            onScrollDown(...)
+        }*/
     }
 
     // MARK: segue
@@ -111,6 +132,10 @@ open class ListFormTable: UITableViewController, ListForm {
     open func onRefreshBegin() {}
     /// Called after a refresh
     open func onRefreshEnd() {}
+
+    /// Called after a clicked on a record. 
+    /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
+    open func onClicked(record: Record, at index: IndexPath) {}
 
     // MARK: Install components
 
@@ -164,12 +189,12 @@ open class ListFormTable: UITableViewController, ListForm {
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
 
-       /* let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
-        _ = dataSync.sync { _ in
-            self.dataSource.performFetch()
-            self.refreshControl?.endRefreshing()
-            self.onRefreshEnd()
-        }*/
+        //let dataSync = ApplicationLoadDataStore.castedInstance.dataSync
+        // _ = dataSync.sync { _ in
+        // self.dataSource.performFetch()
+        self.refreshControl?.endRefreshing()
+        self.onRefreshEnd()
+        //}
     }
 
     @IBAction open func scrollToTheTop(_ sender: Any?) {
@@ -208,10 +233,6 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    /*public func scrollToLastRow(animated:Bool) {
-        self.scrollToRow(at: dataSource.lastIndexPath, at: .bottom, animated: animated)
-    }*/
-
    /* open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         var headerCellIdentifier = "EntityHeader"
         
@@ -231,8 +252,27 @@ public class TableSectionHeader: UITableViewHeaderFooterView {
 }
 
 // MARK: DataSourceSearchable
+import Kingfisher
+
+extension ListFormTable: UITableViewDataSourcePrefetching {
+
+    open func installDataSourcePrefetching() {
+        self.tableView.prefetchDataSource = self
+
+        // get all image urls from records
+        // let urls = records.flatMap {  }
+        // ImagePrefetcher(urls: urls).start()
+    }
+
+    open func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+
+    }
+
+}
+
+// MARK: DataSourceSearchable
 extension ListFormTable: DataSourceSearchable {
-    
+
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
@@ -245,7 +285,7 @@ extension ListFormTable: DataSourceSearchable {
         }
         // XXX API here could load more from network
     }
-    
+
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
     }

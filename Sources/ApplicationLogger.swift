@@ -19,6 +19,7 @@ extension ApplicationLogger: ApplicationService {
 
     static var instance: ApplicationService = ApplicationLogger()
 
+    // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
 
         let logPref = ProxyPreferences(preferences:  Preferences, key: "log.")

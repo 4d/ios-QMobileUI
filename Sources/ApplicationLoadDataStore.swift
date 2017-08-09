@@ -36,7 +36,9 @@ extension ApplicationLoadDataStore: ApplicationService {
 
             // drop before loading
             drop { [weak self] in
-                self?.load()
+                self?.load {
+                    
+                }
             }
 
         } else {

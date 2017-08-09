@@ -27,6 +27,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
+    /// On click execute transition to show record details.
+    /// Set to false, to not execute transition and manage your own code in onClicked()
+    @IBInspectable open var onClickShowDetail: Bool = true
+
     // MARK: override
     final public override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +49,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
+        self.installDataSourcePrefetching()
 
         onLoad()
         if isSearchBarMustBeHidden {
@@ -129,8 +134,19 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     // MARK: Collection View
 
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        super.collectionView(collectionView, didSelectItemAt: indexPath)
         // For a selection default behaviour is to show detail...
-        self.performSegue(withIdentifier: selectedSegueIdentifier, sender: collectionView)
+
+        if onClickShowDetail {
+            self.performSegue(withIdentifier: selectedSegueIdentifier, sender: collectionView)
+        }
+        if let record = dataSource.record(at: indexPath) {
+            onClicked(record: record, at: indexPath)
+        }
+    }
+
+    override open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
     }
 
     // MARK: Events
@@ -149,6 +165,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func onRefreshBegin() {}
     /// Called after a refresh
     open func onRefreshEnd() {}
+
+    /// Called after a clicked on a record.
+    /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
+    open func onClicked(record: Record, at index: IndexPath) {}
 
     // MARK: Install components
 
@@ -196,13 +216,33 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBAction func refresh(_ sender: Any?) {
         onRefreshBegin()
 
-        let dataSync = (ApplicationLoadDataStore.instance as! ApplicationLoadDataStore).dataSync
-        _ = dataSync.sync { _ in
-            self.dataSource.performFetch()
-            self.refreshControl?.endRefreshing()
-            self.onRefreshEnd()
-        }
+        //let dataSync = ApplicationLoadDataStore.castedInstance.dataSync
+        // _ = dataSync.sync { _ in
+        // self.dataSource.performFetch()
+        self.refreshControl?.endRefreshing()
+        self.onRefreshEnd()
+        //}
     }
+}
+
+// MARK: DataSourceSearchable
+import Kingfisher
+extension ListFormCollection: UICollectionViewDataSourcePrefetching {
+
+    open func installDataSourcePrefetching() {
+        self.collectionView?.prefetchDataSource = self
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        //let records = indexPaths.flatMap {dataSo
+
+        // get all image urls from records
+        //let urls: [URL] = [] // records.flatMap {  }
+        //let imagePrefetcher = ImagePrefetcher(urls: urls)
+        //imagePrefetcher.start()
+    }
+
+    // public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {}
 }
 
 // MARK: DataSourceSearchable
@@ -210,7 +250,7 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-        
+
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
@@ -219,7 +259,7 @@ extension ListFormCollection: DataSourceSearchable {
             }
             dataSource?.performFetch()
         }
-        
+
         // XXX API here could load more from network
     }
 
