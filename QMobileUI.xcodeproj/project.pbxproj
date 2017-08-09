@@ -46,7 +46,6 @@
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
-		488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		488D2B0C1E9BD0CF00A8CDCA /* DZNEmptyDataSet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 488D2B0A1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
@@ -221,7 +220,6 @@
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF41EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
 				48E49CFA1EB9DC33002B60AF /* Moya.framework in Frameworks */,
-				488D2B0B1E9BD0B300A8CDCA /* DZNEmptyDataSet.framework in Frameworks */,
 				48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48E49CF11EB9D28D002B60AF /* QMobileDataSync.framework in Frameworks */,
 				48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
@@ -1107,6 +1105,7 @@
 				489C15C61F39AEAB004844F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		489C15C91F39AF78004844F3 /* Build configuration list for PBXLegacyTarget "jazzy" */ = {
 			isa = XCConfigurationList;
@@ -1115,6 +1114,7 @@
 				489C15CB1F39AF78004844F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		48D584581E7830E1006F56B5 /* Build configuration list for PBXProject "QMobileUI" */ = {
 			isa = XCConfigurationList;

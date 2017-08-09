@@ -34,11 +34,9 @@ extension ApplicationLoadDataStore: ApplicationService {
 
         if let mustDrop = Preferences["dataStore.drop.atStart"] as? Bool, mustDrop {
 
-            // drop before loading
+            // drop before loadingb
             drop { [weak self] in
-                self?.load {
-                    
-                }
+                self?.load()
             }
 
         } else {

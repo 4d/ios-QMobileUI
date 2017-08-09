@@ -120,7 +120,7 @@ class DetailsFormTable: QMobileUI.DetailsFormTable {
 
 }
 
-public func alert(title: String, error: Error) {
+public func alert(title: String, error: Swift.Error) {
     QMobileUI.alert(title: title, error: error)
 }
 
@@ -128,8 +128,10 @@ public func alert(title: String, message: String? = nil) {
     QMobileUI.alert(title: title, message: message)
 }
 
-public func dataSync() {
-    QMobileUI.dataSync()
+import QMobileDataSync
+import Moya
+public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHander) -> Cancellable? {
+    return QMobileUI.dataSync(completionHandler)
 }
 
 extension UILabel {
