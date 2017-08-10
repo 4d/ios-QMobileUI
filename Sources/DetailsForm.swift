@@ -53,7 +53,6 @@ extension DetailsForm {
     }
 
     public func previousRecord() {
-
         if let table = self.view.table {
             if let newIndex = table.previousIndexPath {
 

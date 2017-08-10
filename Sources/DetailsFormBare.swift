@@ -76,11 +76,21 @@ open class DetailsFormBare: UIViewController, DetailsForm {
         self.nextRecord()
         checkNavigationBar()
     }
+    
+    @IBAction open func lastRecord(_ sender: Any!) {
+        self.lastRecord()
+        checkNavigationBar()
+    }
+
+    @IBAction open func firstRecord(_ sender: Any!) {
+        self.firstRecord()
+        checkNavigationBar()
+    }
 
     @IBAction func deleteRecord(_ sender: Any!) {
         self.deleteRecord()
+        self.firstRecord() // XXX DELETE go to previous or next record? keep current index? if no more records dismiss view
         checkNavigationBar()
-        // XXX DELETE go to previous or next record? keep current index? if no more records dismiss view
     }
 
     func checkNavigationBar() {
