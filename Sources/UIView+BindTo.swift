@@ -66,7 +66,7 @@ extension UIView {
     // Trying to avoid app crash if bad binding
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
         #if !TARGET_INTERFACE_BUILDER
-            logger.warning("Trying to set value '\(String(describing: value))' on key '\(key)' on view '\(self)")
+            logger.warning("Trying to set value '\(String(unwrappedDescrib: value))' on undefined key '\(key)' on view '\(self)")
         #endif
     }
 

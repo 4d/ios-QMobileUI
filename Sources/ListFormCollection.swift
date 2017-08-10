@@ -134,7 +134,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     // MARK: Collection View
 
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        super.collectionView(collectionView, didSelectItemAt: indexPath)
+        // super.collectionView(collectionView, didSelectItemAt: indexPath)
         // For a selection default behaviour is to show detail...
 
         if onClickShowDetail {
@@ -146,7 +146,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     override open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
+        // super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
+        
+        // could be overrided to add animation on cell appear
+        // could do it here according to a property IB
     }
 
     // MARK: Events
@@ -253,6 +256,8 @@ extension ListFormCollection: DataSourceSearchable {
 
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
+                assert(self.table?.attributes[searchableField] != nil,
+                       "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
             } else {
                 dataSource?.predicate = nil

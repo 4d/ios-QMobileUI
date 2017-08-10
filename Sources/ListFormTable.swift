@@ -81,7 +81,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     // MARK: table view delegate
     open override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        super.tableView(tableView, didSelectRowAt: indexPath)
+        // super.tableView(tableView, didSelectRowAt: indexPath)
         if let record = dataSource.record(at: indexPath) {
             onClicked(record: record, at: indexPath)
         }
@@ -89,7 +89,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     //var triggerTreshold = 10
     open override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
+       // super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
 
        /* Could load more data if pagination 
          if (self.dataSource.items.count - triggerTreshold) == indexPath.row
@@ -277,6 +277,8 @@ extension ListFormTable: DataSourceSearchable {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
+                assert(self.table?.attributes[searchableField] != nil
+                    ,"Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
             } else {
                 dataSource?.predicate = nil

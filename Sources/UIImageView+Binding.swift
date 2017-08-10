@@ -93,5 +93,21 @@ extension UIImageView {
             }
         }
     }
+    
+    public var imageData: Data? {
+        get {
+            guard let image = self.image else {
+                return nil
+            }
+            return UIImagePNGRepresentation(image)
+        }
+        set {
+            if let data = newValue {
+                self.image = UIImage(data: data)
+            } else {
+                self.image = nil
+            }
+        }
+     }
 
 }

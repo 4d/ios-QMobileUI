@@ -209,7 +209,18 @@ open class Binder: NSObject {
                 if let transformer = entry.transformer {
                     view.setValue(transformer.transformedValue(extractedValue), forKey: entry.viewKey)
                 } else {
-                    view.setValue(extractedValue, forKey: entry.viewKey)
+                    var key = entry.viewKey
+                    assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
+                    //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
+                   
+                    if key == "restImage" { // for test purpose, fix type
+                        if extractedValue is Data {
+                            key = "imageData"
+                        } else if extractedValue is UIImage {
+                            key = "image"
+                        }
+                    }
+                    view.setValue(extractedValue, forKey: key)
                 }
             }
         }
@@ -364,3 +375,24 @@ private class KeyPathParser {
 private extension Array {
     var second: Element? { return self.count > 1 ? self[1] : nil }
 }
+
+
+protocol PropertyNames {
+    func hasProperty(name: String) -> Bool
+    var propertyNames: [String] {get}
+}
+
+extension PropertyNames {
+    func hasProperty(name: String) -> Bool{
+        for child in Mirror(reflecting: self).children {
+            if child.label == name {
+                return true
+            }
+        }
+        return false
+    }
+    var propertyNames: [String] {
+        return Mirror(reflecting: self).children.flatMap { $0.label }
+    }
+}
+extension UIView: PropertyNames {}
