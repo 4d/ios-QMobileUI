@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.5.0)
+  - AZDialogView (1.1.4)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
   - DZNEmptyDataSet (1.8.1)
@@ -58,6 +59,7 @@ PODS:
     - ObjcExceptionBridging
 
 DEPENDENCIES:
+  - AZDialogView
   - BrightFutures
   - Guitar
   - IBAnimatable
@@ -92,6 +94,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
+  AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
@@ -114,6 +117,6 @@ SPEC CHECKSUMS:
   Watchdog: 141185b6b3a332a9f5721ea42dfa9681cf2d7c6b
   XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
 
-PODFILE CHECKSUM: e15226924d669642fac5cf4f60ff865ba6ea1cf7
+PODFILE CHECKSUM: 4a2f9c36b50bbb155b2d2b43259d289ca11f8d6f
 
 COCOAPODS: 1.2.0

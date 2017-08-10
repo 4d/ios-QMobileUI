@@ -12,9 +12,9 @@ import Prephirences
 
 //swiftlint:disable identifier_name
 #if DEBUG
-let Settings: MutableCompositePreferences = [Plist(filename: "4d.debug") ?? [:], Plist(filename: "4d") ?? [:]]
+let Settings: MutableCompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
 #else
-let Settings: DictionaryPreferences = Plist(filename: "4d") ?? [:]
+let Settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
 #endif
 let UserDefaults = Foundation.UserDefaults.standard
 var MainBundle = Bundle.main

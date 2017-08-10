@@ -22,19 +22,31 @@ public extension Random {
 
 }
 
-let loggerwatchdog = XCGLogger(identifier: NSStringFromClass(AppDelegate.self), includeDefaultDestinations: true)
+let loggerapp = XCGLogger.forClass(AppDelegate.self)
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var listeners: [NSObjectProtocol] = []
+
     static let threshold = 0.4
 
     let watchdog = Watchdog(threshold: AppDelegate.threshold) {
-        loggerwatchdog.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮")
+        loggerapp.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮")
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+
+        listeners.append(dataStore.onLoad { notif in
+            loggerapp.info("DS load \(notif)")
+        })
+        listeners.append(dataStore.onSave { notif in
+            loggerapp.info("DS save \(notif)")
+        })
+        listeners.append(dataStore.onDrop { notif in
+            loggerapp.info("DS drop \(notif)")
+        })
 
         // ApplicationServices.instance.register(ApplicationStyleKit.instance)
         DispatchQueue.main.after(15) {
@@ -44,8 +56,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
+    func applicationWillResignActive(_ application: UIApplication) {
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        for listener in listeners {
+            dataStore.unobserve(listener)
+        }
+    }
+}
+
+extension AppDelegate {
+
     func fillModel() {
-       // self.testadd(20000)
+      // self.testadd(20000)
     }
 
     func testadd(_ max: Int) {
@@ -96,21 +129,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !added {
             alert(title: "Error when loading model", message: "nothing added to data store queue")
         }
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
     }
 
 }

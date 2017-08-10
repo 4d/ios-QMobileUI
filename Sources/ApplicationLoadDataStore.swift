@@ -31,9 +31,8 @@ extension ApplicationLoadDataStore: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
-
         if let mustDrop = Preferences["dataStore.drop.atStart"] as? Bool, mustDrop {
-
+            
             // drop before loadingb
             drop { [weak self] in
                 self?.load()

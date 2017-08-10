@@ -17,7 +17,23 @@ target 'DemoTabbedApplication' do
   pod 'ValueTransformerKit'
   pod 'RandomKit'
   pod 'BrightFutures'
+  pod 'AZDialogView'
 
   pod 'Watchdog'
 
+end
+
+
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        puts "Updating #{target.name} OTHER_SWIFT_FLAGS"
+        target.build_configurations.each do |config|
+            if config.name == "Debug"
+                config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
+                if !config.build_settings['OTHER_SWIFT_FLAGS'].include? " \"-D\" \"DEBUG\""
+                    config.build_settings['OTHER_SWIFT_FLAGS'] << " \"-D\" \"DEBUG\""
+                end
+            end
+        end
+    end
 end
