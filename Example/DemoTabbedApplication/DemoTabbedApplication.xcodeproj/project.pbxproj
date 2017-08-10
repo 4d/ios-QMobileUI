@@ -194,7 +194,7 @@
 				48E49D221EB9E37E002B60AF /* Info.plist */,
 			);
 			name = XCode;
-			path = ../DemoTabbedApplication;
+			path = ../Xcode;
 			sourceTree = "<group>";
 		};
 		48E49D241EB9E392002B60AF /* Application and Settings */ = {
@@ -601,7 +601,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 58P9JF46LX;
-				INFOPLIST_FILE = DemoTabbedApplication/Info.plist;
+				INFOPLIST_FILE = Xcode/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.4d.DemoTabbedApplication;
@@ -616,7 +616,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 58P9JF46LX;
-				INFOPLIST_FILE = DemoTabbedApplication/Info.plist;
+				INFOPLIST_FILE = Xcode/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.4d.DemoTabbedApplication;

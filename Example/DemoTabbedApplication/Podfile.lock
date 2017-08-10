@@ -1,4 +1,5 @@
 PODS:
+  - Ajimi (0.10.3)
   - Alamofire (4.5.0)
   - AZDialogView (1.1.4)
   - BrightFutures (5.2.0):
@@ -23,6 +24,7 @@ PODS:
     - Prephirences/Core
   - QMobileAPI (0.1.0):
     - Moya
+    - Prephirences
     - SwiftyJSON
     - XCGLogger
   - QMobileDataStore (0.0.1):
@@ -49,6 +51,7 @@ PODS:
   - Result (3.2.3)
   - ShiftOperations (1.0.2)
   - StyleKit (0.5.0)
+  - SwiftMessages (3.4.0)
   - SwiftyJSON (3.1.4)
   - Threadly (1.2.0)
   - ValueTransformerKit (0.0.1)
@@ -59,6 +62,7 @@ PODS:
     - ObjcExceptionBridging
 
 DEPENDENCIES:
+  - Ajimi
   - AZDialogView
   - BrightFutures
   - Guitar
@@ -70,6 +74,7 @@ DEPENDENCIES:
   - QMobileUI (from `../../`)
   - RandomKit
   - StyleKit (from `https://github.com/146BC/StyleKit.git`, branch `develop`)
+  - SwiftMessages
   - SwiftyJSON
   - ValueTransformerKit
   - Watchdog
@@ -93,6 +98,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/146BC/StyleKit.git
 
 SPEC CHECKSUMS:
+  Ajimi: 36f288765cecc55926af22a348933bc1108acc6a
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
@@ -103,7 +109,7 @@ SPEC CHECKSUMS:
   Moya: c37eec09a098ba9991b5a963b291fc5704bdb9ef
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Prephirences: d0ec0bd6047edb3370364345857a769aaf3db312
-  QMobileAPI: 152378e81cd0fcb8a746d33736be8f6fda89fc28
+  QMobileAPI: 607ee8ca8b4aeaaf0bf161455b66bd109c72ab5b
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
   QMobileDataSync: 7604b52d01ff4d7aac86cff9a4dc01090c3e9353
   QMobileUI: 547a3dc8d3e4c69cac88424f7051b57b5798b614
@@ -111,12 +117,13 @@ SPEC CHECKSUMS:
   Result: 128640a6347e8d2ae48b142556739a2d13f90ce6
   ShiftOperations: 702c9aa98d3b20d98dceb71dd8437b562f7ab3ad
   StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
+  SwiftMessages: e20aa1557fde1525ea369361bec4943cc0d08e7c
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   Threadly: b772ed7c1ff4a3f03eb4600bbc5ef83b3be5cb29
   ValueTransformerKit: 4f4ef5383455fde5d01076dfb7016fb5c4874899
   Watchdog: 141185b6b3a332a9f5721ea42dfa9681cf2d7c6b
   XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
 
-PODFILE CHECKSUM: 4a2f9c36b50bbb155b2d2b43259d289ca11f8d6f
+PODFILE CHECKSUM: 67adaffeceae2161854e0f19098c7111b00979ac
 
 COCOAPODS: 1.2.0

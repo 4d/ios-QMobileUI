@@ -36,7 +36,9 @@ class EntityListFormTable: ListFormTable {
 
         var cancellable: Cancellable? = nil
 
-        dialog.addAction(AZDialogAction(title: "Launch") { dialog in
+        let action = AZDialogAction(title: "Launch") { dialog in
+
+            dialog.removeAction(at: 0)
 
             dialog.message = "Updating..."
 
@@ -48,22 +50,37 @@ class EntityListFormTable: ListFormTable {
             indicator.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
             indicator.startAnimating()
 
-           cancellable = dataSync { result in
+            cancellable = dataSync { result in
+
+                dialog.removeAllActions()
 
                 switch result {
                 case .success:
+                    dialog.message = "Success"
                     print("success")
-                case .failure:
-                    print("error")
+                case .failure(let error):
+                    // TODO error sync message
+                    dialog.message = "Failed to synchonize data \(error)"
+
+                    print("error \(error)")
                 }
 
-                  dialog.dismiss()
+                self.refreshEnd()
+
+                let dismissAction = AZDialogAction(title: "Dismiss") { dialog in
+                    dialog.dismiss()
+                }
+                dialog.addAction(dismissAction)
+
+                DispatchQueue.main.after(10) {
+                    dialog.dismiss()
+                }
             }
 
-            self.refreshEnd()
-        })
+        }
+        dialog.addAction(action)
 
-        dialog.addAction(AZDialogAction(title: "Cancel") { dialog in
+       let cancelAction = AZDialogAction(title: "Cancel") { dialog in
 
             cancellable?.cancel()
 
@@ -71,7 +88,9 @@ class EntityListFormTable: ListFormTable {
             dialog.dismiss()
 
             self.refreshEnd()
-        })
+        }
+
+        dialog.addAction(cancelAction)
 
         dialog.show(in: self)
 

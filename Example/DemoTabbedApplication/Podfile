@@ -9,7 +9,6 @@ target 'DemoTabbedApplication' do
   pod 'QMobileUI', :path => '../../'
 
   pod 'SwiftyJSON'
-  pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
 
   pod 'Kingfisher'
   pod 'IBAnimatable'
@@ -17,16 +16,22 @@ target 'DemoTabbedApplication' do
   pod 'ValueTransformerKit'
   pod 'RandomKit'
   pod 'BrightFutures'
-  pod 'AZDialogView'
 
-  pod 'Watchdog'
+# for monitoring
+  pod 'Watchdog' # remove with xcode 9 ???
+  pod 'Ajimi'
+
+# in dev
+  pod 'AZDialogView'
+  pod 'SwiftMessages'
+
+  pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
 
 end
 
-
 post_install do |installer|
+    puts "Updating all targets OTHER_SWIFT_FLAGS to add debug flag to Debug build config"
     installer.pods_project.targets.each do |target|
-        puts "Updating #{target.name} OTHER_SWIFT_FLAGS"
         target.build_configurations.each do |config|
             if config.name == "Debug"
                 config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
