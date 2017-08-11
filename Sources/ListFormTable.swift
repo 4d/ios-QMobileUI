@@ -148,8 +148,8 @@ open class ListFormTable: UITableViewController, ListForm {
     }
 
     open func installDataEmptyView() {
-        self.tableView.emptyDataSetSource = self
-        self.tableView.emptyDataSetDelegate = self
+        //self.tableView.emptyDataSetSource = self
+        //self.tableView.emptyDataSetDelegate = self
     }
 
     open func installSearchBar() {

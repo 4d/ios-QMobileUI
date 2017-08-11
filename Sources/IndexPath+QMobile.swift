@@ -21,7 +21,7 @@ extension IndexPath {
     var isFirstRow: Bool {
         return self.isFirstSection && isFirstRowInSection
     }
-    static let firstRow = IndexPath(row: 0, section: 0)
+    public static let firstRow = IndexPath(row: 0, section: 0)
 
     var isFirstRowInSection: Bool {
         return self.row == 0

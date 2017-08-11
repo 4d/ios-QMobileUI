@@ -188,8 +188,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     open func installDataEmptyView() {
-        self.collectionView?.emptyDataSetSource = self
-        self.collectionView?.emptyDataSetDelegate = self
+        //self.collectionView?.emptyDataSetSource = self
+       // self.collectionView?.emptyDataSetDelegate = self
     }
 
     open func installSearchBar() {
