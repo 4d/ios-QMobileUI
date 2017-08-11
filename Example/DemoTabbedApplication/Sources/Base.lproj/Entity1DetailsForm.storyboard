@@ -15,11 +15,16 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Zpx-P2-MSF" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="gtv-f3-QQt">
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics" barStyle="black"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" barStyle="black" id="gtv-f3-QQt">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Fx1-bU-1Pq">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="2Wt-wN-pVX" kind="relationship" relationship="rootViewController" id="xoa-MI-cQk"/>
                     </connections>
@@ -40,18 +45,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Bn3-3J-fO9">
-                                <rect key="frame" x="39" y="138" width="271" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="bindTo.record.titre" value="text"/>
-                                </userDefinedRuntimeAttributes>
-                            </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="22o-JW-A1b">
-                                <rect key="frame" x="126" y="235" width="42" height="21"/>
+                                <rect key="frame" x="28" y="149" width="292" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -64,13 +59,15 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="wOy-DG-Sxt">
-                        <barButtonItem key="leftBarButtonItem" title="&lt;" id="eu5-VK-lyg">
+                        <barButtonItem key="leftBarButtonItem" image="previous" id="eu5-VK-lyg">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="previousPage:" destination="2Wt-wN-pVX" id="PVc-zb-zhy"/>
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem title="&gt;" id="b0n-1k-5GO">
+                            <barButtonItem image="next" id="b0n-1k-5GO">
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasNext" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
@@ -78,7 +75,8 @@
                                     <action selector="nextRecord:" destination="2Wt-wN-pVX" id="ZM3-wk-Xs9"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="&lt;" id="Oap-lu-z4b">
+                            <barButtonItem image="previous" id="Oap-lu-z4b">
+                                <color key="tintColor" red="0.94975735940835837" green="1" blue="0.99077317025188083" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasPrevious" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
@@ -94,4 +92,8 @@
             <point key="canvasLocation" x="3056.8000000000002" y="-345.87706146926541"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="next" width="22" height="22"/>
+        <image name="previous" width="22" height="22"/>
+    </resources>
 </document>

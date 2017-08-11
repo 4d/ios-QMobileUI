@@ -8,5 +8,25 @@
 	<false/>
 	<key>dataStore.drop.atStart</key>
 	<true/>
+	<key>dataSync.dataStoreDrop</key>
+	<false/>
+	<key>dataSync.deleteRecords</key>
+	<true/>
+	<key>log.showThreadName</key>
+	<true/>
+	<key>log.showLevel</key>
+	<true/>
+	<key>log.showFileNames</key>
+	<true/>
+	<key>log.showLineNumbers</key>
+	<true/>
+	<key>log.showFunctionName</key>
+	<true/>
+	<key>log.showDate</key>
+	<true/>
+	<key>log.showLogIdentifier</key>
+	<false/>
+	<key>log.writeToFile</key>
+	<string>debug.log</string>
 </dict>
 </plist>

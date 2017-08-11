@@ -13,7 +13,7 @@
         <scene sceneID="9by-dT-YGp">
             <objects>
                 <tableViewController title="Table" id="E09-05-0F0" userLabel="Entity List Table controller" customClass="Entity1ListForm" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="102" sectionHeaderHeight="28" sectionFooterHeight="28" id="EA7-97-CCD">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="102" sectionHeaderHeight="28" sectionFooterHeight="28" id="EA7-97-CCD" customClass="AnimatableTableView" customModule="IBAnimatable">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -29,7 +29,7 @@
                                             <rect key="frame" x="16" y="15" width="157" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                            <nil key="textColor"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="bindTo.record.titre" value="text"/>
@@ -39,7 +39,7 @@
                                             <rect key="frame" x="16" y="44" width="136" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <nil key="textColor"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="bindTo.record.field_3" value="decimal"/>
@@ -48,19 +48,37 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <inset key="separatorInset" minX="14" minY="0.0" maxX="6" maxY="0.0"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="fillColor">
+                                        <color key="value" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="removeSeparatorMargins" value="YES"/>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <segue destination="BEE-FE-668" kind="showDetail" identifier="showDetail" customClass="PresentSlideSegue" customModule="IBAnimatable" id="334-AA-F94"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="image" keyPath="backgroundImage" value="testbg"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="E09-05-0F0" id="106-E5-982"/>
                             <outlet property="delegate" destination="E09-05-0F0" id="5E2-94-E74"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Table" image="first" id="D7D-1B-23B"/>
+                    <tabBarItem key="tabBarItem" systemItem="downloads" id="D7D-1B-23B">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.countString" value="badgeValue"/>
+                        </userDefinedRuntimeAttributes>
+                    </tabBarItem>
                     <navigationItem key="navigationItem" id="F42-4A-9A6">
                         <nil key="title"/>
+                        <barButtonItem key="rightBarButtonItem" image="Previous-thin" id="Y7d-pD-PhG">
+                            <connections>
+                                <action selector="testDataSyncOnButton:" destination="E09-05-0F0" id="ear-Tt-uFa"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="searchableField" value="titre"/>
@@ -96,7 +114,7 @@
         <scene sceneID="5kh-Db-Kac">
             <objects>
                 <navigationController hidesBottomBarWhenPushed="YES" id="4C3-67-4B0" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="83A-2D-DE0"/>
+                    <tabBarItem key="tabBarItem" systemItem="downloads" id="83A-2D-DE0"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics" barStyle="black"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="A44-6A-6B0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -116,6 +134,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="first" width="30" height="30"/>
+        <image name="Previous-thin" width="24" height="25"/>
+        <image name="testbg" width="640" height="1136"/>
     </resources>
+    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
 </document>

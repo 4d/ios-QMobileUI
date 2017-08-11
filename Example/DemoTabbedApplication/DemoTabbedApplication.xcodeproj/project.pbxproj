@@ -268,6 +268,37 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		48934E721F3DD7F7003B7DB4 /* pod update */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = update;
+			buildConfigurationList = 48934E751F3DD7F7003B7DB4 /* Build configuration list for PBXLegacyTarget "pod update" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/pod;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = "pod update";
+			passBuildSettingsInEnvironment = 1;
+			productName = "pod update";
+		};
+		48934E761F3DD81E003B7DB4 /* pod cache clean */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "cache clean";
+			buildConfigurationList = 48934E771F3DD81E003B7DB4 /* Build configuration list for PBXLegacyTarget "pod cache clean" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/pod;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = "pod cache clean";
+			passBuildSettingsInEnvironment = 1;
+			productName = "pod cache clean";
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		485CCDBB1E79836800CDB2B3 /* DemoTabbedApplication */ = {
 			isa = PBXNativeTarget;
@@ -307,6 +338,16 @@
 						DevelopmentTeam = 58P9JF46LX;
 						ProvisioningStyle = Automatic;
 					};
+					48934E721F3DD7F7003B7DB4 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 37UG5W39Z2;
+						ProvisioningStyle = Automatic;
+					};
+					48934E761F3DD81E003B7DB4 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 37UG5W39Z2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 485CCDB71E79836800CDB2B3 /* Build configuration list for PBXProject "DemoTabbedApplication" */;
@@ -323,6 +364,8 @@
 			projectRoot = "";
 			targets = (
 				485CCDBB1E79836800CDB2B3 /* DemoTabbedApplication */,
+				48934E721F3DD7F7003B7DB4 /* pod update */,
+				48934E761F3DD81E003B7DB4 /* pod cache clean */,
 			);
 		};
 /* End PBXProject section */
@@ -625,6 +668,60 @@
 			};
 			name = Release;
 		};
+		48934E731F3DD7F7003B7DB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48934E741F3DD7F7003B7DB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		48934E781F3DD81E003B7DB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48934E791F3DD81E003B7DB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -645,6 +742,22 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		48934E751F3DD7F7003B7DB4 /* Build configuration list for PBXLegacyTarget "pod update" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48934E731F3DD7F7003B7DB4 /* Debug */,
+				48934E741F3DD7F7003B7DB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		48934E771F3DD81E003B7DB4 /* Build configuration list for PBXLegacyTarget "pod cache clean" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48934E781F3DD81E003B7DB4 /* Debug */,
+				48934E791F3DD81E003B7DB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 

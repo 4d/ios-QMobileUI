@@ -188,13 +188,15 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="test" id="liS-fj-5x5">
-                        <barButtonItem key="leftBarButtonItem" title="&lt;" id="uny-VU-lHy">
+                        <barButtonItem key="leftBarButtonItem" image="previous" id="uny-VU-lHy">
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="previousPage:" destination="xGZ-Dq-mYF" id="ZZI-FY-o0L"/>
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem title="&gt;" id="nzv-hU-Tdg">
+                            <barButtonItem image="next" id="nzv-hU-Tdg">
+                                <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasNext" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
@@ -202,7 +204,8 @@
                                     <action selector="nextRecord:" destination="xGZ-Dq-mYF" id="BEu-6P-1AH"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="&lt;" id="wFd-O4-IIs">
+                            <barButtonItem image="previous" id="wFd-O4-IIs">
+                                <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.hasPrevious" value="enabled"/>
                                 </userDefinedRuntimeAttributes>
@@ -223,7 +226,7 @@
                 <navigationController hidesBottomBarWhenPushed="YES" id="med-pJ-DMg" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="favorites" id="LuS-zD-SOo"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics" barStyle="black"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="at2-If-Kno">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="at2-If-Kno">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -260,5 +263,8 @@
     </scenes>
     <resources>
         <image name="first" width="30" height="30"/>
+        <image name="next" width="22" height="22"/>
+        <image name="previous" width="22" height="22"/>
     </resources>
+    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
 </document>

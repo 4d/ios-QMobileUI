@@ -113,7 +113,7 @@
         <scene sceneID="PIL-BC-Zv1">
             <objects>
                 <navigationController id="QwE-8p-OPV" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="featured" id="9lk-wp-yUB"/>
+                    <tabBarItem key="tabBarItem" systemItem="bookmarks" id="9lk-wp-yUB"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics" barStyle="black"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="9R1-fo-5Vv">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -209,6 +209,16 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="bindTo.record.alpha" value="text"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="11" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tTf-se-zRn">
+                                        <rect key="frame" x="34" y="269" width="273" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="bindTo.table.count" value="decimal"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -302,4 +312,5 @@
             <point key="canvasLocation" x="1270" y="1252"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
 </document>

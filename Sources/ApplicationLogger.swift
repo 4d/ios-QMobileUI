@@ -82,12 +82,13 @@ extension ApplicationLogger: ApplicationService {
             #endif
         }
 
-        if let writeToFile = writeToFile {
+        if let writeToFile = writeToFile, let writeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(writeToFile) {
+
             let destination: FileDestination
-            if autorotate {
-                destination = FileDestination(writeToFile: writeToFile, identifier: XCGLogger.Constants.fileDestinationIdentifier)
+            if !autorotate {
+                destination = FileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier)
             } else {
-                let autodestination = AutoRotatingFileDestination(writeToFile: writeToFile, identifier: XCGLogger.Constants.fileDestinationIdentifier, shouldAppend: true, appendMarker: nil, archiveSuffixDateFormatter: nil)
+                let autodestination = AutoRotatingFileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier, shouldAppend: true, appendMarker: nil, archiveSuffixDateFormatter: nil)
 
                 if let maxFileSize = maxFileSize {
                     autodestination.targetMaxFileSize = maxFileSize
@@ -101,6 +102,8 @@ extension ApplicationLogger: ApplicationService {
                      #endif
                 }
                 destination = autodestination
+
+                autodestination.cleanUpLogFiles() // XXX maybe do it in task
             }
             destination.showLogIdentifier = showLogIdentifier
             destination.showFunctionName = showFunctionName
@@ -117,6 +120,7 @@ extension ApplicationLogger: ApplicationService {
             }
 
             logger.add(destination: destination)
+            
         }
 
         logger.logAppDetails()

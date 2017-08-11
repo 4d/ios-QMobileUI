@@ -25,8 +25,8 @@ class EntityListFormCollection: ListFormCollection {
 
        //self.collectionView?.collectionViewLayout = listLayout
 
-        self.collectionView?.emptyDataSetSource = self
-        self.collectionView?.emptyDataSetDelegate = self
+       // self.collectionView?.emptyDataSetSource = self
+       // self.collectionView?.emptyDataSetDelegate = self
 
         print(self.refreshControl ?? "")
     }
