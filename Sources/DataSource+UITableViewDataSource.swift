@@ -26,13 +26,13 @@ extension DataSource: UITableViewDataSource {
         if let value = self.delegate?.dataSource?(self, cellIdentifierFor: indexPath) {
             cellIdentifier = value
         }
-        
+
         assert(tableView.dequeueReusableCell(withIdentifier: cellIdentifier) != nil, "Table view cell not well configured in storyboard to \(cellIdentifier)")
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         self.configure(cell, indexPath: indexPath)
         return cell
     }
-    
+
     // MARK: Sections and Headers
 
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {

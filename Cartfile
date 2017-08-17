@@ -11,4 +11,4 @@ github "phimage/Prephirences" # settings
 github "phimage/ValueTransformerKit" # format value
 github "ArtSabintsev/Guitar" # string extension, camel cased etc...
 
-# github 'SwiftKickMobile/SwiftMessages' # display message
+github 'SwiftKickMobile/SwiftMessages' # display message

@@ -12,6 +12,7 @@ import QMobileDataStore
 extension DataSource: FetchedResultsControllerDelegate {
 
     public func controllerWillChangeContent(_ controller: FetchedResultsController) {
+        logger.debug("Updating data source for table \(fetchedResultsController.tableName) start ")
         self.delegate?.dataSourceWillChangeContent?(self)
         if let tableView = self.tableView {
             tableView.beginUpdates()
@@ -69,6 +70,7 @@ extension DataSource: FetchedResultsControllerDelegate {
                 }
             case .delete:
                 if let indexPath = indexPath {
+                    logger.verbose("Delete record \(record) from data source ")
                     tableView.deleteRows(at: [indexPath], with: rowAnimationType)
                     self.delegate?.dataSource?(self, didDeleteRecord: record, atIndexPath: indexPath)
                 }
@@ -126,6 +128,7 @@ extension DataSource: FetchedResultsControllerDelegate {
             collectionChanges.endUpdates(collectionView: collectionView)
         }
         self.delegate?.dataSourceDidChangeContent?(self)
+        logger.debug("Updating data source for table \(fetchedResultsController.tableName) finish ")
     }
 
     public func controller(_ controller: FetchedResultsController, sectionIndexTitleForSectionName sectionName: String) -> String? {

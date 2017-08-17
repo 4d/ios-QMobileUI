@@ -93,7 +93,7 @@ extension UIImageView {
             }
         }
     }
-    
+
     public var imageData: Data? {
         get {
             guard let image = self.image else {

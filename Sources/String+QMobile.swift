@@ -18,14 +18,6 @@ extension String {
         return String(firstLetter)
     }
 
-    public var localized: String {
-        return NSLocalizedString(self, comment: "")
-    }
-
-    public func localized(with comment: String) -> String {
-        return NSLocalizedString(self, comment: comment)
-    }
-
     public var isValidEmail: Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
         let emailTest   = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
@@ -63,6 +55,13 @@ extension String {
         return newString
     }
 
+    init(unwrappedDescrib object: Any?) {
+        if let object = object {
+            self.init(describing: object)
+        } else {
+            self.init(describing: object)
+        }
+    }
 }
 
 extension String {

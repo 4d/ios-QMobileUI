@@ -25,6 +25,10 @@ target 'DemoTabbedApplication' do
   pod 'AZDialogView'
   pod 'SwiftMessages'
 
+
+pod 'NSLogger'
+pod 'XCGLoggerNSLoggerConnector'
+
   pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
 
 end

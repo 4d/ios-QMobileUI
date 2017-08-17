@@ -13,8 +13,8 @@ import QMobileDataSync
 extension ListForm {
 
     public var table: Table? {
-        assert(!ApplicationLoadDataStore.castedInstance.dataSync.tablesByName.isEmpty) // not loaded...
-        return ApplicationLoadDataStore.castedInstance.dataSync.tablesByName[self.tableName]
+        assert(!ApplicationDataSync.dataSync.tablesByName.isEmpty) // not loaded...
+        return ApplicationDataSync.dataSync.tablesByName[self.tableName]
     }
 
 }

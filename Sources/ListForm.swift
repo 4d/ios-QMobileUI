@@ -41,11 +41,11 @@ extension ListForm {
         logger.error("Looking for class \(className) to determine the type of records to load. But no class with this name found in the project. Check your data model.")
         abstractMethod(className: className)
     }
-    
+
     public var firstRecord: Record? {
         return dataSource.record(at: IndexPath.firstRow)
     }
-    
+
     public var lastRecord: Record? {
         guard let index = dataSource.lastIndexPath else {
             return nil

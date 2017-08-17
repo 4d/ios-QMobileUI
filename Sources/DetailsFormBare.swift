@@ -76,7 +76,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
         self.nextRecord()
         checkNavigationBar()
     }
-    
+
     @IBAction open func lastRecord(_ sender: Any!) {
         self.lastRecord()
         checkNavigationBar()

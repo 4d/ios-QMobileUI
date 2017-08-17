@@ -61,6 +61,9 @@
                         </prototypes>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="image" keyPath="backgroundImage" value="testbg"/>
+                            <userDefinedRuntimeAttribute type="color" keyPath="refreshControlTintColor">
+                                <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="E09-05-0F0" id="106-E5-982"/>
@@ -74,7 +77,7 @@
                     </tabBarItem>
                     <navigationItem key="navigationItem" id="F42-4A-9A6">
                         <nil key="title"/>
-                        <barButtonItem key="rightBarButtonItem" image="Previous-thin" id="Y7d-pD-PhG">
+                        <barButtonItem key="rightBarButtonItem" image="successIconSubtle" id="Y7d-pD-PhG">
                             <connections>
                                 <action selector="testDataSyncOnButton:" destination="E09-05-0F0" id="ear-Tt-uFa"/>
                             </connections>
@@ -134,7 +137,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Previous-thin" width="24" height="25"/>
+        <image name="successIconSubtle" width="21" height="18"/>
         <image name="testbg" width="640" height="1136"/>
     </resources>
     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>

@@ -297,6 +297,20 @@
 			passBuildSettingsInEnvironment = 1;
 			productName = "pod cache clean";
 		};
+		48AE2C641F457C630013FDEE /* open 4D base */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = Entity.4dbase;
+			buildConfigurationList = 48AE2C671F457C630013FDEE /* Build configuration list for PBXLegacyTarget "open 4D base" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/open;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = "open 4D base";
+			passBuildSettingsInEnvironment = 1;
+			productName = "Open 4D base";
+		};
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
@@ -348,6 +362,11 @@
 						DevelopmentTeam = 37UG5W39Z2;
 						ProvisioningStyle = Automatic;
 					};
+					48AE2C641F457C630013FDEE = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 37UG5W39Z2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 485CCDB71E79836800CDB2B3 /* Build configuration list for PBXProject "DemoTabbedApplication" */;
@@ -366,6 +385,7 @@
 				485CCDBB1E79836800CDB2B3 /* DemoTabbedApplication */,
 				48934E721F3DD7F7003B7DB4 /* pod update */,
 				48934E761F3DD81E003B7DB4 /* pod cache clean */,
+				48AE2C641F457C630013FDEE /* open 4D base */,
 			);
 		};
 /* End PBXProject section */
@@ -722,6 +742,33 @@
 			};
 			name = Release;
 		};
+		48AE2C651F457C630013FDEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48AE2C661F457C630013FDEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 37UG5W39Z2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -750,6 +797,7 @@
 				48934E741F3DD7F7003B7DB4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		48934E771F3DD81E003B7DB4 /* Build configuration list for PBXLegacyTarget "pod cache clean" */ = {
 			isa = XCConfigurationList;
@@ -758,6 +806,16 @@
 				48934E791F3DD81E003B7DB4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48AE2C671F457C630013FDEE /* Build configuration list for PBXLegacyTarget "open 4D base" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48AE2C651F457C630013FDEE /* Debug */,
+				48AE2C661F457C630013FDEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

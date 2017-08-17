@@ -20,3 +20,14 @@ public extension DispatchQueue {
     }
 
 }
+
+
+extension OperationQueue {
+    
+    public convenience init(underlyingQueue: DispatchQueue) {
+        self.init()
+        self.underlyingQueue = underlyingQueue
+    }
+    
+}
+

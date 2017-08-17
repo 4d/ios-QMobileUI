@@ -39,8 +39,12 @@ open class ListFormTable: UITableViewController, ListForm {
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
 
-        dataSource.tableConfigurationBlock = { [unowned self] cell, record, index in
-            self.configureListFormView(cell, record, index)
+        dataSource.tableConfigurationBlock = { [weak self] cell, record, index in
+            self?.configureListFormView(cell, record, index)
+
+            if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {
+                self?.openLastRow()
+            }
         }
 
         dataSource.delegate = self
@@ -137,6 +141,8 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
     open func onClicked(record: Record, at index: IndexPath) {}
 
+    func openLastRow() {}
+    
     // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
@@ -189,7 +195,7 @@ open class ListFormTable: UITableViewController, ListForm {
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
 
-        //let dataSync = ApplicationLoadDataStore.castedInstance.dataSync
+        //let dataSync = ApplicationDataStore.castedInstance.dataSync
         // _ = dataSync.sync { _ in
         // self.dataSource.performFetch()
         self.refreshControl?.endRefreshing()
@@ -277,8 +283,8 @@ extension ListFormTable: DataSourceSearchable {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
-                assert(self.table?.attributes[searchableField] != nil
-                    ,"Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
+                assert(self.table?.attributes[searchableField] != nil,
+                       "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
             } else {
                 dataSource?.predicate = nil

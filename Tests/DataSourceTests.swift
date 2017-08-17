@@ -145,12 +145,47 @@ class DataSourceTests: XCTestCase {
         
         self.waitForExpectations(timeout: timeout, handler: waitHandler)
     }
+    
+    
+    func testDeleteInTableView() {
+        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil)
+        let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
+        let expectation = self.expectation(description: "Deleted object not retrieve in table view in data source")
+        
+        let randomString = UUID().uuidString
+        dataSource. = { [unowned self] cell, record, index in
+            if record[self.field] as? String == randomString {
+                expectation.fulfill()
+            }
+        }
+        
+        tableView.dataSource = dataSource
+        tableView.reloadData()
+        
+        let result = dataStore.perform(.background) { [unowned self] context, save in
+            let predicate = NSPredicate.false
+            do {
+                let done = try context.delete(in: self.tableName, matching: predicate)
+            
+            } catch {
+                XCTFail(" Failed to delete \(error)")
+            }
+            
+            try! save()
+        }
+        XCTAssertTrue(result, "store not loaded to perform task")
+        
+        self.waitForExpectations(timeout: timeout, handler: waitHandler)
+    }
 
 }
 
 extension DataStore {
     
-    func dropAndLoad(completionHandler: QMobileDataStore.CompletionHandler?) {
+    func dropAndLoad(completionHandler: QMobileDataStore.DataStore.CompletionHandler?) {
         drop { _ in
             self.load(completionHandler: completionHandler)
         }

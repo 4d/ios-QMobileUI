@@ -45,7 +45,7 @@ public class DataSourceEntry: NSObject {
     dynamic open var count: Int {
         return self.dataSource.count
     }
-    
+
     dynamic open var countString: String {
         return String(self.count)
     }

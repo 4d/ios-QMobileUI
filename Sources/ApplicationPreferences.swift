@@ -10,15 +10,12 @@ import UIKit
 
 import Prephirences
 
-//swiftlint:disable identifier_name
 #if DEBUG
-let Settings: MutableCompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
+let settings: MutableCompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
 #else
-let Settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
+let settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
 #endif
-let UserDefaults = Foundation.UserDefaults.standard
-var MainBundle = Bundle.main
-let Preferences: MutableCompositePreferences = [Settings, UserDefaults, MainBundle]
+let preferences: MutableCompositePreferences = [settings, Foundation.UserDefaults.standard, Bundle.main]
 
 class ApplicationPreferences: NSObject {}
 
@@ -27,7 +24,7 @@ extension ApplicationPreferences: ApplicationService {
     static var instance: ApplicationService = ApplicationPreferences()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
-        Prephirences.sharedInstance = Preferences
+        Prephirences.sharedInstance = preferences
     }
 
 }

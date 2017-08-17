@@ -133,6 +133,9 @@ import Moya
 public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHander) -> Cancellable? {
     return QMobileUI.dataSync(completionHandler)
 }
+public func dataLastSync() -> Date? {
+    return QMobileUI.dataLastSync()
+}
 
 extension UILabel {
 

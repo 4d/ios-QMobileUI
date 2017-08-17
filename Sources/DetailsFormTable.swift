@@ -78,12 +78,12 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
         checkNavigationBar()
         checkTable()
     }
-    
+
     @IBAction open func lastRecord(_ sender: Any!) {
         self.lastRecord()
         checkNavigationBar()
     }
-    
+
     @IBAction open func firstRecord(_ sender: Any!) {
         self.firstRecord()
         checkNavigationBar()

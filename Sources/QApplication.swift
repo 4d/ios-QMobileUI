@@ -49,7 +49,10 @@ open class QApplication: UIApplication {
         services.register(ApplicationStepLogging.instance)
 
         // Load the mobile database
-        services.register(ApplicationLoadDataStore.instance)
+        services.register(ApplicationDataStore.instance)
+
+        // Manage data sync
+        services.register(ApplicationDataSync.instance)
 
         // Load transformers for formatting
         services.register(ApplicationValueTransformers.instance)

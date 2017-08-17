@@ -7,10 +7,31 @@
 //
 
 import UIKit
+import QMobileAPI
 
 // Use some Formatter to bind label
 public extension UILabel {
 
+    
+    // MARK: - string
+    
+    /// Display a data with RFC 822 format
+    dynamic public var localized: String? {
+        get {
+            guard let localized = self.text else {
+                return nil
+            }
+            return localized // Cannot undo it...
+        }
+        set {
+            guard let string = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = string.localized
+        }
+    }
+    
     // MARK: - date
 
     /// Display a data with RFC 822 format

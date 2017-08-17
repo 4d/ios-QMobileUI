@@ -19,10 +19,12 @@ extension ApplicationLogger: ApplicationService {
 
     static var instance: ApplicationService = ApplicationLogger()
 
+    var logPref: PreferencesType {
+        return ProxyPreferences(preferences: preferences, key: "log.")
+    }
+
     // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
-
-        let logPref = ProxyPreferences(preferences:  Preferences, key: "log.")
 
         let showThreadName = logPref["showThreadName"] as? Bool ?? true
         let showLevel = logPref["showLevel"] as? Bool ?? true
@@ -115,12 +117,10 @@ extension ApplicationLogger: ApplicationService {
             destination.outputLevel = fileLevel ?? level
             destination.logQueue = XCGLogger.logQueue
 
-            if let formatter = formatter {
-                destination.formatters = [formatter.formatter]
-            }
-
-            logger.add(destination: destination)
+            destination.formatters = [LogFormatter.ansi.formatter]
             
+            logger.add(destination: destination)
+
         }
 
         logger.logAppDetails()

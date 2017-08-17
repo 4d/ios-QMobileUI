@@ -13,6 +13,8 @@ import QMobileUI
 import StyleKit
 import RandomKit
 import Watchdog
+import NSLogger
+import XCGLoggerNSLoggerConnector
 
 public extension Random {
 
@@ -52,6 +54,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DispatchQueue.main.after(15) {
             self.fillModel()
         }
+
+        LoggerSetOptions(LoggerGetDefaultLogger(), UInt32( kLoggerOption_BufferLogsUntilConnection | kLoggerOption_BrowseBonjour | kLoggerOption_BrowseOnlyLocalDomain ))
+        LoggerStart(LoggerGetDefaultLogger())
+        loggerapp.add(destination: XCGNSLoggerLogDestination(owner: loggerapp, identifier: "nslogger.identifier"))
+
         return true
 
     }
