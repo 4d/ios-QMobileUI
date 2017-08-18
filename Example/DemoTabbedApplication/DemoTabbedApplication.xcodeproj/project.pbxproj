@@ -10,6 +10,7 @@
 		480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43461E83FAB8007C90DD /* Entity+TestImage.swift */; };
 		480B43491E840208007C90DD /* a.style.json in Resources */ = {isa = PBXBuildFile; fileRef = 480B43481E840208007C90DD /* a.style.json */; };
 		482C59BA1EE55A0F009B7B49 /* Entity1.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */; };
+		4843784B1F46FE69004C5101 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4843784A1F46FE69004C5101 /* Logger.swift */; };
 		4851FB631EBB277300922638 /* Entity.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 4851FB621EBB277300922638 /* Entity.catalog.json */; };
 		485AF1C91EBA1B24000F89D8 /* EntityTable.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485AF1C71EBA1B24000F89D8 /* EntityTable.storyboard */; };
 		485AF1CC1EBA1C41000F89D8 /* EntityTableCategory.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */; };
@@ -53,6 +54,7 @@
 		480B43461E83FAB8007C90DD /* Entity+TestImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+TestImage.swift"; sourceTree = "<group>"; };
 		480B43481E840208007C90DD /* a.style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a.style.json; sourceTree = "<group>"; };
 		482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity1.catalog.json; sourceTree = "<group>"; };
+		4843784A1F46FE69004C5101 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		4851FB621EBB277300922638 /* Entity.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity.catalog.json; sourceTree = "<group>"; };
 		485AF1C81EBA1B24000F89D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/EntityTable.storyboard; sourceTree = "<group>"; };
 		485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = EntityTableCategory.storyboard; path = ../EntityTableCategory.storyboard; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				48E49D281EB9F9AE002B60AF /* ApplicationStyleKit.swift */,
 				48E49D191EB9E101002B60AF /* Settings.plist */,
 				48E49D1B1EB9E121002B60AF /* Settings.debug.plist */,
+				4843784A1F46FE69004C5101 /* Logger.swift */,
 			);
 			name = "Application and Settings";
 			sourceTree = "<group>";
@@ -503,6 +506,7 @@
 				480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */,
 				48E61B4B1F3C4D1F00C560BB /* Entity1ListForm.swift in Sources */,
 				48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */,
+				4843784B1F46FE69004C5101 /* Logger.swift in Sources */,
 				48E49D291EB9F9AE002B60AF /* ApplicationStyleKit.swift in Sources */,
 				485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */,
 				485CCDC21E79836800CDB2B3 /* EntityListFormTable.swift in Sources */,

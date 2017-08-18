@@ -1,5 +1,4 @@
 PODS:
-  - Ajimi (0.10.3)
   - Alamofire (4.5.0)
   - AZDialogView (1.1.4)
   - BrightFutures (5.2.0):
@@ -7,6 +6,7 @@ PODS:
   - Guitar (0.2.0)
   - IBAnimatable (4.1.0)
   - Kingfisher (3.11.0)
+  - LinearProgressBarMaterial (1.2)
   - Moya (8.0.5):
     - Moya/Core (= 8.0.5)
   - Moya/Core (8.0.5):
@@ -18,6 +18,7 @@ PODS:
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
+  - PinpointKit/ScreenshotDetector (1.0.0)
   - Prephirences (3.0.2):
     - Prephirences/Core (= 3.0.2)
     - Prephirences/Keys (= 3.0.2)
@@ -62,18 +63,21 @@ PODS:
     - XCGLogger/Core (= 5.0.1)
   - XCGLogger/Core (5.0.1):
     - ObjcExceptionBridging
+  - XCGLogger/UserInfoHelpers (5.0.1):
+    - XCGLogger/Core
   - XCGLoggerNSLoggerConnector (0.3.2):
     - NSLogger (>= 1.5)
     - XCGLogger (>= 4.0)
 
 DEPENDENCIES:
-  - Ajimi
   - AZDialogView
   - BrightFutures
   - Guitar
   - IBAnimatable
   - Kingfisher
+  - LinearProgressBarMaterial
   - NSLogger
+  - PinpointKit/ScreenshotDetector
   - QMobileAPI (from `../../../QMobileAPI`)
   - QMobileDataStore (from `../../../QMobileDataStore`)
   - QMobileDataSync (from `../../../QMobileDataSync`)
@@ -84,6 +88,7 @@ DEPENDENCIES:
   - SwiftyJSON
   - ValueTransformerKit
   - Watchdog
+  - XCGLogger/UserInfoHelpers
   - XCGLoggerNSLoggerConnector
 
 EXTERNAL SOURCES:
@@ -105,16 +110,17 @@ CHECKOUT OPTIONS:
     :git: https://github.com/146BC/StyleKit.git
 
 SPEC CHECKSUMS:
-  Ajimi: 36f288765cecc55926af22a348933bc1108acc6a
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
   Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
   IBAnimatable: 0fd2c9fd38c4798d71bcc18dbd87d473a7df2577
   Kingfisher: c8911a7672c6217dec8c0520fb6e76ec4b7e0780
+  LinearProgressBarMaterial: f025b1ec6ecd08bcd4dfc6fecba4fb263d8a545b
   Moya: c37eec09a098ba9991b5a963b291fc5704bdb9ef
   NSLogger: c9b80dbeee1d65eb553647a1f6f1f72171b04808
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
+  PinpointKit: fd9421e22c6567f2bec16d1f39fc70a3fce5df87
   Prephirences: 221058c335f48945c4f2049d2b54d333a9bddc21
   QMobileAPI: 607ee8ca8b4aeaaf0bf161455b66bd109c72ab5b
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
@@ -132,6 +138,6 @@ SPEC CHECKSUMS:
   XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
   XCGLoggerNSLoggerConnector: e13ec54445594d87f4a938fd6c2a6672cd0b4b85
 
-PODFILE CHECKSUM: c72af3592f646d209f2620ba56037cd90cc93537
+PODFILE CHECKSUM: 80e9fa95e06355fd6299c31609515e5805f8f647
 
 COCOAPODS: 1.2.0

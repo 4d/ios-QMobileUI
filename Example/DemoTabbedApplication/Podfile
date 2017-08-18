@@ -8,6 +8,9 @@ target 'DemoTabbedApplication' do
   pod 'QMobileAPI', :path => '../../../QMobileAPI'
   pod 'QMobileUI', :path => '../../'
 
+
+  pod 'XCGLogger/UserInfoHelpers'
+
   pod 'SwiftyJSON'
 
   pod 'Kingfisher'
@@ -19,13 +22,16 @@ target 'DemoTabbedApplication' do
 
 # for monitoring
   pod 'Watchdog' # remove with xcode 9 ???
-  pod 'Ajimi'
+  pod 'PinpointKit/ScreenshotDetector'
 
 # in dev
   pod 'AZDialogView'
   pod 'SwiftMessages'
+  
+  pod 'LinearProgressBarMaterial'
 
 
+# in debuging
 pod 'NSLogger'
 pod 'XCGLoggerNSLoggerConnector'
 

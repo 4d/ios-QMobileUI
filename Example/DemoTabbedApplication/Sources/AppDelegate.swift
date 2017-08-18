@@ -9,12 +9,15 @@
 import UIKit
 import XCGLogger
 import QMobileDataStore
+import QMobileDataSync
 import QMobileUI
+import QMobileAPI
 import StyleKit
 import RandomKit
 import Watchdog
 import NSLogger
 import XCGLoggerNSLoggerConnector
+import LinearProgressBarMaterial
 
 public extension Random {
 
@@ -24,8 +27,6 @@ public extension Random {
 
 }
 
-let loggerapp = XCGLogger.forClass(AppDelegate.self)
-
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
@@ -34,20 +35,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static let threshold = 0.4
 
-    let watchdog = Watchdog(threshold: AppDelegate.threshold) {
-        loggerapp.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮")
-    }
+    var watchdog: Watchdog?
+    let linearBar: LinearProgressBar = LinearProgressBar()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        LoggerSetOptions(LoggerGetDefaultLogger(), UInt32( kLoggerOption_BufferLogsUntilConnection | kLoggerOption_BrowseBonjour | kLoggerOption_BrowseOnlyLocalDomain ))
+        LoggerStart(LoggerGetDefaultLogger())
+        loggerapp.add(destination: XCGNSLoggerLogDestination(owner: loggerapp, identifier: "nslogger.identifier"))
+
+        watchdog = Watchdog(threshold: AppDelegate.threshold) {
+            loggerapp.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮", userInfo:  Domain.monitor | Dev.eric | Tag.demo)
+        }
+
         listeners.append(dataStore.onLoad { notif in
-            loggerapp.info("DS load \(notif)")
+            loggerapp.info("DS load \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo | Image.done)
         })
         listeners.append(dataStore.onSave { notif in
-            loggerapp.info("DS save \(notif)")
+            loggerapp.info("DS save \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo)
         })
         listeners.append(dataStore.onDrop { notif in
-            loggerapp.info("DS drop \(notif)")
+            loggerapp.info("DS drop \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo)
         })
 
         // ApplicationServices.instance.register(ApplicationStyleKit.instance)
@@ -55,9 +63,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.fillModel()
         }
 
-        LoggerSetOptions(LoggerGetDefaultLogger(), UInt32( kLoggerOption_BufferLogsUntilConnection | kLoggerOption_BrowseBonjour | kLoggerOption_BrowseOnlyLocalDomain ))
-        LoggerStart(LoggerGetDefaultLogger())
-        loggerapp.add(destination: XCGNSLoggerLogDestination(owner: loggerapp, identifier: "nslogger.identifier"))
+        listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
+
+            self.linearBar.startAnimation()
+        })
+        listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { _ in
+
+            self.linearBar.stopAnimation()
+        })
+        listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { _ in
+
+            self.linearBar.stopAnimation()
+        })
+
+        /*
+        DataSync.instance.rest.plugins += [PreparePlugin { request, _ in
+            DispatchQueue.main.async {
+            }
+            return request
+            }]
+
+        DataSync.instance.rest.plugins += [ReceivePlugin { _, _ in
+            DispatchQueue.main.async {
+            }
+            }]*/
 
         return true
 

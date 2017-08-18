@@ -41,7 +41,7 @@ extension ApplicationLogger: ApplicationService {
         let levelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "level")
         levelPref.transformation = XCGLogger.Level.preferenceTransformation
         #if DEBUG
-            let level: XCGLogger.Level = levelPref.value ?? .debug
+            let level: XCGLogger.Level = levelPref.value ?? .verbose
         #else
             let level: XCGLogger.Level = levelPref.value ?? .info
         #endif

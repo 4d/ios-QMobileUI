@@ -64,6 +64,10 @@
                             <userDefinedRuntimeAttribute type="color" keyPath="refreshControlTintColor">
                                 <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="refreshControlBackgroundColor">
+                                <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="hasRefreshControl" value="YES"/>
                         </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="E09-05-0F0" id="106-E5-982"/>

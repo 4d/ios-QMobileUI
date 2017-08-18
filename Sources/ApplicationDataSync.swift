@@ -140,35 +140,40 @@ extension ApplicationDataSync: DataSyncDelegate {
     }
 
     public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
-        let messageView = MessageView.viewFromNib(layout: .CardView)
-        messageView.configureTheme(.success)
-        messageView.configureDropShadow()
-        messageView.configureContent(body: "Data updated")
-        messageView.button?.isHidden = true
-        var successConfig = SwiftMessages.defaultConfig
-        successConfig.preferredStatusBarStyle = .lightContent
-        successConfig.presentationContext = .window(windowLevel: UIWindowLevelNormal)
-        messageView.titleLabel?.isHidden = true
-        
-        SwiftMessages.show(config: successConfig, view: messageView)
+        SwiftMessages.displayConfirmation("Data updated")
     }
 
     public func didDataSyncFailed(error: Swift.Error) {
-        let messageView = MessageView.viewFromNib(layout: .TabView)
-        messageView.button?.setTitle("Ok", for: .normal)
-        messageView.configureTheme(.error)
-        
-        var config = SwiftMessages.defaultConfig
-        config.presentationStyle = .top
-        config.presentationContext = .window(windowLevel: UIWindowLevelNormal)
-
         if let error = error as? LocalizedError {
-            messageView.configureContent(title: error.errorDescription ?? "An error occurs", body: error.failureReason ?? "")
+            SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
         }
-
-        messageView.bodyLabel?.isHidden = (messageView.bodyLabel?.text ?? "").isEmpty
-        
-        SwiftMessages.show(config: config, view: messageView)
     }
 
+}
+
+
+extension SwiftMessages {
+   static func displayConfirmation(_ message: String) {
+        let view = MessageView.viewFromNib(layout: .StatusLine)
+        view.configureTheme(.success)
+        view.configureDropShadow()
+        view.configureContent(body: message)
+        view.configureTheme(backgroundColor: UIColor(red: 30/255, green: 200/255, blue: 80/255, alpha: 1), foregroundColor: UIColor.white)
+        var config = SwiftMessages.Config()
+        config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
+        config.duration = .seconds(seconds: 0.8)
+        SwiftMessages.show(config: config, view: view)
+    }
+    
+    static func displayError(title: String, message: String) {
+        let view = MessageView.viewFromNib(layout: .CardView)
+        view.configureTheme(.error)
+        view.configureContent(title: title, body: message)
+        view.button?.isHidden = true
+        view.tapHandler = { _ in SwiftMessages.hide() }
+        var config = SwiftMessages.Config()
+        config.duration = .seconds(seconds: 1.0)
+        config.dimMode = .gray(interactive: true)
+        SwiftMessages.show(config: config, view: view)
+    }
 }

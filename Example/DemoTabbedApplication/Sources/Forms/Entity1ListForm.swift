@@ -49,13 +49,12 @@ class Entity1ListForm: ListFormTable {
 
         let date: Date? = dataLastSync()  ?? Date() // remove default date
         if let date = date {
-            if let refresh = self as? RefreshControlDesignable {
-                
-            }
-            self.refreshControl?.title = NSAttributedString("Last sync "+DateFormatter.fullDate.string(from: date)
-        } else {)
+
+            self.refreshControl?.title = "Last sync "+DateFormatter.fullDate.string(from: date)
+        } else {
             self.refreshControl?.title = ""
         }
+        self.refreshControl?.tintColor = .white // DEMO
         let cancellable = dataSync { _ in
 
             self.refreshControl?.endRefreshing()
