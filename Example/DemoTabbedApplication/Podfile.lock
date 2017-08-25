@@ -3,6 +3,7 @@ PODS:
   - AZDialogView (1.1.4)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
+  - FileKit (4.0.1)
   - Guitar (0.2.0)
   - IBAnimatable (4.1.0)
   - Kingfisher (3.11.0)
@@ -36,6 +37,7 @@ PODS:
     - XCGLogger
   - QMobileDataSync (0.0.1):
     - BrightFutures
+    - FileKit
     - Prephirences
     - QMobileAPI
     - QMobileDataStore
@@ -113,6 +115,7 @@ SPEC CHECKSUMS:
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
+  FileKit: 1ea916f594bc0bb9a3951f80edf92b52bb7f883c
   Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
   IBAnimatable: 0fd2c9fd38c4798d71bcc18dbd87d473a7df2577
   Kingfisher: c8911a7672c6217dec8c0520fb6e76ec4b7e0780
@@ -124,7 +127,7 @@ SPEC CHECKSUMS:
   Prephirences: 221058c335f48945c4f2049d2b54d333a9bddc21
   QMobileAPI: 607ee8ca8b4aeaaf0bf161455b66bd109c72ab5b
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
-  QMobileDataSync: 7604b52d01ff4d7aac86cff9a4dc01090c3e9353
+  QMobileDataSync: d6d1ed920f50b49eb510f6e21be7facbf9cdaa2a
   QMobileUI: 1e4880967c1b076c69219c196dd180d6593c2141
   RandomKit: 380745911c4f7989707489b2ce297194bfcf5031
   Result: 128640a6347e8d2ae48b142556739a2d13f90ce6

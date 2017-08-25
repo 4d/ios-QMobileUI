@@ -51,29 +51,30 @@ class EntityListFormTable: ListFormTable {
             indicator.startAnimating()
 
             cancellable = dataSync { result in
+                DispatchQueue.main.async {
+                    dialog.removeAllActions()
 
-                dialog.removeAllActions()
+                    switch result {
+                    case .success:
+                        dialog.message = "Success"
+                        print("success")
+                    case .failure(let error):
+                        // TODO error sync message
+                        dialog.message = "Failed to synchonize data \(error)"
 
-                switch result {
-                case .success:
-                    dialog.message = "Success"
-                    print("success")
-                case .failure(let error):
-                    // TODO error sync message
-                    dialog.message = "Failed to synchonize data \(error)"
+                        print("error \(error)")
+                    }
 
-                    print("error \(error)")
-                }
+                    self.refreshEnd()
 
-                self.refreshEnd()
+                    let dismissAction = AZDialogAction(title: "Dismiss") { dialog in
+                        dialog.dismiss()
+                    }
+                    dialog.addAction(dismissAction)
 
-                let dismissAction = AZDialogAction(title: "Dismiss") { dialog in
-                    dialog.dismiss()
-                }
-                dialog.addAction(dismissAction)
-
-                DispatchQueue.main.after(10) {
-                    dialog.dismiss()
+                    DispatchQueue.main.after(10) {
+                        dialog.dismiss()
+                    }
                 }
             }
 
