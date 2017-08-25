@@ -19,6 +19,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
     @IBInspectable open var hasRefreshControl: Bool = false
+    @IBInspectable open var searchOperator = "contains" // beginwith, endwitch
+    @IBInspectable open var searchSensitivity = "cd"
      public var refreshControl: UIRefreshControl?
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
@@ -256,9 +258,10 @@ extension ListFormCollection: DataSourceSearchable {
 
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
+                assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
                 assert(self.table?.attributes[searchableField] != nil,
                        "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
-                dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
+                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchableField, searchText)
             } else {
                 dataSource?.predicate = nil
             }

@@ -63,16 +63,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.fillModel()
         }
 
+        // swiftlint:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
-
             self.linearBar.startAnimation()
         })
+        // swiftlint:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { _ in
-
             self.linearBar.stopAnimation()
         })
+        // swiftlint:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { _ in
-
             self.linearBar.stopAnimation()
         })
 

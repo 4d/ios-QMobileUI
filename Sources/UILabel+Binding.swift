@@ -9,6 +9,26 @@
 import UIKit
 import QMobileAPI
 
+extension Bundle {
+    /// Bundle used to get binded localized value, default .main bundle of your application
+     @nonobjc open static var uiBinding: Bundle = .main
+}
+
+extension String {
+    
+    var localizedBinding: String {
+        return NSLocalizedString(self, bundle: .uiBinding, comment: "")
+    }
+    
+    var localizedFramework: String {
+        return NSLocalizedString(self, bundle: Bundle(for: Binder.self), comment: "")
+    }
+    
+    func localized(with comment: String = "", bundle: Bundle = Bundle(for: Binder.self)) -> String {
+        return NSLocalizedString(self, bundle: bundle, comment: comment)
+    }
+}
+
 // Use some Formatter to bind label
 public extension UILabel {
 
@@ -28,7 +48,7 @@ public extension UILabel {
                 self.text = nil
                 return
             }
-            self.text = string.localized
+            self.text = string.localizedBinding
         }
     }
     
@@ -207,10 +227,10 @@ public extension UILabel {
             guard let text = self.text else {
                 return false
             }
-            return text == "Yes".localized
+            return text == "Yes".localizedFramework
         }
         set {
-            text = newValue ? "Yes".localized: "No".localized
+            text = newValue ? "Yes".localizedFramework: "No".localizedFramework
         }
     }
 
@@ -220,10 +240,10 @@ public extension UILabel {
             guard let text = self.text else {
                 return false
             }
-            return text == "True".localized
+            return text == "True".localizedFramework
         }
         set {
-            text = newValue ? "True".localized: "False".localized
+            text = newValue ? "True".localizedFramework: "False".localizedFramework
         }
     }
 

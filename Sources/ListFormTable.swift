@@ -19,6 +19,8 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
     @IBOutlet open var searchBar: UISearchBar!
+    @IBInspectable open var searchOperator = "contains" // beginwith, endwitch
+    @IBInspectable open var searchSensitivity = "cd"
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
@@ -283,9 +285,10 @@ extension ListFormTable: DataSourceSearchable {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
-                assert(self.table?.attributes[searchableField] != nil,
+                assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
+                assert(self.table?.attributes[searchableField] != nil, // XXX maybe a mapped field, try to map to core data field?
                        "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
-                dataSource?.predicate = NSPredicate(format: "\(searchableField) contains[c] %@", searchText)
+                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
             } else {
                 dataSource?.predicate = nil
             }
