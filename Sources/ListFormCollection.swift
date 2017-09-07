@@ -29,6 +29,12 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
+    @IBInspectable open var showSectionBar: Bool = true {
+        didSet {
+            dataSource?.showSection =  showSectionBar
+        }
+    }
+
     /// On click execute transition to show record details.
     /// Set to false, to not execute transition and manage your own code in onClicked()
     @IBInspectable open var onClickShowDetail: Bool = true
@@ -149,7 +155,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     override open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
-        
+
         // could be overrided to add animation on cell appear
         // could do it here according to a property IB
     }

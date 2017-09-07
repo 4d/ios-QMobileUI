@@ -49,6 +49,15 @@ class ListFormTable: QMobileUI.ListFormTable {
             super.searchBar = newValue
         }
     }
+
+    @IBInspectable open override var showSectionBar: Bool {
+        get {
+            return super.showSectionBar
+        }
+        set {
+            super.showSectionBar = newValue
+        }
+    }
 }
 
 @IBDesignable
@@ -90,6 +99,15 @@ class ListFormCollection: QMobileUI.ListFormCollection {
         }
     }
 
+    @IBInspectable open override var showSectionBar: Bool {
+        get {
+            return super.showSectionBar
+        }
+        set {
+            super.showSectionBar = newValue
+        }
+    }
+
 }
 
 @IBDesignable
@@ -120,6 +138,25 @@ class DetailsFormTable: QMobileUI.DetailsFormTable {
 
 }
 
+func background(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.background.async(execute: work)
+}
+func background(_ delay: TimeInterval, execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.background.after(delay, execute: work)
+}
+
+func foreground(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.main.async(execute: work)
+}
+
+func userInitiated(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.userInitiated.async(execute: work)
+}
+
+func userInteractive(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.userInteractive.async(execute: work)
+}
+
 public func alert(title: String, error: Swift.Error) {
     QMobileUI.alert(title: title, error: error)
 }
@@ -130,9 +167,14 @@ public func alert(title: String, message: String? = nil) {
 
 import QMobileDataSync
 import Moya
-public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHander) -> Cancellable? {
+public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
     return QMobileUI.dataSync(completionHandler)
 }
+
+public func dataReload(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
+    return QMobileUI.dataReload(completionHandler)
+}
+
 public func dataLastSync() -> Date? {
     return QMobileUI.dataLastSync()
 }

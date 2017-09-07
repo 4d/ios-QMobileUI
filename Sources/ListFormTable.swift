@@ -30,7 +30,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     @IBInspectable open var showSectionBar: Bool = true {
         didSet {
-            DataSource.showSection =  showSectionBar
+           dataSource?.showSection =  showSectionBar
         }
     }
 
@@ -144,7 +144,7 @@ open class ListFormTable: UITableViewController, ListForm {
     open func onClicked(record: Record, at index: IndexPath) {}
 
     func openLastRow() {}
-    
+
     // MARK: Install components
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute

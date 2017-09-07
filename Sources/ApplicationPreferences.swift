@@ -15,7 +15,7 @@ let settings: MutableCompositePreferences = [Plist(filename: "Settings.debug") ?
 #else
 let settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
 #endif
-let preferences: MutableCompositePreferences = [settings, Foundation.UserDefaults.standard, Bundle.main]
+let preferences: MutableCompositePreferences = [Foundation.UserDefaults.standard, settings, Bundle.main]
 
 class ApplicationPreferences: NSObject {}
 
@@ -27,4 +27,11 @@ extension ApplicationPreferences: ApplicationService {
         Prephirences.sharedInstance = preferences
     }
 
+    func applicationDidEnterBackground(_ application: UIApplication) {
+       Foundation.UserDefaults.standard.synchronize() // save mutable to disk
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        Foundation.UserDefaults.standard.synchronize() // save mutable to disk
+    }
 }

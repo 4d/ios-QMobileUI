@@ -41,9 +41,9 @@ extension ApplicationDataSync: ApplicationService {
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
-        
+
         let ds = dataSync.dataStore
-        
+
         listeners += [ds.onLoad(queue: operationQueue) { [weak self] _ in
             if !(self?.syncAtStartDone ?? true) {
                 self?.syncAtStart()
@@ -68,7 +68,7 @@ extension ApplicationDataSync: ApplicationService {
             logger.debug("\(notification)")
         }]
     }
-    
+
     public func applicationWillTerminate(_ application: UIApplication) {
         applicationWillTerminate = true
         let cancel = servicePreferences["cancel.atEnd"] as? Bool ?? true
@@ -92,26 +92,32 @@ extension ApplicationDataSync: ApplicationService {
             ApplicationDataSync.dataSync.cancel()
         }
     }
-    
+
     func syncAtStart() {
         syncAtStartDone = true
-        let sync = self.servicePreferences["sync.atStart"] as? Bool ?? true
+        let sync = self.servicePreferences["sync.atStart"] as? Bool ?? false
         if sync {
             let dataSync = ApplicationDataSync.dataSync
             _ = dataSync.sync { _ in
-                
+
             }
         }
     }
 
 }
 
-public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHander) -> Cancellable? {
+public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
     return ApplicationDataSync.dataSync.sync(completionHandler)
 }
 
+public func dataReload(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
+    return ApplicationDataSync.dataSync.reload(completionHandler)
+}
+
 public func dataLastSync() -> Date? {
-    return nil // ApplicationDataSync.dataSync.dataStore?.
+    let dataStore = ApplicationDataSync.dataSync.dataStore
+    var metadata = dataStore.metadata
+    return metadata?.lastSync
 }
 
 extension ApplicationDataSync: DataSyncDelegate {
@@ -135,22 +141,20 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     }
 
-    public func didDataSyncFailed(for table: QMobileAPI.Table, error: Swift.Error) {
+    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError) {
 
     }
 
     public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
         SwiftMessages.displayConfirmation("Data updated")
     }
-
-    public func didDataSyncFailed(error: Swift.Error) {
-        if let error = error as? LocalizedError {
-            SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
-        }
+    
+    public func didDataSyncFailed(error: DataSyncError) {
+        SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
+        
     }
-
+    
 }
-
 
 extension SwiftMessages {
    static func displayConfirmation(_ message: String) {
@@ -164,7 +168,7 @@ extension SwiftMessages {
         config.duration = .seconds(seconds: 0.8)
         SwiftMessages.show(config: config, view: view)
     }
-    
+
     static func displayError(title: String, message: String) {
         let view = MessageView.viewFromNib(layout: .CardView)
         view.configureTheme(.error)

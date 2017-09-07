@@ -74,7 +74,7 @@ extension DataSource: UICollectionViewDataSource {
             return
         }
 
-        let result = self.fetchedResultsController.fetchKeyPath(keyPath, ascending: ascending)
+        let result = self.fetchedResultsController.fetch(keyPath: keyPath, ascending: ascending)
         collectionChanges.cachedSectionNames.append(contentsOf: result)
     }
 

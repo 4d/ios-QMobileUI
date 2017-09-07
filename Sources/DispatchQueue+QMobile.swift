@@ -21,13 +21,15 @@ public extension DispatchQueue {
 
 }
 
+func background(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.background.async(execute: work)
+}
 
 extension OperationQueue {
-    
+
     public convenience init(underlyingQueue: DispatchQueue) {
         self.init()
         self.underlyingQueue = underlyingQueue
     }
-    
-}
 
+}

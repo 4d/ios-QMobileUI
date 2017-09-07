@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Prephirences
 
 /// Object to remap KVC binding
 open class Binder: NSObject {
@@ -30,6 +31,19 @@ open class Binder: NSObject {
             }
         }
     }
+    
+    fileprivate static let settingsKey = "settings"
+    open var settings: PreferencesType? {
+        get {
+            return Prephirences.sharedInstance
+        }
+        set {
+            if let pref = newValue {
+                Prephirences.sharedInstance = pref
+            }
+        }
+    }
+    
 
     // entry created by undefined key set to this object
     fileprivate var entries = [KeyPathEntry]()
@@ -52,7 +66,7 @@ open class Binder: NSObject {
     }
 
     open override func value(forKey key: String) -> Any? {
-        if [Binder.recordVarKey, Binder.tableVarKey].contains(key) {
+        if [Binder.recordVarKey, Binder.tableVarKey, Binder.settingsKey].contains(key) {
             self.keyPaths.append(key)
             return self
         } else {
@@ -86,7 +100,7 @@ open class Binder: NSObject {
             var localVarKey: String? = nil
 
             for pathComponent in self.keyPaths {
-                if [Binder.recordVarKey, Binder.tableVarKey].contains(pathComponent) {
+                if [Binder.recordVarKey, Binder.tableVarKey, Binder.settingsKey].contains(pathComponent) {
                     localVarKey = pathComponent
                 } else {
                     if localVarKey == nil {
@@ -172,6 +186,8 @@ open class Binder: NSObject {
     }
 
     fileprivate var updateViewOnDidSet = true
+    
+    
 
     /*
     internal func beginUpdateView() {
@@ -200,19 +216,25 @@ open class Binder: NSObject {
             }
         } else { // record
 
-            guard let record = self.record else {
-                return // maybe ui component loading
-            }
             if let view = entry.view {
-                let extractedValue = record.value(forKeyPath: entry.keyPath)
-
+                var extractedValue: Any? = nil
+                switch entry.localVarKey ?? "" {
+                case "record":
+                    if let record = self.record  {
+                        extractedValue = record.value(forKeyPath: entry.keyPath)
+                    }
+                case "settings":
+                    extractedValue = self.settings?[entry.keyPath]
+                default:
+                    extractedValue = nil
+                }
                 if let transformer = entry.transformer {
                     view.setValue(transformer.transformedValue(extractedValue), forKey: entry.viewKey)
                 } else {
                     var key = entry.viewKey
                     assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
                     //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
-
+                    
                     if key == "restImage" { // for test purpose, fix type
                         if extractedValue is Data {
                             key = "imageData"
@@ -225,7 +247,7 @@ open class Binder: NSObject {
             }
         }
     }
-
+    
     // MARK: parsers
     // Find view according to pathComponent in view hierarchy
     fileprivate func view(for view: UIView?, pathComponent: String) -> UIView? {
@@ -237,6 +259,9 @@ open class Binder: NSObject {
             if result != nil {
                 return result
             }
+        }
+        if pathComponent == "settings" {
+            return view
         }
         assert(result != nil, "Unable to find view \(pathComponent)")
         return result
@@ -314,9 +339,9 @@ private class KeyPathEntry {
     weak var view: UIView?
     // the bintTo attribute to bind (record, table) -> XXX add a closure instead ?
     var localVarKey: String?
-
-   var transformer: ValueTransformer?
-
+    
+    var transformer: ValueTransformer?
+    
     init(keyPath: String, viewKey: String, view: UIView?, localVarKey: String?) {
         self.keyPath = keyPath
         self.viewKey = viewKey

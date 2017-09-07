@@ -72,6 +72,13 @@ extension DateFormatter {
         return formatter
     }()
 
+    open static let shortDateAndTime: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter
+    }()
+
 }
 
 /// Time formatter based on DateFormatter

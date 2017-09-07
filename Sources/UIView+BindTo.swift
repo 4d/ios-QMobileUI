@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Prephirences
 
 private var xoAssociationKey: UInt8 = 0
 public typealias BindedRecord = AnyObject // XXX replace by Record?
@@ -43,7 +44,18 @@ extension UIView {
             self.bindTo.record = newValue
         }
     }
-
+    
+    open var settings: PreferencesType? {
+        get {
+            return Prephirences.sharedInstance
+        }
+        set {
+            if let pref = newValue {
+                Prephirences.sharedInstance = pref
+            }
+        }
+    }
+    
     dynamic open var hasRecord: Bool {
         if !hasBindTo {
             return false

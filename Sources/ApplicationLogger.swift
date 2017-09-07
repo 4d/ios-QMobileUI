@@ -118,7 +118,7 @@ extension ApplicationLogger: ApplicationService {
             destination.logQueue = XCGLogger.logQueue
 
             destination.formatters = [LogFormatter.ansi.formatter]
-            
+
             logger.add(destination: destination)
 
         }

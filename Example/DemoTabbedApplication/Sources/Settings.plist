@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>dataSync.sync.atStart</key>
-	<true/>
+	<false/>
 	<key>server.url</key>
 	<string>http://192.168.5.14</string>
 </dict>

@@ -11,6 +11,8 @@
 		480B43491E840208007C90DD /* a.style.json in Resources */ = {isa = PBXBuildFile; fileRef = 480B43481E840208007C90DD /* a.style.json */; };
 		482C59BA1EE55A0F009B7B49 /* Entity1.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */; };
 		4843784B1F46FE69004C5101 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4843784A1F46FE69004C5101 /* Logger.swift */; };
+		4851C3AA1F600A800014280D /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */; };
+		4851C3AC1F600AB70014280D /* SettingsServerSectionFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */; };
 		4851FB631EBB277300922638 /* Entity.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 4851FB621EBB277300922638 /* Entity.catalog.json */; };
 		485AF1C91EBA1B24000F89D8 /* EntityTable.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485AF1C71EBA1B24000F89D8 /* EntityTable.storyboard */; };
 		485AF1CC1EBA1C41000F89D8 /* EntityTableCategory.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */; };
@@ -33,6 +35,8 @@
 		48E61B501F3C4D8600C560BB /* Entity1ListForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48E61B4E1F3C4D8600C560BB /* Entity1ListForm.storyboard */; };
 		48E61B521F3C4DB700C560BB /* Entity1DetailsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E61B511F3C4DB700C560BB /* Entity1DetailsForm.swift */; };
 		48E61B551F3C4E7E00C560BB /* Entity1DetailsForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48E61B531F3C4E7E00C560BB /* Entity1DetailsForm.storyboard */; };
+		48FBBF9C1F53E5F900E920B6 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */; };
+		48FBBF9F1F53E66500E920B6 /* SettingsForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */; };
 		6BC8EB5A71A397FFF6C823E2 /* Pods_DemoTabbedApplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7296E82E14607BA8B098BBFA /* Pods_DemoTabbedApplication.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +59,8 @@
 		480B43481E840208007C90DD /* a.style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a.style.json; sourceTree = "<group>"; };
 		482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity1.catalog.json; sourceTree = "<group>"; };
 		4843784A1F46FE69004C5101 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsServerSectionFooter.swift; sourceTree = "<group>"; };
+		4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsServerSectionFooter.xib; sourceTree = "<group>"; };
 		4851FB621EBB277300922638 /* Entity.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity.catalog.json; sourceTree = "<group>"; };
 		485AF1C81EBA1B24000F89D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/EntityTable.storyboard; sourceTree = "<group>"; };
 		485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = EntityTableCategory.storyboard; path = ../EntityTableCategory.storyboard; sourceTree = "<group>"; };
@@ -79,6 +85,8 @@
 		48E61B4F1F3C4D8600C560BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Sources/Base.lproj/Entity1ListForm.storyboard; sourceTree = SOURCE_ROOT; };
 		48E61B511F3C4DB700C560BB /* Entity1DetailsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Entity1DetailsForm.swift; path = Sources/Entity1DetailsForm.swift; sourceTree = SOURCE_ROOT; };
 		48E61B541F3C4E7E00C560BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Sources/Base.lproj/Entity1DetailsForm.storyboard; sourceTree = SOURCE_ROOT; };
+		48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
+		48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SettingsForm.storyboard; sourceTree = "<group>"; };
 		7296E82E14607BA8B098BBFA /* Pods_DemoTabbedApplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoTabbedApplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFA62FA9874A8CF9C95AA524 /* Pods-DemoTabbedApplication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoTabbedApplication.release.xcconfig"; path = "Pods/Target Support Files/Pods-DemoTabbedApplication/Pods-DemoTabbedApplication.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +110,13 @@
 				DFA62FA9874A8CF9C95AA524 /* Pods-DemoTabbedApplication.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		4836C03A1F5D72A900FDCBF5 /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Licenses;
 			sourceTree = "<group>";
 		};
 		485CCDB31E79836800CDB2B3 = {
@@ -149,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				48E49D1F1EB9E316002B60AF /* Tables Forms */,
+				48FBBF9D1F53E62600E920B6 /* Settings */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -259,6 +275,18 @@
 				48E61B511F3C4DB700C560BB /* Entity1DetailsForm.swift */,
 			);
 			name = Entity1;
+			sourceTree = "<group>";
+		};
+		48FBBF9D1F53E62600E920B6 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4836C03A1F5D72A900FDCBF5 /* Licenses */,
+				48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */,
+				48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */,
+				4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */,
+				4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */,
+			);
+			name = Settings;
 			sourceTree = "<group>";
 		};
 		6B925BD3D3904BD1B8E98D5B /* Frameworks */ = {
@@ -401,6 +429,7 @@
 				48E61B501F3C4D8600C560BB /* Entity1ListForm.storyboard in Resources */,
 				485CCDCC1E79836800CDB2B3 /* LaunchScreen.storyboard in Resources */,
 				48E49D1A1EB9E101002B60AF /* Settings.plist in Resources */,
+				4851C3AC1F600AB70014280D /* SettingsServerSectionFooter.xib in Resources */,
 				485AF1C91EBA1B24000F89D8 /* EntityTable.storyboard in Resources */,
 				485CCDC91E79836800CDB2B3 /* Assets.xcassets in Resources */,
 				48E49D1C1EB9E121002B60AF /* Settings.debug.plist in Resources */,
@@ -409,6 +438,7 @@
 				4851FB631EBB277300922638 /* Entity.catalog.json in Resources */,
 				480B43491E840208007C90DD /* a.style.json in Resources */,
 				482C59BA1EE55A0F009B7B49 /* Entity1.catalog.json in Resources */,
+				48FBBF9F1F53E66500E920B6 /* SettingsForm.storyboard in Resources */,
 				48E61B551F3C4E7E00C560BB /* Entity1DetailsForm.storyboard in Resources */,
 				485AF1CC1EBA1C41000F89D8 /* EntityTableCategory.storyboard in Resources */,
 			);
@@ -498,6 +528,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				485CCDC41E79836800CDB2B3 /* EntityListFormCollection.swift in Sources */,
+				4851C3AA1F600A800014280D /* SettingsServerSectionFooter.swift in Sources */,
 				48E49D181EB9DDC3002B60AF /* Embedded.swift in Sources */,
 				48639DF31EA766DF00D52E08 /* main.swift in Sources */,
 				48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */,
@@ -506,6 +537,7 @@
 				480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */,
 				48E61B4B1F3C4D1F00C560BB /* Entity1ListForm.swift in Sources */,
 				48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */,
+				48FBBF9C1F53E5F900E920B6 /* SettingsForm.swift in Sources */,
 				4843784B1F46FE69004C5101 /* Logger.swift in Sources */,
 				48E49D291EB9F9AE002B60AF /* ApplicationStyleKit.swift in Sources */,
 				485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */,

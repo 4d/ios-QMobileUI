@@ -15,15 +15,15 @@ extension Bundle {
 }
 
 extension String {
-    
+
     var localizedBinding: String {
         return NSLocalizedString(self, bundle: .uiBinding, comment: "")
     }
-    
+
     var localizedFramework: String {
         return NSLocalizedString(self, bundle: Bundle(for: Binder.self), comment: "")
     }
-    
+
     func localized(with comment: String = "", bundle: Bundle = Bundle(for: Binder.self)) -> String {
         return NSLocalizedString(self, bundle: bundle, comment: comment)
     }
@@ -32,9 +32,8 @@ extension String {
 // Use some Formatter to bind label
 public extension UILabel {
 
-    
     // MARK: - string
-    
+
     /// Display a data with RFC 822 format
     dynamic public var localized: String? {
         get {
@@ -51,7 +50,7 @@ public extension UILabel {
             self.text = string.localizedBinding
         }
     }
-    
+
     // MARK: - date
 
     /// Display a data with RFC 822 format

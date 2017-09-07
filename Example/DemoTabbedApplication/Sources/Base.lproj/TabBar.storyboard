@@ -24,6 +24,7 @@
                         <segue destination="L1d-b4-N0p" kind="relationship" relationship="viewControllers" id="pWH-h8-1nl"/>
                         <segue destination="WVa-zE-3Xl" kind="relationship" relationship="viewControllers" id="EMD-0b-ui4"/>
                         <segue destination="0TN-Mg-lNF" kind="relationship" relationship="viewControllers" id="mRp-KM-Iry"/>
+                        <segue destination="vy7-JR-IZJ" kind="relationship" relationship="viewControllers" id="puz-wO-jid"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
@@ -58,7 +59,17 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hok-wn-FJk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-225" y="868"/>
+            <point key="canvasLocation" x="-375" y="867"/>
+        </scene>
+        <!--SettingsForm-->
+        <scene sceneID="H1K-at-uQL">
+            <objects>
+                <viewControllerPlaceholder storyboardName="SettingsForm" id="vy7-JR-IZJ" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Settings" image="Settings-thin" selectedImage="Settings-thin" id="XgT-We-Qtt"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cYs-I3-lZl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-139" y="867"/>
         </scene>
         <!--EntityCollection-->
         <scene sceneID="Eo2-BX-HWo">
@@ -71,5 +82,8 @@
             <point key="canvasLocation" x="-881" y="868"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Settings-thin" width="24" height="25"/>
+    </resources>
     <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
 </document>
