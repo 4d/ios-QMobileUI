@@ -44,7 +44,7 @@ extension UIView {
             self.bindTo.record = newValue
         }
     }
-    
+
     open var settings: PreferencesType? {
         get {
             return Prephirences.sharedInstance
@@ -55,7 +55,7 @@ extension UIView {
             }
         }
     }
-    
+
     dynamic open var hasRecord: Bool {
         if !hasBindTo {
             return false

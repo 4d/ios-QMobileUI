@@ -31,7 +31,7 @@ open class Binder: NSObject {
             }
         }
     }
-    
+
     fileprivate static let settingsKey = "settings"
     open var settings: PreferencesType? {
         get {
@@ -43,7 +43,6 @@ open class Binder: NSObject {
             }
         }
     }
-    
 
     // entry created by undefined key set to this object
     fileprivate var entries = [KeyPathEntry]()
@@ -186,8 +185,6 @@ open class Binder: NSObject {
     }
 
     fileprivate var updateViewOnDidSet = true
-    
-    
 
     /*
     internal func beginUpdateView() {
@@ -220,7 +217,7 @@ open class Binder: NSObject {
                 var extractedValue: Any? = nil
                 switch entry.localVarKey ?? "" {
                 case "record":
-                    if let record = self.record  {
+                    if let record = self.record {
                         extractedValue = record.value(forKeyPath: entry.keyPath)
                     }
                 case "settings":
@@ -234,7 +231,7 @@ open class Binder: NSObject {
                     var key = entry.viewKey
                     assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
                     //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
-                    
+
                     if key == "restImage" { // for test purpose, fix type
                         if extractedValue is Data {
                             key = "imageData"
@@ -247,7 +244,7 @@ open class Binder: NSObject {
             }
         }
     }
-    
+
     // MARK: parsers
     // Find view according to pathComponent in view hierarchy
     fileprivate func view(for view: UIView?, pathComponent: String) -> UIView? {
@@ -339,9 +336,9 @@ private class KeyPathEntry {
     weak var view: UIView?
     // the bintTo attribute to bind (record, table) -> XXX add a closure instead ?
     var localVarKey: String?
-    
+
     var transformer: ValueTransformer?
-    
+
     init(keyPath: String, viewKey: String, view: UIView?, localVarKey: String?) {
         self.keyPath = keyPath
         self.viewKey = viewKey

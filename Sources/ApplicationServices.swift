@@ -129,6 +129,14 @@ fileprivate extension Notification {
     }
 }
 
+extension ApplicationServices {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) {
+        services.forEach { service in
+            service.application?(app, open: url, options: options)
+        }
+    }
+}
+
 private extension ApplicationServices {
 
     @objc func application(didFinishLaunching notification: Notification) {
@@ -178,9 +186,7 @@ private extension ApplicationServices {
             let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplicationOpenURLOptionsKey : Any] else {
                 return
         }
-        services.forEach { service in
-            service.application?(notification.application, open: url, options: options)
-        }
+        application(notification.application, open: url, options: options)
     }
 
     @objc func application(didRegisterForRemoteWithDeviceToken notification: Notification) {

@@ -11,7 +11,7 @@ import Foundation
 // A temp file allow fast cocoapod developement allowing to inject code in dev pods when new files must be created
 
 extension UITextInput {
-    
+
     public var cursorPosition: Int? {
         get {
             if let selectedRange = self.selectedTextRange {
@@ -30,14 +30,14 @@ extension UITextInput {
             }
         }
     }
-    
+
 }
 extension RawRepresentable where RawValue == Int {
-    
+
     public var indexSet: IndexSet {
         return IndexSet(integer: rawValue)
     }
-    
+
     public static func == (section: Self, value: Int) -> Bool {
         return section.rawValue == value
     }
@@ -45,10 +45,10 @@ extension RawRepresentable where RawValue == Int {
 }
 
 extension UITableViewController {
-    
+
     public func reload<S: RawRepresentable>(section: S) where S.RawValue == Int {
         assert(Thread.isMainThread)
         self.tableView.reloadSections(section.indexSet, with: .none)
     }
-    
+
 }

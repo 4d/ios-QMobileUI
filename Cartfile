@@ -7,6 +7,7 @@ github "onevcat/Kingfisher" # image download
 
 github "DaveWoodCom/XCGLogger" # logger
 github "phimage/Prephirences" # settings
+github "phimage/CallbackURLKit" # action using url
 
 github "phimage/ValueTransformerKit" # format value
 github "ArtSabintsev/Guitar" # string extension, camel cased etc...

@@ -30,7 +30,7 @@ extension ApplicationPreferences: ApplicationService {
     func applicationDidEnterBackground(_ application: UIApplication) {
        Foundation.UserDefaults.standard.synchronize() // save mutable to disk
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         Foundation.UserDefaults.standard.synchronize() // save mutable to disk
     }

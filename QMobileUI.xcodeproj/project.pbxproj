@@ -22,6 +22,8 @@
 		480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392C81E92A03F008CF992 /* DataSourceSearchable.swift */; };
 		480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392CA1E92A181008CF992 /* NumberFormatter+QMobile.swift */; };
 		480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */; };
+		4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */; };
+		4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */; };
 		480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */; };
 		480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434E1E842198007C90DD /* UIScreen+QMobile.swift */; };
 		480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43501E84225C007C90DD /* UISwitch+QMobile.swift */; };
@@ -131,6 +133,8 @@
 		480392C81E92A03F008CF992 /* DataSourceSearchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceSearchable.swift; sourceTree = "<group>"; };
 		480392CA1E92A181008CF992 /* NumberFormatter+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+QMobile.swift"; sourceTree = "<group>"; };
 		480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+QMobile.swift"; sourceTree = "<group>"; };
+		4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationXCallbackURL.swift; sourceTree = "<group>"; };
+		4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallbackURLKit.framework; path = Carthage/Build/iOS/CallbackURLKit.framework; sourceTree = "<group>"; };
 		480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+BackgroundColors.swift"; sourceTree = "<group>"; };
 		480B434E1E842198007C90DD /* UIScreen+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+QMobile.swift"; sourceTree = "<group>"; };
 		480B43501E84225C007C90DD /* UISwitch+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISwitch+QMobile.swift"; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 				48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
 				48E49CF81EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
 				48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */,
+				4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */,
 				48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
 				48FB2CD51E93A22600F4F685 /* Kingfisher.framework in Frameworks */,
 			);
@@ -453,6 +458,7 @@
 				48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */,
 				48E49CE81EB9CA70002B60AF /* ApplicationPreferences.swift */,
 				48E49CE91EB9CA70002B60AF /* ApplicationValueTransformers.swift */,
+				4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -505,6 +511,7 @@
 			children = (
 				48AE2C5F1F45754D0013FDEE /* Cartfile */,
 				48AE2C601F4575590013FDEE /* Cartfile.resolved */,
+				4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */,
 				48AE2C611F4577A40013FDEE /* BrightFutures.framework */,
 				48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */,
 				48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */,
@@ -729,6 +736,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ValueTransformerKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/BrightFutures.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CallbackURLKit.framework",
 			);
 			name = carthage;
 			outputPaths = (
@@ -806,6 +814,7 @@
 				480392AE1E92930A008CF992 /* UIBarButtonItem+BindTo.swift in Sources */,
 				48D584801E783447006F56B5 /* DataSource.swift in Sources */,
 				48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */,
+				4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */,
 				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,

@@ -1,13 +1,16 @@
 PODS:
-  - Alamofire (4.5.0)
+  - Alamofire (4.5.1)
   - AZDialogView (1.1.4)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
+  - CallbackURLKit (1.0.1):
+    - CallbackURLKit/Core (= 1.0.1)
+  - CallbackURLKit/Core (1.0.1)
   - DeviceKit (1.2.3)
   - FileKit (4.0.1)
   - Guitar (0.2.0)
   - IBAnimatable (4.1.0)
-  - Kingfisher (3.12.2)
+  - Kingfisher (3.13.0)
   - LinearProgressBarMaterial (1.2)
   - Moya (9.0.0):
     - Moya/Core (= 9.0.0)
@@ -45,6 +48,7 @@ PODS:
     - QMobileDataStore
     - XCGLogger
   - QMobileUI (0.0.1):
+    - CallbackURLKit
     - Guitar
     - Kingfisher
     - QMobileDataStore
@@ -58,7 +62,7 @@ PODS:
   - Result (3.2.3)
   - ShiftOperations (1.0.2)
   - StyleKit (0.5.0)
-  - SwiftMessages (3.4.0)
+  - SwiftMessages (3.5.0)
   - SwiftyJSON (3.1.4)
   - Threadly (1.2.0)
   - ValueTransformerKit (0.0.1)
@@ -114,14 +118,15 @@ CHECKOUT OPTIONS:
     :git: https://github.com/146BC/StyleKit.git
 
 SPEC CHECKSUMS:
-  Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
   BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
+  CallbackURLKit: c7f1b649a717541e8beea180d286ecc30f85f302
   DeviceKit: f33cbc6e67d9bb416e42dedc647557c7c2f6d3d7
   FileKit: 1ea916f594bc0bb9a3951f80edf92b52bb7f883c
   Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
   IBAnimatable: 0fd2c9fd38c4798d71bcc18dbd87d473a7df2577
-  Kingfisher: 320626678acadfcf47008b3c6841cd882050737b
+  Kingfisher: 7eebf6000ac64401839f10da37f21eefa7d88970
   LinearProgressBarMaterial: f025b1ec6ecd08bcd4dfc6fecba4fb263d8a545b
   Moya: cf5e6ee93af526532f92614004b8ad2ea60fd845
   NSLogger: c9b80dbeee1d65eb553647a1f6f1f72171b04808
@@ -131,12 +136,12 @@ SPEC CHECKSUMS:
   QMobileAPI: bd9eecd1aba82ec4f56632498719bc70e0ac9f05
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
   QMobileDataSync: d6d1ed920f50b49eb510f6e21be7facbf9cdaa2a
-  QMobileUI: 1e4880967c1b076c69219c196dd180d6593c2141
+  QMobileUI: 7442df3bf333522ca27f9262f279fca6bcc549dd
   RandomKit: 380745911c4f7989707489b2ce297194bfcf5031
   Result: 128640a6347e8d2ae48b142556739a2d13f90ce6
   ShiftOperations: 702c9aa98d3b20d98dceb71dd8437b562f7ab3ad
   StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
-  SwiftMessages: e20aa1557fde1525ea369361bec4943cc0d08e7c
+  SwiftMessages: 323c2847255ebf380f01b95ad1121a750be4d117
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   Threadly: b772ed7c1ff4a3f03eb4600bbc5ef83b3be5cb29
   ValueTransformerKit: 4f4ef5383455fde5d01076dfb7016fb5c4874899

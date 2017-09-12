@@ -4,4 +4,50 @@
    <FileRef
       location = "group:QMobileUI.xcodeproj">
    </FileRef>
+   <Group
+      location = "container:"
+      name = "ThirdParty">
+      <FileRef
+         location = "group:Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/DeviceKit/DeviceKit.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/FileKit/FileKit.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Kingfisher/Kingfisher.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/XCGLogger/XCGLogger.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Prephirences/Prephirences.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Moya/Moya.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Result/Result.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/ValueTransformerKit/ValueTransformerKit.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/QMobileAPI/QMobileAPI.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/QMobileDataStore/QMobileDataStore.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/QMobileDataSync/QMobileDataSync.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Alamofire/../CallbackURLKit/CallbackURLKit.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
+      </FileRef>
+   </Group>
 </Workspace>

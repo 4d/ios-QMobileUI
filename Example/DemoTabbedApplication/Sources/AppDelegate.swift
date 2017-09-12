@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LoggerSetOptions(LoggerGetDefaultLogger(), UInt32( kLoggerOption_BufferLogsUntilConnection | kLoggerOption_BrowseBonjour | kLoggerOption_BrowseOnlyLocalDomain ))
         LoggerStart(LoggerGetDefaultLogger())
         loggerapp.add(destination: XCGNSLoggerLogDestination(owner: loggerapp, identifier: "nslogger.identifier"))
+        loggerapp.add(destination: AppleSystemLogDestination(owner: loggerapp, identifier: "apple"))
 
         watchdog = Watchdog(threshold: AppDelegate.threshold) {
             loggerapp.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮", userInfo:  Domain.monitor | Dev.eric | Tag.demo)
@@ -108,6 +109,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         for listener in listeners {
             dataStore.unobserve(listener)
         }
+    }
+ 
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        let services = ApplicationServices.instance
+        services.application(app, open: url, options: options)
+        return true
     }
 }
 

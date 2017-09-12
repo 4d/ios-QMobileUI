@@ -56,6 +56,15 @@ open class QApplication: UIApplication {
 
         // Load transformers for formatting
         services.register(ApplicationValueTransformers.instance)
-    }
 
+        // x-callback-url
+        services.register(ApplicationXCallbackURL.instance)
+    }
+    
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        let services = ApplicationServices.instance
+        services.application(app, open: url, options: options)
+        return true
+    }
+    
 }

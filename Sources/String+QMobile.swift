@@ -62,6 +62,10 @@ extension String {
             self.init(describing: object)
         }
     }
+
+    var boolValue: Bool {
+        return (Int(self) ?? 0) != 0
+    }
 }
 
 extension String {

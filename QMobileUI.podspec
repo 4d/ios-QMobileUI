@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
   s.dependency "Guitar"
   s.dependency "ValueTransformerKit"
   s.dependency "SwiftMessages"
+  s.dependency "CallbackURLKit"
   s.dependency "QMobileDataStore"
   s.dependency "QMobileDataSync"
 
