@@ -9,6 +9,8 @@
 import Foundation
 import CallbackURLKit
 import XCGLogger
+import FileKit
+
 import QMobileDataSync
 import QMobileAPI
 import QMobileDataStore
@@ -61,21 +63,39 @@ extension ApplicationXCallbackURL: ApplicationService {
                     }
                 }
             }
-            callbackManager["exit"] = { parameters, success, failure, cancel in
-                exit(0)
+            callbackManager["dump"] = { parameters, success, failure, cancel in
+                let path: Path
+                if let pathString = parameters["path"] {
+                    path = Path(pathString)
+                } else {
+                    path = .userTemporary
+                }
+                ApplicationDataSync.dataSync.dump(to: path) {
+                    
+                    success(nil)
+                }
             }
-            callbackManager["logger"] = { parameters, success, failure, cancel in
-                if let levelString = parameters["setlevel"] {
-                    if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
-                        logger.outputLevel = level
-                    } else {
-                        logger.warning("Unknown log level \(levelString)")
-                    }
+            
+        }
+        callbackManager["clear"] = { parameters, success, failure, cancel in
+      
+           // ApplicationDataSync.dataSync.dataStore.perform(DataStoreContextType)
+        }
+        
+        callbackManager["exit"] = { parameters, success, failure, cancel in
+            exit(0)
+        }
+        callbackManager["logger"] = { parameters, success, failure, cancel in
+            if let levelString = parameters["setlevel"] {
+                if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
+                    logger.outputLevel = level
+                } else {
+                    logger.warning("Unknown log level \(levelString)")
                 }
             }
         }
     }
-
+    
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) {
         if callbackManager.handleOpen(url: url) {
             logger.debug("Callback url action receive: \(url)")
@@ -86,9 +106,30 @@ extension ApplicationXCallbackURL: ApplicationService {
 
 extension DataSyncError: FailureCallbackError {
     public var code: Int {
-        return -1
+        switch self {
+        case .retain:
+            return 1
+        case .delegateRequestStop:
+            return 2
+        case .dataStoreNotReady:
+            return 3
+        case .dataStoreError:
+            return 4
+        case .apiError:
+            return 5
+        case .noTables:
+            return 6
+        case .missingRemoteTables:
+            return 7
+        case .cancel:
+            return 8
+        case .dataCache:
+            return 9
+        case .underlying:
+            return 10
+        }
     }
     public var message: String {
-     return ""
+        return self.errorDescription ?? ""
     }
 }

@@ -6,144 +6,67 @@
 //  Copyright © 2017 Eric Marchand. All rights reserved.
 //
 
-import Foundation
 import UIKit
-import QMobileDataSync
+
 import Prephirences
+import Moya
+
 import QMobileAPI
+import QMobileDataSync
+import QMobileUI
+
+import AZDialogView
 
 public class SettingsForm: UITableViewController {
 
+    enum Section: Int {
+        case data
+        case server
+        //case about
+    }
+
+    @IBOutlet weak var serverURLLabel: UILabel!
+    weak var serverStatusFooter: SettingsServerSectionFooter?
+    /*weak*/var listener: NSObjectProtocol?
+
+    // MARK: override
     public override func viewDidLoad() {
+        // Register external UI from other file
+        tableView.registerHeaderFooter(SettingsServerSectionFooter())
 
-        let nib = UINib(nibName: "SettingsServerSectionFooter", bundle: nil)
-        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "SettingsServerSectionFooter")
+        initFormData()
 
-        assert(tableView.dataSource === self)
-        assert(tableView.delegate === self)
+        initFooterData()
 
-        // URL.qmobileURL
-        serverURLTextField.text = Prephirences.sharedInstance["server.url"] as? String ?? "http://127.0.0.1"
-        serverURLTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
+        // Check storyboard is well configured
+        assertTableViewAttached()
+    }
 
-        checkStatus(0)
+    private func initFormData() {
+        let key = "server.url"
+        serverURLLabel.text = Prephirences.sharedInstance[key] as? String ?? URL.qmobileURLLocalhost.absoluteString
+
+        listener = UserDefaults.standard.observe(forKeyPath: key) { pref, keyModified in
+            if keyModified == key {
+                self.serverURLLabel.text = pref[key] as? String ?? URL.qmobileURLLocalhost.absoluteString
+            }
+        }
+
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        foreground {
+            self.serverStatusFooter?.checkStatus()
+        }
+    }
+
+    deinit {
+        UserDefaults.standard.removeObserver(self, forKeyPath: "keyPath")
+    }
+
+    private func initFooterData() {
         refreshLastDate()
-    }
-
-    // MARK: Servers status
-
-    @IBOutlet weak var serverURLTextField: UITextField!
-
-    let checkServerStatusQueue = OperationQueue(underlyingQueue: .background)
-
-    func textFieldDidChange(textField: UITextField) {
-        print("Text changed")
-        checkStatus()
-    }
-
-    func checkStatus(_ delay: TimeInterval = 3) {
-        reloadButton.isEnabled = false
-        guard let text = serverURLTextField.text else {
-            serverStatus(.noText)
-            return
-        }
-        guard !text.isEmpty else {
-            serverStatus(.noText)
-            return
-        }
-        guard var url = URL(string: text) else {
-            serverStatus(.notValidURL)
-            return
-        }
-        if url.scheme == nil { // be kind, add scheme
-            url = URL(string: "https://\(text)") ?? url
-        }
-
-        if url.host?.isEmpty ?? false {
-            serverStatus(.notValidURL)
-            return
-        }
-
-        guard url.isHttpOrHttps else {
-            serverStatus(.notValidURL)
-            return
-        }
-        position = self.serverURLTextField.cursorPosition
-        serverStatus(.checking)
-
-        checkServerStatusQueue.cancelAllOperations()
-
-        background(delay) {
-
-            self.checkServerStatusQueue.waitUntilAllOperationsAreFinished()
-            self.checkServerStatusQueue.addOperation { [unowned self] in
-                let apiManager = APIManager(url: url)
-                let checkstatus = apiManager.loadStatus(callbackQueue: .background)
-                checkstatus.onSuccess(DispatchQueue.main.context) { _ in
-
-                    var pref = Prephirences.sharedMutableInstance ?? UserDefaults.standard
-                    pref["server.url"] = text
-                    APIManager.instance = apiManager
-
-                    DataSync.instance.rest = APIManager.instance
-                    self.serverStatus(.success)
-                    self.reloadButton.isEnabled = true
-                }
-                checkstatus.onFailure(DispatchQueue.main.context) { error in
-                    self.serverStatus(.failure(error))
-                }
-            }
-
-        }
-
-    }
-
-    enum ServerStatus {
-        case noText
-        case notValidURL
-        case checking
-        case success
-        case failure(Error)
-
-        var isFinal: Bool {
-            switch self {
-            case .success, .failure: return true
-            default: return false
-            }
-        }
-    }
-
-    var serverStatus: ServerStatus = .success
-    var position: Int?
-
-    func serverStatus(_ status: ServerStatus) {
-        self.serverStatus = status
-       /* UIView.performWithoutAnimation {
-            tableView.beginUpdates()
-            tableView.endUpdates()
-        }
-
-        let offset = self.tableView.contentOffset
-
-        UIView.transition(with: self.tableView, duration:0.5, options: UIViewAnimationOptions.transitionCrossDissolve, animations: {
-            self.tableView.reloadData()
-            self.tableView.contentOffset = offset
-        }) { (_) in
-
-         }*/
-        if case .checking = status {
-            position = self.serverURLTextField.cursorPosition
-            print("caret position \(position)")
-        }
-        self.reload(section: Section.server)
-
-        self.serverURLTextField.cursorPosition = position
-        self.serverURLTextField.becomeFirstResponder()
-
-    }
-
-    func footerTapped(_ sender: UITapGestureRecognizer) {
-        checkStatus()
     }
 
     // MARK: Manage data data
@@ -152,22 +75,83 @@ public class SettingsForm: UITableViewController {
     @IBOutlet weak var reloadFooterLabel: UILabel!
 
     @IBAction public func reloadData(_ sender: Any) {
+
+        /*
         _ = dataReload { [unowned self] result in
 
             switch result {
             case .success:
-                print("data reloading")
+                loggerapp.info("data reloading")
                 self.refreshLastDate()
             case .failure(let error):
-                print("data reloading failed \(error)")
-
-                // TODO if network url,
+                loggerapp.error("data reloading failed \(error)")
 
                 foreground {
-                    self.checkStatus()
+                    self.serverStatusFooter?.checkStatus()
                 }
             }
         }
+*/
+        let dialog = AZDialogViewController(title: "Refresh data", message: "")
+        dialog.allowDragGesture = true
+
+        var cancellable: Cancellable? = nil
+
+        let action = AZDialogAction(title: "Launch") { dialog in
+
+            dialog.removeAction(at: 0)
+
+            dialog.message = "Updating..."
+
+            let indicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            let container = dialog.container
+            dialog.container.addSubview(indicator)
+            indicator.translatesAutoresizingMaskIntoConstraints = false
+            indicator.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
+            indicator.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
+            indicator.startAnimating()
+
+            cancellable = dataReload { result in
+                foreground {
+                    dialog.removeAllActions()
+
+                    switch result {
+                    case .success:
+                        dialog.message = "Success"
+                        loggerapp.debug("success")
+                    case .failure(let error):
+                       // dialog.message = "Failed to reload data \(error)"
+
+                        print("error \(error)")
+                        dialog.dismiss()
+                    }
+
+
+                    let dismissAction = AZDialogAction(title: "Dismiss") { dialog in
+                        dialog.dismiss()
+                    }
+                    dialog.addAction(dismissAction)
+
+                    DispatchQueue.main.after(10) {
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+        }
+        dialog.addAction(action)
+
+        let cancelAction = AZDialogAction(title: "Cancel") { dialog in
+
+            cancellable?.cancel()
+
+            //add your actions here.
+            dialog.dismiss()
+        }
+
+        dialog.addAction(cancelAction)
+
+        dialog.show(in: self)
 
     }
 
@@ -176,73 +160,40 @@ public class SettingsForm: UITableViewController {
             if let date = dataLastSync() {
                 let id = DateFormatter.shortDateAndTime.string(from: date)
                 self.reloadFooterLabel.text = "   Last update: " + id
+            } else {
+                self.reloadFooterLabel.text = ""
             }
             self.reload(section: Section.data)
         }
     }
+
     // MARK: table view
-
-    enum Section: Int {
-        case data
-        case server
-        case remote
-    }
-
     override public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section) {
             switch section {
             case .server:
-                let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "SettingsServerSectionFooter")
-                if let footer = cell as? SettingsServerSectionFooter {
-                    footer.titleLabel.text = serverStatus.description
+                if serverStatusFooter == nil {
+                    serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
+                    serverStatusFooter?.delegate = self
+                    serverStatusFooter?.checkStatus()
+                    serverStatusFooter?.detailLabel.isHidden = true
 
-                    if !footer.tapInstalled {
-                        footer.tapInstalled = true
-
-                        let tapAction = UITapGestureRecognizer(target: self, action: #selector(self.footerTapped(_:)))
-                        footer.titleLabel.isUserInteractionEnabled = true
-                        footer.titleLabel.addGestureRecognizer(tapAction)
-                    }
                 }
-                return cell
+                serverStatusFooter?.update()
+                return serverStatusFooter
             case .data:
                 return reloadFooterLabel
-            case .remote:
-                return nil
             }
         }
         return nil // default
     }
 
-   /* override public func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        //if section == 1 {
-            if let templateFooter = view as? UITableViewHeaderFooterView {
-                //templateFooter.textLabel?.text = templateFooter.textLabel?.text?.localizedLowercase
-            }
-        //}
-    }*/
-
-  /*  public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.accessoryType = .none
-    }*/
 }
 
-extension SettingsForm.ServerStatus: CustomStringConvertible {
-    var description: String {
-        switch self {
-        case .noText:
-            return "Please enter the server URL"
-        case .notValidURL:
-            return "❌ Please enter a valid URL (https://hostname)"
-        case .checking:
-            return "Checking server accessibility..."
-        case .success:
-            return "✅ Online"
-        case .failure(let error):
-            if let error = error as? LocalizedError, let failureReason = error.failureReason {
-                return "❌ \(failureReason)"
-            }
-            return "❌ Server seems not reachable"
-        }
+extension SettingsForm: SettingsServerSectionFooterDelegate {
+    public func statusChanged(status: ServerStatus) {
+        self.reload(section: Section.server)
+
+        self.reloadButton.isEnabled = status.isSuccess
     }
 }

@@ -19,6 +19,8 @@ target 'DemoTabbedApplication' do
   pod 'ValueTransformerKit'
   pod 'RandomKit'
   pod 'BrightFutures'
+  
+  pod 'SwiftMessages'
 
 # for monitoring
   pod 'Watchdog' # remove with xcode 9 ???
@@ -26,8 +28,6 @@ target 'DemoTabbedApplication' do
 
 # in dev
   pod 'AZDialogView'
-  pod 'SwiftMessages'
-  
   pod 'LinearProgressBarMaterial'
 
 

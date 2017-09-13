@@ -18,6 +18,8 @@ import Watchdog
 import NSLogger
 import XCGLoggerNSLoggerConnector
 import LinearProgressBarMaterial
+import SwiftMessages
+import Moya
 
 public extension Random {
 
@@ -32,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     var listeners: [NSObjectProtocol] = []
+    var cancellables: [Cancellable] = []
 
     static let threshold = 0.4
 
@@ -64,15 +67,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.fillModel()
         }
 
-        // swiftlint:disable:next discarded_notification_center_observer
+        // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
             self.linearBar.startAnimation()
         })
-        // swiftlint:disable:next discarded_notification_center_observer
+        // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { _ in
             self.linearBar.stopAnimation()
         })
-        // swiftlint:disable:next discarded_notification_center_observer
+        // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { _ in
             self.linearBar.stopAnimation()
         })
@@ -85,9 +88,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }]
 
         DataSync.instance.rest.plugins += [ReceivePlugin { _, _ in
-            DispatchQueue.main.async {
+         DispatchQueue.main.async {
+         }
+         }]*/
+
+        APIManager.reachability { status in
+            switch status {
+            case .unknown:
+                SwiftMessages.displayError(title: "unknown", message: "unknown m")
+
+            case .notReachable:
+                SwiftMessages.displayWarning("You seems to be offline")
+
+            case .reachable(let type) :
+                switch type {
+                case .ethernetOrWiFi:
+                    print("wifi")
+                case .wwan:
+                    print("wwan")
+                }
+
+                //SwiftMessages.displayConfirmation("Data updated")
             }
-            }]*/
+            }.flatMap {
+                cancellables.append($0)
+        }
 
         return true
 
@@ -105,12 +130,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
     }
 
-    func applicationWillTerminate(_ application: UIApplication) {
+    func applicatinWillTerminate(_ application: UIApplication) {
         for listener in listeners {
             dataStore.unobserve(listener)
         }
     }
- 
+
     public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         let services = ApplicationServices.instance
         services.application(app, open: url, options: options)

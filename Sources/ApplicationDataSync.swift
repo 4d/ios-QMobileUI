@@ -96,11 +96,14 @@ extension ApplicationDataSync: ApplicationService {
     func syncAtStart() {
         syncAtStartDone = true
         let sync = self.servicePreferences["sync.atStart"] as? Bool ?? false
-        if sync {
-            let dataSync = ApplicationDataSync.dataSync
-            _ = dataSync.sync { _ in
-
-            }
+        let dataSync = ApplicationDataSync.dataSync
+        
+        let future: DataSync.SyncFuture = sync ? dataSync.sync(): dataSync.initFuture()
+        future.onSuccess {
+            logger.debug("data from data store initilized")
+        }
+        future.onFailure { error in
+            logger.warning("Failed to initialize data from data store \(error)")
         }
     }
 
@@ -157,7 +160,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 }
 
 extension SwiftMessages {
-   static func displayConfirmation(_ message: String) {
+   public static func displayConfirmation(_ message: String) {
         let view = MessageView.viewFromNib(layout: .StatusLine)
         view.configureTheme(.success)
         view.configureDropShadow()
@@ -168,8 +171,21 @@ extension SwiftMessages {
         config.duration = .seconds(seconds: 0.8)
         SwiftMessages.show(config: config, view: view)
     }
+    
+    public static func displayWarning(_ message: String) {
+        let view = MessageView.viewFromNib(layout: .CardView)
+        view.configureTheme(.error)
+        view.configureContent(body: message)
+        view.button?.isHidden = true
+        view.tapHandler = { _ in SwiftMessages.hide() }
+        var config = SwiftMessages.Config()
+        config.duration = .seconds(seconds: 1.0)
+        config.dimMode = .gray(interactive: true)
+        config.presentationStyle = .bottom
+        SwiftMessages.show(config: config, view: view)
+    }
 
-    static func displayError(title: String, message: String) {
+    public static func displayError(title: String, message: String) {
         let view = MessageView.viewFromNib(layout: .CardView)
         view.configureTheme(.error)
         view.configureContent(title: title, body: message)
