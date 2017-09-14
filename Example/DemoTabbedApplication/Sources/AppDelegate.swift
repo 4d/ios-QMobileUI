@@ -21,13 +21,6 @@ import LinearProgressBarMaterial
 import SwiftMessages
 import Moya
 
-public extension Random {
-
-    static func random() -> Self {
-        return self.random(using: &Xoroshiro.default)
-    }
-
-}
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -62,10 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             loggerapp.info("DS drop \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo)
         })
 
-        // ApplicationServices.instance.register(ApplicationStyleKit.instance)
-        DispatchQueue.main.after(15) {
-            self.fillModel()
-        }
 
         // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in

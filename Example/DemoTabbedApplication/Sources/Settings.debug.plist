@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>server.urls</key>
-	<string>http://192.168.1.0, http://192.168.5.54</string>
+	<string>http://192.168.1.0, http://192.168.5.54, http://192.168.6</string>
 	<key>dataStore.drop.atEnd</key>
 	<false/>
 	<key>dataStore.drop.atStart</key>
-	<true/>
+	<false/>
 	<key>dataSync.dataStoreDrop</key>
 	<false/>
 	<key>dataSync.deleteRecords</key>
