@@ -10,6 +10,6 @@ github "phimage/Prephirences" # settings
 github "phimage/CallbackURLKit" # action using url
 
 github "phimage/ValueTransformerKit" # format value
-github "ArtSabintsev/Guitar", "swift3.2" # string extension, camel cased etc...
+github "ArtSabintsev/Guitar" "swift3.2" # string extension, camel cased etc...
 
 github "SwiftKickMobile/SwiftMessages" # display message
