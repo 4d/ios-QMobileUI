@@ -9,6 +9,6 @@ github "phimage/CallbackURLKit" "1.0.1" # action using url
 github "phimage/ValueTransformerKit" # format value
 github "ArtSabintsev/Guitar" "swift3.2" # string extension, camel cased etc...
 
-github "SwiftKickMobile/SwiftMessages" # display message
+github "SwiftKickMobile/SwiftMessages" "3.5.1" # display message
 
 github "dennisweissmann/DeviceKit" "1.2.3"
