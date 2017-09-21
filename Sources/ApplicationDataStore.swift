@@ -67,7 +67,7 @@ extension ApplicationDataStore {
         dataStore.load { result in
             switch result {
             case .failure(let error):
-                alert(title: "Failed to load the tables data from mobile database", error: error)
+                alert(title: "Failed to load the data stored on phone", error: error)
             case .success:
                 logger.info("Mobile database has been loaded")
             }
@@ -79,7 +79,7 @@ extension ApplicationDataStore {
             switch result {
             case .failure(let error):
                 logger.warning("Failed to save the tables data into mobile database: \(error)")
-                alert(title: "Failed to save the tables data into mobile database", error: error)
+                alert(title: "Failed to store data on phone", error: error)
             case .success:
                 logger.info("Mobile database has been saved")
             }

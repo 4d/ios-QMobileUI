@@ -124,68 +124,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             dataStore.unobserve(listener)
         }
     }
-
+/*
     public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         let services = ApplicationServices.instance
         services.application(app, open: url, options: options)
         return true
-    }
-}
-
-extension AppDelegate {
-
-    func fillModel() {
-      // self.testadd(20000)
-    }
-
-    func testadd(_ max: Int) {
-        let added = dataStore.perform(.background) { context, save in
-            for i in 0...max {
-                let date = Date()
-
-                let record = context.create(in: "Entity")
-
-                record?["string"] = UUID.init().uuidString
-                record?["bool"] = i % 2 == 0
-                record?["integer"] = i
-                record?["date"] = date
-                record?["time"] = date.timeIntervalSince1970
-                record?["alpha"] = String.random()
-                record?["blob"] = Data()
-                record?["bool"] = Bool.random()
-                record?["category"] = String.random()
-                record?["date"] = Date()
-                record?["float"] = Float.random()
-                record?["iD"] = Int32.random()
-                record?["image"] = Data()
-                record?["integer"] = Int16.random()
-                record?["integer64"] = Int64.random()
-                record?["longInteger"] = Int32.random()
-                record?["object"] = [:]
-                record?["real"] = Double.random()
-                record?["text"] = String.random()
-                record?["time"] = Int64.random()
-                record?["category"] = "\(i % 10)"
-
-                if i % 10000 == 0 {
-                    do {
-                        try save()
-                    } catch {
-                        alert(title: "Error when loading model", message: "\(error)")
-                    }
-                }
-            }
-
-            do {
-                try save()
-            } catch {
-                alert(title: "Error when loading model", message: "\(error)")
-            }
-        }
-
-        if !added {
-            alert(title: "Error when loading model", message: "nothing added to data store queue")
-        }
-    }
-
+    }*/
 }

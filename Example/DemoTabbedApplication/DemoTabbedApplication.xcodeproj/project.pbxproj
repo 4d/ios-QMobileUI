@@ -27,6 +27,7 @@
 		48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A041DC1E79865F0098A54C /* Structures.xcdatamodeld */; };
 		48A168BD1E7A95DC00AA525B /* EntityDetailsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */; };
 		48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */; };
+		48D481631F6ACB560027DCB5 /* AppDelegate+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */; };
 		48E49D181EB9DDC3002B60AF /* Embedded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49D0D1EB9DDC3002B60AF /* Embedded.swift */; };
 		48E49D1A1EB9E101002B60AF /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 48E49D191EB9E101002B60AF /* Settings.plist */; };
 		48E49D1C1EB9E121002B60AF /* Settings.debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 48E49D1B1EB9E121002B60AF /* Settings.debug.plist */; };
@@ -78,6 +79,7 @@
 		48A041DD1E79865F0098A54C /* Structures.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Structures.xcdatamodel; sourceTree = "<group>"; };
 		48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityDetailsForm.swift; sourceTree = "<group>"; };
 		48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityListFormTableCategory.swift; sourceTree = "<group>"; };
+		48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Services.swift"; sourceTree = "<group>"; };
 		48E49D0D1EB9DDC3002B60AF /* Embedded.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Embedded.swift; sourceTree = "<group>"; };
 		48E49D191EB9E101002B60AF /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
 		48E49D1B1EB9E121002B60AF /* Settings.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.debug.plist; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				48E49D271EB9E3BC002B60AF /* Embedded */,
 				48E49D211EB9E37E002B60AF /* XCode */,
 				48E49D241EB9E392002B60AF /* Application and Settings */,
+				488B14051F69654C00DAD51D /* Data */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 			children = (
 				48639DF21EA766DF00D52E08 /* main.swift */,
 				485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */,
+				48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */,
 				48E49D281EB9F9AE002B60AF /* ApplicationStyleKit.swift */,
 				48E49D191EB9E101002B60AF /* Settings.plist */,
 				48E49D1B1EB9E121002B60AF /* Settings.debug.plist */,
@@ -268,7 +272,6 @@
 		48E49D271EB9E3BC002B60AF /* Embedded */ = {
 			isa = PBXGroup;
 			children = (
-				488B14051F69654C00DAD51D /* Data */,
 				48E49D0D1EB9DDC3002B60AF /* Embedded.swift */,
 			);
 			name = Embedded;
@@ -557,6 +560,7 @@
 				481122A01F683CDC001EE34E /* SettingURLForm.swift in Sources */,
 				48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */,
 				48A168BD1E7A95DC00AA525B /* EntityDetailsForm.swift in Sources */,
+				48D481631F6ACB560027DCB5 /* AppDelegate+Services.swift in Sources */,
 				48E61B521F3C4DB700C560BB /* Entity1DetailsForm.swift in Sources */,
 				480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */,
 				48E61B4B1F3C4D1F00C560BB /* Entity1ListForm.swift in Sources */,

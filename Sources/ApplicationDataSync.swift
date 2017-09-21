@@ -28,7 +28,7 @@ class ApplicationDataSync: NSObject {
     var listeners: [NSObjectProtocol] = []
     var syncAtStartDone: Bool = false
     var applicationWillTerminate: Bool = false
-}
+} 
 
 extension ApplicationDataSync: ApplicationService {
 
@@ -160,6 +160,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 }
 
 extension SwiftMessages {
+
    public static func displayConfirmation(_ message: String) {
         let view = MessageView.viewFromNib(layout: .StatusLine)
         view.configureTheme(.success)
@@ -168,7 +169,7 @@ extension SwiftMessages {
         view.configureTheme(backgroundColor: UIColor(red: 30/255, green: 200/255, blue: 80/255, alpha: 1), foregroundColor: UIColor.white)
         var config = SwiftMessages.Config()
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
-        config.duration = .seconds(seconds: 0.8)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 4.0)
         SwiftMessages.show(config: config, view: view)
     }
     
@@ -179,7 +180,7 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: 1.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 3.0)
         config.dimMode = .gray(interactive: true)
         config.presentationStyle = .bottom
         SwiftMessages.show(config: config, view: view)
@@ -192,7 +193,7 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: 1.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 4.0)
         config.dimMode = .gray(interactive: true)
         SwiftMessages.show(config: config, view: view)
     }

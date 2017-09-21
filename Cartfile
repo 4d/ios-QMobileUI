@@ -1,15 +1,14 @@
 git "https://gitfusion.wakanda.io/qmobile/QMobileDataStore.git" "HEAD"
-git "https://gitfusion.wakanda.io/qmobile/QMobileDataSync.git" "HEAD"
 git "https://gitfusion.wakanda.io/qmobile/QMobileAPI.git" "HEAD"
+git "https://gitfusion.wakanda.io/qmobile/QMobileDataSync.git" "HEAD"
 
-github "onevcat/Kingfisher" # image download
- # github "dzenbot/DZNEmptyDataSet" # display information if data set empty
+github "onevcat/Kingfisher" ~> 3.0 # image download
 
-github "DaveWoodCom/XCGLogger" # logger
-github "phimage/Prephirences" # settings
-github "phimage/CallbackURLKit" # action using url
+github "phimage/CallbackURLKit" "1.0.1" # action using url
 
 github "phimage/ValueTransformerKit" # format value
 github "ArtSabintsev/Guitar" "swift3.2" # string extension, camel cased etc...
 
 github "SwiftKickMobile/SwiftMessages" # display message
+
+github "dennisweissmann/DeviceKit" "1.2.3"

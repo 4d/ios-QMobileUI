@@ -90,6 +90,8 @@
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="searchableField" value="titre"/>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="hasRefreshControl" value="YES"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="sectionFieldname" value="field_3"/>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="showSectionBar" value="NO"/>
                     </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="searchBar" destination="B1B-40-B7F" id="C25-F0-BE0"/>

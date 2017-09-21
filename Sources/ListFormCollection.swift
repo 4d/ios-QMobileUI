@@ -29,7 +29,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     public var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
 
-    @IBInspectable open var showSectionBar: Bool = true {
+    @IBInspectable open var showSectionBar: Bool = false {
         didSet {
             dataSource?.showSection =  showSectionBar
         }
