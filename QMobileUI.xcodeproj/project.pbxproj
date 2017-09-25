@@ -739,6 +739,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/CallbackURLKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/DeviceKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftMessages.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/FileKit.framework",
 			);
 			name = carthage;
 			outputPaths = (
