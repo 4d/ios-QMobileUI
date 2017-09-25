@@ -36,10 +36,10 @@ extension DataSource: UITableViewDataSource {
     // MARK: Sections and Headers
 
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        if showSection {
+        if showSectionBar {
             if let titles = self.delegate?.sectionIndexTitlesForDataSource?(self, tableView: tableView) {
                 return titles
-            } else if let keyPath = self.fetchedResultsController.sectionNameKeyPath {
+            } else if let keyPath = self.fetchedResultsController.sectionNameKeyPath, !keyPath.isEmpty {
                 let result = self.fetchedResultsController.fetch(keyPath: keyPath, ascending: true)
                 return result.map { "\($0)"}
             }

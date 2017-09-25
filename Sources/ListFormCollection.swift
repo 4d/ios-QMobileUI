@@ -31,7 +31,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
-            dataSource?.showSection =  showSectionBar
+            dataSource?.showSectionBar =  showSectionBar
         }
     }
 

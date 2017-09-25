@@ -30,7 +30,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
-           dataSource?.showSection =  showSectionBar
+           dataSource?.showSectionBar =  showSectionBar
         }
     }
 
