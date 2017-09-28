@@ -20,7 +20,7 @@ class ApplicationXCallbackURL: NSObject {
 }
 
 extension ApplicationXCallbackURL: ApplicationService {
-    
+
     static var instance: ApplicationService = ApplicationXCallbackURL()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
@@ -71,17 +71,17 @@ extension ApplicationXCallbackURL: ApplicationService {
                     path = .userTemporary
                 }
                 ApplicationDataSync.dataSync.dump(to: path) {
-                    
+
                     success(nil)
                 }
             }
-            
+
         }
         callbackManager["clear"] = { parameters, success, failure, cancel in
-      
+
            // ApplicationDataSync.dataSync.dataStore.perform(DataStoreContextType)
         }
-        
+
         callbackManager["exit"] = { parameters, success, failure, cancel in
             exit(0)
         }
@@ -95,13 +95,13 @@ extension ApplicationXCallbackURL: ApplicationService {
             }
         }
     }
-    
+
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) {
         if callbackManager.handleOpen(url: url) {
             logger.debug("Callback url action receive: \(url)")
         }
     }
-    
+
 }
 
 extension DataSyncError: FailureCallbackError {

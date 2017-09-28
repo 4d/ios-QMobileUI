@@ -25,3 +25,22 @@ extension UITableViewController {
     }
 
 }
+
+extension UITableViewController {
+
+    public func reload<S: RawRepresentable>(section: S) where S.RawValue == Int {
+        if(Thread.isMainThread) {
+            self.tableView.reloadSections(section.indexSet, with: .none)
+        }
+        else {
+            DispatchQueue.main.async {
+                self.reload(section: section)
+            }
+        }
+    }
+
+    public func assertTableViewAttached() {
+        assert(tableView.dataSource === self)
+        assert(tableView.delegate === self)
+    }
+}

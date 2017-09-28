@@ -158,7 +158,7 @@ class DataSourceTests: XCTestCase {
         let randomString = UUID().uuidString
         dataSource.tableConfigurationBlock = { [unowned self] cell, record, index in
             if record[self.field] as? String == randomString {
-                //expectation.fulfill()
+                expectation.fulfill()
             }
         }
         

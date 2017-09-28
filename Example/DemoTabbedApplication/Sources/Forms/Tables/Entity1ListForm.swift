@@ -37,7 +37,7 @@ class Entity1ListForm: ListFormTable {
                  */
                 try save()
             } catch {
-                loggerapp.warning("Failed to delete record \(error)")
+                logger.warning("Failed to delete record \(error)")
             }
 
         }

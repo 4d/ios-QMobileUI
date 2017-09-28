@@ -9,21 +9,19 @@ target 'DemoTabbedApplication' do
   pod 'QMobileUI', :path => '../../'
 
 
-  pod 'XCGLogger/UserInfoHelpers'
+  pod 'XCGLogger/UserInfoHelpers', :git => 'https://github.com/DaveWoodCom/XCGLogger.git', :tag => '5.0.5'
 
-  pod 'SwiftyJSON'
+  pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON', :tag => '3.1.4'
 
-  pod 'Kingfisher'
-  pod 'IBAnimatable'
-  pod 'Guitar'
-  pod 'ValueTransformerKit'
-  pod 'RandomKit'
-  pod 'BrightFutures'
+  pod 'Kingfisher', '~> 3.0'
+  pod 'IBAnimatable', '~> 4.0'
+  pod 'Guitar', :git => 'https://github.com/ArtSabintsev/Guitar.git', :branch => 'swift3.2'
+  pod 'ValueTransformerKit', :git => 'https://github.com/phimage/ValueTransformerKit', :tag => '0.0.1'
+  pod 'BrightFutures', :git => 'https://github.com/Thomvis/BrightFutures', :tag => '5.2.0'
   
-  pod 'SwiftMessages'
+  pod 'SwiftMessages', :git => 'https://github.com/SwiftKickMobile/SwiftMessages', :tag => '3.5.1'
 
 # for monitoring
-  pod 'Watchdog' # remove with xcode 9 ???
   pod 'PinpointKit/ScreenshotDetector'
 
 # in dev
@@ -35,7 +33,7 @@ target 'DemoTabbedApplication' do
 pod 'NSLogger'
 pod 'XCGLoggerNSLoggerConnector'
 
-  pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
+  #pod 'StyleKit', :git => 'https://github.com/146BC/StyleKit.git', :branch => 'develop'
 
 end
 

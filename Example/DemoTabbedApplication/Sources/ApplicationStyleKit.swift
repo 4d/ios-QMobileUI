@@ -8,7 +8,7 @@
 
 import UIKit
 import QMobileUI
-import StyleKit
+//import StyleKit
 
 class ApplicationStyleKit: NSObject {}
 
@@ -29,14 +29,14 @@ extension ApplicationStyleKit: ApplicationService {
     }
 
     func loadStyle(fileUrl: URL) {
-        #if DEBUG
+       /* #if DEBUG
             let logLevel: SKLogLevel = .debug
         #else
             let logLevel: SKLogLevel = .error
         #endif
 
         let style = StyleKit(fileUrl: fileUrl, logLevel: logLevel)
-        style?.apply()
+        style?.apply()*/
     }
 
     func inject() {

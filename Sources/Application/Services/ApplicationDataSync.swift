@@ -28,7 +28,7 @@ class ApplicationDataSync: NSObject {
     var listeners: [NSObjectProtocol] = []
     var syncAtStartDone: Bool = false
     var applicationWillTerminate: Bool = false
-} 
+}
 
 extension ApplicationDataSync: ApplicationService {
 
@@ -97,7 +97,7 @@ extension ApplicationDataSync: ApplicationService {
         syncAtStartDone = true
         let sync = self.servicePreferences["sync.atStart"] as? Bool ?? false
         let dataSync = ApplicationDataSync.dataSync
-        
+
         let future: DataSync.SyncFuture = sync ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
             logger.debug("data from data store initilized")
@@ -151,12 +151,12 @@ extension ApplicationDataSync: DataSyncDelegate {
     public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
         SwiftMessages.displayConfirmation("Data updated")
     }
-    
+
     public func didDataSyncFailed(error: DataSyncError) {
         SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
-        
+
     }
-    
+
 }
 
 extension SwiftMessages {
@@ -172,7 +172,7 @@ extension SwiftMessages {
         config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 4.0)
         SwiftMessages.show(config: config, view: view)
     }
-    
+
     public static func displayWarning(_ message: String) {
         let view = MessageView.viewFromNib(layout: .CardView)
         view.configureTheme(.error)

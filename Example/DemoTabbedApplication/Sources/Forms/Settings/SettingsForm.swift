@@ -26,7 +26,17 @@ public class SettingsForm: UITableViewController {
     }
 
     @IBOutlet weak var serverURLLabel: UILabel!
-    weak var serverStatusFooter: SettingsServerSectionFooter?
+
+    private var _serverStatusFooter: SettingsServerSectionFooter?
+    var serverStatusFooter: SettingsServerSectionFooter? {
+        if _serverStatusFooter == nil {
+            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
+            _serverStatusFooter?.delegate = self
+            _serverStatusFooter?.detailLabel.isHidden = true
+        }
+        return _serverStatusFooter
+    }
+
     /*weak*/var listener: NSObjectProtocol?
 
     // MARK: override
@@ -43,26 +53,24 @@ public class SettingsForm: UITableViewController {
     }
 
     private func initFormData() {
-        let key = "server.url"
-        serverURLLabel.text = Prephirences.sharedInstance[key] as? String ?? URL.qmobileURLLocalhost.absoluteString
+        let urlString = URL.qmobileURL?.absoluteString ?? URL.qmobileURLLocalhost.absoluteString
+        if Prephirences.serverURL == nil {
+            Prephirences.serverURL = urlString
+        }
+        serverURLLabel.text = urlString
 
-        listener = UserDefaults.standard.observe(forKeyPath: key) { pref, keyModified in
-            if keyModified == key {
-                self.serverURLLabel.text = pref[key] as? String ?? URL.qmobileURLLocalhost.absoluteString
-            }
+        listener = Prephirences.serverURLChanged { serverURL in
+            self.serverURLLabel.text = serverURL ?? URL.qmobileURLLocalhost.absoluteString
         }
 
     }
-
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        // checkstatus when displayinh
         foreground {
             self.serverStatusFooter?.checkStatus()
         }
-    }
-
-    deinit {
-        UserDefaults.standard.removeObserver(self, forKeyPath: "keyPath")
     }
 
     private func initFooterData() {
@@ -73,86 +81,12 @@ public class SettingsForm: UITableViewController {
 
     @IBOutlet weak var reloadButton: UIButton!
     @IBOutlet weak var reloadFooterLabel: UILabel!
+    var reloadWorker: Cancellable?
 
-    @IBAction public func reloadData(_ sender: Any) {
-
-        /*
-        _ = dataReload { [unowned self] result in
-
-            switch result {
-            case .success:
-                loggerapp.info("data reloading")
-                self.refreshLastDate()
-            case .failure(let error):
-                loggerapp.error("data reloading failed \(error)")
-
-                foreground {
-                    self.serverStatusFooter?.checkStatus()
-                }
-            }
+    public override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let dialogForm = segue.destination as? DialogForm {
+            dialogForm.delegate = self
         }
-*/
-        let dialog = AZDialogViewController(title: "Refresh data", message: "")
-        dialog.allowDragGesture = true
-
-        var cancellable: Cancellable? = nil
-
-        let action = AZDialogAction(title: "Launch") { dialog in
-
-            dialog.removeAction(at: 0)
-
-            dialog.message = "Updating..."
-
-            let indicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-            let container = dialog.container
-            dialog.container.addSubview(indicator)
-            indicator.translatesAutoresizingMaskIntoConstraints = false
-            indicator.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
-            indicator.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
-            indicator.startAnimating()
-
-            cancellable = dataReload { result in
-                foreground {
-                    dialog.removeAllActions()
-
-                    switch result {
-                    case .success:
-                        dialog.message = "Success"
-                        loggerapp.debug("success")
-                    case .failure(let error):
-                       // dialog.message = "Failed to reload data \(error)"
-
-                        print("error \(error)")
-                        dialog.dismiss()
-                    }
-
-
-                    let dismissAction = AZDialogAction(title: "Dismiss") { dialog in
-                        dialog.dismiss()
-                    }
-                    dialog.addAction(dismissAction)
-
-                    DispatchQueue.main.after(10) {
-                        dialog.dismiss()
-                    }
-                }
-            }
-
-        }
-        dialog.addAction(action)
-
-        let cancelAction = AZDialogAction(title: "Cancel") { dialog in
-
-            cancellable?.cancel()
-
-            //add your actions here.
-            dialog.dismiss()
-        }
-
-        dialog.addAction(cancelAction)
-
-        dialog.show(in: self)
-
     }
 
     func refreshLastDate() {
@@ -166,20 +100,11 @@ public class SettingsForm: UITableViewController {
             self.reload(section: Section.data)
         }
     }
-
     // MARK: table view
     override public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section) {
             switch section {
             case .server:
-                if serverStatusFooter == nil {
-                    serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-                    serverStatusFooter?.delegate = self
-                    serverStatusFooter?.checkStatus()
-                    serverStatusFooter?.detailLabel.isHidden = true
-
-                }
-                serverStatusFooter?.update()
                 return serverStatusFooter
             case .data:
                 return reloadFooterLabel
@@ -195,5 +120,34 @@ extension SettingsForm: SettingsServerSectionFooterDelegate {
         self.reload(section: Section.server)
 
         self.reloadButton.isEnabled = status.isSuccess
+    }
+}
+
+extension SettingsForm: DialogFormDelegate {
+    public func okPressed(dialog: DialogForm, sender: Any) {
+        reloadWorker?.cancel()
+
+        background(5) {
+            self.reloadWorker = dataReload { [unowned self] result in
+
+                switch result {
+                case .success:
+                    logger.info("data reloaded")
+                    self.refreshLastDate()
+                    dialog.dismiss(animated: true)
+                case .failure(let error):
+                    logger.error("data reloading failed \(error)")
+                    dialog.dismiss(animated: true)
+
+                    foreground {
+                        self.serverStatusFooter?.checkStatus()
+                    }
+                }
+            }
+        }
+    }
+    public func cancelPressed(dialog: DialogForm, sender: Any, closeDialog: () -> Void) {
+        reloadWorker?.cancel()
+        closeDialog() /// XXX maybe wait cancel
     }
 }

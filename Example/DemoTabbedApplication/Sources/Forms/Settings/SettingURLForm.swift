@@ -9,6 +9,8 @@
 import UIKit
 
 import Prephirences
+import QMobileAPI
+import QMobileUI
 
 public class SettingURLForm: UITableViewController {
 
@@ -18,7 +20,15 @@ public class SettingURLForm: UITableViewController {
 
     @IBOutlet weak var serverURLTextField: UITextField!
 
-    var serverStatusFooter: SettingsServerSectionFooter?
+    private var _serverStatusFooter: SettingsServerSectionFooter?
+    var serverStatusFooter: SettingsServerSectionFooter? {
+        if _serverStatusFooter == nil {
+            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
+            _serverStatusFooter?.delegate = self
+            _serverStatusFooter?.detailLabel.isHidden = false
+        }
+        return _serverStatusFooter
+    }
 
     public override func viewDidLoad() {
         // Register a view for section footer
@@ -29,6 +39,9 @@ public class SettingURLForm: UITableViewController {
 
         // Check component
         assertTableViewAttached()
+
+        // set placeholder with default value. see SettinForm: initFormData
+        serverURLTextField.placeholder = URL.qmobileURLLocalhost.absoluteString
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -39,34 +52,28 @@ public class SettingURLForm: UITableViewController {
     }
 
     func textFieldDidChange(textField: UITextField) {
-        var pref = Prephirences.sharedMutableInstance ?? UserDefaults.standard
-        pref["server.url"] = textField.text
+        Prephirences.serverURL = textField.text
 
         serverStatusFooter?.checkStatus(2)
     }
 
     override public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section), case .server = section {
-            if serverStatusFooter == nil {
-                serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-                serverStatusFooter?.delegate = self
-            }
-            serverStatusFooter?.update()
             return serverStatusFooter
         }
-        return nil // default
+        return nil
     }
 
     var position: Int?
 }
 
 extension SettingURLForm: SettingsServerSectionFooterDelegate {
-    public func statusChanged(status: ServerStatus) {
 
+    public func statusChanged(status: ServerStatus) {
         if case .checking = status {
             position = self.serverURLTextField.cursorPosition
         }
-        loggerapp.verbose("caret position \(String(describing: position))")
+        logger.verbose("caret position \(String(describing: position))")
 
         self.reload(section: Section.server)
 
@@ -74,4 +81,5 @@ extension SettingURLForm: SettingsServerSectionFooterDelegate {
         self.serverURLTextField.becomeFirstResponder()
         self.serverURLTextField.cursorPosition = position
     }
+
 }

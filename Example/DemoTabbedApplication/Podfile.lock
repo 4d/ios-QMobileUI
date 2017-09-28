@@ -1,16 +1,16 @@
 PODS:
   - Alamofire (4.5.1)
-  - AZDialogView (1.1.4)
+  - AZDialogView (1.1.5)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
-  - CallbackURLKit (1.0.1):
-    - CallbackURLKit/Core (= 1.0.1)
-  - CallbackURLKit/Core (1.0.1)
-  - DeviceKit (1.2.3)
+  - CallbackURLKit (2.0.0):
+    - CallbackURLKit/Core (= 2.0.0)
+  - CallbackURLKit/Core (2.0.0)
+  - DeviceKit (1.4.0)
   - FileKit (4.0.1)
   - Guitar (0.2.0)
-  - IBAnimatable (4.1.0)
-  - Kingfisher (3.13.0)
+  - IBAnimatable (4.2.0)
+  - Kingfisher (3.13.1)
   - LinearProgressBarMaterial (1.2)
   - Moya (9.0.0):
     - Moya/Core (= 9.0.0)
@@ -56,22 +56,15 @@ PODS:
     - SwiftMessages
     - ValueTransformerKit
     - XCGLogger
-  - RandomKit (5.2.3):
-    - ShiftOperations (~> 1.0.2)
-    - Threadly (~> 1.0)
-  - Result (3.2.3)
-  - ShiftOperations (1.0.2)
-  - StyleKit (0.5.0)
-  - SwiftMessages (3.5.0)
+  - Result (3.2.4)
+  - SwiftMessages (3.5.1)
   - SwiftyJSON (3.1.4)
-  - Threadly (1.2.0)
   - ValueTransformerKit (0.0.1)
-  - Watchdog (3.0)
-  - XCGLogger (5.0.1):
-    - XCGLogger/Core (= 5.0.1)
-  - XCGLogger/Core (5.0.1):
+  - XCGLogger (5.0.5):
+    - XCGLogger/Core (= 5.0.5)
+  - XCGLogger/Core (5.0.5):
     - ObjcExceptionBridging
-  - XCGLogger/UserInfoHelpers (5.0.1):
+  - XCGLogger/UserInfoHelpers (5.0.5):
     - XCGLogger/Core
   - XCGLoggerNSLoggerConnector (0.3.2):
     - NSLogger (>= 1.5)
@@ -79,10 +72,10 @@ PODS:
 
 DEPENDENCIES:
   - AZDialogView
-  - BrightFutures
-  - Guitar
-  - IBAnimatable
-  - Kingfisher
+  - BrightFutures (from `https://github.com/Thomvis/BrightFutures`, tag `5.2.0`)
+  - Guitar (from `https://github.com/ArtSabintsev/Guitar.git`, branch `swift3.2`)
+  - IBAnimatable (~> 4.0)
+  - Kingfisher (~> 3.0)
   - LinearProgressBarMaterial
   - NSLogger
   - PinpointKit/ScreenshotDetector
@@ -90,16 +83,19 @@ DEPENDENCIES:
   - QMobileDataStore (from `../../../QMobileDataStore`)
   - QMobileDataSync (from `../../../QMobileDataSync`)
   - QMobileUI (from `../../`)
-  - RandomKit
-  - StyleKit (from `https://github.com/146BC/StyleKit.git`, branch `develop`)
-  - SwiftMessages
-  - SwiftyJSON
-  - ValueTransformerKit
-  - Watchdog
-  - XCGLogger/UserInfoHelpers
+  - SwiftMessages (from `https://github.com/SwiftKickMobile/SwiftMessages`, tag `3.5.1`)
+  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON`, tag `3.1.4`)
+  - ValueTransformerKit (from `https://github.com/phimage/ValueTransformerKit`, tag `0.0.1`)
+  - XCGLogger/UserInfoHelpers (from `https://github.com/DaveWoodCom/XCGLogger.git`, tag `5.0.5`)
   - XCGLoggerNSLoggerConnector
 
 EXTERNAL SOURCES:
+  BrightFutures:
+    :git: https://github.com/Thomvis/BrightFutures
+    :tag: 5.2.0
+  Guitar:
+    :branch: swift3.2
+    :git: https://github.com/ArtSabintsev/Guitar.git
   QMobileAPI:
     :path: ../../../QMobileAPI
   QMobileDataStore:
@@ -108,25 +104,49 @@ EXTERNAL SOURCES:
     :path: ../../../QMobileDataSync
   QMobileUI:
     :path: ../../
-  StyleKit:
-    :branch: develop
-    :git: https://github.com/146BC/StyleKit.git
+  SwiftMessages:
+    :git: https://github.com/SwiftKickMobile/SwiftMessages
+    :tag: 3.5.1
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON
+    :tag: 3.1.4
+  ValueTransformerKit:
+    :git: https://github.com/phimage/ValueTransformerKit
+    :tag: 0.0.1
+  XCGLogger:
+    :git: https://github.com/DaveWoodCom/XCGLogger.git
+    :tag: 5.0.5
 
 CHECKOUT OPTIONS:
-  StyleKit:
-    :commit: 69a96e20e543babf30efee70722c6c1155c1eafd
-    :git: https://github.com/146BC/StyleKit.git
+  BrightFutures:
+    :git: https://github.com/Thomvis/BrightFutures
+    :tag: 5.2.0
+  Guitar:
+    :commit: ff30d73221147a7bf2d583e379deef2701ae32ea
+    :git: https://github.com/ArtSabintsev/Guitar.git
+  SwiftMessages:
+    :git: https://github.com/SwiftKickMobile/SwiftMessages
+    :tag: 3.5.1
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON
+    :tag: 3.1.4
+  ValueTransformerKit:
+    :git: https://github.com/phimage/ValueTransformerKit
+    :tag: 0.0.1
+  XCGLogger:
+    :git: https://github.com/DaveWoodCom/XCGLogger.git
+    :tag: 5.0.5
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  AZDialogView: 7c88868e074d32203c9512b6a63cd74fb9a2090e
-  BrightFutures: 8681dbb9fa831b69b6e7dc4a498b9e081d5daeb5
-  CallbackURLKit: c7f1b649a717541e8beea180d286ecc30f85f302
-  DeviceKit: f33cbc6e67d9bb416e42dedc647557c7c2f6d3d7
+  AZDialogView: 25b0bcbc260e56b43228c0b72ee8bbf48abcbfaa
+  BrightFutures: d0c77d07b77a3ec95832960ea0a6f0522c8876a1
+  CallbackURLKit: eebcf4ecbb70dc8c970f9fcf1ff70162c5ea0965
+  DeviceKit: fa74d97499660e88081718b16688e19217595dba
   FileKit: 1ea916f594bc0bb9a3951f80edf92b52bb7f883c
-  Guitar: 8e6f0858a4bcd5d380408f26e93724ba99aea8e1
-  IBAnimatable: 0fd2c9fd38c4798d71bcc18dbd87d473a7df2577
-  Kingfisher: 7eebf6000ac64401839f10da37f21eefa7d88970
+  Guitar: db10a90bea992b31ad9c50dff5dfe3ccb9e8c8a4
+  IBAnimatable: d9d20f1c627ee97c736c55f791da9c83f6bd1bec
+  Kingfisher: ed9707a409cc47fddafbcd12a43a9757e3600af5
   LinearProgressBarMaterial: f025b1ec6ecd08bcd4dfc6fecba4fb263d8a545b
   Moya: cf5e6ee93af526532f92614004b8ad2ea60fd845
   NSLogger: c9b80dbeee1d65eb553647a1f6f1f72171b04808
@@ -137,18 +157,13 @@ SPEC CHECKSUMS:
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
   QMobileDataSync: d6d1ed920f50b49eb510f6e21be7facbf9cdaa2a
   QMobileUI: 7442df3bf333522ca27f9262f279fca6bcc549dd
-  RandomKit: 380745911c4f7989707489b2ce297194bfcf5031
-  Result: 128640a6347e8d2ae48b142556739a2d13f90ce6
-  ShiftOperations: 702c9aa98d3b20d98dceb71dd8437b562f7ab3ad
-  StyleKit: d3618efe49e678fb9249ae0851d4e2f621251b6f
-  SwiftMessages: 323c2847255ebf380f01b95ad1121a750be4d117
-  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
-  Threadly: b772ed7c1ff4a3f03eb4600bbc5ef83b3be5cb29
-  ValueTransformerKit: 4f4ef5383455fde5d01076dfb7016fb5c4874899
-  Watchdog: 141185b6b3a332a9f5721ea42dfa9681cf2d7c6b
-  XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
+  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
+  SwiftMessages: b424725965615911a8bd9ef2a7cf2a7ad046f3a9
+  SwiftyJSON: 05cf0e98a950e2ba343735264f5a96b81e755d00
+  ValueTransformerKit: 476ab20daf5a91d610b0b38bbc18232e80ce73b6
+  XCGLogger: 7f76767461fdfda41a7e370f61b4e56fbea22dba
   XCGLoggerNSLoggerConnector: e13ec54445594d87f4a938fd6c2a6672cd0b4b85
 
-PODFILE CHECKSUM: 80e9fa95e06355fd6299c31609515e5805f8f647
+PODFILE CHECKSUM: 26665b58597e1c172eb9dbf5330e2872f72de27f
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.3.1

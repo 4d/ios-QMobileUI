@@ -27,6 +27,7 @@
 		48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A041DC1E79865F0098A54C /* Structures.xcdatamodeld */; };
 		48A168BD1E7A95DC00AA525B /* EntityDetailsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */; };
 		48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */; };
+		48D3F9921F7D208C00B96947 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F9911F7D208C00B96947 /* DialogForm.swift */; };
 		48D481631F6ACB560027DCB5 /* AppDelegate+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */; };
 		48E49D181EB9DDC3002B60AF /* Embedded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49D0D1EB9DDC3002B60AF /* Embedded.swift */; };
 		48E49D1A1EB9E101002B60AF /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 48E49D191EB9E101002B60AF /* Settings.plist */; };
@@ -79,6 +80,7 @@
 		48A041DD1E79865F0098A54C /* Structures.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Structures.xcdatamodel; sourceTree = "<group>"; };
 		48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityDetailsForm.swift; sourceTree = "<group>"; };
 		48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityListFormTableCategory.swift; sourceTree = "<group>"; };
+		48D3F9911F7D208C00B96947 /* DialogForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DialogForm.swift; path = "../../../../../../../perforce/depot/4DComponents/main/Internal User Components/4D Mobile Express.4dbase/Resources/templates/list/Sources/Forms/Settings/DialogForm.swift"; sourceTree = "<group>"; };
 		48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Services.swift"; sourceTree = "<group>"; };
 		48E49D0D1EB9DDC3002B60AF /* Embedded.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Embedded.swift; sourceTree = "<group>"; };
 		48E49D191EB9E101002B60AF /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
@@ -125,13 +127,6 @@
 				4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */,
 			);
 			name = Footer;
-			sourceTree = "<group>";
-		};
-		4836C03A1F5D72A900FDCBF5 /* Licenses */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Licenses;
 			sourceTree = "<group>";
 		};
 		485CCDB31E79836800CDB2B3 = {
@@ -305,11 +300,11 @@
 		48FBBF9D1F53E62600E920B6 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				4836C03A1F5D72A900FDCBF5 /* Licenses */,
 				48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */,
-				4811229F1F683CDC001EE34E /* SettingURLForm.swift */,
 				48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */,
 				481122A11F683D54001EE34E /* Footer */,
+				4811229F1F683CDC001EE34E /* SettingURLForm.swift */,
+				48D3F9911F7D208C00B96947 /* DialogForm.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -507,13 +502,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DemoTabbedApplication-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B2844C49E54AE97100F32B04 /* [CP] Copy Pods Resources */ = {
@@ -537,9 +535,60 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DemoTabbedApplication/Pods-DemoTabbedApplication-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AZDialogView/AZDialogView.framework",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/BrightFutures/BrightFutures.framework",
+				"${BUILT_PRODUCTS_DIR}/CallbackURLKit/CallbackURLKit.framework",
+				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FileKit/FileKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Guitar/Guitar.framework",
+				"${BUILT_PRODUCTS_DIR}/IBAnimatable/IBAnimatable.framework",
+				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/LinearProgressBarMaterial/LinearProgressBarMaterial.framework",
+				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
+				"${BUILT_PRODUCTS_DIR}/NSLogger/NSLogger.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjcExceptionBridging/ObjcExceptionBridging.framework",
+				"${BUILT_PRODUCTS_DIR}/PinpointKit/PinpointKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Prephirences/Prephirences.framework",
+				"${BUILT_PRODUCTS_DIR}/QMobileAPI/QMobileAPI.framework",
+				"${BUILT_PRODUCTS_DIR}/QMobileDataStore/QMobileDataStore.framework",
+				"${BUILT_PRODUCTS_DIR}/QMobileDataSync/QMobileDataSync.framework",
+				"${BUILT_PRODUCTS_DIR}/QMobileUI/QMobileUI.framework",
+				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftMessages/SwiftMessages.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/ValueTransformerKit/ValueTransformerKit.framework",
+				"${BUILT_PRODUCTS_DIR}/XCGLogger/XCGLogger.framework",
+				"${BUILT_PRODUCTS_DIR}/XCGLoggerNSLoggerConnector/XCGLoggerNSLoggerConnector.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AZDialogView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BrightFutures.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CallbackURLKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FileKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Guitar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IBAnimatable.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LinearProgressBarMaterial.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NSLogger.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjcExceptionBridging.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PinpointKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Prephirences.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QMobileAPI.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QMobileDataStore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QMobileDataSync.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QMobileUI.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftMessages.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ValueTransformerKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XCGLogger.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XCGLoggerNSLoggerConnector.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -570,6 +619,7 @@
 				48E49D291EB9F9AE002B60AF /* ApplicationStyleKit.swift in Sources */,
 				485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */,
 				485CCDC21E79836800CDB2B3 /* EntityListFormTable.swift in Sources */,
+				48D3F9921F7D208C00B96947 /* DialogForm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

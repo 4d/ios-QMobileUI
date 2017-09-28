@@ -17,7 +17,7 @@ extension Tag {
 extension Dev {
     static let eric = Dev("eric")
 }
-
+/*
 extension Domain {
     static let monitor = Domain("monitor")
     static let test = Domain("👷")
@@ -25,8 +25,8 @@ extension Domain {
 
 extension Image {
     static let done = Image(UIImage(named: "LaunchScreen")!)
-}
-
+}*/
+/*
 public struct Domain: UserInfoTaggingProtocol {
 
     /// The name of the developer
@@ -69,6 +69,6 @@ public struct Image: UserInfoTaggingProtocol {
         return Image(name)
     }
 
-}
+}*/
 
-let loggerapp = XCGLogger.forClass(AppDelegate.self)
+let logger = XCGLogger.forClass(AppDelegate.self)

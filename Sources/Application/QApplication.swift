@@ -46,34 +46,34 @@ open class QApplication: UIApplication {
                 }
             }
         } else {
-            
+
             // Logger
             services.register(ApplicationLogger.instance)
-            
+
             // Load preferences
             services.register(ApplicationPreferences.instance)
-            
+
             // Log all logging step
             services.register(ApplicationStepLogging.instance)
-            
+
             // Load the mobile database
             services.register(ApplicationDataStore.instance)
-            
+
             // Manage data sync
             services.register(ApplicationDataSync.instance)
-            
+
             // Load transformers for formatting
             services.register(ApplicationValueTransformers.instance)
-            
+
             // x-callback-url
             services.register(ApplicationXCallbackURL.instance)
         }
     }
-    
+
     public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         let services = ApplicationServices.instance
         services.application(app, open: url, options: options)
         return true
     }
-    
+
 }

@@ -7,6 +7,10 @@
 	<key>dataSync.sync.atStart</key>
 	<false/>
 	<key>server.url</key>
-	<string>http://192.168.5.14</string>
+	<string></string>
+	<key>server.url.port</key>
+	<integer>8099</integer>
+	<key>server.url.https.port</key>
+	<integer>9000</integer>
 </dict>
 </plist>
