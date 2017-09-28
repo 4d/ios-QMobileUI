@@ -19,7 +19,35 @@ public class SettingURLForm: UITableViewController {
     }
 
     @IBOutlet weak var serverURLTextField: UITextField!
+    var position: Int?
 
+    // MARK: events
+
+    public override func viewDidLoad() {
+        // Register a view for section footer
+        initHeaderFooter()
+
+        // Listen to textfield change
+        serverURLTextField.addTarget(self, action: #selector(onDataChanged(textField:)), for: .editingChanged)
+
+        // set placeholder with default value. see SettinForm: initFormData
+        serverURLTextField.placeholder = URL.qmobileURLLocalhost.absoluteString
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.checkStatus()
+    }
+
+    func onDataChanged(textField: UITextField) {
+        Prephirences.serverURL = textField.text
+        checkStatus()
+    }
+
+    // MARK: table section header and footer
+    private func initHeaderFooter() {
+        tableView.registerHeaderFooter(SettingsServerSectionFooter())
+    }
     private var _serverStatusFooter: SettingsServerSectionFooter?
     var serverStatusFooter: SettingsServerSectionFooter? {
         if _serverStatusFooter == nil {
@@ -29,34 +57,6 @@ public class SettingURLForm: UITableViewController {
         }
         return _serverStatusFooter
     }
-
-    public override func viewDidLoad() {
-        // Register a view for section footer
-        tableView.registerHeaderFooter(SettingsServerSectionFooter())
-
-        // Listen to textfield change
-        serverURLTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
-
-        // Check component
-        assertTableViewAttached()
-
-        // set placeholder with default value. see SettinForm: initFormData
-        serverURLTextField.placeholder = URL.qmobileURLLocalhost.absoluteString
-    }
-
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        foreground {
-            self.serverStatusFooter?.checkStatus()
-        }
-    }
-
-    func textFieldDidChange(textField: UITextField) {
-        Prephirences.serverURL = textField.text
-
-        serverStatusFooter?.checkStatus(2)
-    }
-
     override public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section), case .server = section {
             return serverStatusFooter
@@ -64,22 +64,30 @@ public class SettingURLForm: UITableViewController {
         return nil
     }
 
-    var position: Int?
+    private func checkStatus() {
+        serverStatusFooter?.checkStatus(2)
+    }
+
 }
 
 extension SettingURLForm: SettingsServerSectionFooterDelegate {
 
-    public func statusChanged(status: ServerStatus) {
-        if case .checking = status {
-            position = self.serverURLTextField.cursorPosition
+    public func onStatusChanged(status: ServerStatus) {
+        onForeground {
+            if case .checking = status {
+                self.position = self.serverURLTextField.cursorPosition
+            }
+            logger.verbose("caret position \(String(describing: self.position))")
+
+           // self.reload(section: Section.server)
+
+            self.forceUpdates()
+
+            self.serverURLTextField.cursorPosition = self.position
+            self.serverURLTextField.becomeFirstResponder()
+            self.serverURLTextField.cursorPosition = self.position
+
         }
-        logger.verbose("caret position \(String(describing: position))")
-
-        self.reload(section: Section.server)
-
-        self.serverURLTextField.cursorPosition = position
-        self.serverURLTextField.becomeFirstResponder()
-        self.serverURLTextField.cursorPosition = position
     }
 
 }

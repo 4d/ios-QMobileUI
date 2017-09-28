@@ -55,7 +55,7 @@ class Entity1ListForm: ListFormTable {
             self.refreshControl?.title = ""
         }
         self.refreshControl?.tintColor = .white // DEMO
-        let cancellable = dataSync { _ in
+        _ = dataSync { _ in
 
             self.refreshControl?.endRefreshing()
             self.onRefreshEnd()

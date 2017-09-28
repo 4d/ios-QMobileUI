@@ -18,7 +18,7 @@ import Moya
 import Result
 
 public protocol SettingsServerSectionFooterDelegate: NSObjectProtocol {
-    func statusChanged(status: ServerStatus)
+    func onStatusChanged(status: ServerStatus)
 }
 
 public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, ReusableView {
@@ -67,40 +67,28 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
 
         // Check URL validity
         if url.scheme == nil { // be kind, add scheme
-            url = URL(string: "http://\(text)") ?? url
-        }
-        if url.host?.isEmpty ?? false {
-            serverStatus(.notValidURL)
-            return
+            url = URL(string: "\(URL.defaultScheme)://\(text)") ?? url
         }
         guard url.isHttpOrHttps else {
-            serverStatus(.notValidURL)
+            serverStatus(.notValidScheme)
             return
         }
 
-        // Start checking
+        // Cancel all previous checking status
         queue.cancelAllOperations()
         queue.waitUntilAllOperationsAreFinished()
-        background(delay) {
-            DispatchQueue.main.sync {
-                self.serverStatus(.checking)
-            }
-            self.queue.waitUntilAllOperationsAreFinished()
-            self.queue.addOperation {
-                let apiManager = APIManager(url: url)
-                let checkstatus = apiManager.loadStatus(callbackQueue: .background)
-                checkstatus.onSuccess(.main) { _ in
-                    DataSync.instance.rest = APIManager.instance
-                }
-                checkstatus.onComplete { [weak self] result in
-                     self?.serverStatus(.done(result))
-                }
 
-                /*checkstatus.onComplete { result in
-                    apiManager.reachability { _ in
-                        self.checkStatus(10)
-                        }.flatMap { self.cancellables.append($0) }
-                }*/
+        // Start checking in a new task
+        self.serverStatus(.checking)
+        self.queue.addOperation {
+            let apiManager = APIManager(url: url)
+            let checkstatus = apiManager.loadStatus()
+            checkstatus.onSuccess(self.queue.context) { _ in
+                APIManager.instance = apiManager
+                DataSync.instance.rest = apiManager
+            }
+            checkstatus.onComplete(self.queue.context) { [weak self] result in
+                self?.serverStatus(.done(result))
             }
         }
     }
@@ -113,16 +101,16 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
 
         // Notify delegqte
         if oldStatus != status {
-            delegate?.statusChanged(status: status)
+            delegate?.onStatusChanged(status: status)
         }
     }
 
     private func updateUI() {
-        self.iconView.backgroundColor = serverStatus.color
-        self.titleLabel.text = serverStatus.message
-        self.detailLabel.text = serverStatus.detailMessage
+        onForeground {
+            self.iconView.backgroundColor = self.serverStatus.color
+            self.titleLabel.text = self.serverStatus.message
+            self.detailLabel.text = self.serverStatus.detailMessage
 
-        foreground {
             if self.serverStatus.isChecking {
                 self.iconAnimationView.startAnimating()
             } else {
@@ -133,6 +121,4 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
 
 }
 
-public class ServerStatusView: AnimatableActivityIndicatorView {
-
-}
+public class ServerStatusView: AnimatableActivityIndicatorView {}

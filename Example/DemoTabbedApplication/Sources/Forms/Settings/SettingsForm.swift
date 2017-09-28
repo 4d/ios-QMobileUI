@@ -27,29 +27,16 @@ public class SettingsForm: UITableViewController {
 
     @IBOutlet weak var serverURLLabel: UILabel!
 
-    private var _serverStatusFooter: SettingsServerSectionFooter?
-    var serverStatusFooter: SettingsServerSectionFooter? {
-        if _serverStatusFooter == nil {
-            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-            _serverStatusFooter?.delegate = self
-            _serverStatusFooter?.detailLabel.isHidden = true
-        }
-        return _serverStatusFooter
-    }
-
     /*weak*/var listener: NSObjectProtocol?
 
     // MARK: override
     public override func viewDidLoad() {
         // Register external UI from other file
-        tableView.registerHeaderFooter(SettingsServerSectionFooter())
+        initHeaderFooter()
 
         initFormData()
 
         initFooterData()
-
-        // Check storyboard is well configured
-        assertTableViewAttached()
     }
 
     private func initFormData() {
@@ -66,11 +53,7 @@ public class SettingsForm: UITableViewController {
     }
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        // checkstatus when displayinh
-        foreground {
-            self.serverStatusFooter?.checkStatus()
-        }
+        self.checkStatus()
     }
 
     private func initFooterData() {
@@ -100,6 +83,25 @@ public class SettingsForm: UITableViewController {
             self.reload(section: Section.data)
         }
     }
+
+    // server status
+
+    private func initHeaderFooter() {
+        tableView.registerHeaderFooter(SettingsServerSectionFooter())
+    }
+    private func checkStatus() {
+        serverStatusFooter?.checkStatus(0)
+    }
+    private var _serverStatusFooter: SettingsServerSectionFooter?
+    var serverStatusFooter: SettingsServerSectionFooter? {
+        if _serverStatusFooter == nil {
+            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
+            _serverStatusFooter?.delegate = self
+            _serverStatusFooter?.detailLabel.isHidden = true
+        }
+        return _serverStatusFooter
+    }
+
     // MARK: table view
     override public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section) {
@@ -116,14 +118,22 @@ public class SettingsForm: UITableViewController {
 }
 
 extension SettingsForm: SettingsServerSectionFooterDelegate {
-    public func statusChanged(status: ServerStatus) {
-        self.reload(section: Section.server)
 
-        self.reloadButton.isEnabled = status.isSuccess
+    public func onStatusChanged(status: ServerStatus) {
+        onForeground {
+            // Reload server status view ie. the footer of server
+            self.reload(section: Section.server)
+            // Activate reload button if status is ok
+            self.reloadButton.isEnabled = status.isSuccess
+        }
     }
 }
 
+// MARK: action on dialog button press
+
 extension SettingsForm: DialogFormDelegate {
+
+    // if ok pressed
     public func okPressed(dialog: DialogForm, sender: Any) {
         reloadWorker?.cancel()
 
@@ -146,6 +156,8 @@ extension SettingsForm: DialogFormDelegate {
             }
         }
     }
+
+    // if cancel pressed
     public func cancelPressed(dialog: DialogForm, sender: Any, closeDialog: () -> Void) {
         reloadWorker?.cancel()
         closeDialog() /// XXX maybe wait cancel

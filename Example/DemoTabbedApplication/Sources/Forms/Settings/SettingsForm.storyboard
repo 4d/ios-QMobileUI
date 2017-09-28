@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,7 +12,7 @@
         <!--Settings-->
         <scene sceneID="kIB-e4-eqk">
             <objects>
-                <tableViewController id="oh5-F1-aRk" customClass="SettingsForm" customModule="___PRODUCT___" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="oh5-F1-aRk" customClass="SettingsForm" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="PYN-TR-frL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -26,7 +27,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kmp-Tc-mSY">
+                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kmp-Tc-mSY">
                                                     <rect key="frame" x="164" y="7" width="47" height="30"/>
                                                     <state key="normal" title="Reload"/>
                                                     <connections>
@@ -111,7 +112,7 @@
         <!--Remote URL-->
         <scene sceneID="kLD-aX-EOL">
             <objects>
-                <tableViewController id="0bI-w0-rEw" customClass="SettingURLForm" customModule="___PRODUCT___" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="0bI-w0-rEw" customClass="SettingURLForm" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="1XZ-ud-bvJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,7 +200,7 @@
         <!--Dialog Form-->
         <scene sceneID="TXc-QB-a1e">
             <objects>
-                <viewController id="3k7-Pa-5sD" customClass="DialogForm" customModule="___PRODUCT___" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="3k7-Pa-5sD" customClass="DialogForm" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="XUb-NT-1hz"/>
                         <viewControllerLayoutGuide type="bottom" id="23F-dQ-b1k"/>

@@ -12,15 +12,11 @@ import QMobileDataStore
 import QMobileDataSync
 import QMobileUI
 import QMobileAPI
-import StyleKit
-import RandomKit
-import Watchdog
 import NSLogger
 import XCGLoggerNSLoggerConnector
 import LinearProgressBarMaterial
 import SwiftMessages
 import Moya
-
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -31,30 +27,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static let threshold = 0.4
 
-    var watchdog: Watchdog?
     let linearBar: LinearProgressBar = LinearProgressBar()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         LoggerSetOptions(LoggerGetDefaultLogger(), UInt32( kLoggerOption_BufferLogsUntilConnection | kLoggerOption_BrowseBonjour | kLoggerOption_BrowseOnlyLocalDomain ))
         LoggerStart(LoggerGetDefaultLogger())
-        loggerapp.add(destination: XCGNSLoggerLogDestination(owner: loggerapp, identifier: "nslogger.identifier"))
-        loggerapp.add(destination: AppleSystemLogDestination(owner: loggerapp, identifier: "apple"))
-
-        watchdog = Watchdog(threshold: AppDelegate.threshold) {
-            loggerapp.info("👮 Main thread was blocked for " + String(format:"%.2f", AppDelegate.threshold) + "s 👮", userInfo:  Domain.monitor | Dev.eric | Tag.demo)
-        }
+        logger.add(destination: XCGNSLoggerLogDestination(owner: logger, identifier: "nslogger.identifier"))
+        logger.add(destination: AppleSystemLogDestination(owner: logger, identifier: "apple"))
 
         listeners.append(dataStore.onLoad { notif in
-            loggerapp.info("DS load \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo | Image.done)
+            logger.info("DS load \(notif)", userInfo: Dev.eric | Tag.demo)
         })
         listeners.append(dataStore.onSave { notif in
-            loggerapp.info("DS save \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo)
+            logger.info("DS save \(notif)", userInfo: Dev.eric | Tag.demo)
         })
         listeners.append(dataStore.onDrop { notif in
-            loggerapp.info("DS drop \(notif)", userInfo: Domain.test | Dev.eric | Tag.demo)
+            logger.info("DS drop \(notif)", userInfo: Dev.eric | Tag.demo)
         })
-
 
         // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
@@ -119,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
     }
 
-    func applicatinWillTerminate(_ application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         for listener in listeners {
             dataStore.unobserve(listener)
         }

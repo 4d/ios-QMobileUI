@@ -138,6 +138,8 @@ class DetailsFormTable: QMobileUI.DetailsFormTable {
 
 }
 
+// MARK: thread management
+
 func background(execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.background.async(execute: work)
 }
@@ -145,6 +147,7 @@ func background(_ delay: TimeInterval, execute work: @escaping @convention(block
     DispatchQueue.background.after(delay, execute: work)
 }
 
+/// Execute code in User Interface block. enqueue the task.
 func foreground(execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.main.async(execute: work)
 }
@@ -157,6 +160,19 @@ func userInteractive(execute work: @escaping @convention(block) () -> Swift.Void
     DispatchQueue.userInteractive.async(execute: work)
 }
 
+/// Execute code in User Interface thread. If already in execute immediately
+func onForeground(_ closure: @escaping () -> Void) {
+    if Thread.isMainThread {
+        closure()
+    } else {
+        DispatchQueue.main.async {
+            closure()
+        }
+    }
+}
+
+// MARK: shortcut
+
 public func alert(title: String, error: Swift.Error) {
     QMobileUI.alert(title: title, error: error)
 }
@@ -164,6 +180,8 @@ public func alert(title: String, error: Swift.Error) {
 public func alert(title: String, message: String? = nil) {
     QMobileUI.alert(title: title, message: message)
 }
+
+// MARK: Operations
 
 import QMobileDataSync
 import Moya

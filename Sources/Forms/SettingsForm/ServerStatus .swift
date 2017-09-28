@@ -19,6 +19,8 @@ public enum ServerStatus {
     case emptyURL
     /// Could not create a valid URL
     case notValidURL
+    /// Not a valid url scheme (http or https)
+    case notValidScheme
     /// Checking status
     case checking
     /// Status checked with a result
@@ -48,6 +50,7 @@ extension ServerStatus {
         return false
     }
     public var isFailure: Bool {
+        // CLEAN : make a switch
         if case .done(let result) = self {
             if case .failure = result {
                 return true
@@ -60,6 +63,9 @@ extension ServerStatus {
             return true
         }
         if case .notValidURL = self {
+            return true
+        }
+        if case .notValidScheme = self {
             return true
         }
 
@@ -75,7 +81,7 @@ extension ServerStatus {
             return ""
         case .emptyURL:
             return "Please enter the server URL"
-        case .notValidURL:
+        case .notValidURL, .notValidScheme:
             return "Please enter a valid URL (https://hostname)"
         case .checking:
             return "Checking server accessibility..."
@@ -111,6 +117,7 @@ extension ServerStatus: Equatable {
         case (.unknown, .unknown): return true
         case (.emptyURL, .emptyURL): return true
         case (.notValidURL, .notValidURL): return true
+        case (.notValidScheme, .notValidScheme): return true
         case (.checking, .checking): return true
         case (.done(let result), .done (let result2)):
             switch (result, result2) {
