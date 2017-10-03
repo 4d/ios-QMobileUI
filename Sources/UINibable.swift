@@ -39,7 +39,11 @@ extension UINibable where Self: UIView {
     }
 }
 
-extension UIViewController: UINibable {}
+extension UIViewController: UINibable {
+    /*public var nibBundle: Bundle? {
+        return Bundle(for: type(of:self))
+    }*/
+}
 
 extension UINibable {
 

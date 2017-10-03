@@ -35,7 +35,7 @@ extension DetailsForm {
     public var record: Record? {
         return self.view.record as? Record
     }
-    
+
     public var tableName: String? {
         return self.view.table?.dataSource.tableName
     }

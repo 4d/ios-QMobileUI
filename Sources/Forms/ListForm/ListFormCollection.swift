@@ -46,6 +46,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
         dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
+        dataSource.showSectionBar = showSectionBar
 
         dataSource.collectionConfigurationBlock = { [unowned self] cell, record, index in
             self.configureListFormView(cell, record, index)

@@ -11,7 +11,7 @@ import QMobileAPI
 import QMobileDataSync
 
 extension DetailsForm {
-    
+
     public var table: Table? {
         assert(!ApplicationDataSync.dataSync.tablesByName.isEmpty) // not loaded...
         guard let tableName = self.tableName else {

@@ -40,6 +40,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
+        dataSource.showSectionBar = showSectionBar
 
         dataSource.tableConfigurationBlock = { [weak self] cell, record, index in
             self?.configureListFormView(cell, record, index)

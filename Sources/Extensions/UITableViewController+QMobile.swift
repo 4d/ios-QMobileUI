@@ -37,7 +37,7 @@ extension UITableViewController {
         assert(tableView.dataSource === self)
         assert(tableView.delegate === self)
     }
-    
+
     public func forceUpdates(with closure: (() -> Void)? = nil ) {
         UIView.setAnimationsEnabled(false)
         tableView.beginUpdates()
