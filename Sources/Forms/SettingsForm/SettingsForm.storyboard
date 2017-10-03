@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="17A365" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="VB8-8p-VEb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="VB8-8p-VEb">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -133,7 +132,7 @@
         <!--Dialog Form-->
         <scene sceneID="TXc-QB-a1e">
             <objects>
-                <viewController id="3k7-Pa-5sD" customClass="DialogForm" customModule="QMobileUI" sceneMemberID="viewController">
+                <viewController id="3k7-Pa-5sD" customClass="DialogForm" customModule="DemoTabbedApplication" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="XUb-NT-1hz"/>
                         <viewControllerLayoutGuide type="bottom" id="23F-dQ-b1k"/>
@@ -143,7 +142,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Are you sure you want to reload Data ?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8mX-Hn-Puh">
-                                <rect key="frame" x="10" y="37" width="355" height="25"/>
+                                <rect key="frame" x="10" y="17" width="355" height="25"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="21"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -224,8 +223,6 @@
                             <color key="value" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </userDefinedRuntimeAttribute>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="dismissOnTap" value="NO"/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="cancelMessage" value="Cancelling..."/>
-                        <userDefinedRuntimeAttribute type="string" keyPath="okMessage" value="Reloading data"/>
                     </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="activityIndicatorView" destination="Wbt-KP-6Tz" id="T2e-J5-izg"/>

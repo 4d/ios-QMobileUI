@@ -46,6 +46,11 @@
 		483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */; };
 		483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */; };
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
+		4859D94A1F82777100C8A020 /* IBAnimatable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4859D9491F82773600C8A020 /* IBAnimatable.framework */; };
+		4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9581F827E6800C8A020 /* SettingsForm.swift */; };
+		4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95A1F827E6800C8A020 /* SettingsServerSectionFooter.swift */; };
+		4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95B1F827E6800C8A020 /* SettingURLForm.swift */; };
+		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
@@ -167,6 +172,14 @@
 		483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+QMobile.swift"; sourceTree = "<group>"; };
 		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
+		4859D9491F82773600C8A020 /* IBAnimatable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBAnimatable.framework; path = Carthage/Build/iOS/IBAnimatable.framework; sourceTree = "<group>"; };
+		4859D9551F827E4800C8A020 /* DialogForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogForm.swift; sourceTree = "<group>"; };
+		4859D9561F827E6800C8A020 /* SettingsForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SettingsForm.storyboard; sourceTree = "<group>"; };
+		4859D9571F827E6800C8A020 /* SettingsServerSectionFooter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsServerSectionFooter.xib; sourceTree = "<group>"; };
+		4859D9581F827E6800C8A020 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
+		4859D95A1F827E6800C8A020 /* SettingsServerSectionFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsServerSectionFooter.swift; sourceTree = "<group>"; };
+		4859D95B1F827E6800C8A020 /* SettingURLForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLForm.swift; sourceTree = "<group>"; };
+		4859D9601F827EFB00C8A020 /* SettingURLForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SettingURLForm.storyboard; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
@@ -229,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				48E49CFD1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
+				4859D94A1F82777100C8A020 /* IBAnimatable.framework in Frameworks */,
 				48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */,
 				48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
@@ -394,6 +408,17 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		4859D95F1F827E9100C8A020 /* ServerStatus */ = {
+			isa = PBXGroup;
+			children = (
+				4859D95A1F827E6800C8A020 /* SettingsServerSectionFooter.swift */,
+				4859D9571F827E6800C8A020 /* SettingsServerSectionFooter.xib */,
+				48F8E2C11F7D0B23000080FB /* ServerStatus .swift */,
+				48F8E2C81F7D0F3E000080FB /* ServerStatus+Color.swift */,
+			);
+			path = ServerStatus;
+			sourceTree = "<group>";
+		};
 		485CCDB01E7977FF00CDB2B3 /* Quality */ = {
 			isa = PBXGroup;
 			children = (
@@ -406,6 +431,7 @@
 		48D3F98E1F7D16E600B96947 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				4859D9491F82773600C8A020 /* IBAnimatable.framework */,
 				4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */,
 				48AE2C611F4577A40013FDEE /* BrightFutures.framework */,
 				48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */,
@@ -521,6 +547,7 @@
 		48EE07791E7AE98900A8546E /* Forms */ = {
 			isa = PBXGroup;
 			children = (
+				4859D9551F827E4800C8A020 /* DialogForm.swift */,
 				48EE077B1E7AE9B500A8546E /* ListForm */,
 				480B6B721E7FD1C500D1E583 /* DetailsForm */,
 				48F8E2C01F7D0B07000080FB /* SettingsForm */,
@@ -551,8 +578,11 @@
 		48F8E2C01F7D0B07000080FB /* SettingsForm */ = {
 			isa = PBXGroup;
 			children = (
-				48F8E2C11F7D0B23000080FB /* ServerStatus .swift */,
-				48F8E2C81F7D0F3E000080FB /* ServerStatus+Color.swift */,
+				4859D9561F827E6800C8A020 /* SettingsForm.storyboard */,
+				4859D9581F827E6800C8A020 /* SettingsForm.swift */,
+				4859D9601F827EFB00C8A020 /* SettingURLForm.storyboard */,
+				4859D95B1F827E6800C8A020 /* SettingURLForm.swift */,
+				4859D95F1F827E9100C8A020 /* ServerStatus */,
 			);
 			path = SettingsForm;
 			sourceTree = "<group>";
@@ -777,6 +807,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/DeviceKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftMessages.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FileKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/IBAnimatable.framework",
 			);
 			name = carthage;
 			outputPaths = (
@@ -808,6 +839,7 @@
 			files = (
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
+				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
 				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
 				48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */,
 				48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */,
@@ -830,6 +862,7 @@
 				480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */,
 				48E49CEF1EB9CA70002B60AF /* ApplicationValueTransformers.swift in Sources */,
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
+				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
@@ -844,6 +877,7 @@
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
+				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,
 				48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */,
@@ -868,6 +902,7 @@
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
+				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
 				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,
 				480392C11E929660008CF992 /* UIImageView+Binding.swift in Sources */,

@@ -12,3 +12,7 @@ github "ArtSabintsev/Guitar" "swift3.2" # string extension, camel cased etc...
 github "SwiftKickMobile/SwiftMessages" "3.5.1" # display message
 
 github "dennisweissmann/DeviceKit" "1.2.3"
+github "IBAnimatable/IBAnimatable" "4.2.0"
+github "nvzqz/FileKit" "85999177271043b127f8744259fc432b32e4f177"
+github "antitypical/Result" "3.2.3"
+github "DaveWoodCom/XCGLogger" "5.0.5"

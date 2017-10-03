@@ -36,6 +36,7 @@ Pod::Spec.new do |s|
   s.dependency "ValueTransformerKit"
   s.dependency "SwiftMessages"
   s.dependency "CallbackURLKit"
+  s.dependency "IBAnimatable"
   s.dependency "QMobileDataStore"
   s.dependency "QMobileDataSync"
 

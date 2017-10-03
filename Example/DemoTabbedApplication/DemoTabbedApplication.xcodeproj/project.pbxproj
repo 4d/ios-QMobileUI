@@ -9,11 +9,14 @@
 /* Begin PBXBuildFile section */
 		480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43461E83FAB8007C90DD /* Entity+TestImage.swift */; };
 		480B43491E840208007C90DD /* a.style.json in Resources */ = {isa = PBXBuildFile; fileRef = 480B43481E840208007C90DD /* a.style.json */; };
-		481122A01F683CDC001EE34E /* SettingURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4811229F1F683CDC001EE34E /* SettingURLForm.swift */; };
 		482C59BA1EE55A0F009B7B49 /* Entity1.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */; };
 		4843784B1F46FE69004C5101 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4843784A1F46FE69004C5101 /* Logger.swift */; };
-		4851C3AA1F600A800014280D /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */; };
-		4851C3AC1F600AB70014280D /* SettingsServerSectionFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */; };
+		48501C571F83747400EB03DD /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9651F82828C00C8A020 /* SettingsForm.swift */; };
+		48501C581F83747700EB03DD /* SettingURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9641F82828C00C8A020 /* SettingURLForm.swift */; };
+		48501C591F8375A800EB03DD /* SettingURLForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4859D9631F82828C00C8A020 /* SettingURLForm.storyboard */; };
+		48501C5A1F8375AB00EB03DD /* SettingsForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4859D9661F82828C00C8A020 /* SettingsForm.storyboard */; };
+		48501C5E1F83780E00EB03DD /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48501C5C1F83780E00EB03DD /* SettingsServerSectionFooter.swift */; };
+		48501C5F1F83780E00EB03DD /* SettingsServerSectionFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48501C5D1F83780E00EB03DD /* SettingsServerSectionFooter.xib */; };
 		4851FB631EBB277300922638 /* Entity.catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 4851FB621EBB277300922638 /* Entity.catalog.json */; };
 		485AF1CC1EBA1C41000F89D8 /* EntityTableCategory.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */; };
 		485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */; };
@@ -27,7 +30,6 @@
 		48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A041DC1E79865F0098A54C /* Structures.xcdatamodeld */; };
 		48A168BD1E7A95DC00AA525B /* EntityDetailsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */; };
 		48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */; };
-		48D3F9921F7D208C00B96947 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F9911F7D208C00B96947 /* DialogForm.swift */; };
 		48D481631F6ACB560027DCB5 /* AppDelegate+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */; };
 		48E49D181EB9DDC3002B60AF /* Embedded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49D0D1EB9DDC3002B60AF /* Embedded.swift */; };
 		48E49D1A1EB9E101002B60AF /* Settings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 48E49D191EB9E101002B60AF /* Settings.plist */; };
@@ -39,8 +41,6 @@
 		48F800B01F6AAAFF002B1232 /* EntityTable.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48F800AF1F6AAAFF002B1232 /* EntityTable.storyboard */; };
 		48F800B31F6AAB0F002B1232 /* Entity1DetailsForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48F800B11F6AAB0F002B1232 /* Entity1DetailsForm.storyboard */; };
 		48F800B41F6AAB0F002B1232 /* Entity1ListForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48F800B21F6AAB0F002B1232 /* Entity1ListForm.storyboard */; };
-		48FBBF9C1F53E5F900E920B6 /* SettingsForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */; };
-		48FBBF9F1F53E66500E920B6 /* SettingsForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */; };
 		6BC8EB5A71A397FFF6C823E2 /* Pods_DemoTabbedApplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7296E82E14607BA8B098BBFA /* Pods_DemoTabbedApplication.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,12 +61,15 @@
 		2F5F9F4282C799B0443E6090 /* Pods-DemoTabbedApplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoTabbedApplication.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DemoTabbedApplication/Pods-DemoTabbedApplication.debug.xcconfig"; sourceTree = "<group>"; };
 		480B43461E83FAB8007C90DD /* Entity+TestImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+TestImage.swift"; sourceTree = "<group>"; };
 		480B43481E840208007C90DD /* a.style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a.style.json; sourceTree = "<group>"; };
-		4811229F1F683CDC001EE34E /* SettingURLForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingURLForm.swift; sourceTree = "<group>"; };
 		482C59B91EE55A0F009B7B49 /* Entity1.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity1.catalog.json; sourceTree = "<group>"; };
 		4843784A1F46FE69004C5101 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsServerSectionFooter.swift; sourceTree = "<group>"; };
-		4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsServerSectionFooter.xib; sourceTree = "<group>"; };
+		48501C5C1F83780E00EB03DD /* SettingsServerSectionFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsServerSectionFooter.swift; sourceTree = "<group>"; };
+		48501C5D1F83780E00EB03DD /* SettingsServerSectionFooter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsServerSectionFooter.xib; sourceTree = "<group>"; };
 		4851FB621EBB277300922638 /* Entity.catalog.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Entity.catalog.json; sourceTree = "<group>"; };
+		4859D9631F82828C00C8A020 /* SettingURLForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = SettingURLForm.storyboard; path = Sources/Forms/Settings/SettingURLForm.storyboard; sourceTree = SOURCE_ROOT; };
+		4859D9641F82828C00C8A020 /* SettingURLForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingURLForm.swift; path = Sources/Forms/Settings/SettingURLForm.swift; sourceTree = SOURCE_ROOT; };
+		4859D9651F82828C00C8A020 /* SettingsForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsForm.swift; path = Sources/Forms/Settings/SettingsForm.swift; sourceTree = SOURCE_ROOT; };
+		4859D9661F82828C00C8A020 /* SettingsForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = SettingsForm.storyboard; path = Sources/Forms/Settings/SettingsForm.storyboard; sourceTree = SOURCE_ROOT; };
 		485AF1CB1EBA1C41000F89D8 /* EntityTableCategory.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = EntityTableCategory.storyboard; sourceTree = "<group>"; };
 		485CCDBC1E79836800CDB2B3 /* DemoTabbedApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoTabbedApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		485CCDBF1E79836800CDB2B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -80,7 +83,6 @@
 		48A041DD1E79865F0098A54C /* Structures.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Structures.xcdatamodel; sourceTree = "<group>"; };
 		48A168BC1E7A95DC00AA525B /* EntityDetailsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityDetailsForm.swift; sourceTree = "<group>"; };
 		48A168BE1E7AC27200AA525B /* EntityListFormTableCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityListFormTableCategory.swift; sourceTree = "<group>"; };
-		48D3F9911F7D208C00B96947 /* DialogForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DialogForm.swift; path = "../../../../../../../perforce/depot/4DComponents/main/Internal User Components/4D Mobile Express.4dbase/Resources/templates/list/Sources/Forms/Settings/DialogForm.swift"; sourceTree = "<group>"; };
 		48D481621F6ACB560027DCB5 /* AppDelegate+Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Services.swift"; sourceTree = "<group>"; };
 		48E49D0D1EB9DDC3002B60AF /* Embedded.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Embedded.swift; sourceTree = "<group>"; };
 		48E49D191EB9E101002B60AF /* Settings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Settings.plist; sourceTree = "<group>"; };
@@ -93,8 +95,6 @@
 		48F800AF1F6AAAFF002B1232 /* EntityTable.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = EntityTable.storyboard; sourceTree = "<group>"; };
 		48F800B11F6AAB0F002B1232 /* Entity1DetailsForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Entity1DetailsForm.storyboard; sourceTree = "<group>"; };
 		48F800B21F6AAB0F002B1232 /* Entity1ListForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Entity1ListForm.storyboard; sourceTree = "<group>"; };
-		48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsForm.swift; sourceTree = "<group>"; };
-		48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SettingsForm.storyboard; sourceTree = "<group>"; };
 		7296E82E14607BA8B098BBFA /* Pods_DemoTabbedApplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoTabbedApplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFA62FA9874A8CF9C95AA524 /* Pods-DemoTabbedApplication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoTabbedApplication.release.xcconfig"; path = "Pods/Target Support Files/Pods-DemoTabbedApplication/Pods-DemoTabbedApplication.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -120,13 +120,27 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		481122A11F683D54001EE34E /* Footer */ = {
+		48501C5B1F83780E00EB03DD /* ServerStatus */ = {
 			isa = PBXGroup;
 			children = (
-				4851C3A91F600A800014280D /* SettingsServerSectionFooter.swift */,
-				4851C3AB1F600AB70014280D /* SettingsServerSectionFooter.xib */,
+				48501C5C1F83780E00EB03DD /* SettingsServerSectionFooter.swift */,
+				48501C5D1F83780E00EB03DD /* SettingsServerSectionFooter.xib */,
 			);
-			name = Footer;
+			name = ServerStatus;
+			path = Sources/Forms/Settings/ServerStatus;
+			sourceTree = SOURCE_ROOT;
+		};
+		4859D9621F82826A00C8A020 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				48501C5B1F83780E00EB03DD /* ServerStatus */,
+				4859D9661F82828C00C8A020 /* SettingsForm.storyboard */,
+				4859D9651F82828C00C8A020 /* SettingsForm.swift */,
+				4859D9631F82828C00C8A020 /* SettingURLForm.storyboard */,
+				4859D9641F82828C00C8A020 /* SettingURLForm.swift */,
+			);
+			name = Settings;
+			path = "New Group";
 			sourceTree = "<group>";
 		};
 		485CCDB31E79836800CDB2B3 = {
@@ -182,8 +196,8 @@
 		48E49D021EB9DDC3002B60AF /* Forms */ = {
 			isa = PBXGroup;
 			children = (
+				4859D9621F82826A00C8A020 /* Settings */,
 				48E49D1F1EB9E316002B60AF /* Tables */,
-				48FBBF9D1F53E62600E920B6 /* Settings */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -295,18 +309,6 @@
 				48E61B511F3C4DB700C560BB /* Entity1DetailsForm.swift */,
 			);
 			name = Entity1;
-			sourceTree = "<group>";
-		};
-		48FBBF9D1F53E62600E920B6 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				48FBBF9B1F53E5F900E920B6 /* SettingsForm.swift */,
-				48FBBF9E1F53E66500E920B6 /* SettingsForm.storyboard */,
-				481122A11F683D54001EE34E /* Footer */,
-				4811229F1F683CDC001EE34E /* SettingURLForm.swift */,
-				48D3F9911F7D208C00B96947 /* DialogForm.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		6B925BD3D3904BD1B8E98D5B /* Frameworks */ = {
@@ -448,18 +450,19 @@
 			files = (
 				485CCDCC1E79836800CDB2B3 /* LaunchScreen.storyboard in Resources */,
 				48E49D1A1EB9E101002B60AF /* Settings.plist in Resources */,
-				4851C3AC1F600AB70014280D /* SettingsServerSectionFooter.xib in Resources */,
 				485CCDC91E79836800CDB2B3 /* Assets.xcassets in Resources */,
+				48501C5A1F8375AB00EB03DD /* SettingsForm.storyboard in Resources */,
 				48E49D1C1EB9E121002B60AF /* Settings.debug.plist in Resources */,
 				485CCDC71E79836800CDB2B3 /* TabBar.storyboard in Resources */,
 				48F800B01F6AAAFF002B1232 /* EntityTable.storyboard in Resources */,
+				48501C591F8375A800EB03DD /* SettingURLForm.storyboard in Resources */,
 				4851FB631EBB277300922638 /* Entity.catalog.json in Resources */,
 				480B43491E840208007C90DD /* a.style.json in Resources */,
 				482C59BA1EE55A0F009B7B49 /* Entity1.catalog.json in Resources */,
 				48F800B41F6AAB0F002B1232 /* Entity1ListForm.storyboard in Resources */,
-				48FBBF9F1F53E66500E920B6 /* SettingsForm.storyboard in Resources */,
 				48F800AE1F6AAAF7002B1232 /* EntityCollection.storyboard in Resources */,
 				48F800B31F6AAB0F002B1232 /* Entity1DetailsForm.storyboard in Resources */,
+				48501C5F1F83780E00EB03DD /* SettingsServerSectionFooter.xib in Resources */,
 				485AF1CC1EBA1C41000F89D8 /* EntityTableCategory.storyboard in Resources */,
 				488B14041F69654200DAD51D /* Entity1.data.json in Resources */,
 			);
@@ -603,23 +606,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				485CCDC41E79836800CDB2B3 /* EntityListFormCollection.swift in Sources */,
-				4851C3AA1F600A800014280D /* SettingsServerSectionFooter.swift in Sources */,
 				48E49D181EB9DDC3002B60AF /* Embedded.swift in Sources */,
+				48501C571F83747400EB03DD /* SettingsForm.swift in Sources */,
 				48639DF31EA766DF00D52E08 /* main.swift in Sources */,
-				481122A01F683CDC001EE34E /* SettingURLForm.swift in Sources */,
+				48501C581F83747700EB03DD /* SettingURLForm.swift in Sources */,
 				48A168BF1E7AC27200AA525B /* EntityListFormTableCategory.swift in Sources */,
 				48A168BD1E7A95DC00AA525B /* EntityDetailsForm.swift in Sources */,
 				48D481631F6ACB560027DCB5 /* AppDelegate+Services.swift in Sources */,
 				48E61B521F3C4DB700C560BB /* Entity1DetailsForm.swift in Sources */,
 				480B43471E83FAB8007C90DD /* Entity+TestImage.swift in Sources */,
 				48E61B4B1F3C4D1F00C560BB /* Entity1ListForm.swift in Sources */,
+				48501C5E1F83780E00EB03DD /* SettingsServerSectionFooter.swift in Sources */,
 				48A041DE1E79865F0098A54C /* Structures.xcdatamodeld in Sources */,
-				48FBBF9C1F53E5F900E920B6 /* SettingsForm.swift in Sources */,
 				4843784B1F46FE69004C5101 /* Logger.swift in Sources */,
 				48E49D291EB9F9AE002B60AF /* ApplicationStyleKit.swift in Sources */,
 				485CCDC01E79836800CDB2B3 /* AppDelegate.swift in Sources */,
 				485CCDC21E79836800CDB2B3 /* EntityListFormTable.swift in Sources */,
-				48D3F9921F7D208C00B96947 /* DialogForm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

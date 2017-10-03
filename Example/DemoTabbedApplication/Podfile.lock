@@ -50,6 +50,7 @@ PODS:
   - QMobileUI (0.0.1):
     - CallbackURLKit
     - Guitar
+    - IBAnimatable
     - Kingfisher
     - QMobileDataStore
     - QMobileDataSync
@@ -73,6 +74,7 @@ PODS:
 DEPENDENCIES:
   - AZDialogView
   - BrightFutures (from `https://github.com/Thomvis/BrightFutures`, tag `5.2.0`)
+  - FileKit (from `https://github.com/nvzqz/FileKit`, commit `85999177271043b127f8744259fc432b32e4f177`)
   - Guitar (from `https://github.com/ArtSabintsev/Guitar.git`, branch `swift3.2`)
   - IBAnimatable (~> 4.0)
   - Kingfisher (~> 3.0)
@@ -93,6 +95,9 @@ EXTERNAL SOURCES:
   BrightFutures:
     :git: https://github.com/Thomvis/BrightFutures
     :tag: 5.2.0
+  FileKit:
+    :commit: 85999177271043b127f8744259fc432b32e4f177
+    :git: https://github.com/nvzqz/FileKit
   Guitar:
     :branch: swift3.2
     :git: https://github.com/ArtSabintsev/Guitar.git
@@ -121,6 +126,9 @@ CHECKOUT OPTIONS:
   BrightFutures:
     :git: https://github.com/Thomvis/BrightFutures
     :tag: 5.2.0
+  FileKit:
+    :commit: 85999177271043b127f8744259fc432b32e4f177
+    :git: https://github.com/nvzqz/FileKit
   Guitar:
     :commit: ff30d73221147a7bf2d583e379deef2701ae32ea
     :git: https://github.com/ArtSabintsev/Guitar.git
@@ -143,7 +151,7 @@ SPEC CHECKSUMS:
   BrightFutures: d0c77d07b77a3ec95832960ea0a6f0522c8876a1
   CallbackURLKit: eebcf4ecbb70dc8c970f9fcf1ff70162c5ea0965
   DeviceKit: fa74d97499660e88081718b16688e19217595dba
-  FileKit: 1ea916f594bc0bb9a3951f80edf92b52bb7f883c
+  FileKit: 22f59bd1dbbb591f3b9f7495f9fbf2b6b605d7a5
   Guitar: db10a90bea992b31ad9c50dff5dfe3ccb9e8c8a4
   IBAnimatable: d9d20f1c627ee97c736c55f791da9c83f6bd1bec
   Kingfisher: ed9707a409cc47fddafbcd12a43a9757e3600af5
@@ -156,7 +164,7 @@ SPEC CHECKSUMS:
   QMobileAPI: bd9eecd1aba82ec4f56632498719bc70e0ac9f05
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
   QMobileDataSync: d6d1ed920f50b49eb510f6e21be7facbf9cdaa2a
-  QMobileUI: 7442df3bf333522ca27f9262f279fca6bcc549dd
+  QMobileUI: 7f52eddb02f86909d5cacbe7a6d69498a3ff8ee6
   Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
   SwiftMessages: b424725965615911a8bd9ef2a7cf2a7ad046f3a9
   SwiftyJSON: 05cf0e98a950e2ba343735264f5a96b81e755d00
@@ -164,6 +172,6 @@ SPEC CHECKSUMS:
   XCGLogger: 7f76767461fdfda41a7e370f61b4e56fbea22dba
   XCGLoggerNSLoggerConnector: e13ec54445594d87f4a938fd6c2a6672cd0b4b85
 
-PODFILE CHECKSUM: 26665b58597e1c172eb9dbf5330e2872f72de27f
+PODFILE CHECKSUM: d7eaaef484760ae480bb7374ff2bb7d5b93ed9ed
 
 COCOAPODS: 1.3.1

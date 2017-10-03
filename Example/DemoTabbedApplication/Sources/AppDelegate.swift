@@ -47,17 +47,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
 
         // swiftlint2:disable:next discarded_notification_center_observer
-        listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
-            self.linearBar.startAnimation()
+      /*  listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncBegin, object: nil, queue: .main) { _ in
+           // self.linearBar.startAnimation()
         })
         // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { _ in
-            self.linearBar.stopAnimation()
+            //self.linearBar.stopAnimation()
         })
         // swiftlint2:disable:next discarded_notification_center_observer
         listeners.append(NotificationCenter.default.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { _ in
-            self.linearBar.stopAnimation()
-        })
+            //self.linearBar.stopAnimation()
+        })*/
 
         /*
         DataSync.instance.rest.plugins += [PreparePlugin { request, _ in

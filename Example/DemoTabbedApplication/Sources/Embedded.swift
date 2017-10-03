@@ -138,6 +138,26 @@ class DetailsFormTable: QMobileUI.DetailsFormTable {
 
 }
 
+class DialogForm: QMobileUI.DialogForm {
+
+    @IBInspectable open override var okMessage: String? {
+        get {
+            return super.okMessage
+        }
+        set {
+            super.okMessage = newValue
+        }
+    }
+    @IBInspectable open override var cancelMessage: String? {
+        get {
+            return super.cancelMessage
+        }
+        set {
+            super.cancelMessage = newValue
+        }
+    }
+}
+
 // MARK: thread management
 
 func background(execute work: @escaping @convention(block) () -> Swift.Void) {
@@ -150,14 +170,6 @@ func background(_ delay: TimeInterval, execute work: @escaping @convention(block
 /// Execute code in User Interface block. enqueue the task.
 func foreground(execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.main.async(execute: work)
-}
-
-func userInitiated(execute work: @escaping @convention(block) () -> Swift.Void) {
-    DispatchQueue.userInitiated.async(execute: work)
-}
-
-func userInteractive(execute work: @escaping @convention(block) () -> Swift.Void) {
-    DispatchQueue.userInteractive.async(execute: work)
 }
 
 /// Execute code in User Interface thread. If already in execute immediately

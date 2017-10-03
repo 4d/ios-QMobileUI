@@ -94,6 +94,15 @@ extension ApplicationXCallbackURL: ApplicationService {
                 }
             }
         }
+        callbackManager["settings"] = { parameters, success, failure, cancel in
+            if let levelString = parameters["setlevel"] {
+                if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
+                    logger.outputLevel = level
+                } else {
+                    logger.warning("Unknown log level \(levelString)")
+                }
+            }
+        }
     }
 
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) {

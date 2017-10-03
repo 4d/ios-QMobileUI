@@ -8,7 +8,6 @@
 
 import UIKit
 
-import QMobileUI
 import QMobileAPI
 import QMobileDataSync
 
@@ -21,24 +20,40 @@ public protocol SettingsServerSectionFooterDelegate: NSObjectProtocol {
     func onStatusChanged(status: ServerStatus)
 }
 
-public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, ReusableView {
+open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, ReusableView {
 
     @IBOutlet weak var iconView: AnimatableView!
     @IBOutlet weak var iconAnimationView: AnimatableActivityIndicatorView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var detailLabel: UILabel!
+    /// Queue for checking
+    let queue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        
+        operationQueue.maxConcurrentOperationCount = 1
+        operationQueue.qualityOfService = .utility
+        
+        return operationQueue
+        }()
 
+    
     // install tap gesture
-    public override func awakeFromNib() {
+    public final override func awakeFromNib() {
         super.awakeFromNib()
 
         self.installTagGesture()
+
+        serverStatus = .unknown
     }
 
-    private func installTagGesture() {
+    // Install tap gesture on footer to relaunch server status check
+    // Override it and do nothing remote it
+    open func installTagGesture() {
         let gestureRecognizer =  UITapGestureRecognizer(target: nil, action: #selector(self.tapped(_:)))
         self.iconView.addGestureRecognizer(gestureRecognizer)
+        self.iconView.isUserInteractionEnabled = true
         self.titleLabel.addGestureRecognizer(gestureRecognizer)
+        self.titleLabel.isUserInteractionEnabled = true
     }
 
     func tapped(_ sender: UITapGestureRecognizer) {
@@ -48,9 +63,11 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
     // MARK: status
 
     /// Current status
-    var serverStatus: ServerStatus = .unknown
-    /// Queue for check
-    let queue = OperationQueue(underlyingQueue: .background)
+    public private(set) var serverStatus: ServerStatus = .unknown {
+        didSet {
+            updateUI()
+        }
+    }
     /// Delegate to notify server status change
     weak var delegate: SettingsServerSectionFooterDelegate?
 
@@ -64,7 +81,6 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
             serverStatus(.notValidURL)
             return
         }
-
         // Check URL validity
         if url.scheme == nil { // be kind, add scheme
             url = URL(string: "\(URL.defaultScheme)://\(text)") ?? url
@@ -76,19 +92,29 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
 
         // Cancel all previous checking status
         queue.cancelAllOperations()
-        queue.waitUntilAllOperationsAreFinished()
+       // queue.waitUntilAllOperationsAreFinished() // bad, do not wait on main thread
 
         // Start checking in a new task
-        self.serverStatus(.checking)
+
+        let checkingUUID = UUID().uuid
         self.queue.addOperation {
+            //logger.verbose("Checking status \(checkingUUID). sleep start")
+            //Thread.sleep(forTimeInterval: delay)
+            //logger.verbose("Checking status \(checkingUUID). sleep end")
+        }
+        self.queue.addOperation {
+            self.serverStatus(.checking)
+            logger.verbose("Checking status \(checkingUUID). load status start")
             let apiManager = APIManager(url: url)
             let checkstatus = apiManager.loadStatus()
-            checkstatus.onSuccess(self.queue.context) { _ in
+            let context = self.queue.context
+            checkstatus.onSuccess(context) { _ in
                 APIManager.instance = apiManager
                 DataSync.instance.rest = apiManager
             }
-            checkstatus.onComplete(self.queue.context) { [weak self] result in
+            checkstatus.onComplete(context) { [weak self] result in
                 self?.serverStatus(.done(result))
+                logger.verbose("Checking status \(checkingUUID). load status end")
             }
         }
     }
@@ -106,7 +132,7 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
     }
 
     private func updateUI() {
-        onForeground {
+        onForeground { // ui code must be done in main thread
             self.iconView.backgroundColor = self.serverStatus.color
             self.titleLabel.text = self.serverStatus.message
             self.detailLabel.text = self.serverStatus.detailMessage
@@ -118,7 +144,6 @@ public class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable
             }
         }
     }
-
 }
 
-public class ServerStatusView: AnimatableActivityIndicatorView {}
+open class ServerStatusView: AnimatableActivityIndicatorView {}
