@@ -17,7 +17,7 @@ open class SettingURLForm: UITableViewController {
         case server
     }
 
-    @IBOutlet public weak var serverURLTextField: UITextField!
+    @IBOutlet open weak var serverURLTextField: UITextField!
 
     // MARK: events
     final public override func viewDidLoad() {
@@ -44,12 +44,11 @@ open class SettingURLForm: UITableViewController {
         onWillAppear(animated)
     }
 
-
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onWillDisappear(animated)
     }
-    
+
     final public override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
@@ -66,7 +65,6 @@ open class SettingURLForm: UITableViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    
     open func onDataChanged(textField: UITextField) {
         Prephirences.serverURL = textField.text
         checkStatus()

@@ -42,7 +42,6 @@ open class DialogForm: AnimatableModalViewController {
         }
         self.cancelButton.isHidden = true
     }
-    
 
     // MARK: view
     override open func viewDidLayoutSubviews() {

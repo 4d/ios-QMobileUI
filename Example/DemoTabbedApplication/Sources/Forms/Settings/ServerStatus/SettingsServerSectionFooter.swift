@@ -7,7 +7,6 @@
 //
 
 import UIKit
-
 import QMobileUI
 
 public class SettingsServerSectionFooter: QMobileUI.SettingsServerSectionFooter {

@@ -51,7 +51,7 @@ extension UIViewController {
             self.view.removeGestureRecognizer(gestureRecognizer)
         }
     }
-    
+
     func checkBackButton() {
         guard let tabBarController = self.tabBarController else {
             return
@@ -62,7 +62,7 @@ extension UIViewController {
 
         if controllers.contains(self.navigationController ?? self) {
             self.navigationController?.navigationBar.topItem?.leftBarButtonItems = nil
-            
+
             //self.navigationItem.backBarButtonItem = nil
            // self.navigationItem.hidesBackButton = true
         }

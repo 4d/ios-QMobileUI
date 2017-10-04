@@ -216,3 +216,8 @@ extension UILabel {
     }
 
 }
+
+#if DEBUG
+    class DetailsForm___DETAILFORMTYPE___: DetailsFormBare {}
+    class ListForm___LISTFORMTYPE___: ListFormTable {}
+#endif

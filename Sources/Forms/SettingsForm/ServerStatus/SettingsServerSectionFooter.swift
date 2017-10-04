@@ -22,21 +22,20 @@ public protocol SettingsServerSectionFooterDelegate: NSObjectProtocol {
 
 open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, ReusableView {
 
-    @IBOutlet weak var iconView: AnimatableView!
-    @IBOutlet weak var iconAnimationView: AnimatableActivityIndicatorView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var detailLabel: UILabel!
+    @IBOutlet weak open var iconView: AnimatableView!
+    @IBOutlet weak open var iconAnimationView: AnimatableActivityIndicatorView!
+    @IBOutlet weak open var titleLabel: UILabel!
+    @IBOutlet weak open var detailLabel: UILabel!
     /// Queue for checking
     let queue: OperationQueue = {
         let operationQueue = OperationQueue()
-        
+
         operationQueue.maxConcurrentOperationCount = 1
         operationQueue.qualityOfService = .utility
-        
+
         return operationQueue
         }()
 
-    
     // install tap gesture
     public final override func awakeFromNib() {
         super.awakeFromNib()

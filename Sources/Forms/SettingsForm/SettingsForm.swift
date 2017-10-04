@@ -24,7 +24,6 @@ open class SettingsForm: UITableViewController {
 
     @IBOutlet weak var serverURLLabel: UILabel!
 
-
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,9 +32,9 @@ open class SettingsForm: UITableViewController {
         initFooterData()
         checkBackButton()
         onLoad()
-        
+
     }
-    
+
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onWillAppear(animated)
@@ -47,18 +46,16 @@ open class SettingsForm: UITableViewController {
         onDidAppear(animated)
     }
 
-
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onWillDisappear(animated)
     }
-    
+
     final public override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
     }
- 
-    
+
     /// Called after the view has been loaded. Default does nothing
     open func onLoad() {}
     /// Called when the view is about to made visible. Default does nothing
@@ -76,7 +73,7 @@ open class SettingsForm: UITableViewController {
     private func initFormData() {
         let urlString = URL.qmobileURL.absoluteString
         serverURLLabel.text = urlString
-        
+
         listener = Prephirences.serverURLChanged { serverURL in
             self.serverURLLabel.text = serverURL
         }
@@ -126,7 +123,7 @@ open class SettingsForm: UITableViewController {
         }
         return _serverStatusFooter
     }
-    
+
     // MARK: table view
     open override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if let section = Section(rawValue: section) {
@@ -162,7 +159,7 @@ extension SettingsForm: DialogFormDelegate {
     public func onOK(dialog: DialogForm, sender: Any) {
         cancellable.cancel()
         cancellable = CancellableComposite()
-        
+
         background(3) { [weak self] in
             guard !(self?.cancellable.isCancelledUnlocked ?? true) else {
                 return
