@@ -68,10 +68,10 @@ open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, 
         }
     }
     /// Delegate to notify server status change
-    weak var delegate: SettingsServerSectionFooterDelegate?
+    open weak var delegate: SettingsServerSectionFooterDelegate?
 
     /// Check the server status
-    func checkStatus(_ delay: TimeInterval = 0) {
+    open func checkStatus(_ delay: TimeInterval = 0) {
         guard let text = Prephirences.serverURL, !text.isEmpty else {
             serverStatus(.emptyURL)
             return
