@@ -32,7 +32,6 @@ open class SettingsForm: UITableViewController {
         initFooterData()
         checkBackButton()
         onLoad()
-
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -106,6 +105,13 @@ open class SettingsForm: UITableViewController {
         }
     }
 
+    @objc func application(didEnterBackground notification: Notification) {
+        cancellable.cancel()
+        if let dialogForm = self.presentedViewController as? DialogForm {
+            dialogForm.dismiss(animated: false)
+        }
+    }
+
     // server status
 
     private func initHeaderFooter() {
@@ -161,10 +167,17 @@ extension SettingsForm: DialogFormDelegate {
         cancellable = CancellableComposite()
 
         background(3) { [weak self] in
-            guard !(self?.cancellable.isCancelledUnlocked ?? true) else {
+            guard let this = self, !this.cancellable.isCancelledUnlocked else {
                 return
             }
+
+            let center = NotificationCenter.default
+            center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
+
             let reload = dataReload { [weak self] result in
+                if let this = self {
+                    center.removeObserver(this)
+                }
 
                 switch result {
                 case .success:

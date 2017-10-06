@@ -85,9 +85,14 @@ extension ApplicationDataSync: ApplicationService {
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        let dataSync = ApplicationDataSync.dataSync
-        dataSync.cancel()
-        let cancel = servicePreferences["cancel.ifEnterForeground"] as? Bool ?? true
+        let cancel = servicePreferences["cancel.ifEnterForeground"] as? Bool ?? false
+        if cancel {
+            ApplicationDataSync.dataSync.cancel()
+        }
+    }
+
+    public func applicationDidEnterBackground(_ application: UIApplication) {
+        let cancel = servicePreferences["cancel.ifEnterBackground"] as? Bool ?? true
         if cancel {
             ApplicationDataSync.dataSync.cancel()
         }
