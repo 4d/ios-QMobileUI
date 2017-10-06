@@ -95,6 +95,10 @@ open class SettingURLForm: UITableViewController {
         serverStatusFooter?.checkStatus(2)
     }
 
+    // MARK: action
+    @IBAction open func serverURLTextFieldEndEditing(_ sender: Any?) {
+        self.serverURLTextField.endEditing(true)
+    }
 }
 
 extension SettingURLForm: SettingsServerSectionFooterDelegate {
