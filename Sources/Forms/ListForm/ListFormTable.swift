@@ -19,8 +19,8 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
     @IBOutlet open var searchBar: UISearchBar!
-    @IBInspectable open var searchOperator = "contains" // beginwith, endwitch
-    @IBInspectable open var searchSensitivity = "cd"
+    @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
+    @IBInspectable open var searchSensitivity: String = "cd"
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
@@ -140,6 +140,10 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Called after a refresh
     open func onRefreshEnd() {}
 
+    open func onSearchBegin() {}
+    open func onSearchButtonClicked() {}
+    open func onSearchCancelButtonClicked() {}
+
     /// Called after a clicked on a record. 
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
     open func onClicked(record: Record, at index: IndexPath) {}
@@ -254,6 +258,12 @@ open class ListFormTable: UITableViewController, ListForm {
         return cell
     }*/
 
+    @IBAction open func searchBarFirstResponder(_ sender: Any?) {
+        self.searchBar?.resignFirstResponder()
+    }
+    @IBAction open func searchBarEndEditing(_ sender: Any?) {
+        self.searchBar?.endEditing(true)
+    }
 }
 
 public class TableSectionHeader: UITableViewHeaderFooterView {
@@ -283,12 +293,17 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 extension ListFormTable: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchBar.showsCancelButton = true
+        performSearch(searchText)
+    }
+
+    func performSearch(_ searchText: String) {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
                 assert(self.table?.attributes[searchableField] != nil, // XXX maybe a mapped field, try to map to core data field?
-                       "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
+                    "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
                 dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
             } else {
                 dataSource?.predicate = nil
@@ -300,15 +315,23 @@ extension ListFormTable: DataSourceSearchable {
 
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
+        onSearchBegin()
+
+        searchBar.setShowsCancelButton(true, animated: true)
     }
 
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        onSearchButtonClicked()
     }
 
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        searchBar.text = ""
+        searchBar.setShowsCancelButton(false, animated: false)
+        searchBar.endEditing(true)
         dataSource?.predicate = nil
         dataSource?.performFetch()
+        onSearchCancelButtonClicked()
     }
 }

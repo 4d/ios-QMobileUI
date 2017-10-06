@@ -19,8 +19,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
     @IBInspectable open var hasRefreshControl: Bool = false
-    @IBInspectable open var searchOperator = "contains" // beginwith, endwitch
-    @IBInspectable open var searchSensitivity = "cd"
+    @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
+    @IBInspectable open var searchSensitivity: String = "cd"
      public var refreshControl: UIRefreshControl?
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
@@ -86,41 +86,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         onDidDisappear(animated)
     }
 
-    @IBAction open func scrollToTheTop(_ sender: Any?) {
-        collectionView?.setContentOffset(CGPoint.zero, animated: true)
-    }
-
-    @IBAction open func scrollToLastRow(_ sender: Any?) {
-        if let indexPath = self.dataSource.lastIndexPath {
-            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-        }
-    }
-
-    //action go to next section
-    @IBAction func nextHeader(_ sender: UIButton) {
-        let lastSectionIndex = collectionView?.numberOfSections
-        let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] //self.collectionView.indexPathsForVisibleRows?[1]
-        if (firstVisibleIndexPath?.section)! < lastSectionIndex! - 1 {
-            previousButton?.alpha = 1
-            nextButton?.alpha = 1
-            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
-        } else {
-            nextButton?.alpha = 0.2
-        }
-    }
-
-    //action back to previous section
-    @IBAction func previousItem(_ sender: Any?) {
-        let firstVisibleIndexPath = collectionView?.indexPathsForVisibleItems[1]
-        if (firstVisibleIndexPath?.section)! > 0 {
-            previousButton?.alpha = 1
-            nextButton?.alpha = 1
-            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
-        } else {
-            previousButton?.alpha = 0.2
-        }
-    }
-
     // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -177,6 +142,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func onRefreshBegin() {}
     /// Called after a refresh
     open func onRefreshEnd() {}
+
+    open func onSearchBegin() {}
+    open func onSearchButtonClicked() {}
+    open func onSearchCancelButtonClicked() {}
 
     /// Called after a clicked on a record.
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
@@ -235,6 +204,48 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.onRefreshEnd()
         //}
     }
+
+    @IBAction open func scrollToTheTop(_ sender: Any?) {
+        collectionView?.setContentOffset(CGPoint.zero, animated: true)
+    }
+
+    @IBAction open func scrollToLastRow(_ sender: Any?) {
+        if let indexPath = self.dataSource.lastIndexPath {
+            self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
+    @IBAction open func searchBarFirstResponder(_ sender: Any?) {
+        self.searchBar?.resignFirstResponder()
+    }
+    @IBAction open func searchBarEndEditing(_ sender: Any?) {
+        self.searchBar?.endEditing(true)
+    }
+
+    //action go to next section
+    @IBAction func nextHeader(_ sender: UIButton) {
+        let lastSectionIndex = collectionView?.numberOfSections
+        let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] //self.collectionView.indexPathsForVisibleRows?[1]
+        if (firstVisibleIndexPath?.section)! < lastSectionIndex! - 1 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
+        } else {
+            nextButton?.alpha = 0.2
+        }
+    }
+
+    //action back to previous section
+    @IBAction func previousItem(_ sender: Any?) {
+        let firstVisibleIndexPath = collectionView?.indexPathsForVisibleItems[1]
+        if (firstVisibleIndexPath?.section)! > 0 {
+            previousButton?.alpha = 1
+            nextButton?.alpha = 1
+            self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: (firstVisibleIndexPath?.section)!-1), at: .top, animated: true)
+        } else {
+            previousButton?.alpha = 0.2
+        }
+    }
 }
 
 // MARK: DataSourceSearchable
@@ -262,7 +273,10 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // XXX could add other predicate
-
+        searchBar.showsCancelButton = true
+        performSearch(searchText)
+    }
+    func performSearch(_ searchText: String) {
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
@@ -280,16 +294,24 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
+        onSearchBegin()
+
+        searchBar.setShowsCancelButton(true, animated: true)
     }
 
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        onSearchButtonClicked()
     }
 
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        searchBar.text = ""
+        searchBar.setShowsCancelButton(false, animated: false)
+        searchBar.endEditing(true)
         dataSource?.predicate = nil
         dataSource?.performFetch()
+        onSearchCancelButtonClicked()
     }
 
 }
