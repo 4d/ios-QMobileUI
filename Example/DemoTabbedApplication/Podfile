@@ -26,9 +26,7 @@ target 'DemoTabbedApplication' do
   pod 'PinpointKit/ScreenshotDetector'
 
 # in dev
-  pod 'AZDialogView'
   pod 'LinearProgressBarMaterial'
-
 
 # in debuging
 pod 'NSLogger'

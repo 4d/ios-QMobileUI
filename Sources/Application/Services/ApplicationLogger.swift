@@ -33,7 +33,7 @@ extension ApplicationLogger: ApplicationService {
         let showFunctionName = logPref["showFunctionName"] as? Bool ?? true
         let showDate = logPref["showDate"] as? Bool ?? true
         let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
-        let writeToFile: String? = logPref["writeToFile"] as? String
+        let writeToFile = logPref["writeToFile"] as? String
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8

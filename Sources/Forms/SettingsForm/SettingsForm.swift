@@ -108,10 +108,12 @@ open class SettingsForm: UITableViewController {
     @objc func application(didEnterBackground notification: Notification) {
         cancellable.cancel()
         if let dialogForm = self.presentedViewController as? DialogForm {
-            dialogForm.dismiss(animated: false)
+            onForeground {
+                dialogForm.dismiss(animated: false)
+            }
         }
     }
-
+    
     // server status
 
     private func initHeaderFooter() {
@@ -183,12 +185,14 @@ extension SettingsForm: DialogFormDelegate {
                 case .success:
                     logger.info("data reloaded")
                     self?.refreshLastDate()
-                    dialog.dismiss(animated: true)
+                    onForeground {
+                        dialog.dismiss(animated: true)
+                    }
                 case .failure(let error):
                     logger.error("data reloading failed \(error)")
-                    dialog.dismiss(animated: true)
 
                     onForeground {
+                        dialog.dismiss(animated: true)
                         self?.serverStatusFooter?.checkStatus()
                     }
                 }

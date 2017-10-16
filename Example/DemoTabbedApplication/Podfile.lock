@@ -1,6 +1,5 @@
 PODS:
   - Alamofire (4.5.1)
-  - AZDialogView (1.1.5)
   - BrightFutures (5.2.0):
     - Result (~> 3.2)
   - CallbackURLKit (2.0.0):
@@ -11,7 +10,7 @@ PODS:
   - Guitar (0.2.0)
   - IBAnimatable (4.2.0)
   - Kingfisher (3.13.1)
-  - LinearProgressBarMaterial (1.2)
+  - LinearProgressBarMaterial (1.3)
   - Moya (9.0.0):
     - Moya/Core (= 9.0.0)
   - Moya/Core (9.0.0):
@@ -23,7 +22,7 @@ PODS:
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
-  - PinpointKit/ScreenshotDetector (1.0.0)
+  - PinpointKit/ScreenshotDetector (1.1.0)
   - Prephirences (3.0.2):
     - Prephirences/Core (= 3.0.2)
     - Prephirences/Keys (= 3.0.2)
@@ -72,7 +71,6 @@ PODS:
     - XCGLogger (>= 4.0)
 
 DEPENDENCIES:
-  - AZDialogView
   - BrightFutures (from `https://github.com/Thomvis/BrightFutures`, tag `5.2.0`)
   - FileKit (from `https://github.com/nvzqz/FileKit`, commit `85999177271043b127f8744259fc432b32e4f177`)
   - Guitar (from `https://github.com/ArtSabintsev/Guitar.git`, branch `swift3.2`)
@@ -147,7 +145,6 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  AZDialogView: 25b0bcbc260e56b43228c0b72ee8bbf48abcbfaa
   BrightFutures: d0c77d07b77a3ec95832960ea0a6f0522c8876a1
   CallbackURLKit: eebcf4ecbb70dc8c970f9fcf1ff70162c5ea0965
   DeviceKit: fa74d97499660e88081718b16688e19217595dba
@@ -155,11 +152,11 @@ SPEC CHECKSUMS:
   Guitar: db10a90bea992b31ad9c50dff5dfe3ccb9e8c8a4
   IBAnimatable: d9d20f1c627ee97c736c55f791da9c83f6bd1bec
   Kingfisher: ed9707a409cc47fddafbcd12a43a9757e3600af5
-  LinearProgressBarMaterial: f025b1ec6ecd08bcd4dfc6fecba4fb263d8a545b
+  LinearProgressBarMaterial: 84df3135c27a0fc5e0219da10ee98304de159b06
   Moya: cf5e6ee93af526532f92614004b8ad2ea60fd845
   NSLogger: c9b80dbeee1d65eb553647a1f6f1f72171b04808
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
-  PinpointKit: fd9421e22c6567f2bec16d1f39fc70a3fce5df87
+  PinpointKit: b444d66d8b10420c1ffc22c176dee37c1c12b4e7
   Prephirences: 221058c335f48945c4f2049d2b54d333a9bddc21
   QMobileAPI: bd9eecd1aba82ec4f56632498719bc70e0ac9f05
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
@@ -172,6 +169,6 @@ SPEC CHECKSUMS:
   XCGLogger: 7f76767461fdfda41a7e370f61b4e56fbea22dba
   XCGLoggerNSLoggerConnector: e13ec54445594d87f4a938fd6c2a6672cd0b4b85
 
-PODFILE CHECKSUM: d7eaaef484760ae480bb7374ff2bb7d5b93ed9ed
+PODFILE CHECKSUM: 0ba7469a48ae1d71d916d40d6f58aadb42581dd7
 
 COCOAPODS: 1.3.1

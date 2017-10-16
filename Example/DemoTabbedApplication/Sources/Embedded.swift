@@ -218,6 +218,6 @@ extension UILabel {
 }
 
 #if DEBUG
-    class DetailsForm___DETAILFORMTYPE___: DetailsFormBare {}
-    class ListForm___LISTFORMTYPE___: ListFormTable {}
+    class DetailsForm___DETAILFORMTYPE___: DetailsFormBare {} //swiftlint:disable:this type_name
+    class ListForm___LISTFORMTYPE___: ListFormTable {} //swiftlint:disable:this type_name
 #endif

@@ -45,11 +45,13 @@ open class DialogForm: AnimatableModalViewController {
 
     // MARK: view
     override open func viewDidLayoutSubviews() {
-        okButton.transform = CGAffineTransform(scaleX: 0, y: 0)
+        super.viewDidLayoutSubviews()
+ 
+        //okButton.transform = CGAffineTransform(scaleX: 0, y: 0)
 
         self.isModalInPopover = true
 
-        UIView.animate(withDuration: 2.0,
+        /*UIView.animate(withDuration: 2.0,
                        delay: 0.0,
                        usingSpringWithDamping: 0.9,
                        initialSpringVelocity: 6.0,
@@ -67,7 +69,7 @@ open class DialogForm: AnimatableModalViewController {
                        options: UIViewAnimationOptions.allowUserInteraction,
                        animations: {
                         self.cancelButton.transform = .identity
-        }, completion: nil)
+        }, completion: nil)*/
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {

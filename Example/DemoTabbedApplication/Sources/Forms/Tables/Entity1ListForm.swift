@@ -57,7 +57,10 @@ class Entity1ListForm: ListFormTable {
         self.refreshControl?.tintColor = .white // DEMO
         _ = dataSync { _ in
 
+            onForeground {
+
             self.refreshControl?.endRefreshing()
+            }
             self.onRefreshEnd()
 
         }
