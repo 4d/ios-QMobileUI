@@ -113,7 +113,7 @@ open class SettingsForm: UITableViewController {
             }
         }
     }
-    
+
     // server status
 
     private func initHeaderFooter() {
@@ -206,6 +206,8 @@ extension SettingsForm: DialogFormDelegate {
     // if cancel pressed
     public func onCancel(dialog: DialogForm, sender: Any) {
         cancellable.cancel()
-        dialog.dismiss(animated: true) /// XXX maybe wait cancel
+        onForeground {
+            dialog.dismiss(animated: true) /// XXX maybe wait cancel
+        }
     }
 }

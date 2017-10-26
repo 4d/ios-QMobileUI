@@ -66,7 +66,7 @@ extension ApplicationServices {
 
     static var instance: ApplicationService { get }
 
-    @objc optional func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?)
+    @objc optional func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
 
     @objc optional func applicationDidEnterBackground(_ application: UIApplication)
 
@@ -82,7 +82,7 @@ extension ApplicationServices {
 
     @objc optional func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
 
-    @objc optional func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
+    @objc optional func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any])
 }
 
 // Special notifications
@@ -110,7 +110,7 @@ public extension UIApplicationDelegate {
         type(of: self).application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }*/
 
-    static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
         NotificationCenter.default.post(name: .UIApplicationOpenUrlWithOptions, object: app, userInfo: [ApplicationServiceUserInfoKey.openUrl: url, ApplicationServiceUserInfoKey.openUrlOptions: options])
         return true
     }
@@ -130,7 +130,7 @@ fileprivate extension Notification {
 }
 
 extension ApplicationServices {
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) {
         services.forEach { service in
             service.application?(app, open: url, options: options)
         }
@@ -141,7 +141,7 @@ private extension ApplicationServices {
 
     @objc func application(didFinishLaunching notification: Notification) {
         services.forEach { service in
-            service.application?(notification.application, didFinishLaunchingWithOptions: notification.userInfo as? [UIApplicationLaunchOptionsKey : Any])
+            service.application?(notification.application, didFinishLaunchingWithOptions: notification.userInfo as? [UIApplicationLaunchOptionsKey: Any])
         }
     }
 
@@ -183,7 +183,7 @@ private extension ApplicationServices {
 
     @objc func application(openUrlWithOptions notification: Notification) {
         guard let url = notification.userInfo?[ApplicationServiceUserInfoKey.openUrl] as? URL,
-            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplicationOpenURLOptionsKey : Any] else {
+            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplicationOpenURLOptionsKey: Any] else {
                 return
         }
         application(notification.application, open: url, options: options)

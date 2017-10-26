@@ -23,7 +23,7 @@ extension ApplicationPreferences: ApplicationService {
 
     static var instance: ApplicationService = ApplicationPreferences()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         Prephirences.sharedInstance = preferences
     }
 

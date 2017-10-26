@@ -38,7 +38,7 @@ open class DialogForm: AnimatableModalViewController {
     @IBAction public func cancelAction(_ sender: Any) {
         self.delegate?.onCancel(dialog: self, sender: sender)
         if let cancelMessage = cancelMessage {
-        self.message.text = cancelMessage
+            self.message.text = cancelMessage
         }
         self.cancelButton.isHidden = true
     }
@@ -46,7 +46,7 @@ open class DialogForm: AnimatableModalViewController {
     // MARK: view
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
- 
+
         //okButton.transform = CGAffineTransform(scaleX: 0, y: 0)
 
         self.isModalInPopover = true

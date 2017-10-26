@@ -25,7 +25,7 @@ extension ApplicationDataStore: ApplicationService {
         return ProxyPreferences(preferences: preferences, key: "dataStore.")
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         var ds = dataStore
         ds.delegate = self
 

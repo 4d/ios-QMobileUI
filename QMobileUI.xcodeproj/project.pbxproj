@@ -55,6 +55,7 @@
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
+		489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
 		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
 		48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
@@ -183,6 +184,7 @@
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
+		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
@@ -520,6 +522,7 @@
 			children = (
 				48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
+				489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */,
 				48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */,
 				48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */,
 				48E49CE81EB9CA70002B60AF /* ApplicationPreferences.swift */,
@@ -877,6 +880,7 @@
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
+				489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */,
 				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,

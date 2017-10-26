@@ -12,7 +12,7 @@ import Foundation
 /// From: https://gist.github.com/ijoshsmith/0c966b1752b9a5722e23
 extension Collection {
 
-    func asDictionary<K, V>(transform:(_ element: Iterator.Element) -> [K : V]) -> [K : V] {
+    func asDictionary<K, V>(transform:(_ element: Iterator.Element) -> [K: V]) -> [K: V] {
         var dictionary = [K: V]()
         self.forEach { element in
             for (key, value) in transform(element) {

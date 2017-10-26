@@ -32,7 +32,7 @@ extension ApplicationValueTransformers: ApplicationService {
 
     static var instance: ApplicationService = ApplicationValueTransformers()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         loadValueTransformers()
     }
 

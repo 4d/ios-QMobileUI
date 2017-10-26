@@ -10,6 +10,7 @@ import Foundation
 import QMobileDataStore
 import XCGLogger
 import Prephirences
+import FileKit
 
 class ApplicationLogger: NSObject {}
 
@@ -24,7 +25,7 @@ extension ApplicationLogger: ApplicationService {
     }
 
     // swiftlint:disable:next function_body_length
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
 
         let showThreadName = logPref["showThreadName"] as? Bool ?? true
         let showLevel = logPref["showLevel"] as? Bool ?? true
@@ -34,6 +35,7 @@ extension ApplicationLogger: ApplicationService {
         let showDate = logPref["showDate"] as? Bool ?? true
         let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
         let writeToFile = logPref["writeToFile"] as? String
+        let directory = logPref["directory"] as? String ?? "logs"
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8
@@ -84,7 +86,7 @@ extension ApplicationLogger: ApplicationService {
             #endif
         }
 
-        if let writeToFile = writeToFile, let writeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(writeToFile) {
+        if let writeToFile = writeToFile, let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
 
             let destination: FileDestination
             if !autorotate {
@@ -120,10 +122,21 @@ extension ApplicationLogger: ApplicationService {
             destination.formatters = [LogFormatter.ansi.formatter]
 
             logger.add(destination: destination)
-
         }
 
         logger.logAppDetails()
+    }
+
+    func logDirectory(_ directory: String?) -> URL? {
+        if let directory = directory, !directory.isEmpty {
+            let path = Path.userCaches + directory
+            if !path.exists {
+                try? path.createDirectory()
+            }
+            return path.url
+        } else {
+            return Path.userCaches.url
+        }
     }
 
     enum LogFormatter: String {

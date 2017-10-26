@@ -56,6 +56,9 @@ open class QApplication: UIApplication {
             // Log all logging step
             services.register(ApplicationStepLogging.instance)
 
+            // Crash Manager
+            services.register(ApplicationCrashManager.instance)
+
             // Load the mobile database
             services.register(ApplicationDataStore.instance)
 
@@ -70,7 +73,7 @@ open class QApplication: UIApplication {
         }
     }
 
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
         let services = ApplicationServices.instance
         services.application(app, open: url, options: options)
         return true

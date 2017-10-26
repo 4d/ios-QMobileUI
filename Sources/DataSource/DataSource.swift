@@ -271,7 +271,7 @@ extension DataSource {
             row = 0
         }
 
-        return IndexPath(row: row, section:section)
+        return IndexPath(row: row, section: section)
     }
 
     public func previousIndexPath(for indexPath: IndexPath) -> IndexPath? {
@@ -294,7 +294,7 @@ extension DataSource {
             row = numberOfObjects - 1
         }
 
-        return IndexPath(row: row, section:section)
+        return IndexPath(row: row, section: section)
     }
 
     func isFirstSection (_ section: Int) -> Bool {

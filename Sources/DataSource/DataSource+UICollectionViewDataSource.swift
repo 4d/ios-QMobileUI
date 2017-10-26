@@ -191,7 +191,7 @@ extension UICollectionView {
                 }
                 self.moveItem(at: fromIndexPath as IndexPath, to: toIndexPath as IndexPath)
             }
-        }, completion:  completion)
+        }, completion: completion)
 
     }
 }

@@ -24,7 +24,7 @@ extension ApplicationStepLogging: ApplicationService {
 
     static var instance: ApplicationService = ApplicationStepLogging(level: .debug)
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         logger.log(level, "\(#function)")
     }
 
@@ -56,7 +56,7 @@ extension ApplicationStepLogging: ApplicationService {
         logger.log(level, "\(#function)")
     }
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) {
+    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {
         logger.log(level, "\(#function)")
     }
 
