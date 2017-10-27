@@ -29,12 +29,12 @@ extension ApplicationCrashManager: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
-
+        let crashDirectory = ApplicationCrashManager.crashDirectory
         // Register
         if pref[CrashType.nsexception.rawValue] as? Bool ?? true {
             NSSetUncaughtExceptionHandler(nsExceptionHandler)
 
-            let path = ApplicationCrashManager.crashDirectory + CrashType.nsexception.rawValue
+            let path = crashDirectory + CrashType.nsexception.rawValue
             if !path.exists {
                 try? path.createDirectory()
             }
@@ -54,15 +54,25 @@ extension ApplicationCrashManager: ApplicationService {
                 signal(SIGFPE, signalHandler)
                 signal(SIGPIPE, signalHandler)
             }
-            let path = ApplicationCrashManager.crashDirectory + CrashType.signal.rawValue
+            let path = crashDirectory + CrashType.signal.rawValue
             if !path.exists {
                 try? path.createDirectory()
             }
         }
 
         // Maybe at start
-        // - read it and make action like asking to send it
-        // - remove all files
+
+        // Try loading the crash report
+        let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
+        if !crashs.isEmpty {
+            // - read it and make action like asking to send it
+
+            for crash in crashs {
+                logger.warning("Crashed on \(crash.creationDate?.description ?? crash.fileName)")
+                //logger.warning("Crashed with signal )") // add some info
+            }
+        }
+        // Purge the report = remove all files
     }
 
     static var crashDirectory: Path {
