@@ -60,10 +60,13 @@ open class ListFormTable: UITableViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
+        self.installBackButton()
         onLoad()
         if isSearchBarMustBeHidden {
             searchBar.isHidden = true
         }
+        
+        
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -173,6 +176,10 @@ open class ListFormTable: UITableViewController, ListForm {
                 self.navigationItem.titleView = searchBar
             }
         }
+    }
+
+    open func installBackButton() {
+        checkBackButton()
     }
 
     /// little function to remove table footer ie. separator

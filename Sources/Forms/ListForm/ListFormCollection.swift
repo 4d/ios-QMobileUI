@@ -59,6 +59,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
+        self.installBackButton()
 
         onLoad()
         if isSearchBarMustBeHidden {
@@ -178,6 +179,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
                 self.navigationItem.titleView = searchBar
             }
         }
+    }
+
+    open func installBackButton() {
+        checkBackButton()
     }
 
     open func indexPath(for cell: Any?) -> IndexPath? {
