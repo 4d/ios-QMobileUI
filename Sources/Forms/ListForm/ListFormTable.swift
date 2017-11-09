@@ -46,7 +46,7 @@ open class ListFormTable: UITableViewController, ListForm {
             self?.configureListFormView(cell, record, index)
 
             if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {
-                self?.openLastRow()
+                self?.onOpenLastRow()
             }
         }
 
@@ -65,8 +65,7 @@ open class ListFormTable: UITableViewController, ListForm {
         if isSearchBarMustBeHidden {
             searchBar.isHidden = true
         }
-        
-        
+
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -151,7 +150,8 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
     open func onClicked(record: Record, at index: IndexPath) {}
 
-    func openLastRow() {}
+    // this function is called when last row displayed. Could do some stuff like loading data...
+    func onOpenLastRow() {}
 
     // MARK: Install components
 
@@ -168,6 +168,7 @@ open class ListFormTable: UITableViewController, ListForm {
         //self.tableView.emptyDataSetDelegate = self
     }
 
+    /// Install the seach bar if defined using storyboard IBOutlet
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
         if let searchBar = searchBar {
@@ -178,6 +179,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
+    /// Install the back button in navigation bar.
     open func installBackButton() {
         checkBackButton()
     }
@@ -204,6 +206,18 @@ open class ListFormTable: UITableViewController, ListForm {
         return nil
     }
 
+    public func scrollToRecord(_ record: Record, at scrollPosition: UITableViewScrollPosition = .top) { // more swift notation: scroll(to record: Record
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
+        }
+    }
+
+    public func showDetailForm(_ record: Record, animated: Bool = true, scrollPosition: UITableViewScrollPosition = .middle) {
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: scrollPosition)
+        }
+    }
+
     // MARK: IBAction
 
     @IBAction open func refresh(_ sender: Any?) {
@@ -217,17 +231,19 @@ open class ListFormTable: UITableViewController, ListForm {
         //}
     }
 
+    /// Scroll to the top of this list form.
     @IBAction open func scrollToTheTop(_ sender: Any?) {
         tableView.setContentOffset(CGPoint.zero, animated: true)
     }
 
+    /// Scroll to the bottom of this list form.
     @IBAction open func scrollToLastRow(_ sender: Any?) {
         if let indexPath = self.dataSource.lastIndexPath {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
 
-    //action go to next section
+    /// Scroll to the new section header.
     @IBAction func nextHeader(_ sender: UIButton) {
         let lastSectionIndex = tableView.numberOfSections
         let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
@@ -241,7 +257,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    //action back to previous section
+    /// Scroll to the previous record.
     @IBAction func previousItem(_ sender: Any?) {
         let firstVisibleIndexPath = self.tableView.indexPathsForVisibleRows?[1]
         if (firstVisibleIndexPath?.section)! > 0 {
@@ -296,14 +312,42 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 
 }
 
-// MARK: DataSourceSearchable
+// MARK: ListForm is Searchable
 extension ListFormTable: DataSourceSearchable {
 
+    /// Perform a seach when text change
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBar.showsCancelButton = true
         performSearch(searchText)
     }
 
+    /// A search begin. Cancel button is displayed.
+    /// You can receive this information by overriding `onSearchBegin`
+    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true
+        onSearchBegin()
+
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    // Search button is clicked. You can receive this information by overriding `onSearchButtonClicked`
+    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false
+        onSearchButtonClicked()
+    }
+
+    /// Cancel button is clicked, cancel the search.
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false
+        searchBar.text = ""
+        searchBar.setShowsCancelButton(false, animated: false)
+        searchBar.endEditing(true)
+        dataSource?.predicate = nil
+        dataSource?.performFetch()
+        onSearchCancelButtonClicked()
+    }
+
+    // Function to do search
     func performSearch(_ searchText: String) {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
@@ -320,25 +364,4 @@ extension ListFormTable: DataSourceSearchable {
         // XXX API here could load more from network
     }
 
-    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchActive = true
-        onSearchBegin()
-
-        searchBar.setShowsCancelButton(true, animated: true)
-    }
-
-    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
-        onSearchButtonClicked()
-    }
-
-    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
-        searchBar.text = ""
-        searchBar.setShowsCancelButton(false, animated: false)
-        searchBar.endEditing(true)
-        dataSource?.predicate = nil
-        dataSource?.performFetch()
-        onSearchCancelButtonClicked()
-    }
 }

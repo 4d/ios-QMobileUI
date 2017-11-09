@@ -161,8 +161,9 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
             self.refreshControl = UIRefreshControl()
             refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-            // swiftlint:disable:next force_cast
-            self.collectionView?.addSubview(refreshControl!)
+            if let refreshControl = refreshControl {
+                self.collectionView?.addSubview(refreshControl)
+            }
         }
     }
 
@@ -210,13 +211,29 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         //}
     }
 
+    /// Scroll to the top of the current list form
     @IBAction open func scrollToTheTop(_ sender: Any?) {
         collectionView?.setContentOffset(CGPoint.zero, animated: true)
     }
 
+    /// Scrol to the bottom of the current list form
     @IBAction open func scrollToLastRow(_ sender: Any?) {
         if let indexPath = self.dataSource.lastIndexPath {
             self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
+    /// Scroll to the specific record
+    public func scrollToRecord(_ record: Record, at scrollPosition: UICollectionViewScrollPosition = .top) { // more swift notation: scroll(to record: Record
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.collectionView?.scrollToItem(at: indexPath, at: scrollPosition, animated: true)
+        }
+    }
+
+    /// Show the detail form the specific record
+    public func showDetailForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionViewScrollPosition = .centeredVertically) {
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.collectionView?.selectItem(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }
     }
 

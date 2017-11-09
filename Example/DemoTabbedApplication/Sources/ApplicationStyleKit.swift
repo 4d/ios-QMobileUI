@@ -16,7 +16,7 @@ extension ApplicationStyleKit: ApplicationService {
 
     static var instance: ApplicationService = ApplicationStyleKit()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         loadStyles()
     }
 
