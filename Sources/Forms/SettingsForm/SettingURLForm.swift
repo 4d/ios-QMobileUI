@@ -65,7 +65,7 @@ open class SettingURLForm: UITableViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    open func onDataChanged(textField: UITextField) {
+    @objc open func onDataChanged(textField: UITextField) {
         Prephirences.serverURL = textField.text
         checkStatus()
     }

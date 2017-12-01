@@ -30,7 +30,7 @@ extension UIView {
     }
     #endif
 
-    dynamic open var hasBindTo: Bool {
+    @objc dynamic open var hasBindTo: Bool {
         let bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         return bindTo != nil
     }
@@ -56,7 +56,7 @@ extension UIView {
         }
     }
 
-    dynamic open var hasRecord: Bool {
+    @objc dynamic open var hasRecord: Bool {
         if !hasBindTo {
             return false
         }

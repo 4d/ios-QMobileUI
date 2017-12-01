@@ -22,7 +22,7 @@ public class DataSourceEntry: NSObject {
     }
     private var recordCache: BindedRecord?
 
-    dynamic open var record: BindedRecord? {
+    @objc dynamic open var record: BindedRecord? {
         if recordCache == nil { // init at demand
             if let indexPath = self.indexPath {
                 recordCache = dataSource.record(at: indexPath)
@@ -38,46 +38,46 @@ public class DataSourceEntry: NSObject {
     // MARK: accessible property
 
     /// - return: the table name
-    dynamic open var name: String {
+    @objc dynamic open var name: String {
         return self.dataSource.tableName
     }
 
-    dynamic open var count: Int {
+    @objc dynamic open var count: Int {
         return self.dataSource.count
     }
 
-    dynamic open var countString: String {
+    @objc dynamic open var countString: String {
         return String(self.count)
     }
 
-    dynamic open var isEmpty: Bool {
+    @objc dynamic open var isEmpty: Bool {
         return self.dataSource.isEmpty
     }
 
-    dynamic open var isNotEmpty: Bool {
+    @objc dynamic open var isNotEmpty: Bool {
         return !self.dataSource.isEmpty
     }
 
-    dynamic open var section: Int {
+    @objc dynamic open var section: Int {
         return self.indexPath?.section ?? 0
     }
 
-    dynamic open var row: Int {
+    @objc dynamic open var row: Int {
         return self.indexPath?.row ?? 0
     }
 
-    dynamic open var rowString: String {
+    @objc dynamic open var rowString: String {
         return String(self.row)
     }
 
-    dynamic open var hasNext: Bool {
+    @objc dynamic open var hasNext: Bool {
         if let indexPath = self.indexPath {
             return self.dataSource.hasNext(at: indexPath)
         }
         return false
     }
 
-    dynamic open var hasPrevious: Bool {
+    @objc dynamic open var hasPrevious: Bool {
         if let indexPath = self.indexPath {
             return self.dataSource.hasPrevious(at: indexPath)
         }

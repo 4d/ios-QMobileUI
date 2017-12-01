@@ -12,7 +12,7 @@ import Guitar
 extension String {
 
     public var firstLetter: String {
-        guard let firstLetter = self.characters.first else {
+        guard let firstLetter = self.first else {
             return ""
         }
         return String(firstLetter)
@@ -27,7 +27,10 @@ extension String {
     var htmlToAttributedString: NSAttributedString {
         do {
             if let data = data(using: .utf8) {
-                let string = try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8], documentAttributes: nil)
+                let string = try NSAttributedString(data: data,
+                                                    options: [.documentType: NSAttributedString.DocumentType.html,
+                                                              .characterEncoding: String.Encoding.utf8],
+                                                    documentAttributes: nil)
                 return string
             }
         } catch {

@@ -116,7 +116,7 @@ open class TimeFormatter {
     }
 
     open func string(from number: NSNumber) -> String {
-        return string(from: TimeInterval(number))
+        return string(from: TimeInterval(number.doubleValue))
     }
 
     open func time(from string: String) -> TimeInterval? {

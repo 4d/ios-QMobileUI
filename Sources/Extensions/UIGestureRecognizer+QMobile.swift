@@ -46,7 +46,7 @@ class UIGestureRecognizerWithClosure: NSObject, Cancellable {
         self.recognizer?.addTarget(self, action: #selector(UIGestureRecognizerWithClosure.invokeTarget))
     }
 
-    func invokeTarget(nizer: UIGestureRecognizer) {
+    @objc func invokeTarget(nizer: UIGestureRecognizer) {
         self.closure(self)
     }
 

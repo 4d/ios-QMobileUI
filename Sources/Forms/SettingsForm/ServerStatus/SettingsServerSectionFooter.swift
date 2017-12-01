@@ -55,7 +55,7 @@ open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, 
         self.titleLabel.isUserInteractionEnabled = true
     }
 
-    func tapped(_ sender: UITapGestureRecognizer) {
+    @objc func tapped(_ sender: UITapGestureRecognizer) {
         checkStatus(2)
     }
 

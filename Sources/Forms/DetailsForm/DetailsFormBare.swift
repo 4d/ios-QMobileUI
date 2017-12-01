@@ -10,8 +10,8 @@ import UIKit
 
 open class DetailsFormBare: UIViewController, DetailsForm {
 
-    dynamic open var hasPreviousRecord: Bool = false
-    dynamic open var hasNextRecord: Bool = false
+    @objc dynamic open var hasPreviousRecord: Bool = false
+    @objc dynamic open var hasNextRecord: Bool = false
 
     // MARK: override
     final public override func viewDidLoad() {
@@ -128,7 +128,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     }
 
     /// Receive swipe action and do action according to direction
-    open func onSwipe(_ sender: UISwipeGestureRecognizer!) {
+    @objc open func onSwipe(_ sender: UISwipeGestureRecognizer!) {
         if sender.direction.contains(.left) {
             self.nextRecord(sender)
         } else if sender.direction.contains(.right) {

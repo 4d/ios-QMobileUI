@@ -70,7 +70,7 @@ extension ApplicationXCallbackURL: ApplicationService {
                 } else {
                     path = .userTemporary
                 }
-                ApplicationDataSync.dataSync.dump(to: path) {
+               _ =  ApplicationDataSync.dataSync.dump(to: path) {
 
                     success(nil)
                 }

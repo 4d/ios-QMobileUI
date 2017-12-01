@@ -24,7 +24,7 @@ open class Binder: NSObject {
         }
     }
     fileprivate static let tableVarKey = "table"
-    dynamic open var table: DataSourceEntry? {
+    @objc dynamic open var table: DataSourceEntry? {
         didSet {
             if updateViewOnDidSet && (self.table != nil) {
                 updateView()

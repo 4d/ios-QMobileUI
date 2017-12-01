@@ -105,7 +105,7 @@ extension DetailsForm {
         self.hasNextRecord = table.hasNext
     }
 
-    /*public*/ func deleteRecord() {
+    /*public*/func deleteRecord() {
         if let table = self.view.table {
             if let record = table.record?.record as? Record {
                 _ = dataStore.perform(.background) { context, _ in

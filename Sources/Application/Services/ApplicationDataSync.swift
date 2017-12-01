@@ -167,7 +167,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 extension SwiftMessages {
 
    public static func displayConfirmation(_ message: String) {
-        let view = MessageView.viewFromNib(layout: .StatusLine)
+        let view = MessageView.viewFromNib(layout: .statusLine)
         view.configureTheme(.success)
         view.configureDropShadow()
         view.configureContent(body: message)
@@ -179,7 +179,7 @@ extension SwiftMessages {
     }
 
     public static func displayWarning(_ message: String) {
-        let view = MessageView.viewFromNib(layout: .CardView)
+        let view = MessageView.viewFromNib(layout: .cardView)
         view.configureTheme(.error)
         view.configureContent(body: message)
         view.button?.isHidden = true
@@ -192,7 +192,7 @@ extension SwiftMessages {
     }
 
     public static func displayError(title: String, message: String) {
-        let view = MessageView.viewFromNib(layout: .CardView)
+        let view = MessageView.viewFromNib(layout: .cardView)
         view.configureTheme(.error)
         view.configureContent(title: title, body: message)
         view.button?.isHidden = true

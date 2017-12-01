@@ -10,7 +10,7 @@ import Foundation
 
 public extension UIRefreshControl {
 
-    dynamic public var title: String? {
+    @objc dynamic public var title: String? {
         get {
             guard let attributedTitle = self.attributedTitle else {
                 return nil

@@ -73,7 +73,7 @@ extension UIApplication {
 extension UIApplication {
 
     // dismiss Keyboard
-    class func resignFirstResponder() {
+    @objc class func resignFirstResponder() {
         UIApplication.shared.sendAction(#selector(resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
@@ -87,7 +87,7 @@ extension UIApplication {
         return CurrentResponder.currentResponder
     }
 
-    func findFirstResponder(_ sender: AnyObject?) {
+    @objc func findFirstResponder(_ sender: AnyObject?) {
         CurrentResponder.currentResponder = self
     }
 }
