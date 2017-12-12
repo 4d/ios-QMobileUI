@@ -66,6 +66,31 @@ extension UIImageView {
 
 import QMobileAPI
 import QMobileDataSync
+import Prephirences
+
+extension APIManager {
+
+    // TODO move it to QMobileAPI
+    func configure(request: URLRequest) -> URLRequest {
+        var r = request
+        if Prephirences.sharedInstance["server.noSession"] as? Bool ?? true {
+            r.setValue("true", forHTTPHeaderField: "NoSession-4D")
+        }
+        // XXX add maybe also authentification headers
+
+        return r
+    }
+
+}
+
+/// Protocol allowing to customize rest image download using Kingfisher option api.
+public protocol KingfisherOptionsInfoBuilder {
+
+    /// Return the new options to display or download the images.
+    func option(for url: URL, currentOptions options: KingfisherOptionsInfo) -> KingfisherOptionsInfo
+
+    var placeHolderImage: UIImage? { get }
+}
 
 extension UIImageView {
 
@@ -85,7 +110,19 @@ extension UIImageView {
                 self.kf.indicatorType = .activity
                 let fullUri = DataSync.instance.rest.rest.baseURL.absoluteString + uri
                 if let url = URL(string: fullUri) {
-                    self.kf.setImage(with: url)
+
+                    let modifier = AnyModifier { request in
+                        return APIManager.instance.configure(request: request)
+                    }
+                    var options: KingfisherOptionsInfo = [.requestModifier(modifier)]
+                    var placeHolderImage: UIImage?
+                    if let builder = self as? KingfisherOptionsInfoBuilder {
+                        options = builder.option(for: url, currentOptions: options)
+                        placeHolderImage = builder.placeHolderImage
+                    }
+                    self.kf.setImage(with: url,
+                                     placeholder: placeHolderImage,
+                                     options: options)
                 }
 
             } else {
