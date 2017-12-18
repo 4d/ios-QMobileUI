@@ -39,37 +39,37 @@ open class QApplication: UIApplication {
 
     func initServices() {
         let services = ApplicationServices.instance
+
+        // Logger
+        services.register(ApplicationLogger.instance)
+
+        // Load preferences
+        services.register(ApplicationPreferences.instance)
+
+        // Log all logging step
+        services.register(ApplicationStepLogging.instance)
+
+        // Crash Manager
+        services.register(ApplicationCrashManager.instance)
+
+        // Load the mobile database
+        services.register(ApplicationDataStore.instance)
+
+        // Manage data sync
+        services.register(ApplicationDataSync.instance)
+
+        // Load transformers for formatting
+        services.register(ApplicationValueTransformers.instance)
+
+        // x-callback-url
+        services.register(ApplicationXCallbackURL.instance)
+
         if let serviceTypes = Prephirences.sharedInstance.stringArray(forKey: "application.services") {
             for service in serviceTypes {
                 if let serviceType = NSClassFromString(service) as? ApplicationService.Type { // XXX to test, maybe namespace must be added
                     services.register(serviceType.instance)
                 }
             }
-        } else {
-
-            // Logger
-            services.register(ApplicationLogger.instance)
-
-            // Load preferences
-            services.register(ApplicationPreferences.instance)
-
-            // Log all logging step
-            services.register(ApplicationStepLogging.instance)
-
-            // Crash Manager
-            services.register(ApplicationCrashManager.instance)
-
-            // Load the mobile database
-            services.register(ApplicationDataStore.instance)
-
-            // Manage data sync
-            services.register(ApplicationDataSync.instance)
-
-            // Load transformers for formatting
-            services.register(ApplicationValueTransformers.instance)
-
-            // x-callback-url
-            services.register(ApplicationXCallbackURL.instance)
         }
     }
 

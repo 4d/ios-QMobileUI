@@ -57,6 +57,8 @@
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
+		48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */; };
+		48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */; };
 		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
 		48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
 		48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
@@ -187,6 +189,8 @@
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
+		48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUpdate.swift; sourceTree = "<group>"; };
+		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
@@ -302,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				480392BC1E929524008CF992 /* QApplication.swift */,
+				48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */,
 				480392A81E92916E008CF992 /* ApplicationServices.swift */,
 				48E49CE31EB9CA15002B60AF /* Services */,
 			);
@@ -539,6 +544,7 @@
 				48E49CE81EB9CA70002B60AF /* ApplicationPreferences.swift */,
 				48E49CE91EB9CA70002B60AF /* ApplicationValueTransformers.swift */,
 				4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */,
+				48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -883,10 +889,12 @@
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
+				48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */,
 				48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
 				48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */,
+				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,

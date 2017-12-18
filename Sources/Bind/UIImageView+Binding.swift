@@ -66,22 +66,6 @@ extension UIImageView {
 
 import QMobileAPI
 import QMobileDataSync
-import Prephirences
-
-extension APIManager {
-
-    // TODO move it to QMobileAPI
-    func configure(request: URLRequest) -> URLRequest {
-        var r = request
-        if Prephirences.sharedInstance["server.noSession"] as? Bool ?? true {
-            r.setValue("true", forHTTPHeaderField: "NoSession-4D")
-        }
-        // XXX add maybe also authentification headers
-
-        return r
-    }
-
-}
 
 /// Protocol allowing to customize rest image download using Kingfisher option api.
 public protocol KingfisherOptionsInfoBuilder {

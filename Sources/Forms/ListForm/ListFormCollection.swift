@@ -14,7 +14,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     public var dataSource: DataSource! = nil
 
-    @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
+    @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
@@ -37,7 +37,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     /// On click execute transition to show record details.
     /// Set to false, to not execute transition and manage your own code in onClicked()
-    @IBInspectable open var onClickShowDetail: Bool = true
+    @IBInspectable open var onClickShowDetails: Bool = true
 
     // MARK: override
     final public override func viewDidLoad() {
@@ -112,7 +112,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         // super.collectionView(collectionView, didSelectItemAt: indexPath)
         // For a selection default behaviour is to show detail...
 
-        if onClickShowDetail {
+        if onClickShowDetails {
             self.performSegue(withIdentifier: selectedSegueIdentifier, sender: collectionView)
         }
         if let record = dataSource.record(at: indexPath) {
@@ -231,7 +231,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     /// Show the detail form the specific record
-    public func showDetailForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionViewScrollPosition = .centeredVertically) {
+    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionViewScrollPosition = .centeredVertically) {
         if let indexPath = dataSource?.indexPath(for: record) {
             self.collectionView?.selectItem(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }

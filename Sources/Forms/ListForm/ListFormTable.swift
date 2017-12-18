@@ -14,7 +14,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     public var dataSource: DataSource! = nil
 
-    @IBInspectable open var selectedSegueIdentifier: String = "showDetail"
+    @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
     @IBInspectable open var hasRefreshControl: Bool = false
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
@@ -212,7 +212,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    public func showDetailForm(_ record: Record, animated: Bool = true, scrollPosition: UITableViewScrollPosition = .middle) {
+    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UITableViewScrollPosition = .middle) {
         if let indexPath = dataSource?.indexPath(for: record) {
             self.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }
