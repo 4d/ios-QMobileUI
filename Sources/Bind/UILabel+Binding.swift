@@ -220,6 +220,15 @@ public extension UILabel {
         }
     }
 
+    @objc dynamic public var boolean: NSNumber? {
+        get {
+            return integer
+        }
+        set {
+            integer = boolean
+        }
+    }
+
     /// Display yes or no for boolean value
     @objc dynamic public var yesOrNo: Bool {
         get {
@@ -371,6 +380,22 @@ public extension UILabel {
             }
             self.text = NumberFormatter.ordinal.string(from: number)
 
+        }
+    }
+
+    // MARK: image
+    @objc dynamic public var restImage: [String: Any]? {
+        get {
+            if let text = self.text {
+                let deffered = Deferred(uri: text, image: true)
+                return deffered.dictionary
+            }
+            return nil
+        }
+        set {
+            if let dico = newValue, let uri = ImportableParser.parseImage(dico) {
+                self.text = uri
+            }
         }
     }
 

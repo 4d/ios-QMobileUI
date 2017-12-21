@@ -18,7 +18,7 @@ extension UIView {
         return Binder(view: self)
     }
     #else
-    open var bindTo: Binder {
+    @objc dynamic open var bindTo: Binder {
         var bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         if bindTo == nil { // XXX check multithread  safety
             bindTo = Binder(view: self)
@@ -78,7 +78,11 @@ extension UIView {
     // Trying to avoid app crash if bad binding
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
         #if !TARGET_INTERFACE_BUILDER
-            logger.warning("Trying to set value '\(String(unwrappedDescrib: value))' on undefined key '\(key)' on view '\(self)")
+            if key.isEmpty {
+                logger.debug("Trying to set value '\(String(unwrappedDescrib: value))' on empty key on view '\(self). View not binded. Please edit storyboard.")
+            } else {
+                logger.warning("Trying to set value '\(String(unwrappedDescrib: value))' on undefined key '\(key)' on view '\(self)")
+            }
         #endif
     }
 

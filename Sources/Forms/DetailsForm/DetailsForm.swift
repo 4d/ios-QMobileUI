@@ -96,6 +96,7 @@ extension DetailsForm {
         if let table = self.view.table {
             checkActions(table)
         } else {
+            logger.warning("DetailsForm do not receive information from Listform. Maybe the 'indexPath' function on the UICollectionViewCell do not return the index path.")
             assertionFailure("No table set when loading")
         }
     }

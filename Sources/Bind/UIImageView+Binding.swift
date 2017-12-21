@@ -78,7 +78,7 @@ public protocol KingfisherOptionsInfoBuilder {
 
 extension UIImageView {
 
-    public var restImage: [String: Any]? {
+    @objc dynamic public var restImage: [String: Any]? {
         get {
             if let webURL =  self.webURL {
                 var uri = webURL.absoluteString
@@ -115,7 +115,7 @@ extension UIImageView {
         }
     }
 
-    public var imageData: Data? {
+    @objc dynamic public var imageData: Data? {
         get {
             guard let image = self.image else {
                 return nil

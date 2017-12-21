@@ -71,8 +71,13 @@ extension ApplicationCrashManager: ApplicationService {
                 logger.warning("Crashed on \(crash.creationDate?.description ?? crash.fileName)")
                 //logger.warning("Crashed with signal )") // add some info
             }
+
+            // Purge the report = remove all files
+            logger.debug("Purge crash file")
+            for crash in crashs {
+                try? crash.deleteFile()
+            }
         }
-        // Purge the report = remove all files
     }
 
     static var crashDirectory: Path {

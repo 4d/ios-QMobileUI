@@ -68,7 +68,6 @@
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
 		48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
 		48AE2C631F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
-		48B267251FB30D3F00C79323 /* BioAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B267241FB30D3F00C79323 /* BioAuthenticator.swift */; };
 		48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */; };
 		48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -858,7 +857,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				48B267251FB30D3F00C79323 /* BioAuthenticator.swift in Sources */,
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
@@ -1145,7 +1143,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -1170,7 +1168,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

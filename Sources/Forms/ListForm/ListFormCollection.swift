@@ -91,18 +91,20 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         /*if segue.identifier == selectedSegueIdentifier {*/ // code commented, here we can filter on segue name
-            if let indexPath = self.indexPath(for: sender) {
-                let table = DataSourceEntry(dataSource: self.dataSource)
-                table.indexPath = indexPath
+        if let indexPath = self.indexPath(for: sender) {
+            let table = DataSourceEntry(dataSource: self.dataSource)
+            table.indexPath = indexPath
 
-                if let navigation = segue.destination as? UINavigationController {
-                    navigation.navigationBar.table = table
-                    navigation.navigationBar.record = table.record
-                }
-                let destination = segue.destination.firstController
-                destination.view.table = table
-                destination.view.record = table.record
+            if let navigation = segue.destination as? UINavigationController {
+                navigation.navigationBar.table = table
+                navigation.navigationBar.record = table.record
             }
+            let destination = segue.destination.firstController
+            destination.view.table = table
+            destination.view.record = table.record
+        } else {
+            logger.warning("No collection index found for \(String(describing: sender)).")
+        }
         /*}*/
     }
 
@@ -189,6 +191,9 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func indexPath(for cell: Any?) -> IndexPath? {
         if let cell = cell as? UICollectionViewCell {
             return self.collectionView?.indexPath(for: cell)
+        } else if let collection = cell as? UICollectionView {
+            logger.warning("Expected a UICollectionViewCell but receive UICollectionView \(collection). Maybe segue is in wrong object")
+            return nil
         }
         return nil
     }

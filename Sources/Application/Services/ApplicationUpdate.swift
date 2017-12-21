@@ -170,7 +170,7 @@ extension ApplicationUpdate {
             postError(.noUpdateAvailable)
             return
         }
-        setAlertType()
+        setAlertType() // maybe rename to get update type
         showAlert()
     }
 
