@@ -92,8 +92,9 @@ extension UIImageView {
         set {
             if let dico = newValue, let uri = ImportableParser.parseImage(dico) {
                 self.kf.indicatorType = .activity
-                let fullUri = DataSync.instance.rest.rest.baseURL.absoluteString + uri
-                if let url = URL(string: fullUri) {
+                var components = URLComponents(url: DataSync.instance.rest.rest.baseURL, resolvingAgainstBaseURL: false)
+                components?.path = uri
+                if let url = components?.url {
 
                     let modifier = AnyModifier { request in
                         return APIManager.instance.configure(request: request)
@@ -107,8 +108,9 @@ extension UIImageView {
                     self.kf.setImage(with: url,
                                      placeholder: placeHolderImage,
                                      options: options)
+                } else {
+                    logger.warning("Cannot encode URI \(uri) to download image from 4D server")
                 }
-
             } else {
                 self.kf.indicatorType = .none
             }
