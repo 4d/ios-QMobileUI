@@ -154,19 +154,23 @@ extension ApplicationDataSync: DataSyncDelegate {
     }
 
     public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
-        SwiftMessages.displayConfirmation("Data updated")
+        onForeground {
+            SwiftMessages.displayConfirmation("Data updated")
+        }
     }
 
     public func didDataSyncFailed(error: DataSyncError) {
-        SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
-
+        onForeground {
+            SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
+        }
     }
 
 }
 
 extension SwiftMessages {
 
-   public static func displayConfirmation(_ message: String) {
+    public static func displayConfirmation(_ message: String) {
+        assert(Thread.isMainThread)
         let view = MessageView.viewFromNib(layout: .statusLine)
         view.configureTheme(.success)
         view.configureDropShadow()
@@ -179,6 +183,7 @@ extension SwiftMessages {
     }
 
     public static func displayWarning(_ message: String) {
+        assert(Thread.isMainThread)
         let view = MessageView.viewFromNib(layout: .cardView)
         view.configureTheme(.error)
         view.configureContent(body: message)
@@ -192,6 +197,7 @@ extension SwiftMessages {
     }
 
     public static func displayError(title: String, message: String) {
+        assert(Thread.isMainThread)
         let view = MessageView.viewFromNib(layout: .cardView)
         view.configureTheme(.error)
         view.configureContent(title: title, body: message)
