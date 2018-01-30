@@ -5,9 +5,9 @@
 	<key>com.4d.qa.urlScheme</key>
 	<string>4dqatest</string>
 	<key>dataSync.sync.atStart</key>
-	<false/>
+	<true/>
 	<key>server.url</key>
-	<string></string>
+	<string>localhost</string>
 	<key>server.url.port</key>
 	<integer>8099</integer>
 	<key>server.url.https.port</key>

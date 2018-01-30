@@ -1,0 +1,40 @@
+{
+  "dataClasses": [{
+    "name": "Entity 1",
+    "className": "Entity 1",
+    "collectionName": "Entity1Collection",
+    "scope": "public",
+    "dataURI": "/rest/Entity 1",
+    "attributes": [{
+      "name": "ID",
+      "kind": "storage",
+      "scope": "public",
+      "indexed": true,
+      "type": "long",
+      "identifying": true
+    }, {
+      "name": "titre",
+      "kind": "storage",
+      "scope": "public",
+      "type": "string"
+    }, {
+      "name": "Command Name",
+      "kind": "storage",
+      "scope": "public",
+      "type": "string"
+    }, {
+      "name": "description",
+      "kind": "storage",
+      "scope": "public",
+      "type": "string"
+    }, {
+      "name": "Field_3",
+      "kind": "storage",
+      "scope": "public",
+      "type": "float"
+    }],
+    "key": [{
+      "name": "ID"
+    }]
+  }]
+}

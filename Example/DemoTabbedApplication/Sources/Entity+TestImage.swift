@@ -10,16 +10,16 @@ import Foundation
 
 extension Entity {
 
-    dynamic public var urlString: String {
+    @objc dynamic public var urlString: String {
         let imageNumber = integer % 1000
         return "https://unsplash.it/128?image=\(imageNumber)" // http://placehold.it/120x120&text=\(integer)"
     }
 
-    dynamic public var url: URL {
+     @objc  dynamic public var url: URL {
         return URL(string: self.urlString)!
     }
 
-    dynamic public var boolString: String {
+     @objc  dynamic public var boolString: String {
         return String(bool)
     }
 

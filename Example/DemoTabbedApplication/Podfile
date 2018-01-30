@@ -9,24 +9,29 @@ target 'DemoTabbedApplication' do
   pod 'QMobileUI', :path => '../../'
 
 
-  pod 'XCGLogger/UserInfoHelpers', :git => 'https://github.com/DaveWoodCom/XCGLogger.git', :tag => '5.0.5'
+  pod 'XCGLogger/UserInfoHelpers'
 
-  pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON', :tag => '3.1.4'
+  pod 'SwiftyJSON'
 
-  pod 'Kingfisher', '~> 3.0'
-  pod 'IBAnimatable', '~> 4.0'
-  pod 'Guitar', :git => 'https://github.com/ArtSabintsev/Guitar.git', :branch => 'swift3.2'
-  pod 'ValueTransformerKit', :git => 'https://github.com/phimage/ValueTransformerKit', :tag => '0.0.1'
-  pod 'BrightFutures', :git => 'https://github.com/Thomvis/BrightFutures', :tag => '5.2.0'
-  pod 'FileKit', :git => 'https://github.com/nvzqz/FileKit', :commit => '85999177271043b127f8744259fc432b32e4f177'
-  
-  pod 'SwiftMessages', :git => 'https://github.com/SwiftKickMobile/SwiftMessages', :tag => '3.5.1'
+  pod 'Kingfisher'
+  pod 'IBAnimatable'
+  pod 'Guitar', :git => 'https://github.com/ArtSabintsev/Guitar.git'
+  pod 'ValueTransformerKit'
+  pod 'BrightFutures'
+  pod 'FileKit'
+
+  pod 'SwiftMessages'
 
 # for monitoring
   pod 'PinpointKit/ScreenshotDetector'
 
 # in dev
   pod 'LinearProgressBarMaterial'
+  pod 'SideMenu'
+
+  pod 'AnimatedCollectionViewLayout'
+  pod 'TRMosaicLayout'
+
 
 # in debuging
 pod 'NSLogger'

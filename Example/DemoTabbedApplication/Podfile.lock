@@ -1,19 +1,20 @@
 PODS:
-  - Alamofire (4.5.1)
-  - BrightFutures (5.2.0):
-    - Result (~> 3.2)
+  - Alamofire (4.6.0)
+  - AnimatedCollectionViewLayout (0.3.0)
+  - BrightFutures (6.0.0):
+    - Result (~> 3.2.4)
   - CallbackURLKit (2.0.0):
     - CallbackURLKit/Core (= 2.0.0)
   - CallbackURLKit/Core (2.0.0)
-  - DeviceKit (1.4.0)
-  - FileKit (4.0.1)
-  - Guitar (0.2.0)
-  - IBAnimatable (4.2.0)
-  - Kingfisher (3.13.1)
+  - DeviceKit (1.5.0)
+  - FileKit (5.0.0)
+  - Guitar (0.3.0)
+  - IBAnimatable (5.0.0)
+  - Kingfisher (4.6.1)
   - LinearProgressBarMaterial (1.3)
-  - Moya (9.0.0):
-    - Moya/Core (= 9.0.0)
-  - Moya/Core (9.0.0):
+  - Moya (10.0.2):
+    - Moya/Core (= 10.0.2)
+  - Moya/Core (10.0.2):
     - Alamofire (~> 4.1)
     - Result (~> 3.0)
   - NSLogger (1.8.3):
@@ -23,11 +24,11 @@ PODS:
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
   - PinpointKit/ScreenshotDetector (1.1.0)
-  - Prephirences (3.0.2):
-    - Prephirences/Core (= 3.0.2)
-    - Prephirences/Keys (= 3.0.2)
-  - Prephirences/Core (3.0.2)
-  - Prephirences/Keys (3.0.2):
+  - Prephirences (4.0.0):
+    - Prephirences/Core (= 4.0.0)
+    - Prephirences/Keys (= 4.0.0)
+  - Prephirences/Core (4.0.0)
+  - Prephirences/Keys (4.0.0):
     - Prephirences/Core
   - QMobileAPI (0.1.0):
     - DeviceKit
@@ -57,25 +58,28 @@ PODS:
     - ValueTransformerKit
     - XCGLogger
   - Result (3.2.4)
-  - SwiftMessages (3.5.1)
-  - SwiftyJSON (3.1.4)
-  - ValueTransformerKit (0.0.1)
-  - XCGLogger (5.0.5):
-    - XCGLogger/Core (= 5.0.5)
-  - XCGLogger/Core (5.0.5):
+  - SideMenu (3.1.5)
+  - SwiftMessages (4.1.0)
+  - SwiftyJSON (4.0.0)
+  - TRMosaicLayout (1.0.0)
+  - ValueTransformerKit (1.0.0)
+  - XCGLogger (6.0.2):
+    - XCGLogger/Core (= 6.0.2)
+  - XCGLogger/Core (6.0.2):
     - ObjcExceptionBridging
-  - XCGLogger/UserInfoHelpers (5.0.5):
+  - XCGLogger/UserInfoHelpers (6.0.2):
     - XCGLogger/Core
   - XCGLoggerNSLoggerConnector (0.3.2):
     - NSLogger (>= 1.5)
     - XCGLogger (>= 4.0)
 
 DEPENDENCIES:
-  - BrightFutures (from `https://github.com/Thomvis/BrightFutures`, tag `5.2.0`)
-  - FileKit (from `https://github.com/nvzqz/FileKit`, commit `85999177271043b127f8744259fc432b32e4f177`)
-  - Guitar (from `https://github.com/ArtSabintsev/Guitar.git`, branch `swift3.2`)
-  - IBAnimatable (~> 4.0)
-  - Kingfisher (~> 3.0)
+  - AnimatedCollectionViewLayout
+  - BrightFutures
+  - FileKit
+  - Guitar (from `https://github.com/ArtSabintsev/Guitar.git`)
+  - IBAnimatable
+  - Kingfisher
   - LinearProgressBarMaterial
   - NSLogger
   - PinpointKit/ScreenshotDetector
@@ -83,21 +87,16 @@ DEPENDENCIES:
   - QMobileDataStore (from `../../../QMobileDataStore`)
   - QMobileDataSync (from `../../../QMobileDataSync`)
   - QMobileUI (from `../../`)
-  - SwiftMessages (from `https://github.com/SwiftKickMobile/SwiftMessages`, tag `3.5.1`)
-  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON`, tag `3.1.4`)
-  - ValueTransformerKit (from `https://github.com/phimage/ValueTransformerKit`, tag `0.0.1`)
-  - XCGLogger/UserInfoHelpers (from `https://github.com/DaveWoodCom/XCGLogger.git`, tag `5.0.5`)
+  - SideMenu
+  - SwiftMessages
+  - SwiftyJSON
+  - TRMosaicLayout
+  - ValueTransformerKit
+  - XCGLogger/UserInfoHelpers
   - XCGLoggerNSLoggerConnector
 
 EXTERNAL SOURCES:
-  BrightFutures:
-    :git: https://github.com/Thomvis/BrightFutures
-    :tag: 5.2.0
-  FileKit:
-    :commit: 85999177271043b127f8744259fc432b32e4f177
-    :git: https://github.com/nvzqz/FileKit
   Guitar:
-    :branch: swift3.2
     :git: https://github.com/ArtSabintsev/Guitar.git
   QMobileAPI:
     :path: ../../../QMobileAPI
@@ -107,68 +106,41 @@ EXTERNAL SOURCES:
     :path: ../../../QMobileDataSync
   QMobileUI:
     :path: ../../
-  SwiftMessages:
-    :git: https://github.com/SwiftKickMobile/SwiftMessages
-    :tag: 3.5.1
-  SwiftyJSON:
-    :git: https://github.com/SwiftyJSON/SwiftyJSON
-    :tag: 3.1.4
-  ValueTransformerKit:
-    :git: https://github.com/phimage/ValueTransformerKit
-    :tag: 0.0.1
-  XCGLogger:
-    :git: https://github.com/DaveWoodCom/XCGLogger.git
-    :tag: 5.0.5
 
 CHECKOUT OPTIONS:
-  BrightFutures:
-    :git: https://github.com/Thomvis/BrightFutures
-    :tag: 5.2.0
-  FileKit:
-    :commit: 85999177271043b127f8744259fc432b32e4f177
-    :git: https://github.com/nvzqz/FileKit
   Guitar:
-    :commit: ff30d73221147a7bf2d583e379deef2701ae32ea
+    :commit: d88afd48e8793d66f4609db98710b679ce039341
     :git: https://github.com/ArtSabintsev/Guitar.git
-  SwiftMessages:
-    :git: https://github.com/SwiftKickMobile/SwiftMessages
-    :tag: 3.5.1
-  SwiftyJSON:
-    :git: https://github.com/SwiftyJSON/SwiftyJSON
-    :tag: 3.1.4
-  ValueTransformerKit:
-    :git: https://github.com/phimage/ValueTransformerKit
-    :tag: 0.0.1
-  XCGLogger:
-    :git: https://github.com/DaveWoodCom/XCGLogger.git
-    :tag: 5.0.5
 
 SPEC CHECKSUMS:
-  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  BrightFutures: d0c77d07b77a3ec95832960ea0a6f0522c8876a1
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  AnimatedCollectionViewLayout: 504b992a4258eb39d2dd2b2b48e84b4b95860fd7
+  BrightFutures: 9e7604f511aed9f0d6a49b04ac9b3fca6b117758
   CallbackURLKit: eebcf4ecbb70dc8c970f9fcf1ff70162c5ea0965
-  DeviceKit: fa74d97499660e88081718b16688e19217595dba
-  FileKit: 22f59bd1dbbb591f3b9f7495f9fbf2b6b605d7a5
-  Guitar: db10a90bea992b31ad9c50dff5dfe3ccb9e8c8a4
-  IBAnimatable: d9d20f1c627ee97c736c55f791da9c83f6bd1bec
-  Kingfisher: ed9707a409cc47fddafbcd12a43a9757e3600af5
+  DeviceKit: 883552d64028056216e913a88f892e7e29678e75
+  FileKit: 857f5f9d2583044c1354e7564b110d80f31405e8
+  Guitar: 661b1bb2620242ef35bd97b72047b95f48c716cd
+  IBAnimatable: aa2286a9cf8fb4ae2e1be85c5287ae56143b024f
+  Kingfisher: 1f9157d9c02b380cbd0b7cc890161195164eb634
   LinearProgressBarMaterial: 84df3135c27a0fc5e0219da10ee98304de159b06
-  Moya: cf5e6ee93af526532f92614004b8ad2ea60fd845
+  Moya: 2b0531a9fef318e0bc484030c3db1e6f279ccb66
   NSLogger: c9b80dbeee1d65eb553647a1f6f1f72171b04808
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   PinpointKit: b444d66d8b10420c1ffc22c176dee37c1c12b4e7
-  Prephirences: 221058c335f48945c4f2049d2b54d333a9bddc21
+  Prephirences: d3f1d1db3959640f754d7c75325dccf78722cd12
   QMobileAPI: bd9eecd1aba82ec4f56632498719bc70e0ac9f05
   QMobileDataStore: 738a7de21874d6af5e3441b2de60c5cf66d6d5d6
   QMobileDataSync: d6d1ed920f50b49eb510f6e21be7facbf9cdaa2a
   QMobileUI: 7f52eddb02f86909d5cacbe7a6d69498a3ff8ee6
   Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
-  SwiftMessages: b424725965615911a8bd9ef2a7cf2a7ad046f3a9
-  SwiftyJSON: 05cf0e98a950e2ba343735264f5a96b81e755d00
-  ValueTransformerKit: 476ab20daf5a91d610b0b38bbc18232e80ce73b6
-  XCGLogger: 7f76767461fdfda41a7e370f61b4e56fbea22dba
+  SideMenu: 47dbf9e4d878062d8994aed43f6e4bf6c1fea30b
+  SwiftMessages: 1bacc783c8f10bdfdc57c14860cae8a1f1fa6591
+  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+  TRMosaicLayout: 1875505c48dd2877afd69a8bea7b4c1c63afa5b5
+  ValueTransformerKit: 6157eae6e0522492d269ebebe980499086009dab
+  XCGLogger: c9601cae9a8912de34a58666ba931ed3d624dd31
   XCGLoggerNSLoggerConnector: e13ec54445594d87f4a938fd6c2a6672cd0b4b85
 
-PODFILE CHECKSUM: 0ba7469a48ae1d71d916d40d6f58aadb42581dd7
+PODFILE CHECKSUM: 4f117e49112e6a3539ad7d717569579396838acb
 
 COCOAPODS: 1.3.1

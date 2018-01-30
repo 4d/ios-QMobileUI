@@ -85,13 +85,13 @@ extension DataSource: UICollectionViewDataSourcePrefetching {
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            print(indexPath)
+            print(indexPath) // not implemented
         }
     }
 
     public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            print(indexPath)
+            print(indexPath) // not implemented
         }
     }
 
@@ -103,10 +103,12 @@ struct CollectionChanges {
     internal var objectChanges: [FetchedResultsChangeType: Set<IndexPath>] = [FetchedResultsChangeType: Set<IndexPath>]()
     internal var sectionChanges: [FetchedResultsChangeType: IndexSet] = [FetchedResultsChangeType: IndexSet]()
     internal var cachedSectionNames: [Any] = [Any]()
+    internal var shouldReloadCollectionView: Bool = false
 
     mutating func beginUpdates() {
         self.sectionChanges = [FetchedResultsChangeType: IndexSet]()
         self.objectChanges = [FetchedResultsChangeType: Set<IndexPath>]()
+        self.shouldReloadCollectionView = false
     }
 
     mutating func endUpdates(collectionView: UICollectionView) {
@@ -151,8 +153,11 @@ struct CollectionChanges {
                 self.objectChanges.removeValue(forKey: .move)
             }
         }
-
-        collectionView.update(with: self)
+        if shouldReloadCollectionView {
+            collectionView.reloadData()
+        } else {
+            collectionView.update(with: self)
+        }
     }
 }
 

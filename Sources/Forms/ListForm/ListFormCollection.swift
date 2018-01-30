@@ -90,7 +90,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        /*if segue.identifier == selectedSegueIdentifier {*/ // code commented, here we can filter on segue name
         if let indexPath = self.indexPath(for: sender) {
             let table = DataSourceEntry(dataSource: self.dataSource)
             table.indexPath = indexPath
@@ -103,9 +102,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             destination.view.table = table
             destination.view.record = table.record
         } else {
-            logger.warning("No collection index found for \(String(describing: sender)).")
+            if segue.identifier == selectedSegueIdentifier {
+                logger.warning("No collection index found for \(String(describing: sender)).")
+            }
         }
-        /*}*/
     }
 
     // MARK: Collection View
@@ -149,6 +149,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func onSearchBegin() {}
     open func onSearchButtonClicked() {}
     open func onSearchCancelButtonClicked() {}
+    open func onSearchFetching() {}
 
     /// Called after a clicked on a record.
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
@@ -309,11 +310,13 @@ extension ListFormCollection: DataSourceSearchable {
                 assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
                 assert(self.table?.attributes[searchableField] != nil,
                        "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
-                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchableField, searchText)
+                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
             } else {
                 dataSource?.predicate = nil
             }
             dataSource?.performFetch()
+
+            onSearchFetching()
         }
 
         // XXX API here could load more from network

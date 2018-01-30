@@ -36,14 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logger.add(destination: XCGNSLoggerLogDestination(owner: logger, identifier: "nslogger.identifier"))
         logger.add(destination: AppleSystemLogDestination(owner: logger, identifier: "apple"))
 
-        listeners.append(dataStore.onLoad { notif in
-            logger.info("DS load \(notif)", userInfo: Dev.eric | Tag.demo)
+        listeners.append(dataStore.onLoad { _ in
+            //logger.info("DS load \(notif)", userInfo: Dev.eric | Tag.demo)
         })
-        listeners.append(dataStore.onSave { notif in
-            logger.info("DS save \(notif)", userInfo: Dev.eric | Tag.demo)
+        listeners.append(dataStore.onSave { _ in
+          //  logger.info("DS save \(notif)", userInfo: Dev.eric | Tag.demo)
         })
-        listeners.append(dataStore.onDrop { notif in
-            logger.info("DS drop \(notif)", userInfo: Dev.eric | Tag.demo)
+        listeners.append(dataStore.onDrop { _ in
+          //  logger.info("DS drop \(notif)", userInfo: Dev.eric | Tag.demo)
         })
 
         // swiftlint2:disable:next discarded_notification_center_observer

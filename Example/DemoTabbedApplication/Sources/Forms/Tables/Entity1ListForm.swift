@@ -10,6 +10,10 @@ import Foundation
 import QMobileDataStore
 import IBAnimatable
 
+class EntityNavController: UINavigationController {
+
+}
+
 /// Generated controller for Entity table.
 /// Do not edit name or override tableName
 class Entity1ListForm: ListFormTable {
@@ -19,29 +23,9 @@ class Entity1ListForm: ListFormTable {
     }
     @IBAction func testDataSyncOnButton(_ sender: Any) {
 
-        /*_ = dataSync {_ in
-         
-         }*/
+        _ = dataSync {_ in
 
-        _ = dataStore.perform(.background) { ( context, save) in
-            do {
-                if let table = self.table {
-                    if try context.delete(in: table) {
-                        print("ok delete \(table.name)")
-                    } else {
-                        print("nothing delete \(table.name)")
-                    }
-                }
-                /* if let record = self.firstRecord {
-                 context.delete(record: record)
-                 */
-                try save()
-            } catch {
-                logger.warning("Failed to delete record \(error)")
-            }
-
-        }
-
+         }
     }
 
     @IBAction override open func refresh(_ sender: Any?) {

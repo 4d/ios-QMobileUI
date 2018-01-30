@@ -10,14 +10,21 @@ import UIKit
 import QMobileUI
 import TRMosaicLayout
 
-class EntityListFormCollection: ListFormCollection {
+class EntityListFormCollection2: ListFormCollection {
     //private lazy var listLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .list)
    // private lazy var gridLayout: DisplaySwitchLayout = DisplaySwitchLayout(staticCellHeight: 128, nextLayoutStaticCellHeight: 128, layoutState: .grid)
 
+    public override var tableName: String {
+        return "Entity"
+    }
     override func onLoad() {
         super.onLoad()
 
-        self.collectionView?.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        let mosaicLayout = TRMosaicLayout()
+        self.collectionView?.collectionViewLayout = mosaicLayout
+
+        mosaicLayout.delegate = self
+       // self.collectionView?.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         ///self.collectionView?.backgroundView = UIImageView(image: UIImage(named: "profile-bg")!)
 
         //self.collectionView?.collectionViewLayout = CoverFlowLayout()
@@ -29,11 +36,6 @@ class EntityListFormCollection: ListFormCollection {
        // self.collectionView?.emptyDataSetSource = self
        // self.collectionView?.emptyDataSetDelegate = self
 
-        print(self.refreshControl ?? "")
-        let mosaicLayout = TRMosaicLayout()
-        //self.collectionView?.collectionViewLayout = mosaicLayout
-
-        mosaicLayout.delegate = self
     }
 
     /*func collectionView(collectionView: UICollectionView, transitionLayoutForOldLayout fromLayout: UICollectionViewLayout, newLayout toLayout: UICollectionViewLayout) -> UICollectionViewTransitionLayout {
@@ -72,9 +74,10 @@ class EntityListFormCollection: ListFormCollection {
     }
 
 }
-extension EntityListFormCollection: TRMosaicLayoutDelegate {
+
+extension EntityListFormCollection2: TRMosaicLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, mosaicCellSizeTypeAtIndexPath indexPath: IndexPath) -> TRMosaicCellType {
-        return indexPath.item % 3 == 0 ? TRMosaicCellType.big : TRMosaicCellType.small
+          return indexPath.item % 3 == 0 ? TRMosaicCellType.big : TRMosaicCellType.small
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: TRMosaicLayout, insetAtSection: Int) -> UIEdgeInsets {
