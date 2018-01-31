@@ -39,6 +39,8 @@ extension ApplicationLogger: ApplicationService {
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8
+        let maxTimeInterval = logPref["maxTimeInterval"] as? TimeInterval
+        let appleSystem = logPref["appleSystem"] as? Bool ?? true
 
         let levelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "level")
         levelPref.transformation = XCGLogger.Level.preferenceTransformation
@@ -100,11 +102,14 @@ extension ApplicationLogger: ApplicationService {
                 if let maxLogFiles = maxLogFiles {
                     autodestination.targetMaxLogFiles = maxLogFiles
                 }
-                autodestination.autoRotationCompletion = { _ in
-                     #if DEBUG
-                    print("Log autorotation")
-                     #endif
+                if let maxTimeInterval = maxTimeInterval {
+                    autodestination.targetMaxTimeInterval = maxTimeInterval
                 }
+                #if DEBUG
+                    autodestination.autoRotationCompletion = { success in
+                        print("Log autorotation \(success)")
+                    }
+                #endif
                 destination = autodestination
 
                 autodestination.cleanUpLogFiles() // XXX maybe do it in task
@@ -117,11 +122,18 @@ extension ApplicationLogger: ApplicationService {
             destination.showLineNumber = showLineNumbers
             destination.showDate = showDate
             destination.outputLevel = fileLevel ?? level
-            destination.logQueue = XCGLogger.logQueue
+            #if DEBUG
+                // immediate
+            #else
+                destination.logQueue = XCGLogger.logQueue
+            #endif
 
             destination.formatters = [LogFormatter.ansi.formatter]
 
             logger.add(destination: destination)
+        }
+        if appleSystem {
+            logger.add(destination: AppleSystemLogDestination())
         }
 
         logger.logAppDetails()

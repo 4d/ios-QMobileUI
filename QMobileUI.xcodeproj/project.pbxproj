@@ -51,6 +51,7 @@
 		4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95A1F827E6800C8A020 /* SettingsServerSectionFooter.swift */; };
 		4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95B1F827E6800C8A020 /* SettingURLForm.swift */; };
 		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
+		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
@@ -184,6 +185,7 @@
 		4859D95B1F827E6800C8A020 /* SettingURLForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLForm.swift; sourceTree = "<group>"; };
 		4859D9601F827EFB00C8A020 /* SettingURLForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SettingURLForm.storyboard; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
@@ -567,6 +569,7 @@
 			isa = PBXGroup;
 			children = (
 				4859D9551F827E4800C8A020 /* DialogForm.swift */,
+				4867450B20221BD20029924D /* WebAreaForm.swift */,
 				48EE077B1E7AE9B500A8546E /* ListForm */,
 				480B6B721E7FD1C500D1E583 /* DetailsForm */,
 				48F8E2C01F7D0B07000080FB /* SettingsForm */,
@@ -895,6 +898,7 @@
 				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
+				4867450C20221BD20029924D /* WebAreaForm.swift in Sources */,
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
