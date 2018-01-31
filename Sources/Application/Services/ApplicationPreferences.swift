@@ -25,6 +25,11 @@ extension ApplicationPreferences: ApplicationService {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         Prephirences.sharedInstance = preferences
+
+        if let resetDefaults = preferences["resetDefaults"] as? Bool, resetDefaults {
+            Foundation.UserDefaults.standard.clearAll()
+            Foundation.UserDefaults.standard.synchronize()
+        }
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

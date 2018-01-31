@@ -65,6 +65,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         if isSearchBarMustBeHidden {
             self.searchBar.isHidden = true
         }
+        logger.info("ListForm for '\(self.tableName)' table loaded.")
+        logger.verbose {
+            return "source: \(self.dataSource) , count: \(self.dataSource.count)"
+        }
     }
 
     final public override func viewWillAppear(_ animated: Bool) {

@@ -362,3 +362,9 @@ extension DataSource {
     }
 
 }
+
+extension DataSource {
+    public override var description: String {
+        return "DataSource[on: \(self.viewType), fetch: \(fetchedResultsController)]"
+    }
+}
