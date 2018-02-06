@@ -16,18 +16,19 @@ open class ListFormTable: UITableViewController, ListForm {
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
     @IBInspectable open var hasRefreshControl: Bool = false
-    /// Optional section for table using one field name
-    @IBInspectable open var sectionFieldname: String?
+
     @IBOutlet open var searchBar: UISearchBar!
     @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
     @IBInspectable open var searchSensitivity: String = "cd"
+    public private(set) var searchActive: Bool = false
+    @IBInspectable open var searchableField: String = "name"
+    @IBInspectable open var searchableAsTitle: Bool = true
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
 
-    public var searchActive: Bool = false
-    @IBInspectable open var searchableField: String = "name"
-
+    /// Optional section for table using one field name
+    @IBInspectable open var sectionFieldname: String?
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
            dataSource?.showSectionBar =  showSectionBar
@@ -175,11 +176,22 @@ open class ListFormTable: UITableViewController, ListForm {
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
         if let searchBar = searchBar {
-            searchBar.delegate = self
             if searchBar.superview == nil {
-                self.navigationItem.titleView = searchBar
+                if searchableAsTitle {
+                    self.navigationItem.titleView = searchBar
+                } else {
+                    let searchController = UISearchController(searchResultsController: nil)
+                    searchController.searchResultsUpdater = self
+                    searchController.obscuresBackgroundDuringPresentation = false
+                    searchController.delegate = self
+                    self.navigationItem.searchController = searchController
+                    self.definesPresentationContext = true
+
+                    self.searchBar = searchController.searchBar // continue to manage search using listener
+                }
             }
         }
+        self.searchBar?.delegate = self
     }
 
     /// Install the back button in navigation bar.
@@ -356,15 +368,25 @@ extension ListFormTable: DataSourceSearchable {
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
-                assert(self.table?.attributes[searchableField] != nil, // XXX maybe a mapped field, try to map to core data field?
-                    "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
-                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
+
+                if self.tableInfo?.fieldsByName[searchableField] != nil {
+                    dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
+                } else {
+                    assertionFailure("Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))")
+                }
             } else {
                 dataSource?.predicate = nil
             }
             dataSource?.performFetch()
         }
         // XXX API here could load more from network
+    }
+
+    public func updateSearchResults(for searchController: UISearchController) {
+        //let searchBar = searchController.searchBar
+        //if let searchText = searchBar.text {
+            //performSearch(searchText) // already done by search bar listener
+        //}
     }
 
 }

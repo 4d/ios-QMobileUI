@@ -8,15 +8,30 @@
 
 import Foundation
 import QMobileAPI
+import QMobileDataStore
 import QMobileDataSync
 
 extension ListForm {
 
+    /// Return information about current table using 4D table and field naming
     public var table: Table? {
-        assert(!ApplicationDataSync.dataSync.tablesInfoByTable.isEmpty) // not loaded...
-
         let dataSync = ApplicationDataSync.dataSync
-        return dataSync.tables.filter { $0.name == self.tableName }.first
+        assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
+
+        for (table, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
+            return table
+        }
+        return nil
     }
 
+    /// Return information about current table using mobile database table and field naming
+    public var tableInfo: DataStoreTableInfo? {
+        let dataSync = ApplicationDataSync.dataSync
+        assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
+
+        for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
+            return tableInfo
+        }
+        return nil
+    }
 }

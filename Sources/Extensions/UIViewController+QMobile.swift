@@ -68,4 +68,10 @@ extension UIViewController {
         }
     }
 
+    func addChildViewController(storyboardName: String, bundle: Bundle? = nil) {
+        if let childVc = UIStoryboard(name: storyboardName, bundle: bundle).instantiateInitialViewController() {
+            addChildViewController(childVc)
+        }
+    }
+
 }

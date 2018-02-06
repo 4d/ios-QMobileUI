@@ -16,19 +16,21 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
-    @IBOutlet open var nextButton: UIButton?
-    @IBOutlet open var previousButton: UIButton?
     @IBInspectable open var hasRefreshControl: Bool = false
-    @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
-    @IBInspectable open var searchSensitivity: String = "cd"
-     public var refreshControl: UIRefreshControl?
-    /// Optional section for table using one field name
-    @IBInspectable open var sectionFieldname: String?
+    public var refreshControl: UIRefreshControl?
 
     @IBOutlet open var searchBar: UISearchBar!
-    public var searchActive: Bool = false
+    public private(set) var searchActive: Bool = false
     @IBInspectable open var searchableField: String = "name"
+    @IBInspectable open var searchableAsTitle: Bool = true
+    @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
+    @IBInspectable open var searchSensitivity: String = "cd"
 
+    @IBOutlet open var nextButton: UIButton?
+    @IBOutlet open var previousButton: UIButton?
+
+    /// Optional section for table using one field name
+    @IBInspectable open var sectionFieldname: String?
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
             dataSource?.showSectionBar =  showSectionBar
@@ -182,11 +184,22 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
         if let searchBar = searchBar {
-            searchBar.delegate = self
             if searchBar.superview == nil {
-                self.navigationItem.titleView = searchBar
+                if searchableAsTitle {
+                    self.navigationItem.titleView = searchBar
+                } else {
+                    let searchController = UISearchController(searchResultsController: nil)
+                    searchController.searchResultsUpdater = self
+                    searchController.obscuresBackgroundDuringPresentation = false
+                    searchController.delegate = self
+                    self.navigationItem.searchController = searchController
+                    self.definesPresentationContext = true
+
+                    self.searchBar = searchController.searchBar // continue to manage search using listener
+                }
             }
         }
+        self.searchBar?.delegate = self
     }
 
     open func installBackButton() {
@@ -312,9 +325,12 @@ extension ListFormCollection: DataSourceSearchable {
         if !isSearchBarMustBeHidden {
             if !searchText.isEmpty {
                 assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
-                assert(self.table?.attributes[searchableField] != nil,
-                       "Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))" )
-                dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
+
+                if self.tableInfo?.fieldsByName[searchableField] != nil {
+                    dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
+                } else {
+                    assertionFailure("Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))")
+                }
             } else {
                 dataSource?.predicate = nil
             }
@@ -346,6 +362,13 @@ extension ListFormCollection: DataSourceSearchable {
         dataSource?.predicate = nil
         dataSource?.performFetch()
         onSearchCancelButtonClicked()
+    }
+
+    public func updateSearchResults(for searchController: UISearchController) {
+        //let searchBar = searchController.searchBar
+        //if let searchText = searchBar.text {
+        //performSearch(searchText) // already done by search bar listener
+        //}
     }
 
 }
