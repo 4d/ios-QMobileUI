@@ -130,12 +130,14 @@ extension DataSyncError: FailureCallbackError {
             return 6
         case .missingRemoteTables:
             return 7
-        case .cancel:
+        case .missingRemoteTableAttributes:
             return 8
-        case .dataCache:
+        case .cancel:
             return 9
-        case .underlying:
+        case .dataCache:
             return 10
+        case .underlying:
+            return 11
         }
     }
     public var message: String {
