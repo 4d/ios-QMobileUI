@@ -100,12 +100,12 @@ class DataSourceTests: XCTestCase {
         tableView.dataSource = dataSource
         tableView.reloadData()
 
-        let result = dataStore.perform(.background) { [unowned self] context, save in
+        let result = dataStore.perform(.background) { [unowned self] context in
             
             let record = context.create(in: self.tableName)
             record?[self.field] = randomString
 
-            try! save()
+            try! context.commit()
         }
         XCTAssertTrue(result, "store not loaded to perform task")
 
@@ -134,12 +134,12 @@ class DataSourceTests: XCTestCase {
         collectionView.dataSource = dataSource
         collectionView.reloadData()
         
-        let result = dataStore.perform(.background) { [unowned self] context, save in
+        let result = dataStore.perform(.background) { [unowned self] context in
             
             let record = context.create(in: self.tableName)
             record?[self.field] = randomString
-            
-            try! save()
+
+            try! context.commit()
         }
         XCTAssertTrue(result, "store not loaded to perform task")
         
@@ -167,16 +167,16 @@ class DataSourceTests: XCTestCase {
         tableView.dataSource = dataSource
         tableView.reloadData()
         
-        let result = dataStore.perform(.background) { [unowned self] context, save in
+        let result = dataStore.perform(.background) { [unowned self] context in
             let predicate = NSPredicate.true
             do {
                 let done = try context.delete(in: self.tableName, matching: predicate)
-                XCTAssertTrue(done)
+                XCTAssertTrue(done>0)
             } catch {
                 XCTFail(" Failed to delete \(error)")
             }
-            
-            try! save()
+
+            try! context.commit()
         }
         XCTAssertTrue(result, "store not loaded to perform task")
         

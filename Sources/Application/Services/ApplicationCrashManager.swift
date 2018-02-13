@@ -29,6 +29,9 @@ extension ApplicationCrashManager: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        guard pref["manage"] as? Bool ?? true else { // manage by default
+            return
+        }
         let crashDirectory = ApplicationCrashManager.crashDirectory
         // Register
         if pref[CrashType.nsexception.rawValue] as? Bool ?? true {

@@ -109,8 +109,10 @@ extension DetailsForm {
     /*public*/func deleteRecord() {
         if let table = self.view.table {
             if let record = table.record?.record as? Record {
-                _ = dataStore.perform(.background, blockName: "deleteRecord") { context, _ in
+                _ = dataStore.perform(.background, blockName: "deleteRecord") { context in
                     context.delete(record: record)
+
+                    try? context.commit()
                 }
             } else {
                 logger.warning("Failed to get selected record for deletion")
