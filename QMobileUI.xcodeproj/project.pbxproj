@@ -81,6 +81,7 @@
 		48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */; };
 		48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */; };
 		48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */; };
+		48E4726B20333373002194C7 /* ApplicationImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E4726A20333373002194C7 /* ApplicationImageCache.swift */; };
 		48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */; };
 		48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */; };
 		48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */; };
@@ -218,6 +219,7 @@
 		48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UITableViewDataSource.swift"; sourceTree = "<group>"; };
 		48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceCollectionHeaderView.swift; sourceTree = "<group>"; };
 		48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceDelegate.swift; sourceTree = "<group>"; };
+		48E4726A20333373002194C7 /* ApplicationImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationImageCache.swift; sourceTree = "<group>"; };
 		48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationLogger.swift; sourceTree = "<group>"; };
 		48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationDataStore.swift; sourceTree = "<group>"; };
 		48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationStepLogging.swift; sourceTree = "<group>"; };
@@ -543,6 +545,7 @@
 				48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
 				489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */,
+				48E4726A20333373002194C7 /* ApplicationImageCache.swift */,
 				48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */,
 				48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */,
 				48E49CE81EB9CA70002B60AF /* ApplicationPreferences.swift */,
@@ -925,6 +928,7 @@
 				480392AE1E92930A008CF992 /* UIBarButtonItem+BindTo.swift in Sources */,
 				48D584801E783447006F56B5 /* DataSource.swift in Sources */,
 				48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */,
+				48E4726B20333373002194C7 /* ApplicationImageCache.swift in Sources */,
 				481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */,
 				4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */,
 				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,

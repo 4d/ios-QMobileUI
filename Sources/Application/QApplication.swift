@@ -52,6 +52,9 @@ open class QApplication: UIApplication {
         // Crash Manager
         services.register(ApplicationCrashManager.instance)
 
+        // Load image cache
+        services.register(ApplicationImageCache.instance)
+
         // Load the mobile database
         services.register(ApplicationDataStore.instance)
 
