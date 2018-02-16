@@ -52,6 +52,7 @@
 		4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95A1F827E6800C8A020 /* SettingsServerSectionFooter.swift */; };
 		4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D95B1F827E6800C8A020 /* SettingURLForm.swift */; };
 		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
+		48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48657A36203590A900000D45 /* UIButton+Binding.swift */; };
 		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
@@ -67,6 +68,8 @@
 		48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */; };
 		48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */; };
 		48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */; };
+		48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */; };
+		48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */; };
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
 		48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
 		48AE2C631F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
@@ -188,6 +191,7 @@
 		4859D95B1F827E6800C8A020 /* SettingURLForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLForm.swift; sourceTree = "<group>"; };
 		4859D9601F827EFB00C8A020 /* SettingURLForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SettingURLForm.storyboard; sourceTree = "<group>"; };
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		48657A36203590A900000D45 /* UIButton+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Binding.swift"; sourceTree = "<group>"; };
 		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
@@ -200,6 +204,8 @@
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
 		48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexPathTests.swift; sourceTree = "<group>"; };
 		48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIGestureRecognizer+QMobile.swift"; sourceTree = "<group>"; };
+		48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+QMobile.swift"; sourceTree = "<group>"; };
+		48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBar+QMobile.swift"; sourceTree = "<group>"; };
 		48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationDataSync.swift; sourceTree = "<group>"; };
 		48AE2C5F1F45754D0013FDEE /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		48AE2C601F4575590013FDEE /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -303,6 +309,7 @@
 			children = (
 				480392A51E928C4B008CF992 /* UILabel+Binding.swift */,
 				480392C01E929660008CF992 /* UIImageView+Binding.swift */,
+				48657A36203590A900000D45 /* UIButton+Binding.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -360,25 +367,16 @@
 		480392BA1E9294F5008CF992 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				48A9CB3020348BC9007183B4 /* Controller */,
+				48A9CB3120348C08007183B4 /* View */,
 				483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */,
 				480B434E1E842198007C90DD /* UIScreen+QMobile.swift */,
-				483FDA821E826C9900FAF84B /* UIView+QMobile.swift */,
-				483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */,
-				48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */,
-				483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */,
-				481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */,
-				480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */,
-				480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */,
-				480B43501E84225C007C90DD /* UISwitch+QMobile.swift */,
-				480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */,
 				480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */,
-				480392BE1E929593008CF992 /* UIRefreshControl+QMobile.swift */,
-				480392C21E9298B3008CF992 /* UIImageView+Qmobile.swift */,
+				48F8E2CA1F7D0FA2000080FB /* UITextInput+QMobile.swift */,
 				480B43521E842289007C90DD /* UIDevice+QMobile.swift */,
 				48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */,
 				48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */,
 				48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */,
-				48F8E2CA1F7D0FA2000080FB /* UITextInput+QMobile.swift */,
 			);
 			name = UIKit;
 			sourceTree = "<group>";
@@ -442,6 +440,41 @@
 				48112D491E9FB11000A3A88C /* .slather.yml */,
 			);
 			name = Quality;
+			sourceTree = "<group>";
+		};
+		48A9CB3020348BC9007183B4 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */,
+				483FDA861E82836700FAF84B /* UITableViewController+QMobile.swift */,
+				48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */,
+				481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */,
+				480B43541E8423AD007C90DD /* UIAlertController+QMobile.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		48A9CB3120348C08007183B4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				48A9CB3220348C2B007183B4 /* Control */,
+				483FDA821E826C9900FAF84B /* UIView+QMobile.swift */,
+				48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */,
+				480B435E1E842EF9007C90DD /* UIViewCell+QMobile.swift */,
+				480392C21E9298B3008CF992 /* UIImageView+Qmobile.swift */,
+				48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		48A9CB3220348C2B007183B4 /* Control */ = {
+			isa = PBXGroup;
+			children = (
+				480392BE1E929593008CF992 /* UIRefreshControl+QMobile.swift */,
+				480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */,
+				480B43501E84225C007C90DD /* UISwitch+QMobile.swift */,
+			);
+			name = Control;
 			sourceTree = "<group>";
 		};
 		48B267231FB30D1C00C79323 /* Auth */ = {
@@ -899,6 +932,7 @@
 				48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */,
 				48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
+				48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
 				48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */,
 				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
@@ -911,12 +945,14 @@
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
 				489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */,
 				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,
+				48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */,
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,
 				48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */,
 				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,
 				480B43591E842546007C90DD /* CGRect+QMobile.swift in Sources */,
 				480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */,
+				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
 				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,

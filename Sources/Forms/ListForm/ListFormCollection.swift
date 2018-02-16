@@ -41,6 +41,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     /// Set to false, to not execute transition and manage your own code in onClicked()
     @IBInspectable open var onClickShowDetails: Bool = true
 
+    public var originalParent: UIViewController?
+
     // MARK: override
     final public override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,6 +93,17 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     final public override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onDidDisappear(animated)
+    }
+
+    override open func willMove(toParentViewController parent: UIViewController?) {
+        if parent == nil {
+            self.originalParent = self.parent
+        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
+            if let navigationController = self.originalParent  as? UINavigationController {
+                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
+            }
+        }
+        super.willMove(toParentViewController: parent)
     }
 
     // MARK: segue
