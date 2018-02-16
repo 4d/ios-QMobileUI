@@ -63,7 +63,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
-        self.installBackButton()
 
         onLoad()
         if isSearchBarMustBeHidden {
@@ -77,6 +76,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.installBackButton()
         onWillAppear(animated)
     }
 

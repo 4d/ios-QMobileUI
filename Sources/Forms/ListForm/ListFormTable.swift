@@ -63,7 +63,6 @@ open class ListFormTable: UITableViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
-        self.installBackButton()
         onLoad()
         if isSearchBarMustBeHidden {
             searchBar.isHidden = true
@@ -76,6 +75,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.installBackButton()
         onWillAppear(animated)
     }
 

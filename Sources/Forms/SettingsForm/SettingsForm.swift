@@ -30,12 +30,12 @@ open class SettingsForm: UITableViewController {
         initHeaderFooter() // Register external UI from other file
         initFormData()
         initFooterData()
-        checkBackButton()
         onLoad()
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        checkBackButton()
         onWillAppear(animated)
     }
 
