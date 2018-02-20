@@ -21,10 +21,21 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     @IBOutlet open var searchBar: UISearchBar!
     public private(set) var searchActive: Bool = false
+    /// Name of the search field
     @IBInspectable open var searchableField: String = "name"
+    /// Search field always in title
     @IBInspectable open var searchableAsTitle: Bool = true
+    /// Operator used to search. contains, beginwith,endwith. Default contains
     @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
+    /// Case sensitivity when searching. Default cd
     @IBInspectable open var searchSensitivity: String = "cd"
+
+    /// Name of the field used to sort. (You use multiple field using coma)
+    @IBInspectable open var sortField: String = ""
+    /// Sort ascending on `sortField`
+    @IBInspectable open var sortAscending: Bool = true
+    /// If no sort field, use search field as sort field
+    @IBInspectable open var searchFieldAsSortField: Bool = true
 
     @IBOutlet open var nextButton: UIButton?
     @IBOutlet open var previousButton: UIButton?
@@ -44,11 +55,24 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     public var originalParent: UIViewController?
 
     // MARK: override
+
     final public override func viewDidLoad() {
         super.viewDidLoad()
         guard let collectionView = self.collectionView  else { fatalError("CollectionView is nil") }
 
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName, sectionNameKeyPath: self.sectionFieldname)
+        var sortDescriptors: [NSSortDescriptor]? = nil
+        if !sortField.isEmpty {
+            let sortFields = sortField.split(separator: ",")
+            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
+        } else if !searchableField.isEmpty && searchFieldAsSortField {
+            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
+        } else {
+            // XXX find in UI Cell first/main field?
+        }
+
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
+                                                                          sectionNameKeyPath: self.sectionFieldname,
+                                                                          sortDescriptors: sortDescriptors)
         dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         dataSource.showSectionBar = showSectionBar
 
