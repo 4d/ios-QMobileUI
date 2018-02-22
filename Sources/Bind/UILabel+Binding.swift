@@ -399,50 +399,53 @@ extension UILabel {
             return nil
         }
         set {
-            if let dico = newValue, let uri = ImportableParser.parseImage(dico) {
-                self.text = uri
-
-                let restTarget = DataSync.instance.rest.rest
-                let urlString = restTarget.baseURL.absoluteString + uri
-                if let components = URLComponents(string: urlString), let url = components.url {
-
-                    let modifier = AnyModifier { request in
-                        return APIManager.instance.configure(request: request)
-                    }
-                    var options: KingfisherOptionsInfo = [.requestModifier(modifier)]
-                    var placeHolderImage: UIImage?
-                    if let builder = self as? KingfisherOptionsInfoBuilder {
-                        options = builder.option(for: url, currentOptions: options)
-                        placeHolderImage = builder.placeHolderImage
-                    }
-
-                    let cacheKey = components.path.replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
-                        .replacingOccurrences(of: "/", with: "")
-
-                    //let resource = ImageResource(downloadURL: url, cacheKey: cacheKey)
-                    let imageCache = options.targetCache
-
-                    if !imageCache.imageCachedType(forKey: cacheKey).cached {
-                        let subdirectory = ApplicationImageCache.subdirectory
-                        let ext = ApplicationImageCache.extension
-                        if let url = Bundle.main.url(forResource: cacheKey, withExtension: ext, subdirectory: subdirectory),
-                            let image = Image(url: url) {
-                            imageCache.store(image, forKey: cacheKey)
-                            options += [.forceRefresh]
-                        }
-                    }
-                    //if imageCache.imageCachedType(forKey: cacheKey).cached {
-                    if let image = imageCache.retrieveImageInDiskCache(forKey: cacheKey) ?? placeHolderImage {
-                        let attachmentImage = NSTextAttachment()
-                        attachmentImage.image = image
-                        self.attributedText = NSAttributedString(attachment: attachmentImage)
-                    }
-                    //}
-
-                }
-            } else {
-                 self.attributedText = nil
+            guard let dico = newValue, let uri = ImportableParser.parseImage(dico) else {
+                self.text = nil
+                return
             }
+            self.text = uri
+
+            let restTarget = DataSync.instance.rest.rest
+            let urlString = restTarget.baseURL.absoluteString +
+                (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
+            guard let components = URLComponents(string: urlString), let url = components.url else {
+                self.text = nil
+                return
+            }
+
+            let modifier = AnyModifier { request in
+                return APIManager.instance.configure(request: request)
+            }
+            var options: KingfisherOptionsInfo = [.requestModifier(modifier)]
+            var placeHolderImage: UIImage?
+            if let builder = self as? KingfisherOptionsInfoBuilder {
+                options = builder.option(for: url, currentOptions: options)
+                placeHolderImage = builder.placeHolderImage
+            }
+
+            let cacheKey = components.path.replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
+                .replacingOccurrences(of: "/", with: "")
+
+            //let resource = ImageResource(downloadURL: url, cacheKey: cacheKey)
+            let imageCache = options.targetCache
+
+            if !imageCache.imageCachedType(forKey: cacheKey).cached {
+                let subdirectory = ApplicationImageCache.subdirectory
+                let ext = ApplicationImageCache.extension
+                if let url = Bundle.main.url(forResource: cacheKey, withExtension: ext, subdirectory: subdirectory),
+                    let image = Image(url: url) {
+                    imageCache.store(image, forKey: cacheKey)
+                    options += [.forceRefresh]
+                }
+            }
+            //if imageCache.imageCachedType(forKey: cacheKey).cached {
+            if let image = imageCache.retrieveImageInDiskCache(forKey: cacheKey) ?? placeHolderImage {
+                let attachmentImage = NSTextAttachment()
+                attachmentImage.image = image
+                self.attributedText = NSAttributedString(attachment: attachmentImage)
+            }
+            //}
+
         }
     }
 

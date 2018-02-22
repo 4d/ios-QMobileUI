@@ -100,7 +100,8 @@ extension UIImageView {
             }
 
             let restTarget = DataSync.instance.rest.rest
-            let urlString = restTarget.baseURL.absoluteString + uri
+            let urlString = restTarget.baseURL.absoluteString +
+                (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
             guard let components = URLComponents(string: urlString), let url = components.url else {
                 logger.warning("Cannot encode URI \(uri) to download image from 4D server")
                 self.kf.indicatorType = .none
@@ -123,11 +124,12 @@ extension UIImageView {
                 placeHolderImage = builder.placeHolderImage
             }
 
+            // check cache
             let cacheKey = components.path.replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
                 .replacingOccurrences(of: "/", with: "")
             let resource = ImageResource(downloadURL: url, cacheKey: cacheKey)
-            let imageCache = options.targetCache
             if !ApplicationImageCache.atLaunch {
+                let imageCache = options.targetCache
                 if !imageCache.imageCachedType(forKey: cacheKey).cached {
                     let subdirectory = ApplicationImageCache.subdirectory
                     let ext = ApplicationImageCache.extension
