@@ -440,7 +440,8 @@ extension UILabel {
                     //}
 
                 }
-
+            } else {
+                 self.attributedText = nil
             }
         }
     }
