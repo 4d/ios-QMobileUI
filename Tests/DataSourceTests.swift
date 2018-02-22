@@ -85,8 +85,8 @@ class DataSourceTests: XCTestCase {
     func testInsertInTableView() {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil)
+
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: nil)
         let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in table view in data source")
 
@@ -120,7 +120,7 @@ class DataSourceTests: XCTestCase {
         let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 500, height: 1200), collectionViewLayout: layout)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
         
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: sectionFieldname)
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: sectionFieldname, sortDescriptors: nil)
         let dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in collection view in data source")
         
@@ -151,7 +151,7 @@ class DataSourceTests: XCTestCase {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil)
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: nil)
         let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Deleted object not retrieve in table view in data source")
         

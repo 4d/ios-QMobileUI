@@ -121,7 +121,7 @@ open class ListFormTable: UITableViewController, ListForm {
         if parent == nil {
             self.originalParent = self.parent
         } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
-            if let navigationController = self.originalParent  as? UINavigationController {
+            if let navigationController = self.originalParent as? UINavigationController {
                 moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
             }
         }
@@ -211,7 +211,7 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Install the seach bar if defined using storyboard IBOutlet
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
-        if let searchBar = searchBar {
+        if let searchBar = searchBar, !isSearchBarMustBeHidden {
             if searchBar.superview == nil {
                 if searchableAsTitle {
                     self.navigationItem.titleView = searchBar

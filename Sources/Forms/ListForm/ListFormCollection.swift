@@ -220,7 +220,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     open func installSearchBar() {
         // Install seachbar into navigation bar if any
-        if let searchBar = searchBar {
+        if let searchBar = searchBar, !isSearchBarMustBeHidden {
             if searchBar.superview == nil {
                 if searchableAsTitle {
                     self.navigationItem.titleView = searchBar
