@@ -141,7 +141,7 @@ extension UIImageView {
                     }
                 }
             }
-
+            self.image = nil
             _ = self.kf.setImage(with: resource,
                                  placeholder: placeHolderImage,
                                  options: options,
