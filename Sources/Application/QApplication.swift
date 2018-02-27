@@ -12,6 +12,8 @@ import Prephirences
 // Root class of QMobile application
 open class QApplication: UIApplication {
 
+    let services: ApplicationServices = .instance
+
     public override init() {
         super.init()
         self.initServices()
@@ -38,10 +40,11 @@ open class QApplication: UIApplication {
   */
 
     func initServices() {
-        let services = ApplicationServices.instance
-
         // Logger
         services.register(ApplicationLogger.instance)
+
+        // Launch option handler
+        services.register(ApplicationLaunchOptions.instance)
 
         // Load preferences
         services.register(ApplicationPreferences.instance)
@@ -66,18 +69,9 @@ open class QApplication: UIApplication {
 
         // x-callback-url
         services.register(ApplicationXCallbackURL.instance)
-
-        if let serviceTypes = Prephirences.sharedInstance.stringArray(forKey: "application.services") {
-            for service in serviceTypes {
-                if let serviceType = NSClassFromString(service) as? ApplicationService.Type { // XXX to test, maybe namespace must be added
-                    services.register(serviceType.instance)
-                }
-            }
-        }
     }
 
     public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
-        let services = ApplicationServices.instance
         services.application(app, open: url, options: options)
         return true
     }

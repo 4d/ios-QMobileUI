@@ -102,6 +102,7 @@
 		48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */; };
 		48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
 		48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
+		48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */; };
 		48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */; };
 		48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077D1E7AED4200A8546E /* ListFormTable.swift */; };
 		48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077F1E7AED7100A8546E /* ListFormCollection.swift */; };
@@ -237,6 +238,7 @@
 		48E49CF71EB9DC33002B60AF /* Moya.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Moya.framework; path = Carthage/Build/iOS/Moya.framework; sourceTree = "<group>"; };
 		48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ValueTransformerKit.framework; path = Carthage/Build/iOS/ValueTransformerKit.framework; sourceTree = "<group>"; };
+		48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLaunchOptions.swift; sourceTree = "<group>"; };
 		48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UIPageViewControllerDataSource.swift"; sourceTree = "<group>"; };
 		48EE077D1E7AED4200A8546E /* ListFormTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormTable.swift; sourceTree = "<group>"; };
 		48EE077F1E7AED7100A8546E /* ListFormCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormCollection.swift; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 				48E49CE91EB9CA70002B60AF /* ApplicationValueTransformers.swift */,
 				4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */,
 				48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */,
+				48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -938,6 +941,7 @@
 				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
+				48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */,
 				4867450C20221BD20029924D /* WebAreaForm.swift in Sources */,
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,

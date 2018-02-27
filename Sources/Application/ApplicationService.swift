@@ -9,25 +9,68 @@
 import Foundation
 
 /// Protocol for an application service. @see UIApplicationDelegate.
-@objc public protocol ApplicationService: NSObjectProtocol {
+public protocol ApplicationService {
 
-    static var instance: ApplicationService { get }
+    // MARK: application flow
 
-    @objc optional func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
 
-    @objc optional func applicationDidEnterBackground(_ application: UIApplication)
+    func applicationDidEnterBackground(_ application: UIApplication)
 
-    @objc optional func applicationWillEnterForeground(_ application: UIApplication)
+    func applicationWillEnterForeground(_ application: UIApplication)
 
-    @objc optional func applicationDidBecomeActive(_ application: UIApplication)
+    func applicationDidBecomeActive(_ application: UIApplication)
 
-    @objc optional func applicationWillResignActive(_ application: UIApplication)
+    func applicationWillResignActive(_ application: UIApplication)
 
-    @objc optional func applicationWillTerminate(_ application: UIApplication)
+    func applicationWillTerminate(_ application: UIApplication)
 
-    @objc optional func applicationDidReceiveMemoryWarning(_ application: UIApplication)
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication)
 
-    @objc optional func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
+    // MARK: application receive url or token
 
-    @objc optional func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any])
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
+
+    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any])
+
+    // MARK: User activity
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool
+
+    func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool
+
+    func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error)
+
+    func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity)
+
+}
+
+extension ApplicationService {
+
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {}
+
+    public func applicationDidEnterBackground(_ application: UIApplication) {}
+
+    public func applicationWillEnterForeground(_ application: UIApplication) {}
+
+    public func applicationDidBecomeActive(_ application: UIApplication) {}
+
+    public func applicationWillResignActive(_ application: UIApplication) {}
+
+    public func applicationWillTerminate(_ application: UIApplication) {}
+
+    public func applicationDidReceiveMemoryWarning(_ application: UIApplication) {}
+
+    public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {}
+
+    public func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {}
+
+    public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool { return false }
+
+    public func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool { return false }
+
+    public func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {}
+
+    public func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {}
+
 }
