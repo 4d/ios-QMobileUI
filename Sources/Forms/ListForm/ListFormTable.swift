@@ -227,6 +227,11 @@ open class ListFormTable: UITableViewController, ListForm {
                 }
             }
         }
+        if let subview = self.searchBar.subviews.first {
+            if let searchTextField = subview.subviews.flatMap({$0 as? UITextField }).first {
+                searchTextField.tintColor = searchTextField.textColor
+            }
+        }
         self.searchBar?.delegate = self
     }
 
@@ -384,6 +389,7 @@ extension ListFormTable: DataSourceSearchable {
     // Search button is clicked. You can receive this information by overriding `onSearchButtonClicked`
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        searchBar.endEditing(true)
         onSearchButtonClicked()
     }
 

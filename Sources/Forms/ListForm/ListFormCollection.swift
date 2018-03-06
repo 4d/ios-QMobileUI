@@ -236,6 +236,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
                 }
             }
         }
+        if let subview = self.searchBar.subviews.first {
+            if let searchTextField = subview.subviews.flatMap({$0 as? UITextField }).first {
+                searchTextField.tintColor = searchTextField.textColor
+            }
+        }
         self.searchBar?.delegate = self
     }
 
@@ -388,6 +393,7 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false
+        searchBar.endEditing(true)
         onSearchButtonClicked()
     }
 
