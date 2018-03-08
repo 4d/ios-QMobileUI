@@ -161,6 +161,8 @@ open class ListFormTable: UITableViewController, ListForm {
             let destination = segue.destination.firstController
             destination.view.table = table
             destination.view.record = table.record
+
+            table.indexPathObserver = self
         }
     }
 
@@ -364,6 +366,19 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 
     open func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
 
+    }
+
+}
+
+// MARK: ListForm is IndexPathObserver
+extension ListFormTable: IndexPathObserver {
+
+    func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    }
+    func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+        if let indexPath = indexPath {
+            self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+        }
     }
 
 }

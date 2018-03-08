@@ -44,3 +44,15 @@ public extension CGRect {
     }
 
 }
+
+public extension CGSize {
+    public func with(height: CGFloat) -> CGSize {
+        return CGSize(width: self.width, height: height)
+    }
+    public func with(width: CGFloat) -> CGSize {
+        return CGSize(width: width, height: self.height)
+    }
+    public func divide(by divider: CGFloat) -> CGSize {
+        return CGSize(width: self.width / divider, height: self.height / divider)
+    }
+}

@@ -334,7 +334,18 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
     }
 }
+// MARK: ListForm is IndexPathObserver
+extension ListFormCollection: IndexPathObserver {
 
+    func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    }
+    func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+        if let indexPath = indexPath {
+            self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: false)
+        }
+    }
+
+}
 // MARK: DataSourceSearchable
 import Kingfisher
 extension ListFormCollection: UICollectionViewDataSourcePrefetching {
@@ -387,7 +398,6 @@ extension ListFormCollection: DataSourceSearchable {
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchActive = true
         onSearchBegin()
-
         searchBar.setShowsCancelButton(true, animated: true)
     }
 

@@ -8,15 +8,24 @@
 
 import Foundation
 
+protocol IndexPathObserver {
+
+    func willChangeIndexPath(from: IndexPath?, to: IndexPath?)
+    func didChangeIndexPath(from: IndexPath?, to: IndexPath?)
+
+}
+
 /// Object which represent the table and an optional record index
 public class DataSourceEntry: NSObject {
 
     open var dataSource: DataSource
+    var indexPathObserver: IndexPathObserver?
     open var indexPath: IndexPath? {
         willSet {
-            //
+            indexPathObserver?.willChangeIndexPath(from: indexPath, to: newValue)
         }
         didSet {
+            indexPathObserver?.didChangeIndexPath(from: oldValue, to: indexPath)
             recordCache = nil
         }
     }
