@@ -10,7 +10,9 @@ import Foundation
 
 protocol IndexPathObserver {
 
+    // swiftlint:disable:next identifier_name
     func willChangeIndexPath(from: IndexPath?, to: IndexPath?)
+    // swiftlint:disable:next identifier_name
     func didChangeIndexPath(from: IndexPath?, to: IndexPath?)
 
 }

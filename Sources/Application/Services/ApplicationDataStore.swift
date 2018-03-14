@@ -25,6 +25,10 @@ extension ApplicationDataStore: ApplicationService {
         return ProxyPreferences(preferences: preferences, key: "dataStore.")
     }
 
+    var dataStore: DataStore {
+        return DataStoreFactory.dataStore  // must use same in dataSync
+    }
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         var ds = dataStore
         ds.delegate = self
@@ -101,15 +105,24 @@ extension ApplicationDataStore {
 }
 
 extension ApplicationDataStore: DataStoreDelegate {
-    public func dataStoreWillSave(_ dataStore: DataStore) {
+
+    func dataStoreWillSave(_ dataStore: DataStore, context: DataStoreContext) {
 
     }
 
-    public func dataStoreDidSave(_ dataStore: DataStore) {
+    func dataStoreDidSave(_ dataStore: DataStore, context: DataStoreContext) {
 
     }
 
-    public func objectsDidChange(dataStore: DataStore) {
+    func objectsDidChange(dataStore: DataStore, context: DataStoreContext) {
+
+    }
+
+    func dataStoreWillMerge(_ dataStore: DataStore, context: DataStoreContext, with: DataStoreContext) {
+
+    }
+
+    func dataStoreDidMerge(_ dataStore: DataStore, context: DataStoreContext, with: DataStoreContext) {
 
     }
 

@@ -52,16 +52,25 @@ open class ListFormTable: UITableViewController, ListForm {
     final public override func viewDidLoad() {
         super.viewDidLoad()
 
-        var sortDescriptors: [NSSortDescriptor]? = nil
+        var sortDescriptors: [NSSortDescriptor] = []
         if !sortField.isEmpty {
             let sortFields = sortField.split(separator: ",")
             sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
         } else if !searchableField.isEmpty && searchFieldAsSortField {
             sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
         } else {
-            // XXX find in UI Cell first/main field?
+            // XXX Find in UI Cell first/main field?
+
+            // for the moment take the first in data store
+            if let firstField = self.tableInfo?.fields.first {
+                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
+                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+            } else {
+                assertionFailure("No sort field. Please fill sortField with a field name")
+            }
         }
 
+        let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
                                                                           sortDescriptors: sortDescriptors)

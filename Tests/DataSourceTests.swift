@@ -30,7 +30,7 @@ class DataSourceTests: XCTestCase {
     }
 
     var dataStore: DataStore {
-        return QMobileDataStore.dataStore
+        return DataStoreFactory.dataStore
     }
     
     override func setUp() {
@@ -86,7 +86,9 @@ class DataSourceTests: XCTestCase {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
 
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: nil)
+        let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
+
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: sortDescriptors)
         let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in table view in data source")
 
@@ -119,8 +121,9 @@ class DataSourceTests: XCTestCase {
         layout.itemSize = CGSize(width: 200, height: 100)
         let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 500, height: 1200), collectionViewLayout: layout)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
-        
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: sectionFieldname, sortDescriptors: nil)
+
+        let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: sectionFieldname, sortDescriptors: sortDescriptors)
         let dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in collection view in data source")
         
@@ -150,8 +153,9 @@ class DataSourceTests: XCTestCase {
     func _testDeleteInTableView() {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: nil)
+
+        let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: sortDescriptors)
         let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Deleted object not retrieve in table view in data source")
         
@@ -171,7 +175,7 @@ class DataSourceTests: XCTestCase {
             let predicate = NSPredicate.true
             do {
                 let done = try context.delete(in: self.tableName, matching: predicate)
-                XCTAssertTrue(done>0)
+                XCTAssertTrue(done>0, "No record deleted")
             } catch {
                 XCTFail(" Failed to delete \(error)")
             }

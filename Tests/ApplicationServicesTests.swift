@@ -30,7 +30,7 @@ class ApplicationServicesTests: XCTestCase {
         services.register(service)
         defer {
             service.clear()
-            services.unregister(service)
+            //services.unregister(service)
         }
 
         let center = NotificationCenter.default

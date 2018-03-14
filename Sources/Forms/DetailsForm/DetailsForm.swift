@@ -109,6 +109,7 @@ extension DetailsForm {
     /*public*/func deleteRecord() {
         if let table = self.view.table {
             if let record = table.record?.record as? Record {
+                let dataStore = DataStoreFactory.dataStore // must use same in dataSync
                 _ = dataStore.perform(.background, blockName: "deleteRecord") { context in
                     context.delete(record: record)
 
