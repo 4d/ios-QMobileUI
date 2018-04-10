@@ -30,6 +30,7 @@ extension ApplicationDataStore: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        // swiftlint:disable:next identifier_name
         var ds = dataStore
         ds.delegate = self
 

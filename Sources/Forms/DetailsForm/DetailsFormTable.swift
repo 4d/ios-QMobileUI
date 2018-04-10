@@ -65,6 +65,9 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    /// Called when the record change using standard actions (next, previous, last, first)
+    open func onRecordChanged() {}
+
     // MARK: IBAction
 
     @IBAction open func previousRecord(_ sender: Any!) {

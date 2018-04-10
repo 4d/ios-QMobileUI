@@ -35,7 +35,7 @@ extension DataSource: FetchedResultsControllerDelegate {
                 tableView.reloadSections(IndexSet(integer: sectionIndex), with: rowAnimationType)
             }
         } else if case .collection = self.viewType {
-            collectionChanges.cachedSectionNames.removeAll()
+            clearSectionNamesCache()
             switch type {
             case .insert, .delete:
                 if var indexSet = collectionChanges.sectionChanges[type] {

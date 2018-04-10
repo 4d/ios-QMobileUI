@@ -42,6 +42,7 @@ extension ApplicationDataSync: ApplicationService {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 
+        // swiftlint:disable:next identifier_name
         let ds = dataSync.dataStore
 
         listeners += [ds.onLoad(queue: operationQueue) { [weak self] _ in
@@ -79,8 +80,8 @@ extension ApplicationDataSync: ApplicationService {
             let dataSync = ApplicationDataSync.dataSync
             dataSync.delegate = nil
 
-            let ds = dataSync.dataStore
-            ds.unobserve(listener)
+            let dataStore = dataSync.dataStore
+            dataStore.unobserve(listener)
         }
     }
 

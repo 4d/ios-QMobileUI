@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 open class DetailsFormBare: UIViewController, DetailsForm {
 
@@ -53,6 +54,9 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     open func onWillDisappear(_ animated: Bool) {}
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
+
+    /// Called when the record change using standard actions (next, previous, last, first)
+    open func onRecordChanged() {}
 
     /*
     open func installNavigationItems() {

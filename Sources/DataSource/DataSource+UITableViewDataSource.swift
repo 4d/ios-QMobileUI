@@ -42,13 +42,17 @@ extension DataSource: UITableViewDataSource {
             } else if let keyPath = self.fetchedResultsController.sectionNameKeyPath, !keyPath.isEmpty {
                 let result = self.fetchedResultsController.fetch(keyPath: keyPath, ascending: true)
                 return result.map { "\($0)"}
+                // fetchedResultsController.sectionIndexTitles ??
             }
         }
         return nil
     }
 
     public func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return self.delegate?.dataSource?(self, tableView: tableView, sectionForSectionIndexTitle: title, atIndex: index) ?? index
+        if let index = self.delegate?.dataSource?(self, tableView: tableView, sectionForSectionIndexTitle: title, atIndex: index) {
+            return index
+        }
+        return self.fetchedResultsController.section(forSectionIndexTitle: title, at: index)
     }
 
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

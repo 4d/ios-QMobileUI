@@ -239,7 +239,7 @@ open class ListFormTable: UITableViewController, ListForm {
             }
         }
         if let subview = self.searchBar.subviews.first {
-            if let searchTextField = subview.subviews.flatMap({$0 as? UITextField }).first {
+            if let searchTextField = subview.subviews.compactMap({$0 as? UITextField }).first {
                 searchTextField.tintColor = searchTextField.textColor
             }
         }

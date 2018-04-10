@@ -14,8 +14,8 @@ public extension UIAlertController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
-        if let vc = UIApplication.topViewController {
-            vc.present(alertController, animated: true, completion: nil)
+        if let viewController = UIApplication.topViewController {
+            viewController.present(alertController, animated: true, completion: nil)
         } else {
             // Too soon maybe
             DispatchQueue.main.after(5) {

@@ -27,7 +27,7 @@ extension ListForm {
     /// Return information about current table using mobile database table and field naming
     public var tableInfo: DataStoreTableInfo? {
         let dataSync = ApplicationDataSync.dataSync
-        assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
+        //assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
 
         for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
             return tableInfo

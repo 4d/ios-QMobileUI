@@ -42,6 +42,7 @@ fileprivate class UIImageNamed: UIImage {
 
 // MARK: using URL and cache
 import Kingfisher
+import QMobileAPI
 
 extension UIImageView {
 
@@ -81,6 +82,8 @@ public protocol KingfisherOptionsInfoBuilder {
 
 extension UIImageView {
 
+    public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
+
     @objc dynamic public var restImage: [String: Any]? {
         get {
             if let webURL =  self.webURL {
@@ -93,60 +96,58 @@ extension UIImageView {
             return nil
         }
         set {
-            guard let dico = newValue, let uri = ImportableParser.parseImage(dico) else {
+            // Check if passed value is a compatible restImage dictionary
+            guard let imageResource = ApplicationImageCache.imageResource(for: newValue) else {
+                // Remove image
                 self.kf.indicatorType = .none
                 self.image = nil
                 return
             }
 
-            let restTarget = DataSync.instance.rest.rest
-            let urlString = restTarget.baseURL.absoluteString +
-                (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
-            guard let components = URLComponents(string: urlString), let url = components.url else {
-                logger.warning("Cannot encode URI \(uri) to download image from 4D server")
-                self.kf.indicatorType = .none
-                self.image = nil
-                return
-            }
-
-            self.kf.indicatorType = .activity
+            // Setup placeHolder image or other options defined by custom builders
+            var options: KingfisherOptionsInfo = []
+            var placeHolderImage: UIImage?
+            var indicatorType: IndicatorType = .activity
             if let builder = self as? KingfisherOptionsInfoBuilder {
-                self.kf.indicatorType = builder.indicatorType ?? .activity
+                options = builder.option(for: imageResource.downloadURL, currentOptions: options)
+                placeHolderImage = builder.placeHolderImage
+                indicatorType = builder.indicatorType ?? .activity
+            }
+            let imageCache = options.targetCache
+
+            /// Get from bundle
+            var hasSetImage = false
+            if !imageCache.imageCachedType(forKey: imageResource.cacheKey).cached {
+                // Fill cache with bundle -> XXX  result double copy on disk -> could do better by having bundle as disk cache backend
+                if let image = ApplicationImageCache.imageInBundle(for: imageResource) {
+
+                    imageCache.store(image, forKey: imageResource.cacheKey)
+                    self.image = image
+                    options += [.keepCurrentImageWhileLoading]
+                    hasSetImage = true
+                }
+            }
+            if !hasSetImage {
+                self.kf.indicatorType = indicatorType
+                self.image = placeHolderImage
             }
 
+            // Setup some request modification
             let modifier = AnyModifier { request in
                 return APIManager.instance.configure(request: request)
             }
-            var options: KingfisherOptionsInfo = [.requestModifier(modifier)]
-            var placeHolderImage: UIImage?
-            if let builder = self as? KingfisherOptionsInfoBuilder {
-                options = builder.option(for: url, currentOptions: options)
-                placeHolderImage = builder.placeHolderImage
-            }
+            options += [.requestModifier(modifier)]
 
-            // check cache
-            let cacheKey = components.path.replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
-                .replacingOccurrences(of: "/", with: "")
-            let resource = ImageResource(downloadURL: url, cacheKey: cacheKey)
-            if !ApplicationImageCache.atLaunch {
-                let imageCache = options.targetCache
-                if !imageCache.imageCachedType(forKey: cacheKey).cached {
-                    let subdirectory = ApplicationImageCache.subdirectory
-                    let ext = ApplicationImageCache.extension
-                    // Fill cache with bundle -> result double copy on disk -> could do better by having bundle as disk cache backend
-                    if let url = Bundle.main.url(forResource: cacheKey, withExtension: ext, subdirectory: subdirectory),
-                        let image = Image(url: url) {
-                        imageCache.store(image, forKey: cacheKey)
-                        options += [.forceRefresh]
-                    }
-                }
+            // Do the request
+            let completionHandler: CompletionHandler = { image, error, cacheType, imageURL in
+                self.setNeedsDisplay()
             }
-            self.image = nil
-            _ = self.kf.setImage(with: resource,
+            self.kf.cancelDownloadTask()
+            _ = self.kf.setImage(with: imageResource,
                                  placeholder: placeHolderImage,
                                  options: options,
                                  progressBlock: nil,
-                                 completionHandler: nil)
+                                 completionHandler: completionHandler)
         }
     }
 

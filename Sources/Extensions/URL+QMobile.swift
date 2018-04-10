@@ -12,10 +12,10 @@ extension URL {
 
     /// Allows optional argument when creating a URL
     public init?(string: String?) {
-        guard let s = string else {
+        guard let unwrapped = string else {
             return nil
         }
-        self.init(string: s)
+        self.init(string: unwrapped)
     }
 
     public func value(forQueryItem name: String) -> String? {

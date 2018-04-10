@@ -96,6 +96,7 @@ open class SettingsForm: UITableViewController {
     func refreshLastDate() {
         foreground {
             if let date = dataLastSync() {
+                // swiftlint:disable:next identifier_name
                 let id = DateFormatter.shortDateAndTime.string(from: date)
                 self.reloadFooterLabel.text = "   Last update: " + id // LOCALIZE
             } else {

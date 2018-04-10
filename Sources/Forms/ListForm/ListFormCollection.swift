@@ -180,6 +180,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         // could be overrided to add animation on cell appear
         // could do it here according to a property IB
     }
+    override open func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // This will cancel all unfinished downloading task when the cell disappearing.
+
+        //(cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
+    }
 
     // MARK: Events
     /// Called after the view has been loaded. Default does nothing
@@ -246,7 +251,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             }
         }
         if let subview = self.searchBar.subviews.first {
-            if let searchTextField = subview.subviews.flatMap({$0 as? UITextField }).first {
+            if let searchTextField = subview.subviews.compactMap({$0 as? UITextField }).first {
                 searchTextField.tintColor = searchTextField.textColor
             }
         }
@@ -433,4 +438,23 @@ extension ListFormCollection: DataSourceSearchable {
         //}
     }
 
+}
+
+struct Recursive {
+    static func flatten<T>(value: T, childrenClosure: (T) -> [T]) -> [T] {
+        var result: [T] = childrenClosure(value)
+        result = result.flatMap { flatten(value: $0, childrenClosure: childrenClosure) }
+        return [value] + result
+    }
+
+    static func filter<T>(isIncluded: (T) -> Bool, value: T, childrenClosure: (T) -> [T]) -> [T] {
+        let children: [T] = childrenClosure(value)
+        var result: [T] = children.filter(isIncluded)
+        result += children.flatMap { filter(isIncluded: isIncluded, value: $0, childrenClosure: childrenClosure) }
+
+        if isIncluded(value) {
+            return [value] + result
+        }
+        return  result
+    }
 }

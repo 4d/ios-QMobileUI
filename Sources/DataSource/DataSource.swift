@@ -106,7 +106,7 @@ public class DataSource: NSObject {
             return self.fetchedResultsController.fetchRequest.predicate
         }
         set {
-            collectionChanges.cachedSectionNames.removeAll()
+            clearSectionNamesCache()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.predicate = newValue
@@ -122,7 +122,7 @@ public class DataSource: NSObject {
             return self.fetchedResultsController.fetchRequest.sortDescriptors
         }
         set {
-            collectionChanges.cachedSectionNames.removeAll()
+            clearSectionNamesCache()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.sortDescriptors = sortDescriptors
@@ -130,6 +130,10 @@ public class DataSource: NSObject {
             // CLEAN maybe only if already loaded data one time, and do not do it many time
             self.refresh()
         }
+    }
+
+    public func clearSectionNamesCache() {
+        collectionChanges.cachedSectionNames.removeAll()
     }
 
     public var sectionNameKeyPath: String? {
@@ -211,7 +215,7 @@ public class DataSource: NSObject {
     /// Do a fetch
     public func performFetch() {
         do {
-            collectionChanges.cachedSectionNames.removeAll()
+            clearSectionNamesCache()
             try self.fetchedResultsController.performFetch()
         } catch {
             logger.error("Error fetching records \(error)")

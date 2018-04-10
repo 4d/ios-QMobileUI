@@ -54,6 +54,8 @@
 		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
 		48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48657A36203590A900000D45 /* UIButton+Binding.swift */; };
 		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
+		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
+		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
@@ -107,6 +109,7 @@
 		48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077D1E7AED4200A8546E /* ListFormTable.swift */; };
 		48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077F1E7AED7100A8546E /* ListFormCollection.swift */; };
 		48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE07851E7AEF1A00A8546E /* ListForm.swift */; };
+		48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8DF282057F35E0087066F /* PasscodeField.swift */; };
 		48F8E2C21F7D0B23000080FB /* ServerStatus .swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C11F7D0B23000080FB /* ServerStatus .swift */; };
 		48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */; };
 		48F8E2C61F7D0F00000080FB /* UIColor+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */; };
@@ -194,6 +197,8 @@
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		48657A36203590A900000D45 /* UIButton+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Binding.swift"; sourceTree = "<group>"; };
 		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
+		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
+		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
@@ -243,6 +248,7 @@
 		48EE077D1E7AED4200A8546E /* ListFormTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormTable.swift; sourceTree = "<group>"; };
 		48EE077F1E7AED7100A8546E /* ListFormCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormCollection.swift; sourceTree = "<group>"; };
 		48EE07851E7AEF1A00A8546E /* ListForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListForm.swift; sourceTree = "<group>"; };
+		48F8DF282057F35E0087066F /* PasscodeField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeField.swift; sourceTree = "<group>"; };
 		48F8E2C11F7D0B23000080FB /* ServerStatus .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServerStatus .swift"; sourceTree = "<group>"; };
 		48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RawRepresentable+IndexSet.swift"; sourceTree = "<group>"; };
 		48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Result.swift"; sourceTree = "<group>"; };
@@ -623,6 +629,9 @@
 		48EE077A1E7AE9A600A8546E /* LogInForm */ = {
 			isa = PBXGroup;
 			children = (
+				4872590920528C23000D416B /* LoginForm.swift */,
+				4872590B20528CAD000D416B /* LoginPasscodeForm.swift */,
+				48F8DF282057F35E0087066F /* PasscodeField.swift */,
 			);
 			path = LogInForm;
 			sourceTree = "<group>";
@@ -766,7 +775,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Eric Marchand";
 				TargetAttributes = {
 					489C15C41F39AEAB004844F3 = {
@@ -930,6 +939,7 @@
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
+				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
 				48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */,
@@ -953,6 +963,7 @@
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,
 				48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */,
+				4872590A20528C23000D416B /* LoginForm.swift in Sources */,
 				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,
 				480B43591E842546007C90DD /* CGRect+QMobile.swift in Sources */,
 				480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */,
@@ -972,6 +983,7 @@
 				481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */,
 				4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */,
 				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,
+				48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
@@ -1076,6 +1088,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1083,6 +1096,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -1135,6 +1149,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1142,6 +1157,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

@@ -14,7 +14,9 @@ extension UITableViewController {
     var cells: [UITableViewCell] {
         var cells = [UITableViewCell]()
         // assuming tableView is your self.tableView defined somewhere
+        // swiftlint:disable:next identifier_name
         for i in 0...tableView.numberOfSections-1 {
+            // swiftlint:disable:next identifier_name
             for j in 0...(tableView.numberOfRows(inSection: i) - 1) {
                 if let cell = tableView.cellForRow(at: IndexPath(row: j, section: i)) {
                     cells.append(cell)

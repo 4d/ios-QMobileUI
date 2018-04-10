@@ -411,7 +411,7 @@ extension PropertyNames {
         return false
     }
     var propertyNames: [String] {
-        return Mirror(reflecting: self).children.flatMap { $0.label }
+        return Mirror(reflecting: self).children.compactMap { $0.label }
     }
 }
 extension UIView: PropertyNames {}

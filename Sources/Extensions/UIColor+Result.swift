@@ -16,10 +16,12 @@ extension UIColor {
     public static let statusFailure = UIColor(red: 244/255, green: 101/255, blue: 96/255, alpha: 1)
 
     public var hexString: String {
+        // swiftlint:disable identifier_name
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
+        // swiftlint:enable identifier_name
 
         getRed(&r, green: &g, blue: &b, alpha: &a)
 

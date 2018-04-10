@@ -19,6 +19,9 @@ public protocol DetailsForm: class {
     /// @return: true if the is next record
     var hasNextRecord: Bool {get set}
 
+    /// Called when record changed
+    func onRecordChanged()
+
 }
 
 extension DetailsForm {
@@ -45,13 +48,11 @@ extension DetailsForm {
     public func nextRecord() {
         if let table = self.view.table {
             if let newIndex = table.nextIndexPath {
-
-                table.indexPath = newIndex
-
-                // update the view (if not done auto by seting the index)
+                cancelImageDownloadTasks()
+                table.indexPath = newIndex // update the view (if not done auto by seting the index)
                 self.view.record = table.record
-
                 checkActions(table)
+                onRecordChanged()
             }
         }
     }
@@ -59,36 +60,32 @@ extension DetailsForm {
     public func previousRecord() {
         if let table = self.view.table {
             if let newIndex = table.previousIndexPath {
-
-                table.indexPath = newIndex
-
-                // update the view (if not done auto by seting the index)
+                cancelImageDownloadTasks()
+                table.indexPath = newIndex // update the view (if not done auto by setting the index)
                 self.view.record = table.record
-
                 checkActions(table)
+                onRecordChanged()
             }
         }
     }
 
     public func firstRecord() {
         if let table = self.view.table {
-            table.indexPath = IndexPath.firstRow
-
-            // update the view (if not done auto by seting the index)
+            cancelImageDownloadTasks()
+            table.indexPath = IndexPath.firstRow // update the view (if not done auto by setting the index)
             self.view.record = table.record
-
             checkActions(table)
+            onRecordChanged()
         }
     }
 
     public func lastRecord() {
         if let table = self.view.table {
+            cancelImageDownloadTasks()
             table.indexPath = table.lastIndexPath // check nullity?
-
-            // update the view (if not done auto by seting the index)
-            self.view.record = table.record
-
+            self.view.record = table.record // update the view (if not done auto by setting the index)
             checkActions(table)
+            onRecordChanged()
         }
     }
 
@@ -104,6 +101,13 @@ extension DetailsForm {
     func checkActions(_ table: DataSourceEntry) {
         self.hasPreviousRecord = table.hasPrevious
         self.hasNextRecord = table.hasNext
+    }
+
+    func cancelImageDownloadTasks() {
+        let imageViews: [UIImageView] = filter(value: view) { $0.subviews }
+        for imageView in imageViews {
+            imageView.kf.cancelDownloadTask()
+        }
     }
 
     /*public*/func deleteRecord() {
