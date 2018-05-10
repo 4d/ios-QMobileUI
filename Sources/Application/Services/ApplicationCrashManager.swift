@@ -12,6 +12,7 @@ import Foundation
 import XCGLogger
 import Prephirences
 import FileKit
+import Moya
 
 class ApplicationCrashManager: NSObject {}
 
@@ -66,32 +67,64 @@ extension ApplicationCrashManager: ApplicationService {
         // Maybe at start
 
         // Try loading the crash report
-        let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
-        if !crashs.isEmpty {
-            // - read it and make action like asking to send it
-
-            for crash in crashs {
-                logger.warning("Crashed on \(crash.creationDate?.description ?? crash.fileName)")
-                //logger.warning("Crashed with signal )") // add some info
+        let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { action in
+            let crashDirectory = ApplicationCrashManager.crashDirectory
+            let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
+            if !crashs.isEmpty {
+                for crash in crashs {
+                    if let zipPath = self.tempZipPath(fileName: crash.fileName), let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
+                        saveCrashFile(pathCrash: pathCrash+"/"+crash.fileName, zipPath: zipPath)
+                        let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
+                        crashServeProvider.request(.init(zipFile: URL(string:zipPath)! , param: getInfoApp(fileName:crash.fileName))) { (result) in
+                            switch result {
+                            case .success(let response):
+                                do {
+                                    try response.filterSuccessfulStatusCodes()
+                                    let data = try response.mapJSON()
+                                    if ("\(data)" == "ok"){
+                                        deleteCrashFile(pathCrash: pathCrash, zipPath: zipPath)
+                                    }
+                                } catch let error{
+                                    print(error)
+                                }
+                            case .failure(let error): break
+                            print(error)
+                            }
+                        }
+                    }
+                }
             }
-
-            // Purge the report = remove all files
-            logger.debug("Purge crash file")
-            for crash in crashs {
-                try? crash.deleteFile()
-            }
-        }
+        }))
+        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+        alertWindow.rootViewController = UIViewController()
+        alertWindow.windowLevel = UIWindowLevelAlert + 1;
+        alertWindow.makeKeyAndVisible()
+        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
     }
 
     static var crashDirectory: Path {
         return Path.userCaches
     }
-
+    func tempPathFile(parent:String) -> String? {
+        let path = Path.userCaches + parent//"nsexception"
+        let url = URL(fileURLWithPath: path.rawValue)
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            return nil
+        }
+        return url.path
+    }
+    func tempZipPath(fileName:String) -> String? {
+        let path = Path.userTemporary + "\(fileName).zip"
+        return path.absolute.rawValue
+    }
     static func save(crash: String, ofType type: CrashType) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYYMMdd-HHmmss"
         let path = Path.userCaches + type.rawValue + dateFormatter.string(from: Date())
-
         try? TextFile(path: path).write(crash, atomically: true)
     }
 }
@@ -131,4 +164,43 @@ func signalHandler(signal: Int32) {
 
     ApplicationCrashManager.save(crash: crash, ofType: .signal)
     exit(signal)
+}
+
+func getInfoApp(fileName:String) -> Dictionary<String,String> {
+    var myPlist = [String: String]()
+    myPlist["CFBundleShortVersionString"] = Bundle.main["CFBundleShortVersionString"] as? String
+    myPlist["DTPlatformVersion"] = Bundle.main["DTPlatformVersion"] as? String
+    myPlist["CFBundleIdentifier"] = Bundle.main["CFBundleIdentifier"] as? String
+    myPlist["CFBundleName"] = Bundle.main["CFBundleName"] as? String
+    myPlist["AppIdentifierPrefix"] = Bundle.main["AppIdentifierPrefix"] as? String
+    let date = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd.MM.yyyy.HH.mm.ss"
+    myPlist["SendDate"] = formatter.string(from: date)
+    myPlist["fileName"] = fileName
+    return myPlist
+}
+
+func saveCrashFile(pathCrash:String,zipPath:String) {
+    do {
+        let source: Path = Path(rawValue: pathCrash)
+        try source.zip(to: Path(rawValue: zipPath))
+    }catch {
+        print(error.localizedDescription)
+    }
+}
+
+func deleteCrashFile(pathCrash: String, zipPath: String) {
+    do {
+        let source: Path = Path(rawValue: pathCrash)
+        try source.deleteFile()
+    }catch {
+        print(error.localizedDescription)
+    }
+    do {
+        let source: Path = Path(rawValue: zipPath)
+        try source.deleteFile()
+    }catch {
+        print(error.localizedDescription)
+    }
 }
