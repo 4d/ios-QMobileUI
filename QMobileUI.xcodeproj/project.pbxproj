@@ -888,6 +888,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftMessages.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FileKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/IBAnimatable.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
 			);
 			name = carthage;
 			outputPaths = (
