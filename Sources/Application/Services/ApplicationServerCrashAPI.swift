@@ -18,13 +18,13 @@ extension URL {
 }
 
 struct ApplicationServerCrashAPI {
-    let fileName : URL
-    let parametre : Dictionary<String, String>
+    let fileName: URL
+    let parametre: Dictionary<String, String>
 }
 
-extension CrashServerAPI: TargetType {
+extension ApplicationServerCrashAPI: TargetType {
     
-    init(zipFile: URL, param: Dictionary<String,String>) {
+    init(zipFile: URL, param: Dictionary<String, String>) {
         self.fileName = zipFile
         self.parametre = param
     }
@@ -46,7 +46,7 @@ extension CrashServerAPI: TargetType {
     }
     
     var sampleData: Data {
-        return jsonSerializedUTF8(json: self.parametre)
+        return stubbedData("crashLog")
     }
     
     var headers: [String : String]? {
@@ -56,10 +56,4 @@ extension CrashServerAPI: TargetType {
     var parameters: [String: String]? {
         return self.parametre
     }
-    
-    private func jsonSerializedUTF8(json: [String: Any]) -> Data {
-        return try! JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted])
-    }
 }
-
-

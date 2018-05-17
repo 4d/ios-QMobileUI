@@ -69,7 +69,7 @@ extension ApplicationCrashManager: ApplicationService {
         // Try loading the crash report
         let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { action in
+        alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { _ in
             let crashDirectory = ApplicationCrashManager.crashDirectory
             let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
             if !crashs.isEmpty {
@@ -77,16 +77,16 @@ extension ApplicationCrashManager: ApplicationService {
                     if let zipPath = self.tempZipPath(fileName: crash.fileName), let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
                         saveCrashFile(pathCrash: pathCrash+"/"+crash.fileName, zipPath: zipPath)
                         let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
-                        crashServeProvider.request(.init(zipFile: URL(string:zipPath)! , param: getInfoApp(fileName:crash.fileName))) { (result) in
+                        crashServeProvider.request(.init(zipFile: URL(string:zipPath)!, param: getInfoApp(fileName:crash.fileName))) { (result) in
                             switch result {
                             case .success(let response):
                                 do {
                                     try response.filterSuccessfulStatusCodes()
                                     let data = try response.mapJSON()
-                                    if ("\(data)" == "ok"){
+                                    if ("\(data)" == "ok") {
                                         deleteCrashFile(pathCrash: pathCrash, zipPath: zipPath)
                                     }
-                                } catch let error{
+                                } catch let error {
                                     print(error)
                                 }
                             case .failure(let error): break
@@ -99,7 +99,7 @@ extension ApplicationCrashManager: ApplicationService {
         }))
         let alertWindow = UIWindow(frame: UIScreen.main.bounds)
         alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1;
+        alertWindow.windowLevel = UIWindowLevelAlert + 1
         alertWindow.makeKeyAndVisible()
         alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
     }
@@ -107,7 +107,7 @@ extension ApplicationCrashManager: ApplicationService {
     static var crashDirectory: Path {
         return Path.userCaches
     }
-    func tempPathFile(parent:String) -> String? {
+    func tempPathFile(parent: String) -> String? {
         let path = Path.userCaches + parent//"nsexception"
         let url = URL(fileURLWithPath: path.rawValue)
         do {
@@ -117,7 +117,7 @@ extension ApplicationCrashManager: ApplicationService {
         }
         return url.path
     }
-    func tempZipPath(fileName:String) -> String? {
+    func tempZipPath(fileName: String) -> String? {
         let path = Path.userTemporary + "\(fileName).zip"
         return path.absolute.rawValue
     }
@@ -166,7 +166,7 @@ func signalHandler(signal: Int32) {
     exit(signal)
 }
 
-func getInfoApp(fileName:String) -> Dictionary<String,String> {
+func getInfoApp(fileName: String) -> Dictionary<String, String> {
     var myPlist = [String: String]()
     myPlist["CFBundleShortVersionString"] = Bundle.main["CFBundleShortVersionString"] as? String
     myPlist["DTPlatformVersion"] = Bundle.main["DTPlatformVersion"] as? String
@@ -181,7 +181,7 @@ func getInfoApp(fileName:String) -> Dictionary<String,String> {
     return myPlist
 }
 
-func saveCrashFile(pathCrash:String,zipPath:String) {
+func saveCrashFile(pathCrash: String, zipPath: String) {
     do {
         let source: Path = Path(rawValue: pathCrash)
         try source.zip(to: Path(rawValue: zipPath))

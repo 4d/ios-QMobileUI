@@ -128,6 +128,8 @@
 		48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */; };
 		48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
 		48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
+		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
+		FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -261,6 +263,8 @@
 		48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QMobileDataStore.framework; path = Carthage/Build/iOS/QMobileDataStore.framework; sourceTree = "<group>"; };
+		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
+		FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServerCrashAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -356,6 +360,7 @@
 		480392B91E92945F008CF992 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				FE655FFB20AD928900B55336 /* Path+Zip.swift */,
 				480B43561E842448007C90DD /* Platform.swift */,
 				480B435C1E842699007C90DD /* NSObject+QMobile.swift */,
 				480392B71E92944D008CF992 /* Collection+QMobile.swift */,
@@ -585,6 +590,7 @@
 			children = (
 				48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
+				FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */,
 				489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */,
 				48E4726A20333373002194C7 /* ApplicationImageCache.swift */,
 				48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */,
@@ -929,6 +935,7 @@
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
 				48F8E2C61F7D0F00000080FB /* UIColor+Result.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
+				FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus .swift in Sources */,
@@ -967,6 +974,7 @@
 				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,
 				480B43591E842546007C90DD /* CGRect+QMobile.swift in Sources */,
 				480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */,
+				FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */,
 				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
 				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
