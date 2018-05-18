@@ -102,7 +102,7 @@ open class LoginForm: UIViewController {
             switch result {
             case .success(let authToken):
                 // Go to passcode view
-                assert(authToken.isValid) // status could contains additionnal info
+                assert(authToken.isValidToken) // status could contains additionnal info
                 DispatchQueue.main.async {
                     self.performSegue(withIdentifier: self.passcodeSegueIdentifier, sender: sender)
                 }

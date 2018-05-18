@@ -104,7 +104,7 @@ extension Notification.Name {
 // create missing notifications
 public extension UIApplicationDelegate {
 
-    static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    public static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         ApplicationServices.instance.center.post(name: .UIApplicationDidRegisterForRemoteWithDeviceToken, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.deviceToken: deviceToken])
     }
@@ -113,7 +113,7 @@ public extension UIApplicationDelegate {
         type(of: self).application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }*/ // not working anymore, code is put in generated project instead
 
-    static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+    public static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
         ApplicationServices.instance.center.post(name: .UIApplicationOpenUrlWithOptions, object: app,
                                                  userInfo: [ApplicationServiceUserInfoKey.openUrl: url, ApplicationServiceUserInfoKey.openUrlOptions: options])
         return true
@@ -123,24 +123,24 @@ public extension UIApplicationDelegate {
         return type(of: self).application(app, open: url, options: options)
      }*/
 
-    static func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    public static func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         ApplicationServices.instance.center.post(name: .UIApplicationContinueUserActivity, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity, ApplicationServiceUserInfoKey.restorationHandler: restorationHandler])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
-    static func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
+    public static func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
         ApplicationServices.instance.center.post(name: .UIApplicationWillContinueUserActivity, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
-    static func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {
+    public static func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {
         ApplicationServices.instance.center.post(name: .UIApplicationDidFailToContinueUserActivity, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType, ApplicationServiceUserInfoKey.error: error])
     }
 
-    static func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {
+    public static func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {
         ApplicationServices.instance.center.post(name: .UIApplicationDidUpdateUserActivity, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity])
     }

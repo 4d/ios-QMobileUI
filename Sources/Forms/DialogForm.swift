@@ -32,7 +32,7 @@ open class DialogForm: AnimatableModalViewController {
         self.okButton.isHidden = true
 
        // self.dismissOnTap = false // BUG IBAnimatable on change after loading view
-        self.activityIndicatorView.startAnimating()
+        self.activityIndicatorView?.startAnimating()
     }
 
     @IBAction public func cancelAction(_ sender: Any) {
@@ -73,7 +73,7 @@ open class DialogForm: AnimatableModalViewController {
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.activityIndicatorView.stopAnimating()
+        self.activityIndicatorView?.stopAnimating()
         super.dismiss(animated: flag, completion: completion)
     }
 

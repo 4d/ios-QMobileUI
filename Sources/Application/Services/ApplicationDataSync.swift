@@ -24,7 +24,7 @@ class ApplicationDataSync: NSObject {
     // shared instance of data sync object for all QMoble application
     static let dataSync: DataSync = DataSync.instance
 
-    let operationQueue = OperationQueue(underlyingQueue: DispatchQueue.background)
+    let operationQueue = OperationQueue(underlyingQueue: .background)
     var listeners: [NSObjectProtocol] = []
     var syncAtStartDone: Bool = false
     var applicationWillTerminate: Bool = false
@@ -46,8 +46,11 @@ extension ApplicationDataSync: ApplicationService {
         let ds = dataSync.dataStore
 
         listeners += [ds.onLoad(queue: operationQueue) { [weak self] _ in
-            if !(self?.syncAtStartDone ?? true) {
-                self?.syncAtStart()
+            guard let this = self else {
+                return
+            }
+            if !this.syncAtStartDone {
+                this.syncAtStart()
             }
             }]
         if ds.isLoaded {

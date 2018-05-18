@@ -89,7 +89,7 @@ extension ApplicationLogger: ApplicationService {
         }
 
         if let writeToFile = writeToFile, let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
-
+            print("Log will be written into file '\(writeURL)'")
             let destination: FileDestination
             if !autorotate {
                 destination = FileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier)
@@ -107,7 +107,7 @@ extension ApplicationLogger: ApplicationService {
                 }
                 #if DEBUG
                     autodestination.autoRotationCompletion = { success in
-                        print("Log autorotation \(success)")
+                        print("Log autorotation status: \(success)")
                     }
                 #endif
                 destination = autodestination
