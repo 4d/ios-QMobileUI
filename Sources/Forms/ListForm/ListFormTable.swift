@@ -66,7 +66,7 @@ open class ListFormTable: UITableViewController, ListForm {
                 logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
                 sortDescriptors = [firstField.sortDescriptor(ascending: true)]
             } else {
-                assertionFailure("No sort field. Please fill sortField with a field name")
+                //assertionFailure("No sort field. Please fill sortField with a field name")
             }
         }
 
@@ -165,11 +165,9 @@ open class ListFormTable: UITableViewController, ListForm {
 
             if let navigation = segue.destination as? UINavigationController {
                 navigation.navigationBar.table = table
-                navigation.navigationBar.record = table.record
             }
             let destination = segue.destination.firstController
             destination.view.table = table
-            destination.view.record = table.record
 
             table.indexPathObserver = self
         }

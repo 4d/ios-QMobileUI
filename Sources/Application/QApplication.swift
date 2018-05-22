@@ -52,6 +52,9 @@ open class QApplication: UIApplication {
         // Log all logging step
         services.register(ApplicationStepLogging.instance)
 
+        // Manage authentification
+        services.register(ApplicationAuthenticate.instance)
+
         // Crash Manager
         services.register(ApplicationCrashManager.instance)
 

@@ -28,18 +28,8 @@ public class DataSourceEntry: NSObject {
         }
         didSet {
             indexPathObserver?.didChangeIndexPath(from: oldValue, to: indexPath)
-            recordCache = nil
+            //recordCache = nil
         }
-    }
-    private var recordCache: BindedRecord?
-
-    @objc dynamic open var record: BindedRecord? {
-        if recordCache == nil { // init at demand
-            if let indexPath = self.indexPath {
-                recordCache = dataSource.record(at: indexPath)
-            }
-        }
-        return recordCache
     }
 
     init(dataSource: DataSource) {
@@ -47,6 +37,13 @@ public class DataSourceEntry: NSObject {
     }
 
     // MARK: accessible property
+
+    @objc dynamic open var record: BindedRecord? {
+        guard let indexPath = indexPath else {
+            return nil
+        }
+        return dataSource.record(at: indexPath)
+    }
 
     /// - return: the table name
     @objc dynamic open var name: String {

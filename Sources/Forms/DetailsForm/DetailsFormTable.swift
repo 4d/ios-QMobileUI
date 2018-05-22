@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A detail form based on apple `UITableViewController` which provide an `UITableView`.
 open class DetailsFormTable: UITableViewController, DetailsForm {
 
     @objc dynamic open var hasPreviousRecord: Bool = false

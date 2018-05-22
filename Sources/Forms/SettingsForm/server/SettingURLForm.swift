@@ -35,7 +35,9 @@ open class SettingURLForm: UITableViewController {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.checkStatus()
+
+        ServerStatusManager.instance.checkStatus(2)
+
         onDidAppear(animated)
     }
 
@@ -67,7 +69,7 @@ open class SettingURLForm: UITableViewController {
 
     @objc open func onDataChanged(textField: UITextField) {
         Prephirences.serverURL = textField.text
-        checkStatus()
+        ServerStatusManager.instance.checkStatus(2)
     }
 
     // MARK: table section header and footer
@@ -78,7 +80,7 @@ open class SettingURLForm: UITableViewController {
     var serverStatusFooter: SettingsServerSectionFooter? {
         if _serverStatusFooter == nil {
             _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-            _serverStatusFooter?.delegate = self
+
             _serverStatusFooter?.detailLabel.isHidden = false
         }
         return _serverStatusFooter
@@ -91,17 +93,13 @@ open class SettingURLForm: UITableViewController {
         return nil // default
     }
 
-    private func checkStatus() {
-        serverStatusFooter?.checkStatus(2)
-    }
-
     // MARK: action
     @IBAction open func serverURLTextFieldEndEditing(_ sender: Any?) {
         self.serverURLTextField.endEditing(true)
     }
 }
 
-extension SettingURLForm: SettingsServerSectionFooterDelegate {
+extension SettingURLForm: ServerStatusListener {
 
     public func onStatusChanged(status: ServerStatus) {
         onForeground {

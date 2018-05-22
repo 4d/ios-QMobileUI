@@ -43,12 +43,21 @@ extension ServerStatus {
     }
     public var isSuccess: Bool {
         if case .done(let result) = self {
+            if case .success = result {
+                return true
+            }
+        }
+        return false
+    }
+    public var isSuccessAuthentified: Bool {
+        if case .done(let result) = self {
             if case .success(let status) = result {
                 return status.ok
             }
         }
         return false
     }
+
     public var isFailure: Bool {
         // CLEAN : make a switch
         if case .done(let result) = self {

@@ -50,7 +50,6 @@ extension DetailsForm {
             if let newIndex = table.nextIndexPath {
                 cancelImageDownloadTasks()
                 table.indexPath = newIndex // update the view (if not done auto by seting the index)
-                self.view.record = table.record
                 checkActions(table)
                 onRecordChanged()
             }
@@ -62,7 +61,6 @@ extension DetailsForm {
             if let newIndex = table.previousIndexPath {
                 cancelImageDownloadTasks()
                 table.indexPath = newIndex // update the view (if not done auto by setting the index)
-                self.view.record = table.record
                 checkActions(table)
                 onRecordChanged()
             }
@@ -73,7 +71,6 @@ extension DetailsForm {
         if let table = self.view.table {
             cancelImageDownloadTasks()
             table.indexPath = IndexPath.firstRow // update the view (if not done auto by setting the index)
-            self.view.record = table.record
             checkActions(table)
             onRecordChanged()
         }
@@ -83,7 +80,6 @@ extension DetailsForm {
         if let table = self.view.table {
             cancelImageDownloadTasks()
             table.indexPath = table.lastIndexPath // check nullity?
-            self.view.record = table.record // update the view (if not done auto by setting the index)
             checkActions(table)
             onRecordChanged()
         }

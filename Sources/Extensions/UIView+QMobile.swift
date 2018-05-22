@@ -75,3 +75,72 @@ public extension UIView {
         set { frame = frame.with(height: newValue) }
     }
 }
+
+// MARK: animation delegate
+
+extension UIView {
+
+    public func shake(duration: CFTimeInterval = 0.6,
+                      timingFunction: CAMediaTimingFunction = .linear,
+                      completion: (() -> Void)? = nil) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = timingFunction
+        animation.duration = duration
+        animation.values = [ -20, 20, -20, 20, -10, 10, -5, 5, 0]
+        if let completion = completion {
+            animation.delegate = AnimationDelegate(completion: completion)
+        }
+        layer.add(animation, forKey: "shake")
+    }
+
+    public func shrink(duration: CFTimeInterval,
+                       timingFunction: CAMediaTimingFunction = .linear,
+                       completion: (() -> Void)? = nil) {
+        let animation = CABasicAnimation(keyPath: "bounds.size.width")
+        animation.fromValue = frame.width
+        animation.toValue = frame.height
+        animation.duration = duration
+        animation.timingFunction = timingFunction
+        animation.fillMode = kCAFillModeForwards
+        animation.isRemovedOnCompletion = false
+        if let completion = completion {
+            animation.delegate = AnimationDelegate(completion: completion)
+        }
+        layer.add(animation, forKey: "shrink")
+    }
+
+    public func expand(duration: CFTimeInterval = 0.3,
+                       timingFunction: CAMediaTimingFunction = .linear,
+                       completion: (() -> Void)? = nil) {
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.fromValue = 1.0
+        animation.toValue = 26.0
+        animation.timingFunction = timingFunction
+        animation.duration = duration
+        animation.fillMode = kCAFillModeForwards
+        animation.isRemovedOnCompletion = false
+        if let completion = completion {
+            animation.delegate = AnimationDelegate(completion: completion)
+        }
+        layer.add(animation, forKey: "expand")
+    }
+
+}
+
+// MARK: `CAAnimationDelegate`
+open class AnimationDelegate: NSObject, CAAnimationDelegate {
+
+    fileprivate let completion: () -> Void
+
+    public init(completion: @escaping () -> Void) {
+        self.completion = completion
+    }
+
+    open func animationDidStop(_: CAAnimation, finished: Bool) {
+        completion()
+    }
+}
+
+extension CAMediaTimingFunction {
+    public static let linear = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+}

@@ -9,6 +9,7 @@
 import UIKit
 import Kingfisher
 
+/// A detail form based on apple `UIViewController`, a simple empty view.
 open class DetailsFormBare: UIViewController, DetailsForm {
 
     @objc dynamic open var hasPreviousRecord: Bool = false

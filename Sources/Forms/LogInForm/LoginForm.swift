@@ -12,6 +12,8 @@ import UIKit
 import Prephirences
 import Moya
 
+import SwiftMessages
+
 import QMobileAPI
 import QMobileDataSync
 
@@ -19,8 +21,19 @@ import QMobileDataSync
 @IBDesignable
 open class LoginForm: UIViewController {
 
+    /// Identifier for segue when successfuly logged. Default value "logged"
+    @IBInspectable open var loggedSegueIdentifier: String = "logged"
+
     /// Segue to go to passcode form
-    @IBInspectable open var passcodeSegueIdentifier: String = "passcode"
+    //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"
+
+    /// Constaint for view at the bottom.
+    @IBOutlet weak open var bottomLayoutConstraint: NSLayoutConstraint!
+
+    /// The login buttons.
+    @IBOutlet open weak var loginButton: LoadingButton!
+    /// The text field for the login information ie. the email.
+    @IBOutlet open weak var loginTextField: FloatingLabelTextField!
 
     var cancellable: Cancellable?
 
@@ -32,16 +45,19 @@ open class LoginForm: UIViewController {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
         onWillAppear(animated)
     }
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        loginButton.isUserInteractionEnabled = false
         onDidAppear(animated)
     }
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillChangeFrame, object: nil)
         onWillDisappear(animated)
     }
 
@@ -61,62 +77,117 @@ open class LoginForm: UIViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    // MARK: functions
+    // MARK: - Notifications
 
-    /// Check content of loginTextField to login ie. valid email.
-    open func isValid(login: String) -> Bool {
-        return login.isValidEmail
-    }
-
-    /// Function to return user login
-    open func loginText() -> String? {
-        assertionFailure("Login text must be provided by form")
-        return nil
-    }
-
-    /// Return additional parameters to send to authentification process
-    open func customLoginParameters() -> [String: Any]? {
-        return nil
-    }
-
-    // MARK: Action
-
-    /// Action when pushing login
-    @IBAction open func login(_ sender: Any?) {
-
-        guard let login = loginText(), !login.isEmpty else {
-            // Maybe shake the loginTextField
-            alert(title: "Login field must not be empty.")
-            return
+    /// Animate bottom constraint when keyboard show or hide.
+    @objc open func keyboardChanged(_ notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+            let animationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? UInt,
+            let keyboardEndFrame = userInfo[UIKeyboardFrameEndUserInfoKey] as? CGRect else {
+                return
         }
+        let convertedKeyboardEndFrame = view.convert(keyboardEndFrame, from: view.window)
 
-        guard isValid(login: login) else {
-            // Maybe shake the loginTextField
-            alert(title: "Login field must be valid email.")
-            return
-        }
+        bottomLayoutConstraint.constant = view.bounds.maxY - convertedKeyboardEndFrame.minY + 20
+        let animationCurve = UIViewKeyframeAnimationOptions(rawValue: curve)
 
-        let rest = ApplicationDataSync.dataSync.rest
-        cancellable = rest.authentificate(login: login, parameters: customLoginParameters()) { result in
+        UIView.animateKeyframes(withDuration: animationDuration, delay: 0.0, options: animationCurve, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+    // MARK: - Get info
 
-            switch result {
-            case .success(let authToken):
-                // Go to passcode view
-                assert(authToken.isValidToken) // status could contains additionnal info
-                DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: self.passcodeSegueIdentifier, sender: sender)
-                }
-            case .failure(let error):
-                // TODO Auth ; according to error notify user
-                // email not accepted, custom message from server
-                // Server failed to send a mail
-                alert(title: "Failed to authentificate", message: error.localizedDescription)
+    /// Return the email from `loginTextField`.
+    open var email: String {
+        return self.loginTextField.text ?? ""
+    }
+
+    /// Return any custom informations that must be send when authenticate.
+    open var customParameters: [String: Any]? {
+        return [:]
+    }
+
+    /// Function called when email change.
+    @IBAction open func loginTextDidChange(_ sender: Any) {
+        if checkLoginClickable() {
+            loginTextField.errorMessage = ""
+        } else {
+            if email.count > 3 && !email.isValidEmail {
+                loginTextField.errorMessage = "Invalid email"
+            } else {
+                loginTextField.errorMessage = ""
             }
         }
     }
 
-    @IBAction open func cancelLogin(_ sender: Any?) {
+    /// Check if login button must be clickable. Using `isLoginClickable`.
+    /// If `false` the button interaction is disabled.
+    open func checkLoginClickable() -> Bool {
+        let value = isLoginClickable
+        loginButton.isUserInteractionEnabled = value
+        return value
+    }
+
+    // MARK: - Actions
+
+    /// Respond if email is valid or not to login with.
+    /// Could be overriden to add custom logic like specific emails pattern.
+    open var isLoginClickable: Bool {
+        return email.isValidEmail
+    }
+
+    @IBAction open func login(_ sender: Any!) {
+        let email = self.email
+        let parameters = self.customParameters
+
+        if isLoginClickable {
+            loginButton.startAnimation()
+            loginTextField.isEnabled = false
+            cancellable = APIManager.instance.authentificate(login: email, parameters: parameters) {  [weak self] result in
+                guard let this = self else { return }
+                switch result {
+                case .success(let token):
+                    this.loginButton.stopAnimation {
+                        DispatchQueue.main.async {
+                            this.loginTextField.isEnabled = true
+                            this.performSegue(withIdentifier: this.loggedSegueIdentifier, sender: sender)
+                        }
+                    }
+
+                    if let statusText = token.statusText {
+                        onForeground {
+                          SwiftMessages.displayConfirmation(statusText)
+                        }
+                    }
+                case .failure(let error):
+                    logger.warning("Failed to login: \(error)")
+                    this.loginButton.stopAnimation()
+                    this.loginButton.reset()
+                    this.loginTextField.isEnabled = true
+                    this.loginTextField.shake()
+
+                    onForeground {
+                        if let restError = error.restErrors {
+                            if let statusText = restError.statusText {
+                                SwiftMessages.displayError(title: error.errorDescription ?? "Failed to login", message: statusText)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            self.loginTextField.shake()
+        }
+    }
+
+    @IBAction open func cancel(_ sender: Any!) {
+        cancel()
+    }
+
+    func cancel() {
         cancellable?.cancel()
+        // XXX maybe reset ui component
     }
 
 }

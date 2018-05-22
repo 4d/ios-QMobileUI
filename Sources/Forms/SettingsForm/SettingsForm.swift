@@ -14,23 +14,63 @@ import Moya
 import QMobileAPI
 import QMobileDataSync
 
+@IBDesignable
 open class SettingsForm: UITableViewController {
 
     public enum Section: Int {
+
         case data
         case server
-        //case about
+        case account
+
+        public static let all: [Section] = [.data, .server, .account]
+
+        static func register(in tableView: UITableView) {
+            for section in Section.all {
+                section.register(in: tableView)
+            }
+        }
+
+        public func register(in tableView: UITableView) {
+            switch self {
+            case .data:
+                tableView.registerHeaderFooter(SettingsDataSectionFooter())
+            case .server:
+                tableView.registerHeaderFooter(SettingsServerSectionFooter())
+            default:
+                break
+            }
+        }
+
+        public func dequeueFooter(in tableView: UITableView) -> UITableViewHeaderFooterView? {
+            switch self {
+            case .data:
+                return tableView.dequeueReusableHeaderFooterView(SettingsDataSectionFooter.self)
+            case .server:
+                return tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
+            default:
+                return nil
+            }
+        }
+
+        public func dequeueHeader(in tableView: UITableView) -> UITableViewHeaderFooterView? {
+            switch self {
+            default:
+                return nil
+            }
+        }
     }
 
-    @IBOutlet weak var serverURLLabel: UILabel!
+    @IBInspectable open var sectionHeaderForegroundColor: UIColor = UIColor(named: "BackgroundColor") ?? .clear
 
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
-        initHeaderFooter() // Register external UI from other file
-        initFormData()
-        initFooterData()
+        initSections() // Register external UI from other file
         onLoad()
+
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(self.application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -41,7 +81,7 @@ open class SettingsForm: UITableViewController {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.checkStatus()
+        ServerStatusManager.instance.checkStatus()
         onDidAppear(animated)
     }
 
@@ -66,48 +106,28 @@ open class SettingsForm: UITableViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    // MARK: init
-    /*weak*/var listener: NSObjectProtocol?
-
-    private func initFormData() {
-        let urlString = URL.qmobileURL.absoluteString
-        serverURLLabel.text = urlString
-
-        listener = Prephirences.serverURLChanged { serverURL in
-            self.serverURLLabel.text = serverURL
-        }
-    }
-    private func initFooterData() {
-        refreshLastDate()
-    }
-
     // MARK: Manage data data
 
-    @IBOutlet weak var reloadButton: UIButton!
-    @IBOutlet weak var reloadFooterLabel: UILabel!
-    var cancellable = CancellableComposite()
-
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let dialogForm = segue.destination as? DialogForm {
-            dialogForm.delegate = self
-        }
-    }
-
-    func refreshLastDate() {
-        foreground {
-            if let date = dataLastSync() {
-                // swiftlint:disable:next identifier_name
-                let id = DateFormatter.shortDateAndTime.string(from: date)
-                self.reloadFooterLabel.text = "   Last update: " + id // LOCALIZE
-            } else {
-                self.reloadFooterLabel.text = ""
+        if let dialogForm = segue.destination as? DialogForm,
+            let identifier = segue.identifier,
+            let button = sender as? UIButton,
+            let cell = button.parentCellView as? DialogFormDelegate {
+            switch identifier {
+            case "confirmReload":
+                dialogForm.delegate = cell
+            case "confirmLogOut":
+                dialogForm.delegate = cell
+            default:
+                logger.warning("Unknown segue \(identifier) for dialog \(dialogForm)")
             }
-            self.reload(section: Section.data)
+        } else {
+            logger.debug("UI Transition with segue \(String(describing: segue.identifier))")
         }
     }
 
     @objc func application(didEnterBackground notification: Notification) {
-        cancellable.cancel()
+        // Dismiss all dialog opened in settings if application enter background
         if let dialogForm = self.presentedViewController as? DialogForm {
             onForeground {
                 dialogForm.dismiss(animated: false)
@@ -115,100 +135,74 @@ open class SettingsForm: UITableViewController {
         }
     }
 
-    // server status
+    // init section
 
-    private func initHeaderFooter() {
-        tableView.registerHeaderFooter(SettingsServerSectionFooter())
-    }
-    private func checkStatus() {
-        serverStatusFooter?.checkStatus(0)
-    }
-    private var _serverStatusFooter: SettingsServerSectionFooter?
-    var serverStatusFooter: SettingsServerSectionFooter? {
-        if _serverStatusFooter == nil {
-            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-            _serverStatusFooter?.delegate = self
-            _serverStatusFooter?.detailLabel.isHidden = true
-        }
-        return _serverStatusFooter
+    private func initSections() {
+        Section.register(in: tableView)
     }
 
     // MARK: table view
+
+    open override func tableView(_ tableView: UITableView, willDisplay: UITableViewCell, forRowAt: IndexPath) {
+
+    }
+    /*open override func tableView(_ tableView: UITableView, heightForRowAt: IndexPath) -> CGFloat {
+        return 50
+    }*/
+    /*open override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }*/
+    // - sections
+
     open override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if let section = Section(rawValue: section) {
-            switch section {
-            case .server:
-                return serverStatusFooter
-            case .data:
-                return reloadFooterLabel
-            }
+        if let sectionEnum = Section(rawValue: section),
+            let footer = sectionEnum.dequeueFooter(in: tableView) {
+            footer.index = section
+            return footer
         }
-        return nil // default
+        return nil
     }
 
+    open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        //let cells = tableView.visibleCells
+
+        if let sectionEnum = Section(rawValue: section),
+            let footer = sectionEnum.dequeueHeader(in: tableView) {
+            footer.index = section
+            return footer
+        }
+        return nil
+    }
+
+    /*open override func tableView(_ tableView: UITableView, heightForHeaderInSection: Int) -> CGFloat {
+        return 48
+    }*/
+    /*open override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+     }*/
+    open override func tableView(_ tableView: UITableView, heightForFooterInSection: Int) -> CGFloat {
+        return 48
+    }
+    /* open override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection: Int) -> CGFloat {
+     return 30
+     }*/
+
+    open override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection: Int) {
+        if let headerTitle = view as? UITableViewHeaderFooterView,
+            sectionHeaderForegroundColor != .clear {
+            headerTitle.textLabel?.textColor = sectionHeaderForegroundColor
+        }
+    }
+
+    open override func tableView(_ tableView: UITableView, willDisplayFooterView: UIView, forSection: Int) {
+    }
 }
 
-extension SettingsForm: SettingsServerSectionFooterDelegate {
+extension SettingsForm: ServerStatusListener {
 
     public func onStatusChanged(status: ServerStatus) {
         onForeground {
             // Reload server status view ie. the footer of server
             self.reload(section: Section.server)
-            // Activate reload button if status is ok
-            self.reloadButton.isEnabled = status.isSuccess
-        }
-    }
-}
-
-// MARK: action on dialog button press
-
-extension SettingsForm: DialogFormDelegate {
-
-    // if ok pressed
-    public func onOK(dialog: DialogForm, sender: Any) {
-        cancellable.cancel()
-        cancellable = CancellableComposite()
-
-        background(3) { [weak self] in
-            guard let this = self, !this.cancellable.isCancelledUnlocked else {
-                return
-            }
-
-            let center = NotificationCenter.default
-            center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
-
-            let reload = dataReload { [weak self] result in
-                if let this = self {
-                    center.removeObserver(this)
-                }
-
-                switch result {
-                case .success:
-                    logger.info("data reloaded")
-                    self?.refreshLastDate()
-                    onForeground {
-                        dialog.dismiss(animated: true)
-                    }
-                case .failure(let error):
-                    logger.error("data reloading failed \(error)")
-
-                    onForeground {
-                        dialog.dismiss(animated: true)
-                        self?.serverStatusFooter?.checkStatus()
-                    }
-                }
-            }
-            if let reload = reload {
-                self?.cancellable.append(reload)
-            }
-        }
-    }
-
-    // if cancel pressed
-    public func onCancel(dialog: DialogForm, sender: Any) {
-        cancellable.cancel()
-        onForeground {
-            dialog.dismiss(animated: true) /// XXX maybe wait cancel
         }
     }
 }

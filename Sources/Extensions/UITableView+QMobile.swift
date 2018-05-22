@@ -13,3 +13,27 @@ extension UITableView {
         return indexPathForRow(at: location)
     }
 }
+
+private var xoAssociationKey: UInt8 = 0
+public typealias TableSectionIndex = Int
+extension UITableViewHeaderFooterView {
+
+    public var index: TableSectionIndex? {
+        get {
+            return objc_getAssociatedObject(self, &xoAssociationKey) as? TableSectionIndex
+        }
+        set(newValue) {
+            objc_setAssociatedObject(self, &xoAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+
+    public func reloadInTableView() {
+        if let cell = self.parentCellView as? UITableViewCell,
+            let tableView = cell.tableView,
+            let index = index {
+            let indexSet = IndexSet([index])
+            tableView.reloadSections(indexSet, with: .none)
+        }
+    }
+
+}
