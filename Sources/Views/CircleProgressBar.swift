@@ -41,8 +41,10 @@ open class CircleProgressBar: UIView {
     }
 
     override open func draw(_ rect: CGRect) {
-        let X = self.bounds.midX
-        let Y = self.bounds.midY
+        //swiftlint:disable:next identifier_name
+        let x = self.bounds.midX
+        //swiftlint:disable:next identifier_name
+        let y = self.bounds.midY
         var strokeStart: CGFloat = 0
         var strokeEnd: CGFloat = percent
         let degrees = 270.0
@@ -60,7 +62,7 @@ open class CircleProgressBar: UIView {
             let radians = CGFloat(degrees * Double.pi / 180)
             layer.transform = CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0)
         }
-        let path = UIBezierPath(ovalIn: CGRect(x: (X - (68/2)), y: (Y - (68/2)), width: 68, height: 68)).cgPath
+        let path = UIBezierPath(ovalIn: CGRect(x: (x - (68/2)), y: (y - (68/2)), width: 68, height: 68)).cgPath
         self.addOval(self.bgThickness,
                      path: path,
                      strokeStart: strokeStart,
@@ -83,14 +85,14 @@ open class CircleProgressBar: UIView {
 
     // swiftlint:disable:next function_parameter_count
     open func addOval(_ lineWidth: CGFloat,
-                 path: CGPath,
-                 strokeStart: CGFloat,
-                 strokeEnd: CGFloat,
-                 strokeColor: UIColor,
-                 fillColor: UIColor,
-                 shadowRadius: CGFloat,
-                 shadowOpacity: Float,
-                 shadowOffsset: CGSize) {
+                      path: CGPath,
+                      strokeStart: CGFloat,
+                      strokeEnd: CGFloat,
+                      strokeColor: UIColor,
+                      fillColor: UIColor,
+                      shadowRadius: CGFloat,
+                      shadowOpacity: Float,
+                      shadowOffsset: CGSize) {
         if oldpercent == .infinity {
             let animation = CABasicAnimation(keyPath: "strokeEnd")
             animation.fromValue = strokeStart
@@ -116,14 +118,14 @@ open class CircleProgressBar: UIView {
 
     // swiftlint:disable:next function_parameter_count
     open func addOval2(_ lineWidth: CGFloat,
-                  path: CGPath,
-                  strokeStart: CGFloat,
-                  strokeEnd: CGFloat,
-                  strokeColor: UIColor,
-                  fillColor: UIColor,
-                  shadowRadius: CGFloat,
-                  shadowOpacity: Float,
-                  shadowOffsset: CGSize) {
+                       path: CGPath,
+                       strokeStart: CGFloat,
+                       strokeEnd: CGFloat,
+                       strokeColor: UIColor,
+                       fillColor: UIColor,
+                       shadowRadius: CGFloat,
+                       shadowOpacity: Float,
+                       shadowOffsset: CGSize) {
         if oldpercent == .infinity {
             let animation = CABasicAnimation(keyPath: "strokeEnd")
             animation.fromValue = strokeStart
