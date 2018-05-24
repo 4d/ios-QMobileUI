@@ -25,6 +25,17 @@ struct ApplicationServerCrashAPI {
 
 extension ApplicationServerCrashAPI: TargetType {
 
+    static var crashURL: URL? {
+        if let url = Prephirences.sharedInstance["crash.server.url"] as? URL {
+            return url
+        }
+        if let urlString = Prephirences.sharedInstance["crash.server.url"] as? String,
+            let url = URL(string: urlString) {
+            return url
+        }
+        return nil
+    }
+
     var task: Task {
         return .uploadFile(self.fileURL)
     }

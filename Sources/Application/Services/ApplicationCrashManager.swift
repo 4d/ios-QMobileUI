@@ -22,16 +22,6 @@ enum CrashType: String {
 }
 
 extension ApplicationCrashManager: ApplicationService {
-    static var crashURL: URL? {
-        if let url = Prephirences.sharedInstance["crash.server.url"] as? URL {
-            return url
-        }
-        if let urlString = Prephirences.sharedInstance["crash.server.url"] as? String,
-            let url = URL(string: urlString) {
-            return url
-        }
-        return nil
-    }
     static var instance: ApplicationService = ApplicationCrashManager()
 
     var pref: PreferencesType {
@@ -76,7 +66,7 @@ extension ApplicationCrashManager: ApplicationService {
         // Maybe at start
 
         // Try loading the crash report
-        if ApplicationCrashManager.crashURL != nil {
+        if ApplicationServerCrashAPI.crashURL != nil {
             let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { _ in
