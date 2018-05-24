@@ -67,45 +67,47 @@ extension ApplicationCrashManager: ApplicationService {
         // Maybe at start
 
         // Try loading the crash report
-        let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { _ in
-            let crashDirectory = ApplicationCrashManager.crashDirectory
-            let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
-            if !crashs.isEmpty {
-                for crash in crashs {
-                    if let zipPath = self.tempZipPath(fileName: crash.fileName),
-                        let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
-                        self.saveCrashFile(pathCrash: "\(pathCrash)/\(crash.fileName)", zipPath: zipPath)
+        if let path = Prephirences.sharedInstance["crash.server.path"] as? String {
+            let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { _ in
+                let crashDirectory = ApplicationCrashManager.crashDirectory
+                let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
+                if !crashs.isEmpty {
+                    for crash in crashs {
+                        if let zipPath = self.tempZipPath(fileName: crash.fileName),
+                            let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
+                            self.saveCrashFile(pathCrash: "\(pathCrash)/\(crash.fileName)", zipPath: zipPath)
 
-                        let target = ApplicationServerCrashAPI(fileURL: zipPath.url, parameters: self.applicationInformation(fileName: crash.fileName))
+                            let target = ApplicationServerCrashAPI(fileURL: zipPath.url, parameters: self.applicationInformation(fileName: crash.fileName))
 
-                        let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
-                        crashServeProvider.request(target) { (result) in
-                            switch result {
-                            case .success(let response):
-                                do {
-                                    _ = try response.filterSuccessfulStatusCodes()
-                                    let data = try response.mapJSON()
-                                    if "\(data)" == "ok" {
-                                        self.deleteCrashFile(pathCrash: pathCrash, zipPath: zipPath)
+                            let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
+                            crashServeProvider.request(target) { (result) in
+                                switch result {
+                                case .success(let response):
+                                    do {
+                                        _ = try response.filterSuccessfulStatusCodes()
+                                        let data = try response.mapJSON()
+                                        if "\(data)" == "ok" {
+                                            self.deleteCrashFile(pathCrash: pathCrash, zipPath: zipPath)
+                                        }
+                                    } catch let error {
+                                        logger.warning(error)
                                     }
-                                } catch let error {
+                                case .failure(let error):
                                     logger.warning(error)
                                 }
-                            case .failure(let error):
-                                logger.warning(error)
                             }
                         }
                     }
                 }
-            }
-        }))
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+            }))
+            let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+            alertWindow.rootViewController = UIViewController()
+            alertWindow.windowLevel = UIWindowLevelAlert + 1
+            alertWindow.makeKeyAndVisible()
+            alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+        }
     }
 
     static var crashDirectory: Path {
