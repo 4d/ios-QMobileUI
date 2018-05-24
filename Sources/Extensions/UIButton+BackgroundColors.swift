@@ -44,14 +44,14 @@ extension UIButton {
     func setBackgroundColor(_ color: UIColor, forState state: UIControlState) {
         backgroundColors[state.rawValue] = color
 
-        if state == UIControlState() {
+        if state == .normal {
             updateBackgroundColorForState(state)
         }
     }
 
     private func updateBackgroundColorForState(_ state: UIControlState) {
         if let backgroundcolor = backgroundColors[state.rawValue] {
-            self.backgroundColor = backgroundColors[state.rawValue]
+            self.backgroundColor = backgroundcolor
         }
     }
 

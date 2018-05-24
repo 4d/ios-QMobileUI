@@ -80,7 +80,7 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
 
     open func startAnimation() {
         // Remove the title
-        let state = UIControlState()
+        let state: UIControlState = .normal
         self.cachedTitle = title(for: state)
         self.setTitle("", for: state)
 
@@ -110,7 +110,7 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
 
     open func reset() {
         self.layer.removeAllAnimations()
-        self.setTitle(self.cachedTitle, for: UIControlState())
+        self.setTitle(self.cachedTitle, for: .normal)
         self.activityIndicator.stopAnimation()
     }
 

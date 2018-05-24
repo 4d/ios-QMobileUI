@@ -173,13 +173,18 @@ extension ApplicationDataSync: DataSyncDelegate {
 
 extension SwiftMessages {
 
+    public static var confirmationColor: UIColor = UIColor(named: "MessageConfirmation") ??
+        UIColor(red: 30/255, green: 200/255, blue: 80/255, alpha: 1)
+    public static var confirmationForegroundColor: UIColor = UIColor(named: "MessageConfirmationForeground") ??
+        .white
+
     public static func displayConfirmation(_ message: String) {
         assert(Thread.isMainThread)
         let view = MessageView.viewFromNib(layout: .statusLine)
         view.configureTheme(.success)
         view.configureDropShadow()
         view.configureContent(body: message)
-        view.configureTheme(backgroundColor: UIColor(red: 30/255, green: 200/255, blue: 80/255, alpha: 1), foregroundColor: UIColor.white)
+        view.configureTheme(backgroundColor: confirmationColor, foregroundColor: confirmationForegroundColor)
         var config = SwiftMessages.Config()
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
         config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 4.0)
@@ -188,15 +193,15 @@ extension SwiftMessages {
 
     public static func displayWarning(_ message: String) {
         assert(Thread.isMainThread)
-        let view = MessageView.viewFromNib(layout: .cardView)
-        view.configureTheme(.error)
+        let view = MessageView.viewFromNib(layout: .statusLine)
+        view.configureTheme(.warning)
         view.configureContent(body: message)
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 3.0)
-        config.dimMode = .gray(interactive: true)
-        config.presentationStyle = .bottom
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 5.0)
+       // config.dimMode = .gray(interactive: true)
+        config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
         SwiftMessages.show(config: config, view: view)
     }
 

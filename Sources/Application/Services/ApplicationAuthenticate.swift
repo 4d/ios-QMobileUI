@@ -34,9 +34,7 @@ extension ApplicationAuthenticate: ApplicationService {
         if let authToken = keyChain["auth.token"] as? AuthToken {
             apiManager.authToken = authToken
         } else {
-            if hasLoginForm {
-                // TODO show login form
-            } else {
+            if !hasLoginForm {
                 // login guest mode
                 let guestLogin = ""
                 let cancellable = apiManager.authentificate(login: guestLogin) { result in
@@ -56,7 +54,7 @@ extension ApplicationAuthenticate: ApplicationService {
                     }
                 }
                 logger.info("Application is trying to authenticate with 4d server `\(apiManager.rest.baseURL)` using guest mode. \(cancellable)")
-            }
+            } // else login form must be displayed, show flow controller or main view controller
         }
     }
 

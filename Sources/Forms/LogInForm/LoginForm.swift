@@ -24,6 +24,9 @@ open class LoginForm: UIViewController {
     /// Identifier for segue when successfuly logged. Default value "logged"
     @IBInspectable open var loggedSegueIdentifier: String = "logged"
 
+    /// If true save login information and fill it at start.
+    @IBInspectable open var saveLoginInfo: Bool = false
+
     /// Segue to go to passcode form
     //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"
 
@@ -40,6 +43,10 @@ open class LoginForm: UIViewController {
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
+
+        if let login = Prephirences.sharedInstance["auth.login"] as? String {
+            loginTextField.text = login
+        }
         onLoad()
     }
 
@@ -113,10 +120,16 @@ open class LoginForm: UIViewController {
         if checkLoginClickable() {
             loginTextField.errorMessage = ""
         } else {
+            let email = self.email
             if email.count > 3 && !email.isValidEmail {
                 loginTextField.errorMessage = "Invalid email"
             } else {
                 loginTextField.errorMessage = ""
+
+                if saveLoginInfo {
+                    var pref = Prephirences.sharedMutableInstance
+                    pref?["auth.login"] = email
+                }
             }
         }
     }
@@ -170,8 +183,16 @@ open class LoginForm: UIViewController {
                     onForeground {
                         if let restError = error.restErrors {
                             if let statusText = restError.statusText {
-                                SwiftMessages.displayError(title: error.errorDescription ?? "Failed to login", message: statusText)
+                                SwiftMessages.displayWarning(statusText)
+                            } else {
+                                SwiftMessages.displayWarning("You are not allowed to connect.")
                             }
+                        } else if let error = error.urlError {
+                            SwiftMessages.displayWarning(error.localizedDescription)
+                        } else if let error = error.afError {
+                            SwiftMessages.displayWarning(error.localizedDescription)
+                        } else if let error = error.moyaError {
+                            SwiftMessages.displayWarning(error.localizedDescription)
                         }
                     }
                 }

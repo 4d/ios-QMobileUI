@@ -39,13 +39,7 @@ extension SettingLogOutCell: DialogFormDelegate {
                 }
                 dialog.dismiss(animated: true)
 
-                /// TODO Get login form
-                let loginForm: UIViewController? = nil
-                if let loginForm = loginForm {
-                    self.viewController?.present(loginForm, animated: false) {
-
-                    }
-                }
+                self.viewController?.performSegue(withIdentifier: "logout", sender: sender)
             }
         }
     }

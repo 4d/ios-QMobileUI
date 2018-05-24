@@ -63,6 +63,10 @@ open class SettingsForm: UITableViewController {
 
     @IBInspectable open var sectionHeaderForegroundColor: UIColor = UIColor(named: "BackgroundColor") ?? .clear
 
+    var hasLoginForm: Bool {
+        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
+    }
+
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
@@ -142,6 +146,13 @@ open class SettingsForm: UITableViewController {
     }
 
     // MARK: table view
+
+    open override func numberOfSections(in tableView: UITableView) -> Int {
+        if hasLoginForm {
+            return Section.all.count
+        }
+        return Section.all.count - 1
+    }
 
     open override func tableView(_ tableView: UITableView, willDisplay: UITableViewCell, forRowAt: IndexPath) {
 
