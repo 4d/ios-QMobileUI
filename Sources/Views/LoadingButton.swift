@@ -22,14 +22,14 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
         }
     }
 
-    @IBInspectable dynamic open var disabledColor: UIColor = UIColor(white: 0.88, alpha: 1.0) {
+    static var buttonDisabledColor: String = "buttonDisabledColor"
+
+    @IBInspectable dynamic open var disabledColor: UIColor =
+        UIColor(named: LoadingButton.buttonDisabledColor) ?? UIColor(white: 0.88, alpha: 1.0) {
         didSet {
             configureBackgroundColor()
         }
     }
-
-    /// Closure to be notified of animation end.
-    open var completionHandler : (() -> Void)?
 
     /// Cache title (removed when animating)
     private var cachedTitle: String?
@@ -97,10 +97,9 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
         })
     }
 
-    open func stopAnimation(completion:(() -> Void)? = nil) {
-        self.completionHandler = completion
+    open func stopAnimation(completionHandler: (() -> Void)? = nil) {
         self.expand { // Maybe let transition do this animation
-            self.completionHandler?()
+            completionHandler?()
             // Reset
             Timer.schedule(delay: 1) { _ in
                 self.reset()

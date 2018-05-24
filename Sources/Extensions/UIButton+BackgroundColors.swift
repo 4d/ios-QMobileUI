@@ -50,7 +50,9 @@ extension UIButton {
     }
 
     private func updateBackgroundColorForState(_ state: UIControlState) {
-        backgroundColor = backgroundColors[state.rawValue]
+        if let backgroundcolor = backgroundColors[state.rawValue] {
+            self.backgroundColor = backgroundColors[state.rawValue]
+        }
     }
 
 }
