@@ -76,7 +76,7 @@ extension ApplicationCrashManager: ApplicationService {
         // Maybe at start
 
         // Try loading the crash report
-        if crashURL != nil {
+        if ApplicationCrashManager.crashURL != nil {
             let alert = UIAlertController(title: "Information", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
             alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.destructive, handler: { _ in
