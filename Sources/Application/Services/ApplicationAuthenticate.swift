@@ -30,9 +30,8 @@ extension ApplicationAuthenticate: ApplicationService {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         let apiManager = APIManager.instance
-        let keyChain = KeychainPreferences.sharedInstance
-        if let authToken = keyChain["auth.token"] as? AuthToken {
-            apiManager.authToken = authToken
+        if let authToken = apiManager.authToken, authToken.isValidToken {
+            logger.info("Application already logged with session \(authToken.id)")
         } else {
             if !hasLoginForm {
                 // login guest mode

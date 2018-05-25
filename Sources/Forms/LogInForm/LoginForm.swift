@@ -162,33 +162,45 @@ open class LoginForm: UIViewController {
                 switch result {
                 case .success(let token):
                     this.loginButton.stopAnimation {
-                        DispatchQueue.main.async {
+                        onForeground {
                             this.loginTextField.isEnabled = true
                             this.performSegue(withIdentifier: this.loggedSegueIdentifier, sender: sender)
+
+                            if let statusText = token.statusText, !statusText.isEmpty {
+                                // Maybe some issues with displaying during segue
+                                SwiftMessages.displayConfirmation(statusText)
+                            }
                         }
                     }
 
-                    if let statusText = token.statusText {
-                        onForeground {
-                          SwiftMessages.displayConfirmation(statusText)
-                        }
-                    }
                 case .failure(let error):
                     logger.warning("Failed to login: \(error)")
-                    this.loginButton.stopAnimation()
-                    this.loginButton.reset()
-                    this.loginTextField.isEnabled = true
-                    this.loginTextField.shake()
 
                     onForeground {
+                        this.loginButton.stopAnimation()
+                        this.loginButton.reset()
+                        this.loginTextField.isEnabled = true
+
                         if let restError = error.restErrors {
                             if let statusText = restError.statusText {
                                 SwiftMessages.displayWarning(statusText)
                             } else {
                                 SwiftMessages.displayWarning("You are not allowed to connect.")
                             }
+                            this.loginTextField.shake()
                         } else if let error = error.urlError {
-                            SwiftMessages.displayWarning(error.localizedDescription)
+                            let serverCertificateCodes: [URLError.Code] = [
+                                .serverCertificateHasBadDate,
+                                .serverCertificateHasUnknownRoot,
+                                .serverCertificateNotYetValid,
+                                .serverCertificateUntrusted
+                            ]
+                            if serverCertificateCodes.contains(error.code) {
+                                SwiftMessages.displayError(title: "Server certificate error",
+                                                           message: error.localizedDescription)
+                            } else {
+                                SwiftMessages.displayWarning(error.localizedDescription)
+                            }
                         } else if let error = error.afError {
                             SwiftMessages.displayWarning(error.localizedDescription)
                         } else if let error = error.moyaError {

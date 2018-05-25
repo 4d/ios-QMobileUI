@@ -98,13 +98,13 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
     }
 
     open func stopAnimation(completionHandler: (() -> Void)? = nil) {
-        self.expand { // Maybe let transition do this animation
-            completionHandler?()
-            // Reset
-            Timer.schedule(delay: 1) { _ in
-                self.reset()
-            }
+        /*self.expand { // Maybe let transition do this animation*/
+        completionHandler?()
+        // Reset
+        Timer.schedule(delay: 1) { _ in
+            self.reset()
         }
+        /*}*/
         self.activityIndicator.stopAnimation()
     }
 

@@ -214,7 +214,9 @@ extension SwiftMessages {
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
         config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 4.0)
+        //config.dimMode = .blur(style: .prominent, alpha: 0.5, interactive: true) 
         config.dimMode = .gray(interactive: true)
+        config.presentationStyle = .center
         SwiftMessages.show(config: config, view: view)
     }
 }
