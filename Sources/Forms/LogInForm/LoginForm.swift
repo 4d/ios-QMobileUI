@@ -19,7 +19,7 @@ import QMobileDataSync
 
 /// Form to login
 @IBDesignable
-open class LoginForm: UIViewController {
+open class LoginForm: UIViewController, UITextFieldDelegate {
 
     /// Identifier for segue when successfuly logged. Default value "logged"
     @IBInspectable open var loggedSegueIdentifier: String = "logged"
@@ -47,6 +47,7 @@ open class LoginForm: UIViewController {
         if let login = Prephirences.sharedInstance["auth.login"] as? String {
             loginTextField.text = login
         }
+        loginTextField.delegate = self
         onLoad()
     }
 
@@ -59,6 +60,7 @@ open class LoginForm: UIViewController {
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         loginButton.isUserInteractionEnabled = false
+        loginTextField.becomeFirstResponder()
         onDidAppear(animated)
     }
 
@@ -134,6 +136,13 @@ open class LoginForm: UIViewController {
         }
     }
 
+    /// The login text field is no more edited.
+    open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //textField.resignFirstResponder() // Dismiss the keyboard
+        login(textField)
+        return true
+    }
+
     /// Check if login button must be clickable. Using `isLoginClickable`.
     /// If `false` the button interaction is disabled.
     open func checkLoginClickable() -> Bool {
@@ -150,67 +159,74 @@ open class LoginForm: UIViewController {
         return email.isValidEmail
     }
 
+    fileprivate func updateUIForLogin() {
+        loginButton.startAnimation()
+        loginTextField.isEnabled = false
+    }
+
+    fileprivate func displayError(_ error: (APIError)) {
+        if let restError = error.restErrors {
+            if let statusText = restError.statusText {
+                SwiftMessages.displayWarning(statusText)
+            } else {
+                SwiftMessages.displayWarning("You are not allowed to connect.")
+            }
+            self.loginTextField.shake()
+        } else if let error = error.urlError {
+            let serverCertificateCodes: [URLError.Code] = [
+                .serverCertificateHasBadDate,
+                .serverCertificateHasUnknownRoot,
+                .serverCertificateNotYetValid,
+                .serverCertificateUntrusted
+            ]
+            if serverCertificateCodes.contains(error.code) {
+                SwiftMessages.displayError(title: "Server certificate error",
+                                           message: error.localizedDescription)
+            } else {
+                SwiftMessages.displayWarning(error.localizedDescription)
+            }
+        } else if let error = error.afError {
+            SwiftMessages.displayWarning(error.localizedDescription)
+        } else if let error = error.moyaError {
+            SwiftMessages.displayWarning(error.localizedDescription)
+        }
+    }
+
     @IBAction open func login(_ sender: Any!) {
-        let email = self.email
-        let parameters = self.customParameters
+        guard isLoginClickable else {
+            self.loginTextField.shake()
+            return
+        }
+        let date = Date() + 1
+        updateUIForLogin()
+        cancellable = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
+            guard let this = self else { return }
 
-        if isLoginClickable {
-            loginButton.startAnimation()
-            loginTextField.isEnabled = false
-            cancellable = APIManager.instance.authentificate(login: email, parameters: parameters) {  [weak self] result in
-                guard let this = self else { return }
-                switch result {
-                case .success(let token):
-                    this.loginButton.stopAnimation {
-                        onForeground {
-                            this.loginTextField.isEnabled = true
-                            this.performSegue(withIdentifier: this.loggedSegueIdentifier, sender: sender)
+            Thread.sleep(until: date) // allow to start animation if server respond to quickly
 
-                            if let statusText = token.statusText, !statusText.isEmpty {
-                                // Maybe some issues with displaying during segue
-                                SwiftMessages.displayConfirmation(statusText)
-                            }
+            onForeground {
+                this.loginButton.stopAnimation {
+                    this.loginButton.reset()
+                    this.loginTextField.isEnabled = true
+
+                    switch result {
+                    case .success(let token):
+                        logger.warning("Application has been authenticated.")
+                        this.performSegue(withIdentifier: this.loggedSegueIdentifier, sender: sender)
+
+                        if let statusText = token.statusText, !statusText.isEmpty {
+                            // Maybe some issues with displaying during segue
+                            SwiftMessages.displayConfirmation(statusText)
                         }
+
+                    case .failure(let error):
+                        logger.warning("Failed to login: \(error)")
+
+                        this.displayError(error)
                     }
 
-                case .failure(let error):
-                    logger.warning("Failed to login: \(error)")
-
-                    onForeground {
-                        this.loginButton.stopAnimation()
-                        this.loginButton.reset()
-                        this.loginTextField.isEnabled = true
-
-                        if let restError = error.restErrors {
-                            if let statusText = restError.statusText {
-                                SwiftMessages.displayWarning(statusText)
-                            } else {
-                                SwiftMessages.displayWarning("You are not allowed to connect.")
-                            }
-                            this.loginTextField.shake()
-                        } else if let error = error.urlError {
-                            let serverCertificateCodes: [URLError.Code] = [
-                                .serverCertificateHasBadDate,
-                                .serverCertificateHasUnknownRoot,
-                                .serverCertificateNotYetValid,
-                                .serverCertificateUntrusted
-                            ]
-                            if serverCertificateCodes.contains(error.code) {
-                                SwiftMessages.displayError(title: "Server certificate error",
-                                                           message: error.localizedDescription)
-                            } else {
-                                SwiftMessages.displayWarning(error.localizedDescription)
-                            }
-                        } else if let error = error.afError {
-                            SwiftMessages.displayWarning(error.localizedDescription)
-                        } else if let error = error.moyaError {
-                            SwiftMessages.displayWarning(error.localizedDescription)
-                        }
-                    }
                 }
             }
-        } else {
-            self.loginTextField.shake()
         }
     }
 

@@ -40,7 +40,8 @@ extension ApplicationLogger: ApplicationService {
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8
         let maxTimeInterval = logPref["maxTimeInterval"] as? TimeInterval
-        let appleSystem = logPref["appleSystem"] as? Bool ?? true
+        let appleSystem = logPref["appleSystem"] as? Bool ?? false
+        let immediate = logPref["immediate"] as? Bool ?? false // if true, debug is easiest, but app perf will discrease
 
         let levelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "level")
         levelPref.transformation = XCGLogger.Level.preferenceTransformation
@@ -52,11 +53,7 @@ extension ApplicationLogger: ApplicationService {
 
         let fileLevelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "fileLevel")
         fileLevelPref.transformation = XCGLogger.Level.preferenceTransformation
-        #if DEBUG
-            let fileLevel: XCGLogger.Level? = fileLevelPref.value
-        #else
-            let fileLevel: XCGLogger.Level? = fileLevelPref.value
-        #endif
+        let fileLevel: XCGLogger.Level? = fileLevelPref.value
 
         let formatterPref: Preference<LogFormatter> = logPref.preference(forKey: "formatter")
         formatterPref.transformation = LogFormatter.preferenceTransformation
@@ -81,11 +78,9 @@ extension ApplicationLogger: ApplicationService {
             if let formatter = formatter {
                 destination.formatters = [formatter.formatter]
             }
-            #if DEBUG
-                // immediate
-            #else
+            if !immediate {
                 destination.logQueue = XCGLogger.logQueue
-            #endif
+            }
         }
 
         if let writeToFile = writeToFile, let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
@@ -105,11 +100,12 @@ extension ApplicationLogger: ApplicationService {
                 if let maxTimeInterval = maxTimeInterval {
                     autodestination.targetMaxTimeInterval = maxTimeInterval
                 }
-                #if DEBUG
-                    autodestination.autoRotationCompletion = { success in
-                        print("Log autorotation status: \(success)")
+                autodestination.autoRotationCompletion = { success in
+                    if success {
+                        print("Log has been autorotated")
                     }
-                #endif
+                    print("Log has failed to autorotate")
+                }
                 destination = autodestination
 
                 autodestination.cleanUpLogFiles() // XXX maybe do it in task
@@ -122,11 +118,10 @@ extension ApplicationLogger: ApplicationService {
             destination.showLineNumber = showLineNumbers
             destination.showDate = showDate
             destination.outputLevel = fileLevel ?? level
-            #if DEBUG
-                // immediate
-            #else
+
+            if !immediate {
                 destination.logQueue = XCGLogger.logQueue
-            #endif
+            }
 
             destination.formatters = [LogFormatter.ansi.formatter]
 

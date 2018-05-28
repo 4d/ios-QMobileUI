@@ -43,16 +43,16 @@ extension ApplicationAuthenticate: ApplicationService {
                         if authToken.isValidToken {
                             apiManager.authToken = authToken
                         } else {
-                            logger.info("Application has been authenticated with 4d server `\(apiManager.rest.baseURL)` using guest mode but no token provided. Server admin must validate the session")
+                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided. Server admin must validate the session")
                             // TODO show form with message about login
                         }
                     case .failure(let error):
                         let error: Error = error.restErrors ?? error
-                        logger.error("Failed to authenticate with 4d server `\(apiManager.rest.baseURL)` using guest mode: \(error)")
+                        logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
                         // TODO show full screen dialog with error message
                     }
                 }
-                logger.info("Application is trying to authenticate with 4d server `\(apiManager.rest.baseURL)` using guest mode. \(cancellable)")
+                logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")
             } // else login form must be displayed, show flow controller or main view controller
         }
     }

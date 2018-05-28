@@ -405,7 +405,7 @@ extension UILabel {
             }
             self.text = uri
 
-            let restTarget = DataSync.instance.rest.rest
+            let restTarget = DataSync.instance.rest.base
             let urlString = restTarget.baseURL.absoluteString +
                 (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
             guard let components = URLComponents(string: urlString), let url = components.url else {

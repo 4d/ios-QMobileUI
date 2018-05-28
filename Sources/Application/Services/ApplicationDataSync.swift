@@ -184,10 +184,11 @@ extension SwiftMessages {
         view.configureTheme(.success)
         view.configureDropShadow()
         view.configureContent(body: message)
+        view.tapHandler = { _ in SwiftMessages.hide() }
         view.configureTheme(backgroundColor: confirmationColor, foregroundColor: confirmationForegroundColor)
         var config = SwiftMessages.Config()
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 4.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 6.0)
         SwiftMessages.show(config: config, view: view)
     }
 
@@ -199,7 +200,7 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 5.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 20.0)
        // config.dimMode = .gray(interactive: true)
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
         SwiftMessages.show(config: config, view: view)
@@ -213,7 +214,7 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 4.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 30.0)
         //config.dimMode = .blur(style: .prominent, alpha: 0.5, interactive: true) 
         config.dimMode = .gray(interactive: true)
         config.presentationStyle = .center
