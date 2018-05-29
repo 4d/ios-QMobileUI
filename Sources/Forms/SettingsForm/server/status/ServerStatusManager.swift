@@ -10,6 +10,7 @@ import Foundation
 import Prephirences
 import Moya
 import Result
+import BrightFutures
 
 import QMobileAPI
 import QMobileDataSync
@@ -86,7 +87,8 @@ open class ServerStatusManager {
             self.serverStatus(.checking)
             logger.verbose("Checking status \(checkingUUID). load status start")
             let apiManager = APIManager(url: url)
-            let checkstatus = apiManager.loadStatus()
+
+            let checkstatus = apiManager.status()
             let context = self.queue.context
             checkstatus.onSuccess(context) { _ in
                 APIManager.instance = apiManager

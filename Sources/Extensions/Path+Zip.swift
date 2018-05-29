@@ -51,6 +51,4 @@ extension Path {
             throw FileKitError.readFromFileFail(path: self, error: error)
         }
     }
-
-    // TODO: could make Path optionnal and look for the better archive name.
 }

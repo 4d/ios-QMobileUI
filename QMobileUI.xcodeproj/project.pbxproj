@@ -382,7 +382,6 @@
 		480392B91E92945F008CF992 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
-				FE655FFB20AD928900B55336 /* Path+Zip.swift */,
 				480B43561E842448007C90DD /* Platform.swift */,
 				480B435C1E842699007C90DD /* NSObject+QMobile.swift */,
 				480392B71E92944D008CF992 /* Collection+QMobile.swift */,
@@ -452,6 +451,7 @@
 		483FDA811E826C8A00FAF84B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				FE655FFB20AD928900B55336 /* Path+Zip.swift */,
 				480392BB1E9294FD008CF992 /* CoreGraphics */,
 				480392B91E92945F008CF992 /* Foundation */,
 				480392BA1E9294F5008CF992 /* UIKit */,
