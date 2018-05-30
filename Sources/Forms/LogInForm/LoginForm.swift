@@ -223,6 +223,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
                         logger.warning("Failed to login: \(error)")
 
                         this.displayError(error)
+
+                        this.loginTextField.becomeFirstResponder()
                     }
 
                 }

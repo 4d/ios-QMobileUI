@@ -61,7 +61,7 @@ open class SettingsForm: UITableViewController {
         }
     }
 
-    @IBInspectable open var sectionHeaderForegroundColor: UIColor = UIColor(named: "BackgroundColor") ?? .clear
+    @IBInspectable open var sectionHeaderForegroundColor: UIColor = /*UIColor(named: "BackgroundColor") ??*/ .clear
 
     var hasLoginForm: Bool {
         return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
