@@ -159,11 +159,22 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
         onForeground {
-            SwiftMessages.displayConfirmation("Data updated")
+            SwiftMessages.displayInfo("Data updated")
         }
     }
-
+    var hasLoginForm: Bool {
+        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
+    }
     public func didDataSyncFailed(error: DataSyncError) {
+        if case .apiError(let apiError) = error {
+            if apiError.isHTTPResponseWith(codes: [.unauthorized, .forbidden]) { // TODO remove forbidden
+                // TODO must not be done here, for each request if forbidden occurs, send notification, and a listener must logout
+                if hasLoginForm {
+                    UIApplication.topViewController?.navigationController?.popToRootViewController(animated: true)
+                    return
+                }
+            }
+        }
         onForeground {
             SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
         }
@@ -173,22 +184,34 @@ extension ApplicationDataSync: DataSyncDelegate {
 
 extension SwiftMessages {
 
-    public static var confirmationColor: UIColor = UIColor(named: "MessageConfirmation") ??
-        UIColor(red: 30/255, green: 200/255, blue: 80/255, alpha: 1)
-    public static var confirmationForegroundColor: UIColor = UIColor(named: "MessageConfirmationForeground") ??
-        .white
+    public static var infoColor = UIColor(named: "MessageInfoBackgroundColor")
+    public static var infoForegroundColor = UIColor(named: "MessageInfoForegroundColor")
 
-    public static func displayConfirmation(_ message: String) {
+    public static func displayInfo(_ message: String, duration: TimeInterval = 3) {
         assert(Thread.isMainThread)
-        let view = MessageView.viewFromNib(layout: .statusLine)
-        view.configureTheme(.success)
-        view.configureDropShadow()
+
+        var layout: MessageView.Layout = .statusLine
+        if message.contains("\n") {
+            layout = .messageView
+        }
+
+        let view = MessageView.viewFromNib(layout: layout)
+
+        if let backgroundColor = infoColor, let foregroundColor = infoForegroundColor {
+            view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
+        } /*else if let backgroundColor = UIColor(named: "BackgroundColor"), let foregroundColor = UIColor(named: "ForegroundColor") {
+            view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
+        } */else {
+            view.configureTheme(.success)
+        }
+
+        //view.configureDropShadow()
         view.configureContent(body: message)
         view.tapHandler = { _ in SwiftMessages.hide() }
-        view.configureTheme(backgroundColor: confirmationColor, foregroundColor: confirmationForegroundColor)
         var config = SwiftMessages.Config()
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? 6.0)
+        config.presentationStyle = .top
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? duration)
         SwiftMessages.show(config: config, view: view)
     }
 
@@ -200,7 +223,7 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 20.0)
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 10.0)
        // config.dimMode = .gray(interactive: true)
         config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
         SwiftMessages.show(config: config, view: view)
@@ -214,10 +237,10 @@ extension SwiftMessages {
         view.button?.isHidden = true
         view.tapHandler = { _ in SwiftMessages.hide() }
         var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 30.0)
-        //config.dimMode = .blur(style: .prominent, alpha: 0.5, interactive: true) 
-        config.dimMode = .gray(interactive: true)
-        config.presentationStyle = .center
+        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 20.0)
+
+        config.dimMode = .gray(interactive: true) // .blur(style: .prominent, alpha: 0.5, interactive: true)
+        config.presentationStyle = .top
         SwiftMessages.show(config: config, view: view)
     }
 }

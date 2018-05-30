@@ -216,7 +216,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
                         if let statusText = token.statusText, !statusText.isEmpty {
                             // Maybe some issues with displaying during segue
-                            SwiftMessages.displayConfirmation(statusText)
+                            SwiftMessages.displayInfo(statusText)
                         }
 
                     case .failure(let error):
