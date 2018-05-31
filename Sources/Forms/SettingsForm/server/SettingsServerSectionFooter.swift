@@ -31,7 +31,7 @@ open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, 
     // Install tap gesture on footer to relaunch server status check
     // Override it and do nothing remote it
     open func installTagGesture() {
-        let gestureRecognizer =  UITapGestureRecognizer(target: nil, action: #selector(self.tapped(_:)))
+        let gestureRecognizer =  UITapGestureRecognizer(target: self, action: #selector(self.tapped(_:)))
         self.iconView.addGestureRecognizer(gestureRecognizer)
         self.iconView.isUserInteractionEnabled = true
         self.titleLabel.addGestureRecognizer(gestureRecognizer)

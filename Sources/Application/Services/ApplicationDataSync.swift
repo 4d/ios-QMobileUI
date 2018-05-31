@@ -110,6 +110,9 @@ extension ApplicationDataSync: ApplicationService {
         let future: DataSync.SyncFuture = sync ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
             logger.debug("data from data store initilized")
+            if sync {
+                SwiftMessages.info("Data updated")
+            }
         }
         future.onFailure { error in
             logger.warning("Failed to initialize data from data store \(error)")
@@ -126,12 +129,14 @@ public func dataReload(_ completionHandler: @escaping QMobileDataSync.DataSync.S
     return ApplicationDataSync.dataSync.reload(completionHandler)
 }
 
+/// Get the last data sync date.
 public func dataLastSync() -> Date? {
     let dataStore = ApplicationDataSync.dataSync.dataStore
     var metadata = dataStore.metadata
     return metadata?.lastSync
 }
 
+// MARK: DataSyncDelegate
 extension ApplicationDataSync: DataSyncDelegate {
     public func willDataSyncBegin(tables: [QMobileAPI.Table]) -> Bool {
         if applicationWillTerminate /* stop sync is app shutdown */ {
@@ -141,106 +146,16 @@ extension ApplicationDataSync: DataSyncDelegate {
         return false
     }
 
-    public func willDataSyncBegin(for table: QMobileAPI.Table) {
+    public func willDataSyncBegin(for table: QMobileAPI.Table) {}
 
-    }
+    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {}
 
-    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {
+    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {}
 
-    }
+    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError) {}
 
-    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {
+    public func didDataSyncEnd(tables: [QMobileAPI.Table]) {}
 
-    }
+    public func didDataSyncFailed(error: DataSyncError) {}
 
-    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError) {
-
-    }
-
-    public func didDataSyncEnd(tables: [QMobileAPI.Table]) {
-        onForeground {
-            SwiftMessages.displayInfo("Data updated")
-        }
-    }
-    var hasLoginForm: Bool {
-        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
-    }
-    public func didDataSyncFailed(error: DataSyncError) {
-        if case .apiError(let apiError) = error {
-            if apiError.isHTTPResponseWith(codes: [.unauthorized, .forbidden]) { // TODO remove forbidden
-                // TODO must not be done here, for each request if forbidden occurs, send notification, and a listener must logout
-                if hasLoginForm {
-                    UIApplication.topViewController?.navigationController?.popToRootViewController(animated: true)
-                    return
-                }
-            }
-        }
-        onForeground {
-            SwiftMessages.displayError(title: error.errorDescription ?? "An error occurs", message: error.failureReason ?? "")
-        }
-    }
-
-}
-
-extension SwiftMessages {
-
-    public static var infoColor = UIColor(named: "MessageInfoBackgroundColor")
-    public static var infoForegroundColor = UIColor(named: "MessageInfoForegroundColor")
-
-    public static func displayInfo(_ message: String, duration: TimeInterval = 3) {
-        assert(Thread.isMainThread)
-
-        var layout: MessageView.Layout = .statusLine
-        if message.contains("\n") {
-            layout = .messageView
-        }
-
-        let view = MessageView.viewFromNib(layout: layout)
-
-        if let backgroundColor = infoColor, let foregroundColor = infoForegroundColor {
-            view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
-        } /*else if let backgroundColor = UIColor(named: "BackgroundColor"), let foregroundColor = UIColor(named: "ForegroundColor") {
-            view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
-        } */else {
-            view.configureTheme(.success)
-        }
-
-        //view.configureDropShadow()
-        view.configureContent(body: message)
-        view.tapHandler = { _ in SwiftMessages.hide() }
-        var config = SwiftMessages.Config()
-        config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
-        config.presentationStyle = .top
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.info.duration"] as? TimeInterval ?? duration)
-        SwiftMessages.show(config: config, view: view)
-    }
-
-    public static func displayWarning(_ message: String) {
-        assert(Thread.isMainThread)
-        let view = MessageView.viewFromNib(layout: .statusLine)
-        view.configureTheme(.warning)
-        view.configureContent(body: message)
-        view.button?.isHidden = true
-        view.tapHandler = { _ in SwiftMessages.hide() }
-        var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.warning.duration"] as? TimeInterval ?? 10.0)
-       // config.dimMode = .gray(interactive: true)
-        config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
-        SwiftMessages.show(config: config, view: view)
-    }
-
-    public static func displayError(title: String, message: String) {
-        assert(Thread.isMainThread)
-        let view = MessageView.viewFromNib(layout: .cardView)
-        view.configureTheme(.error)
-        view.configureContent(title: title, body: message)
-        view.button?.isHidden = true
-        view.tapHandler = { _ in SwiftMessages.hide() }
-        var config = SwiftMessages.Config()
-        config.duration = .seconds(seconds: Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 20.0)
-
-        config.dimMode = .gray(interactive: true) // .blur(style: .prominent, alpha: 0.5, interactive: true)
-        config.presentationStyle = .top
-        SwiftMessages.show(config: config, view: view)
-    }
 }

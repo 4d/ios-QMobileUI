@@ -48,12 +48,14 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
             loginTextField.text = login
         }
         loginTextField.delegate = self
+        _ = checkLoginClickable()
         onLoad()
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
+        loginTextField.becomeFirstResponder()
         onWillAppear(animated)
     }
 
@@ -167,9 +169,9 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     fileprivate func displayError(_ error: (APIError)) {
         if let restError = error.restErrors {
             if let statusText = restError.statusText {
-                SwiftMessages.displayWarning(statusText)
+                SwiftMessages.warning(statusText)
             } else {
-                SwiftMessages.displayWarning("You are not allowed to connect.")
+                SwiftMessages.warning("You are not allowed to connect.")
             }
             self.loginTextField.shake()
         } else if let error = error.urlError {
@@ -180,15 +182,15 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
                 .serverCertificateUntrusted
             ]
             if serverCertificateCodes.contains(error.code) {
-                SwiftMessages.displayError(title: "Server certificate error",
-                                           message: error.localizedDescription)
+                SwiftMessages.error(title: "Server certificate error. Please advice the server administrator.",
+                                    message: error.localizedDescription)
             } else {
-                SwiftMessages.displayWarning(error.localizedDescription)
+                SwiftMessages.warning(error.localizedDescription)
             }
         } else if let error = error.afError {
-            SwiftMessages.displayWarning(error.localizedDescription)
+            SwiftMessages.warning(error.localizedDescription)
         } else if let error = error.moyaError {
-            SwiftMessages.displayWarning(error.localizedDescription)
+            SwiftMessages.warning(error.localizedDescription)
         }
     }
 
@@ -216,7 +218,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
                         if let statusText = token.statusText, !statusText.isEmpty {
                             // Maybe some issues with displaying during segue
-                            SwiftMessages.displayInfo(statusText)
+                            SwiftMessages.info(statusText)
                         }
 
                     case .failure(let error):

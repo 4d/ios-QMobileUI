@@ -39,12 +39,8 @@ extension ApplicationAuthenticate: ApplicationService {
                 let cancellable = apiManager.authentificate(login: guestLogin) { result in
                     switch result {
                     case .success(let authToken):
-                        apiManager.authToken = authToken
-                        if authToken.isValidToken {
-                            apiManager.authToken = authToken
-                        } else {
-                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided. Server admin must validate the session")
-                            // TODO show form with message about login
+                        if !authToken.isValidToken {
+                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided. Server admin must validate the session or accept it or next action on server could not working")
                         }
                     case .failure(let error):
                         let error: Error = error.restErrors ?? error

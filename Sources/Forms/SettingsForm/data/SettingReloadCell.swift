@@ -9,6 +9,8 @@
 import UIKit
 
 import Moya
+import Prephirences
+import SwiftMessages
 
 import QMobileAPI
 import QMobileDataSync
@@ -54,7 +56,7 @@ extension SettingReloadCell: DialogFormDelegate {
                 ServerStatusManager.instance.checkStatus(0) // XXX do elsewhere (break using listener)
             }
         }
-        DataReloadManager.instance.reload()
+        DataReloadManager.instance.reload(didReload)
     }
 
     // if cancel pressed
@@ -63,6 +65,62 @@ extension SettingReloadCell: DialogFormDelegate {
         onForeground {
             dialog.dismiss(animated: true) /// XXX maybe wait cancel
         }
+    }
+
+    /// Return true if application need to display login form.
+    /// see application preferences.
+    public var hasLoginForm: Bool {
+        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
+    }
+
+    public func logout(_ completion: (() -> Void)? = nil) {
+        foreground {
+            self.viewController?.performSegue(withIdentifier: "logout", sender: self)
+            completion?()
+        }
+    }
+
+    /// Called when reload end.
+    public func didReload(_ result: DataSync.SyncResult) {
+        switch result {
+        case .success:
+
+            SwiftMessages.info("Data has been reloaded")
+
+        case .failure(let error):
+            if case .apiError(let apiError) = error,
+                apiError.isHTTPResponseWith(code: .unauthorized) {
+                if hasLoginForm {
+                    // Display error before logout
+                    SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data",
+                                        message: "You have been disconnected",
+                                        configure: { (messageView, config) in
+                                            messageView.tapHandler = { _ in
+                                                SwiftMessages.hide()
+                                                self.logout()
+                                            }
+                                            var config = config
+                                            config.presentationStyle = .center
+                                            config.duration = .forever
+                                            // no interactive because there is no way yet to get background tap handler to make logout
+                                            config.dimMode = .gray(interactive: false)
+                                            return config
+                    })
+                } else {
+                    _ = APIManager.instance.authentificate(login: "") { result in
+                        if let statusText = result.error?.restErrors?.statusText {
+                            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+                        } else {
+                            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                        }
+                    }
+                }
+                return
+            }
+
+            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+        }
+
     }
 
 }

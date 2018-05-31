@@ -1,5 +1,5 @@
 //
-//  LoadingButtonn.swift
+//  LoadingButton.swift
 //  FormEditor
 //
 //  Created by Eric Marchand on 27/03/2018.
