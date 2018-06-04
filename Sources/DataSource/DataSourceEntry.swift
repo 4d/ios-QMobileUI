@@ -79,31 +79,31 @@ public class DataSourceEntry: NSObject {
     }
 
     @objc dynamic open var hasNext: Bool {
-        if let indexPath = self.indexPath {
-            return self.dataSource.hasNext(at: indexPath)
+        guard let indexPath = self.indexPath else {
+            return false
         }
-        return false
+        return self.dataSource.hasNext(at: indexPath)
     }
 
     @objc dynamic open var hasPrevious: Bool {
-        if let indexPath = self.indexPath {
-            return self.dataSource.hasPrevious(at: indexPath)
+        guard let indexPath = self.indexPath else {
+            return false
         }
-        return false
+        return self.dataSource.hasPrevious(at: indexPath)
     }
 
     open var nextIndexPath: IndexPath? {
-        if let indexPath = self.indexPath {
-            return self.dataSource.nextIndexPath(for: indexPath)
+        guard let indexPath = self.indexPath else {
+            return nil
         }
-        return nil
+        return self.dataSource.nextIndexPath(for: indexPath)
     }
 
     open var previousIndexPath: IndexPath? {
-        if let indexPath = self.indexPath {
-            return self.dataSource.previousIndexPath(for: indexPath)
+        guard let indexPath = self.indexPath else {
+            return nil
         }
-        return nil
+        return self.dataSource.previousIndexPath(for: indexPath)
     }
 
     open var lastIndexPath: IndexPath? {
@@ -114,7 +114,7 @@ public class DataSourceEntry: NSObject {
     public override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
         var keyPaths = super.keyPathsForValuesAffectingValue(forKey: key)
 
-        if key == "hasNext" || key == "hasPrevious" || key == "row" || key == "rowString" || key == "section" {
+        if key == "hasNext" || key == "hasPrevious" || key == "row" || key == "rowString" || key == "section" || key == "record" {
             keyPaths.insert("indexPath")
         } else if key == "count" || key == "hasPrevious" || key == "isEmpty"  || key == "isNotEmpty" || key == "name" {
             keyPaths.insert("dataSource")

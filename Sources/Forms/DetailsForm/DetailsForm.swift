@@ -27,24 +27,30 @@ public protocol DetailsForm: class {
 extension DetailsForm {
 
     // MARK: model info from DataSource
+
+    /// The source where to retrieve record information.
     public var dataSource: DataSource? {
         return self.view.table?.dataSource
     }
 
+    /// Current index of the record in `dataSource`
     public var indexPath: IndexPath? {
         return self.view.table?.indexPath
     }
 
-    public var record: Record? {
-        return self.view.record as? Record
+    /// The record in `dataSource` at the `indexPath`
+    public var record: AnyObject? {
+        return self.view.table?.record
     }
 
+    /// Table name of the data source. (same as `dataSource?.tableName`)
     public var tableName: String? {
-        return self.view.table?.dataSource.tableName
+        return self.dataSource?.tableName
     }
 
     // MARK: standards actions
 
+    /// Go to the next record in data source if any.
     public func nextRecord() {
         if let table = self.view.table {
             if let newIndex = table.nextIndexPath {
@@ -56,6 +62,7 @@ extension DetailsForm {
         }
     }
 
+    /// Return to the previous record in data source if any.
     public func previousRecord() {
         if let table = self.view.table {
             if let newIndex = table.previousIndexPath {
@@ -67,6 +74,7 @@ extension DetailsForm {
         }
     }
 
+    /// Go to the first record in data source.
     public func firstRecord() {
         if let table = self.view.table {
             cancelImageDownloadTasks()
@@ -76,6 +84,7 @@ extension DetailsForm {
         }
     }
 
+    /// Go to the last record in data source.
     public func lastRecord() {
         if let table = self.view.table {
             cancelImageDownloadTasks()
@@ -85,13 +94,14 @@ extension DetailsForm {
         }
     }
 
+    // check if action must be enabled or not.
     func checkActions() {
-        if let table = self.view.table {
-            checkActions(table)
-        } else {
+        guard let table = self.view.table else {
             logger.warning("DetailsForm do not receive information from Listform. Maybe the 'indexPath' function on the UICollectionViewCell do not return the index path.")
             assertionFailure("No table set when loading")
+            return
         }
+        checkActions(table)
     }
 
     func checkActions(_ table: DataSourceEntry) {
@@ -99,6 +109,7 @@ extension DetailsForm {
         self.hasNextRecord = table.hasNext
     }
 
+    // try to stop all image download task.
     func cancelImageDownloadTasks() {
         let imageViews: [UIImageView] = filter(value: view) { $0.subviews }
         for imageView in imageViews {
@@ -166,7 +177,6 @@ class TransitionContainerView: UIView, TransitionContainerViewType {
 
     func viewAdded(_ view: UIView) {
         self.table = view.table
-        self.record = view.record
     }
     func snapshotViewAdded(_ view: UIView) {
     }

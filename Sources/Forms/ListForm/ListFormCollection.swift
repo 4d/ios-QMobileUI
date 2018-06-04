@@ -148,11 +148,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
             if let navigation = segue.destination as? UINavigationController {
                 navigation.navigationBar.table = table
-                navigation.navigationBar.record = table.record
+                //navigation.navigationBar.record = table.record
             }
             let destination = segue.destination.firstController
             destination.view.table = table
-            destination.view.record = table.record
+            //destination.view.record = table.record
         } else {
             if segue.identifier == selectedSegueIdentifier {
                 logger.warning("No collection index found for \(String(describing: sender)).")

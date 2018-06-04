@@ -36,14 +36,6 @@ extension UIView {
     }
 
     // MARK: data
-    open var record: BindedRecord? {
-        get {
-            return self.bindTo.record
-        }
-        set {
-            self.bindTo.record = newValue
-        }
-    }
 
     open var settings: PreferencesType? {
         get {
@@ -60,7 +52,7 @@ extension UIView {
         if !hasBindTo {
             return false
         }
-        return record != nil
+        return bindTo.record != nil
     }
 
     open var table: DataSourceEntry? {

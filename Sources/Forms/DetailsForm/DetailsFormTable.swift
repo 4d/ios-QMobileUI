@@ -48,7 +48,6 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
         // Install data into each table cell
         let staticCell = super.tableView(tableView, cellForRowAt: indexPath)
         staticCell.tableView = self.tableView
-        staticCell.record = self.tableView.record
         staticCell.table = self.tableView.table
 
         return staticCell

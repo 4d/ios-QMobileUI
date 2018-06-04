@@ -23,7 +23,7 @@ extension ListForm {
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
         // Give view information about records, let binding fill the UI components
-        view.record = record
+        //view.record = record
 
         let table = DataSourceEntry(dataSource: self.dataSource)
         table.indexPath = indexPath

@@ -17,11 +17,7 @@ open class Binder: NSObject {
 
     fileprivate static let recordVarKey = "record"
     open var record: AnyObject? {
-        didSet {
-            if updateViewOnDidSet && (self.record != nil) /*&& table != nil*/ {
-                updateView()
-            }
-        }
+        return table?.record
     }
     fileprivate static let tableVarKey = "table"
     @objc dynamic open var table: DataSourceEntry? {
