@@ -169,7 +169,7 @@ open class ListFormTable: UITableViewController, ListForm {
             let destination = segue.destination.firstController
             destination.view.table = table
 
-            table.indexPathObserver = self
+            table.indexPathObservers.append(self)
         }
     }
 

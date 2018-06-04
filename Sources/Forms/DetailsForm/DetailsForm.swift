@@ -52,26 +52,21 @@ extension DetailsForm {
 
     /// Go to the next record in data source if any.
     public func nextRecord() {
-        if let table = self.view.table {
-            if let newIndex = table.nextIndexPath {
-                cancelImageDownloadTasks()
-                table.indexPath = newIndex // update the view (if not done auto by seting the index)
-                checkActions(table)
-                onRecordChanged()
-            }
-        }
+        guard let table = self.view.table, let newIndex = table.nextIndexPath else { return }
+        cancelImageDownloadTasks()
+        table.indexPath = newIndex // update the view (if not done auto by seting the index)
+
+        checkActions(table)
+        onRecordChanged()
     }
 
     /// Return to the previous record in data source if any.
     public func previousRecord() {
-        if let table = self.view.table {
-            if let newIndex = table.previousIndexPath {
-                cancelImageDownloadTasks()
-                table.indexPath = newIndex // update the view (if not done auto by setting the index)
-                checkActions(table)
-                onRecordChanged()
-            }
-        }
+        guard let table = self.view.table, let newIndex = table.previousIndexPath else { return }
+        cancelImageDownloadTasks()
+        table.indexPath = newIndex // update the view (if not done auto by setting the index)
+        checkActions(table)
+        onRecordChanged()
     }
 
     /// Go to the first record in data source.

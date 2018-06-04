@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol IndexPathObserver {
+protocol IndexPathObserver: NSObjectProtocol {
 
     // swiftlint:disable:next identifier_name
     func willChangeIndexPath(from: IndexPath?, to: IndexPath?)
@@ -21,14 +21,17 @@ protocol IndexPathObserver {
 public class DataSourceEntry: NSObject {
 
     open var dataSource: DataSource
-    var indexPathObserver: IndexPathObserver?
-    open var indexPath: IndexPath? {
+    var indexPathObservers: [IndexPathObserver] = []
+    @objc dynamic open var indexPath: IndexPath? {
         willSet {
-            indexPathObserver?.willChangeIndexPath(from: indexPath, to: newValue)
+            for indexPathObserver in indexPathObservers {
+                indexPathObserver.willChangeIndexPath(from: indexPath, to: newValue)
+            }
         }
         didSet {
-            indexPathObserver?.didChangeIndexPath(from: oldValue, to: indexPath)
-            //recordCache = nil
+            for indexPathObserver in indexPathObservers {
+                indexPathObserver.didChangeIndexPath(from: oldValue, to: indexPath)
+            }
         }
     }
 
@@ -114,9 +117,15 @@ public class DataSourceEntry: NSObject {
     public override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
         var keyPaths = super.keyPathsForValuesAffectingValue(forKey: key)
 
-        if key == "hasNext" || key == "hasPrevious" || key == "row" || key == "rowString" || key == "section" || key == "record" {
+        if key == "hasNext" || key == "hasPrevious"
+            || key == "row" || key == "rowString"
+            || key == "section"
+            || key == "record" {
             keyPaths.insert("indexPath")
-        } else if key == "count" || key == "hasPrevious" || key == "isEmpty"  || key == "isNotEmpty" || key == "name" {
+        } else if key == "count"
+            || key == "hasNext" || key == "hasPrevious"
+            || key == "isEmpty"  || key == "isNotEmpty"
+            || key == "name" || key == "record" {
             keyPaths.insert("dataSource")
         }
 

@@ -16,13 +16,25 @@ open class Binder: NSObject {
     weak open var view: UIView?
 
     fileprivate static let recordVarKey = "record"
-    open var record: AnyObject? {
-        return table?.record
+
+    // cache on record
+    @objc dynamic open var record: AnyObject? {
+        didSet {
+            if /*updateViewOnDidSet &&*/ (self.table != nil) {
+                updateView()
+            }
+        }
     }
+
     fileprivate static let tableVarKey = "table"
     @objc dynamic open var table: DataSourceEntry? {
+        willSet {
+            // table?.indexPathObservers.remove(at: self)
+        }
         didSet {
-            if updateViewOnDidSet && (self.table != nil) {
+            record = table?.record
+            table?.indexPathObservers.append(self)
+            if /*updateViewOnDidSet && */ (self.table != nil) {
                 updateView()
             }
         }
@@ -180,7 +192,7 @@ open class Binder: NSObject {
         }
     }
 
-    fileprivate var updateViewOnDidSet = true
+    ///fileprivate var updateViewOnDidSet = true
 
     /*
     internal func beginUpdateView() {
@@ -411,3 +423,12 @@ extension PropertyNames {
     }
 }
 extension UIView: PropertyNames {}
+
+// MARK: observer change on table
+extension Binder: IndexPathObserver {
+
+    func willChangeIndexPath(from: IndexPath?, to: IndexPath?) {}
+    func didChangeIndexPath(from: IndexPath?, to: IndexPath?) {
+        record = table?.record
+    }
+}
