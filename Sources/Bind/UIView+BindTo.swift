@@ -15,7 +15,7 @@ extension UIView {
 
     #if TARGET_INTERFACE_BUILDER
     open var bindTo: Binder {
-        return Binder(view: self)
+        return Binder(binded: self)
     }
     #else
     @objc dynamic open var bindTo: Binder {

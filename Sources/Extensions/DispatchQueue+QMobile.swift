@@ -21,16 +21,19 @@ public extension DispatchQueue {
 
 }
 
-func background(execute work: @escaping @convention(block) () -> Swift.Void) {
+public func background(execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.background.async(execute: work)
 }
-func background(_ delay: TimeInterval, execute work: @escaping @convention(block) () -> Swift.Void) {
+public func background(_ delay: TimeInterval, execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.background.after(delay, execute: work)
 }
-func foreground(execute work: @escaping @convention(block) () -> Swift.Void) {
+
+/// Execute code in User Interface queue, ie. the main queue.
+public func foreground(execute work: @escaping @convention(block) () -> Swift.Void) {
     DispatchQueue.main.async(execute: work)
 }
-func onForeground(_ closure: @escaping () -> Void) {
+/// Execute code in User Interface thread. If already in execute immediately
+public func onForeground(_ closure: @escaping () -> Void) {
     if Thread.isMainThread {
         closure()
     } else {
@@ -38,6 +41,10 @@ func onForeground(_ closure: @escaping () -> Void) {
             closure()
         }
     }
+}
+
+public func userInitiated(execute work: @escaping @convention(block) () -> Swift.Void) {
+    DispatchQueue.userInitiated.async(execute: work)
 }
 
 // could be replaced by a framework like Then

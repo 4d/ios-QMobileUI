@@ -142,22 +142,38 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     // MARK: segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let indexPath = self.indexPath(for: sender) {
-            let table = DataSourceEntry(dataSource: self.dataSource)
-            table.indexPath = indexPath
-
-            if let navigation = segue.destination as? UINavigationController {
-                navigation.navigationBar.table = table
-                //navigation.navigationBar.record = table.record
-            }
-            let destination = segue.destination.firstController
-            destination.view.table = table
-            //destination.view.record = table.record
-        } else {
+        guard let indexPath = self.indexPath(for: sender) else {
             if segue.identifier == selectedSegueIdentifier {
                 logger.warning("No collection index found for \(String(describing: sender)).")
             }
+            return
         }
+        // create a new entry to bind
+        let table = DataSourceEntry(dataSource: self.dataSource)
+        table.indexPath = indexPath
+
+        // pass to view controllers and views
+        if let navigation = segue.destination as? UINavigationController {
+            navigation.navigationBar.table = table
+        }
+        let destination = segue.destination.firstController
+        destination.view.table = table
+
+        // listen to index path change, to scroll table to new selected record
+        table.add(indexPathObserver: self)
+    }
+
+    open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        // Remove the listener
+        if let table = self.presentedViewController?.firstController.view.table {
+            table.remove(indexPathObserver: self)
+        }
+        // do dismiss
+        super.dismiss(animated: flag, completion: completion)
+    }
+
+    override open func show(_ viewController: UIViewController, sender: Any?) {
+        self.present(viewController, animated: true, completion: nil)
     }
 
     // MARK: Collection View

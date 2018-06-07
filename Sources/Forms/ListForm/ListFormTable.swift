@@ -158,19 +158,41 @@ open class ListFormTable: UITableViewController, ListForm {
 
     // MARK: segue
 
+    /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let indexPath = self.indexPath(for: sender) {
-            let table = DataSourceEntry(dataSource: self.dataSource)
-            table.indexPath = indexPath
+        // get current index
+        guard let indexPath = self.indexPath(for: sender) else { return }
+        // create a new entry to bind
+        let table = DataSourceEntry(dataSource: self.dataSource)
+        table.indexPath = indexPath
 
-            if let navigation = segue.destination as? UINavigationController {
-                navigation.navigationBar.table = table
-            }
-            let destination = segue.destination.firstController
-            destination.view.table = table
-
-            table.indexPathObservers.append(self)
+        // pass to view controllers and views
+        if let navigation = segue.destination as? UINavigationController {
+            navigation.navigationBar.table = table
         }
+        // by pass navigation controller if any to get real controller
+        let destination = segue.destination.firstController
+        destination.view.table = table
+
+        // listen to index path change, to scroll table to new selected record
+        table.add(indexPathObserver: self)
+    }
+
+    open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        // Remove the listener
+        if let table = self.presentedViewController?.firstController.view.table {
+            table.remove(indexPathObserver: self)
+        }
+        // do dismiss
+        super.dismiss(animated: flag, completion: completion)
+    }
+
+    override open func show(_ viewController: UIViewController, sender: Any?) {
+        self.present(viewController, animated: true, completion: nil)
+    }
+
+    override open func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Swift.Void)? = nil) {
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
     // MARK: Events

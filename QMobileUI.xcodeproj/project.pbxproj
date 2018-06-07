@@ -61,6 +61,7 @@
 		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
 		48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48657A36203590A900000D45 /* UIButton+Binding.swift */; };
 		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
+		486A0FAC20C91B07001A26D0 /* Storyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486A0FAB20C91B07001A26D0 /* Storyboards.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
 		4879495D20AC5264008876B8 /* SettingReloadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879495C20AC5264008876B8 /* SettingReloadCell.swift */; };
@@ -217,6 +218,7 @@
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		48657A36203590A900000D45 /* UIButton+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Binding.swift"; sourceTree = "<group>"; };
 		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
+		486A0FAB20C91B07001A26D0 /* Storyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storyboards.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
 		4879495C20AC5264008876B8 /* SettingReloadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingReloadCell.swift; sourceTree = "<group>"; };
@@ -415,6 +417,7 @@
 				48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */,
 				48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */,
 				48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */,
+				486A0FAB20C91B07001A26D0 /* Storyboards.swift */,
 			);
 			name = UIKit;
 			sourceTree = "<group>";
@@ -1086,6 +1089,7 @@
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
+				486A0FAC20C91B07001A26D0 /* Storyboards.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,

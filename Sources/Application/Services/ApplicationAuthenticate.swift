@@ -20,32 +20,36 @@ class ApplicationAuthenticate: NSObject {
 
 }
 
+extension Prephirences {
+    public static var hasLoginForm: Bool {
+        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
+    }
+}
+
 extension ApplicationAuthenticate: ApplicationService {
 
     static var instance: ApplicationService = ApplicationAuthenticate()
-
-    var hasLoginForm: Bool {
-        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
-    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         let apiManager = APIManager.instance
         if let authToken = apiManager.authToken, authToken.isValidToken {
             logger.info("Application already logged with session \(authToken.id)")
         } else {
-            if !hasLoginForm {
+            if !Prephirences.hasLoginForm {
                 // login guest mode
                 let guestLogin = ""
                 let cancellable = apiManager.authentificate(login: guestLogin) { result in
                     switch result {
                     case .success(let authToken):
                         if !authToken.isValidToken {
-                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided. Server admin must validate the session or accept it or next action on server could not working")
+                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided."
+                                + " Server admin must validate the session or accept it or next action on server could not working")
                         }
                     case .failure(let error):
                         let error: Error = error.restErrors ?? error
                         logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
-                        // TODO show full screen dialog with error message
+                        /// XXX show full screen dialog with error message ?
+                        /// Or keep the information in api for next failed request.
                     }
                 }
                 logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")

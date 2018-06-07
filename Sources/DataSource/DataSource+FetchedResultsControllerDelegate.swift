@@ -58,14 +58,11 @@ extension DataSource: FetchedResultsControllerDelegate {
             switch type {
             case .insert:
                 if let newIndexPath = newIndexPath {
-
-                    //FIXME: iOS 9 Bug!
                     if indexPath != newIndexPath {
-
                         tableView.insertRows(at: [newIndexPath], with: rowAnimationType)
                         self.delegate?.dataSource?(self, didInsertRecord: record, atIndexPath: newIndexPath)
                     } else {
-                        logger.warning()
+                        logger.warning("Issue when inserting a row, old and new indexes are equal: \(newIndexPath)")
                     }
                 }
             case .delete:

@@ -136,7 +136,6 @@ extension ApplicationUpdate {
                 }
             }
         } else {
-            // TODO maybe check to an other server
             let action = preferences["update.4daction"] as? String ?? "mdm_applicationinfo"
             return APIManager.instance.loadApplicationInfo(actionName: action, bundleId: bundleId) { [unowned self] result in
                 switch result {
@@ -170,7 +169,7 @@ extension ApplicationUpdate {
             postError(.noUpdateAvailable)
             return
         }
-        setAlertType() // maybe rename to get update type
+        _ = setAlertType() // maybe rename to get update type
         showAlert()
     }
 
@@ -182,6 +181,7 @@ extension ApplicationUpdate {
         /// No alert, just call delegate
         case none
 
+        /// Default alert type ie. `option`.
         public static let `default`: AlertType = .option
     }
 

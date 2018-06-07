@@ -8,20 +8,21 @@
 
 import Foundation
 
+/// Interface for object which could listen to `IndexPath` change.
 protocol IndexPathObserver: NSObjectProtocol {
 
-    // swiftlint:disable:next identifier_name
-    func willChangeIndexPath(from: IndexPath?, to: IndexPath?)
-    // swiftlint:disable:next identifier_name
-    func didChangeIndexPath(from: IndexPath?, to: IndexPath?)
+    func willChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?)
+    func didChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?)
 
 }
 
 /// Object which represent the table and an optional record index
 public class DataSourceEntry: NSObject {
 
+    /// The data source which represent a table
     open var dataSource: DataSource
-    var indexPathObservers: [IndexPathObserver] = []
+
+    /// The record index.
     @objc dynamic open var indexPath: IndexPath? {
         willSet {
             for indexPathObserver in indexPathObservers {
@@ -35,6 +36,17 @@ public class DataSourceEntry: NSObject {
         }
     }
 
+    private var indexPathObservers: [IndexPathObserver] = []
+    func add(indexPathObserver: IndexPathObserver) {
+        if !indexPathObservers.contains(where: { $0.isEqual(indexPathObserver) }) {
+            indexPathObservers.append(indexPathObserver)
+        }
+    }
+    func remove(indexPathObserver: IndexPathObserver) {
+        indexPathObservers = indexPathObservers.filter { !self.isEqual($0) }
+    }
+
+    // MARK: init
     init(dataSource: DataSource) {
         self.dataSource = dataSource
     }
