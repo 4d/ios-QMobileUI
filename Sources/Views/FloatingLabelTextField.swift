@@ -98,14 +98,14 @@ import UIKit
     }
 
     /// A UIColor value that determines the text color of the title label when editing
-    @IBInspectable dynamic open var selectedTitleColor: UIColor = .blue {
+    @IBInspectable dynamic open var selectedTitleColor: UIColor = .lightGray {
         didSet {
             configureTitleColor()
         }
     }
 
     /// A UIColor value that determines the color of the line in a selected state
-    @IBInspectable dynamic open var selectedLineColor: UIColor = .black {
+    @IBInspectable dynamic open var selectedLineColor: UIColor = .lightGray {
         didSet {
             configureLineView()
         }
