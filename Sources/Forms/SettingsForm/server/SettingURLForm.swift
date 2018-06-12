@@ -29,7 +29,7 @@ open class SettingURLForm: UITableViewController {
         serverURLTextField.addTarget(self, action: #selector(onDataChanged(textField:)), for: .editingChanged)
 
         // Set the default value ie. localhost with 4D port
-        serverURLTextField.placeholder = URL.qmobileURLLocalhost.absoluteString
+        serverURLTextField.placeholder = URL.qmobileLocalhost.absoluteString
         onLoad()
     }
 

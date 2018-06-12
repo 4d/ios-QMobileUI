@@ -10,13 +10,6 @@ import UIKit
 
 import Prephirences
 
-#if DEBUG
-let settings: MutableCompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
-#else
-let settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
-#endif
-let preferences: MutableCompositePreferences = [Foundation.UserDefaults.standard, settings, Bundle.main]
-
 class ApplicationPreferences: NSObject {}
 
 extension ApplicationPreferences: ApplicationService {
@@ -24,12 +17,28 @@ extension ApplicationPreferences: ApplicationService {
     static var instance: ApplicationService = ApplicationPreferences()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        #if DEBUG
+        // if compiled without debug, this file will not be used
+        let settings: CompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
+        #else
+        let settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
+        #endif
+        let preferences: MutableCompositePreferences = [Foundation.UserDefaults.standard, settings, Bundle.main]
         Prephirences.sharedInstance = preferences
 
-        if let resetDefaults = preferences["resetDefaults"] as? Bool, resetDefaults {
-            Foundation.UserDefaults.standard.clearAll()
-            Foundation.UserDefaults.standard.synchronize()
+        var resetDefaults = preferences["resetDefaults"] as? Bool ?? false
+
+        // Fix simulator bug which keep user default for old application
+        let mutable = Foundation.UserDefaults.standard
+        if mutable["uuid"] as? String != preferences["uuid"] as? String {
+            resetDefaults = true
         }
+        if resetDefaults {
+            mutable.clearAll()
+            mutable.synchronize()
+        }
+        mutable["uuid"] = preferences["uuid"]
+        mutable.synchronize()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -38,5 +47,16 @@ extension ApplicationPreferences: ApplicationService {
 
     func applicationWillTerminate(_ application: UIApplication) {
         Foundation.UserDefaults.standard.synchronize() // save mutable to disk
+    }
+}
+
+extension ApplicationService {
+    var preferences: MutablePreferencesType {
+        // swiftlint:disable:next force_cast
+        return Prephirences.sharedInstance as! MutablePreferencesType
+    }
+    static var preferences: MutablePreferencesType {
+        // swiftlint:disable:next force_cast
+        return Prephirences.sharedInstance as! MutablePreferencesType
     }
 }

@@ -282,16 +282,16 @@ extension ApplicationUpdate {
             return preferences["appUpdateLastVersionCheck"] as? Date
         }
         set {
+            var preferences = self.preferences
             preferences["appUpdateLastVersionCheck"] = newValue
         }
     }
 
     public var updateURL: URL? {
-        if let appID = preferences["appStoreID"] as? String {
-            return URL(string: "https://itunes.apple.com/app/id\(appID)")
+        guard let appID = preferences["appStoreID"] as? String else {
+            return nil
         }
-
-        return nil
+        return URL(string: "https://itunes.apple.com/app/id\(appID)")
     }
 
     /// Action when asking update

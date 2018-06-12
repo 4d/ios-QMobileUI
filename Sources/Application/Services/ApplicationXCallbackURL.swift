@@ -16,7 +16,6 @@ import QMobileAPI
 import QMobileDataStore
 
 class ApplicationXCallbackURL: NSObject {
-    let callbackManager = Manager(callbackURLScheme: preferences.string(forKey: "com.4d.qa.urlScheme"))
 }
 
 extension ApplicationXCallbackURL: ApplicationService {
@@ -24,68 +23,69 @@ extension ApplicationXCallbackURL: ApplicationService {
     static var instance: ApplicationService = ApplicationXCallbackURL()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        guard let scheme = preferences.string(forKey: "com.4d.qa.urlScheme"),
+            let urlSchemes = Manager.urlSchemes, urlSchemes.contains(scheme) else {
+                return
+        }
+        Manager.shared.callbackURLScheme = scheme
 
-        if let urlSchemes = Manager.urlSchemes, urlSchemes.contains(callbackManager.callbackURLScheme ?? "") {
-
-            callbackManager["sync"] = { parameters, success, failure, cancel in
-                if let cancel = parameters["cancel"], cancel.boolValue {
-                    ApplicationDataSync.dataSync.cancel()
-                } else {
-                    /* let cancellable */ _ = dataSync { result in
-                        switch result {
-                        case .success:
-                            success(nil)
-                        case .failure(let error):
-                            if case .cancel = error {
-                                cancel()
-                            } else {
-                                failure(error)
-                            }
+        Manager.shared["sync"] = { parameters, success, failure, cancel in
+            if let cancel = parameters["cancel"], cancel.boolValue {
+                ApplicationDataSync.dataSync.cancel()
+            } else {
+                /* let cancellable */ _ = dataSync { result in
+                    switch result {
+                    case .success:
+                        success(nil)
+                    case .failure(let error):
+                        if case .cancel = error {
+                            cancel()
+                        } else {
+                            failure(error)
                         }
                     }
                 }
             }
-            callbackManager["reload"] = { parameters, success, failure, cancel in
-                if let cancel = parameters["cancel"], cancel.boolValue {
-                    ApplicationDataSync.dataSync.cancel()
-                } else {
-                    _ = dataReload { result in
-                        switch result {
-                        case .success:
-                            success(nil)
-                        case .failure(let error):
-                            if case .cancel = error {
-                                cancel()
-                            } else {
-                                failure(error)
-                            }
+        }
+        Manager.shared["reload"] = { parameters, success, failure, cancel in
+            if let cancel = parameters["cancel"], cancel.boolValue {
+                ApplicationDataSync.dataSync.cancel()
+            } else {
+                _ = dataReload { result in
+                    switch result {
+                    case .success:
+                        success(nil)
+                    case .failure(let error):
+                        if case .cancel = error {
+                            cancel()
+                        } else {
+                            failure(error)
                         }
                     }
                 }
             }
-            callbackManager["dump"] = { parameters, success, failure, cancel in
-                let path: Path
-                if let pathString = parameters["path"] {
-                    path = Path(pathString)
-                } else {
-                    path = .userTemporary
-                }
-               _ =  ApplicationDataSync.dataSync.dump(to: path) {
-
-                    success(nil)
-                }
+        }
+        Manager.shared["dump"] = { parameters, success, failure, cancel in
+            let path: Path
+            if let pathString = parameters["path"] {
+                path = Path(pathString)
+            } else {
+                path = .userTemporary
             }
+            _ =  ApplicationDataSync.dataSync.dump(to: path) {
 
+                success(nil)
+            }
         }
-        callbackManager["clear"] = { parameters, success, failure, cancel in
 
-           // ApplicationDataSync.dataSync.dataStore.perform(DataStoreContextType)
+        Manager.shared["clear"] = { parameters, success, failure, cancel in
+            // ApplicationDataSync.dataSync.dataStore.perform(DataStoreContextType)
         }
 
-        callbackManager["exit"] = { parameters, success, failure, cancel in
+        Manager.shared["exit"] = { parameters, success, failure, cancel in
             exit(0)
         }
-        callbackManager["logger"] = { parameters, success, failure, cancel in
+        Manager.shared["logger"] = { parameters, success, failure, cancel in
             if let levelString = parameters["setlevel"] {
                 if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
                     logger.outputLevel = level
@@ -94,7 +94,7 @@ extension ApplicationXCallbackURL: ApplicationService {
                 }
             }
         }
-        callbackManager["settings"] = { parameters, success, failure, cancel in
+        Manager.shared["settings"] = { parameters, success, failure, cancel in
             if let levelString = parameters["setlevel"] {
                 if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
                     logger.outputLevel = level
@@ -106,7 +106,7 @@ extension ApplicationXCallbackURL: ApplicationService {
     }
 
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {
-        if callbackManager.handleOpen(url: url) {
+        if  Manager.shared.handleOpen(url: url) {
             logger.debug("Callback url action receive: \(url)")
         }
     }

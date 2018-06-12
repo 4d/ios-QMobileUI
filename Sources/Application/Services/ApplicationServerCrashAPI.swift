@@ -48,7 +48,7 @@ extension ApplicationServerCrashAPI: TargetType {
             let url = URL(string: urlString) {
             return url
         }
-        return URL.qmobileURLLocalhost
+        return URL.qmobileLocalhost
     }
 
     var path: String {
