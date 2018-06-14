@@ -19,7 +19,10 @@ open class SettingReloadCell: UITableViewCell {
 
     @IBOutlet open weak var reloadButton: UIButton!
 
-    weak var listener: DataReloadListener?
+    //weak var listener: DataReloadListener?
+    static let maxRetryCount = 2
+    var tryCount = 0
+    private var stopBlock: () -> Void = {}
 
     open override func awakeFromNib() {
         ServerStatusManager.instance.add(listener: self)
@@ -47,15 +50,14 @@ extension SettingReloadCell: DialogFormDelegate {
         if let button = sender as? LoadingButton {
             button.startAnimation()
         }
-        listener = DataReloadManager.instance.listen { _ in
-            onForeground {
-                if let button = sender as? LoadingButton {
-                    button.stopAnimation()
-                }
-                dialog.dismiss(animated: true)
-                ServerStatusManager.instance.checkStatus(0) // XXX do elsewhere (break using listener)
+        stopBlock = {
+            if let button = sender as? LoadingButton {
+                button.stopAnimation()
             }
+            dialog.dismiss(animated: true)
+            ServerStatusManager.instance.checkStatus(0) // XXX do elsewhere (break using listener)
         }
+        tryCount = 1
         DataReloadManager.instance.reload(didReload)
     }
 
@@ -82,11 +84,10 @@ extension SettingReloadCell: DialogFormDelegate {
 
     /// Called when reload end.
     public func didReload(_ result: DataSync.SyncResult) {
+        var didEnd = true
         switch result {
         case .success:
-
             SwiftMessages.info("Data has been reloaded")
-
         case .failure(let error):
             if case .apiError(let apiError) = error,
                 apiError.isHTTPResponseWith(code: .unauthorized) {
@@ -108,10 +109,20 @@ extension SettingReloadCell: DialogFormDelegate {
                     })
                 } else {
                     _ = APIManager.instance.authentificate(login: "") { result in
-                        if let statusText = result.error?.restErrors?.statusText {
-                            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
-                        } else {
-                            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                        switch result {
+                        case .success:
+                            // retry XXX manage it elsewhere with a request retrier
+                            if self.tryCount < SettingReloadCell.maxRetryCount {
+                                didEnd = false
+                                self.tryCount += 1
+                                DataReloadManager.instance.reload(self.didReload)
+                            }
+                        case .failure(let authError):
+                            if let statusText = authError.restErrors?.statusText {
+                                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+                            } else {
+                                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                            }
                         }
                     }
                 }
@@ -121,6 +132,9 @@ extension SettingReloadCell: DialogFormDelegate {
             SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
         }
 
+        if didEnd {
+            onForeground(stopBlock)
+        }
     }
 
 }

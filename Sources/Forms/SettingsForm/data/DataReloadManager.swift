@@ -47,6 +47,10 @@ class DataReloadManager {
         return listener
     }
 
+    func remove(listener: DataReloadListener?) {
+       // TODO implement remove listerer on data reload end
+    }
+
     func cancel() {
         cancellable.cancel()
     }
