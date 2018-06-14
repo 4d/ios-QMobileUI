@@ -15,6 +15,7 @@ class ApplicationPreferences: NSObject {}
 extension ApplicationPreferences: ApplicationService {
 
     static var instance: ApplicationService = ApplicationPreferences()
+    static let uuidKey = "uuid"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         #if DEBUG
@@ -29,16 +30,18 @@ extension ApplicationPreferences: ApplicationService {
         var resetDefaults = preferences["resetDefaults"] as? Bool ?? false
 
         // Fix simulator bug which keep user default for old application
-        let mutable = Foundation.UserDefaults.standard
-        if mutable["uuid"] as? String != preferences["uuid"] as? String {
-            resetDefaults = true
+        let editable = Foundation.UserDefaults.standard
+        let uuidKey = ApplicationPreferences.uuidKey
+        if let uuid = editable[uuidKey] as? String, uuid != settings[uuidKey] as? String {
+            resetDefaults = true // and uuid in pref, but not same as settings file -> reset
         }
         if resetDefaults {
-            mutable.clearAll()
-            mutable.synchronize()
+            logger.info("Reset settings")
+            editable.clearAll()
+            editable.synchronize()
         }
-        mutable["uuid"] = preferences["uuid"]
-        mutable.synchronize()
+        editable[uuidKey] = settings[uuidKey]
+        editable.synchronize()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
