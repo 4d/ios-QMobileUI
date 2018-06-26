@@ -63,7 +63,7 @@ extension ApplicationServerCrashAPI: TargetType {
     }
 
     var headers: [String: String]? {
-        return nil
+        return self.parameters
     }
 
 }
