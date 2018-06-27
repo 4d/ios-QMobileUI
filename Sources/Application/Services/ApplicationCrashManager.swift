@@ -75,12 +75,12 @@ extension ApplicationCrashManager: ApplicationService {
                 var dsStory = -1
                 print(crashs)
                 for crash in crashs {
-                    if((crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal") && crash.fileName != ".DS_Store") {
+                    if (crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal") && crash.fileName != ".DS_Store" {
                         dsStory = 1
                     }
 
                 }
-                if ( crashs.count != 0 && dsStory == 1) {
+                if !crashs.isEmpty && dsStory == 1 {
                     let alert = UIAlertController(title: "Your application has crash at last opening", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
                     alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
                     alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.default, handler: { _ in
@@ -88,7 +88,7 @@ extension ApplicationCrashManager: ApplicationService {
                         let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
                         if !crashs.isEmpty {
                             for crash in crashs {
-                                if((crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal") && crash.fileName != ".DS_Store") {
+                                if (crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal") && crash.fileName != ".DS_Store" {
                                     if let zipPath = self.tempZipPath(fileName: crash.fileName), let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
                                         print(pathCrash)
                                         print(zipPath)
@@ -155,7 +155,7 @@ extension ApplicationCrashManager: ApplicationService {
         if let appName = Bundle.main["CFBundleIdentifier"] as? String {
             let fName = "\(appName)_\(dateFormatter.string(from: Date()))"
             let path = Path.userCaches + type.rawValue + fName
-            let crashData = InformationWithData(DicData: applicationInformation(fileName: fName), crash: crash)
+            let crashData = informationWithData(dicData: applicationInformation(fileName: fName), crash: crash)
             if let crashDataString = try? JSONSerialization.data(withJSONObject: crashData, options: []) {
                 let crashString = String(data: crashDataString, encoding: .utf8)
                 try? TextFile(path: path).write(crashString!)
@@ -165,7 +165,7 @@ extension ApplicationCrashManager: ApplicationService {
         }
     }
 
-    static func InformationWithData(DicData: [String: String], crash: String) -> [String: String] {
+    static func informationWithData(dicData: [String: String], crash: String) -> [String: String] {
         var information = DicData
         information["dataCrash"] = crash
         return information
