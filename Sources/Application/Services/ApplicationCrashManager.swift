@@ -166,7 +166,7 @@ extension ApplicationCrashManager: ApplicationService {
     }
 
     static func informationWithData(dicData: [String: String], crash: String) -> [String: String] {
-        var information = DicData
+        var information = dicData
         information["dataCrash"] = crash
         return information
     }
