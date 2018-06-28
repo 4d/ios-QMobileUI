@@ -81,9 +81,9 @@ extension ApplicationCrashManager: ApplicationService {
 
                 }
                 if !crashs.isEmpty && dsStory == 1 {
-                    let alert = UIAlertController(title: "Your application has crash at last opening", message: "Do you want to send the crash log ?", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-                    alert.addAction(UIAlertAction(title: "Send", style: UIAlertActionStyle.default, handler: { _ in
+                    let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?", message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "Save report for later", style: UIAlertActionStyle.cancel, handler: nil))
+                    alert.addAction(UIAlertAction(title: "Send report", style: UIAlertActionStyle.default, handler: { _ in
                         let crashDirectory = ApplicationCrashManager.crashDirectory
                         let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
                         if !crashs.isEmpty {
@@ -117,7 +117,7 @@ extension ApplicationCrashManager: ApplicationService {
                             }
                         }
                     }))
-                    alert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.destructive, handler: { _ in
+                    alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: { _ in
                         let crashDirectory = ApplicationCrashManager.crashDirectory
                         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
                     }))
@@ -155,20 +155,13 @@ extension ApplicationCrashManager: ApplicationService {
         if let appName = Bundle.main["CFBundleIdentifier"] as? String {
             let fName = "\(appName)_\(dateFormatter.string(from: Date()))"
             let path = Path.userCaches + type.rawValue + fName
-            let crashData = informationWithData(dicData: applicationInformation(fileName: fName), crash: crash)
-            if let crashDataString = try? JSONSerialization.data(withJSONObject: crashData, options: []) {
-                let crashString = String(data: crashDataString, encoding: .utf8)
-                try? TextFile(path: path).write(crashString!)
-            } else {
-                try? TextFile(path: path).write(crash)
+            var crashLog = "\r\n information application: "
+            for item in applicationInformation(fileName: path.fileName) {
+                crashLog += "\r\n \(item.key) : \(item.value)"
             }
+            crashLog += "\r\n *** First throw call "+crash
+            try? TextFile(path: path).write(crashLog)
         }
-    }
-
-    static func informationWithData(dicData: [String: String], crash: String) -> [String: String] {
-        var information = dicData
-        information["dataCrash"] = crash
-        return information
     }
 
     static func applicationInformation(fileName: String) -> [String: String] {
