@@ -30,18 +30,20 @@ extension ApplicationPreferences: ApplicationService {
         var resetDefaults = preferences["resetDefaults"] as? Bool ?? false
 
         // Fix simulator bug which keep user default for old application
-        let editable = Foundation.UserDefaults.standard
+        let userDefaults = Foundation.UserDefaults.standard
         let uuidKey = ApplicationPreferences.uuidKey
-        if let uuid = editable[uuidKey] as? String, uuid != settings[uuidKey] as? String {
+        if let uuid = userDefaults[uuidKey] as? String, uuid != settings[uuidKey] as? String {
             resetDefaults = true // and uuid in pref, but not same as settings file -> reset
         }
         if resetDefaults {
             logger.info("Reset settings")
-            editable.clearAll()
-            editable.synchronize()
+            userDefaults.clearAll()
+            userDefaults.synchronize()
+            // remove also keychain.
+            KeychainPreferences.sharedInstance.clearAll()
         }
-        editable[uuidKey] = settings[uuidKey]
-        editable.synchronize()
+        userDefaults[uuidKey] = settings[uuidKey]
+        userDefaults.synchronize()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
