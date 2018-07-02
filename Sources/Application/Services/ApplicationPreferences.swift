@@ -17,7 +17,7 @@ extension ApplicationPreferences: ApplicationService {
     static var instance: ApplicationService = ApplicationPreferences()
     static let uuidKey = "uuid"
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    static let preferences: MutableCompositePreferences = {
         #if DEBUG
         // if compiled without debug, this file will not be used
         let settings: CompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
@@ -26,12 +26,17 @@ extension ApplicationPreferences: ApplicationService {
         #endif
         let preferences: MutableCompositePreferences = [Foundation.UserDefaults.standard, settings, Bundle.main]
         Prephirences.sharedInstance = preferences
+        return preferences
+    }()
 
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        let preferences = ApplicationPreferences.preferences
         var resetDefaults = preferences["resetDefaults"] as? Bool ?? false
 
         // Fix simulator bug which keep user default for old application
         let userDefaults = Foundation.UserDefaults.standard
         let uuidKey = ApplicationPreferences.uuidKey
+        let settings = CompositePreferences(preferences.immutableArray)
         if let uuid = userDefaults[uuidKey] as? String, uuid != settings[uuidKey] as? String {
             resetDefaults = true // and uuid in pref, but not same as settings file -> reset
         }
@@ -57,11 +62,9 @@ extension ApplicationPreferences: ApplicationService {
 
 extension ApplicationService {
     var preferences: MutablePreferencesType {
-        // swiftlint:disable:next force_cast
-        return Prephirences.sharedInstance as! MutablePreferencesType
+        return ApplicationPreferences.preferences
     }
     static var preferences: MutablePreferencesType {
-        // swiftlint:disable:next force_cast
-        return Prephirences.sharedInstance as! MutablePreferencesType
+        return ApplicationPreferences.preferences
     }
 }

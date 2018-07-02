@@ -26,7 +26,6 @@ extension ApplicationLogger: ApplicationService {
 
     // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
-
         let showThreadName = logPref["showThreadName"] as? Bool ?? true
         let showLevel = logPref["showLevel"] as? Bool ?? true
         let showFileNames = logPref["showFileNames"] as? Bool ?? true
@@ -34,7 +33,7 @@ extension ApplicationLogger: ApplicationService {
         let showFunctionName = logPref["showFunctionName"] as? Bool ?? true
         let showDate = logPref["showDate"] as? Bool ?? true
         let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
-        let writeToFile = logPref["writeToFile"] as? String
+        let writeToFile = logPref["writeToFile"] as? String ?? "debug.log"
         let directory = logPref["directory"] as? String ?? "logs"
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
@@ -83,7 +82,7 @@ extension ApplicationLogger: ApplicationService {
             }
         }
 
-        if let writeToFile = writeToFile, let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
+        if let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
             print("Log will be written into file '\(writeURL)'")
             let destination: FileDestination
             if !autorotate {
