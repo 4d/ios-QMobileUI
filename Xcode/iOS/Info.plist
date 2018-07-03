@@ -20,9 +20,5 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
-	<key>Title dialog crash</key>
-	<string>Oops! It looks like your app didn&apos;t close correctly. Want to help us get better?</string>
-	<key>Subtitle dialog crash</key>
-	<string>An error report has been generated, please send it to 4D.com. We&apos;ll keep your information confidential.</string>
 </dict>
 </plist>
