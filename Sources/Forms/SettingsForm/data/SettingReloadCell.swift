@@ -89,24 +89,13 @@ extension SettingReloadCell: DialogFormDelegate {
         case .success:
             SwiftMessages.info("Data has been reloaded")
         case .failure(let error):
-            if case .apiError(let apiError) = error,
-                apiError.isHTTPResponseWith(code: .unauthorized) {
+            let title = "Issue when reloading data"
+            if case .apiError(let apiError) = error, apiError.isHTTPResponseWith(code: .unauthorized) {
                 if hasLoginForm {
                     // Display error before logout
-                    SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data",
+                    SwiftMessages.error(title: error.errorDescription ?? title,
                                         message: "You have been disconnected",
-                                        configure: { (messageView, config) in
-                                            messageView.tapHandler = { _ in
-                                                SwiftMessages.hide()
-                                                self.logout()
-                                            }
-                                            var config = config
-                                            config.presentationStyle = .center
-                                            config.duration = .forever
-                                            // no interactive because there is no way yet to get background tap handler to make logout
-                                            config.dimMode = .gray(interactive: false)
-                                            return config
-                    })
+                                        configure: configure())
                 } else {
                     _ = APIManager.instance.authentificate(login: "") { result in
                         switch result {
@@ -119,21 +108,36 @@ extension SettingReloadCell: DialogFormDelegate {
                             }
                         case .failure(let authError):
                             if let statusText = authError.restErrors?.statusText {
-                                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+                                SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
                             } else {
-                                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                                SwiftMessages.error(title: error.errorDescription ?? title, message: error.failureReason ?? "")
                             }
                         }
                     }
                 }
-                return
+            } else {
+                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
             }
-
-            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
         }
 
         if didEnd {
             onForeground(stopBlock)
+        }
+    }
+
+    // Configure logout dialog and action
+    fileprivate func configure() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+        return { (messageView, config) in
+            messageView.tapHandler = { _ in
+                SwiftMessages.hide()
+                self.logout()
+            }
+            var config = config
+            config.presentationStyle = .center
+            config.duration = .forever
+            // no interactive because there is no way yet to get background tap handler to make logout
+            config.dimMode = .gray(interactive: false)
+            return config
         }
     }
 
