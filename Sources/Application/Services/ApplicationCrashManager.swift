@@ -101,7 +101,7 @@ extension ApplicationCrashManager: ApplicationService {
     static var crashDirectory: Path {
         return Path.userCaches
     }
-    
+
     func sendReport() {
         let crashDirectory = ApplicationCrashManager.crashDirectory
         let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
@@ -131,12 +131,12 @@ extension ApplicationCrashManager: ApplicationService {
             }
         }
     }
-    
+
     func notSendReport() {
         let crashDirectory = ApplicationCrashManager.crashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }
-    
+
     func tempPathFile(parent: String) -> Path? {
         let path = Path.userTemporary + parent//"nsexception"
         do {
