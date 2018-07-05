@@ -43,6 +43,7 @@ fileprivate class UIImageNamed: UIImage {
 // MARK: using URL and cache
 import Kingfisher
 import QMobileAPI
+import QMobileDataSync
 
 extension UIImageView {
 
@@ -54,29 +55,9 @@ extension UIImageView {
             if newValue != nil {
                 self.kf.indicatorType = .activity
             }
-            // could add a processor
-            // https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#built-in-processors-of-kingfisher
-            // let processor = BlurImageProcessor(blurRadius: 4) >> RoundCornerImageProcessor(cornerRadius: 20)
-            // options: [.processor(processor)] // , .cacheOriginalImage
-
             self.kf.setImage(with: newValue, placeholder: nil, options: nil)
         }
     }
-
-}
-
-import QMobileAPI
-import QMobileDataSync
-
-/// Protocol allowing to customize rest image download using Kingfisher option api.
-public protocol KingfisherOptionsInfoBuilder {
-
-    /// Return the new options to display or download the images.
-    func option(for url: URL, currentOptions options: KingfisherOptionsInfo) -> KingfisherOptionsInfo
-
-    var placeHolderImage: UIImage? { get }
-
-    var indicatorType: IndicatorType? { get }
 
 }
 
@@ -84,67 +65,56 @@ extension UIImageView {
 
     public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
+    // Remove image
+    fileprivate func unsetImage() {
+        self.kf.indicatorType = .none
+        self.image = nil
+    }
+
     @objc dynamic public var restImage: [String: Any]? {
         get {
-            if let webURL =  self.webURL {
-                var uri = webURL.absoluteString
-                // remove the base url
-                uri = uri.replacingOccurrences(of: DataSync.instance.rest.base.baseURL.absoluteString, with: "")
-                let deffered = Deferred(uri: uri, image: true)
-                return deffered.dictionary
+            guard let webURL =  self.webURL else {
+                return nil
             }
-            return nil
+            var uri = webURL.absoluteString
+            uri = uri.replacingOccurrences(of: DataSync.instance.rest.base.baseURL.absoluteString, with: "") // remove the base url
+            let deffered = Deferred(uri: uri, image: true)
+            return deffered.dictionary
         }
         set {
             // Check if passed value is a compatible restImage dictionary
             guard let imageResource = ApplicationImageCache.imageResource(for: newValue) else {
-                // Remove image
-                self.kf.indicatorType = .none
-                self.image = nil
+                unsetImage()
                 return
             }
+            logger.verbose("Setting \(imageResource) to view \(self)")
 
             // Setup placeHolder image or other options defined by custom builders
-            var options: KingfisherOptionsInfo = []
+            var options = ApplicationImageCache.options()
             var placeHolderImage: UIImage?
             var indicatorType: IndicatorType = .activity
-            if let builder = self as? KingfisherOptionsInfoBuilder {
+            if let builder = self as? ImageCacheOptionsBuilder {
                 options = builder.option(for: imageResource.downloadURL, currentOptions: options)
                 placeHolderImage = builder.placeHolderImage
                 indicatorType = builder.indicatorType ?? .activity
             }
-            let imageCache = options.targetCache
 
-            /// Get from bundle
-            var hasSetImage = false
-            if !imageCache.imageCachedType(forKey: imageResource.cacheKey).cached {
-                // Fill cache with bundle -> XXX  result double copy on disk -> could do better by having bundle as disk cache backend
-                if let image = ApplicationImageCache.imageInBundle(for: imageResource) {
-
-                    imageCache.store(image, forKey: imageResource.cacheKey)
-                    self.image = image
-                    options += [.keepCurrentImageWhileLoading]
-                    hasSetImage = true
-                }
-            }
-            if !hasSetImage {
-                self.kf.indicatorType = indicatorType
-                self.image = placeHolderImage
-            }
-
-            // Setup some request modification
-            let modifier = AnyModifier { request in
-                return APIManager.instance.configure(request: request)
-            }
-            options += [.requestModifier(modifier)]
+            /// Check cache, bundle
+            ApplicationImageCache.checkCached(imageResource)
 
             // Do the request
             let completionHandler: CompletionHandler = { image, error, cacheType, imageURL in
-                self.setNeedsDisplay()
+                if let error = error {
+                    ApplicationImageCache.log(error: error, for: imageURL)
+                } else {
+                    //self.setNeedsDisplay() // force refresh ??
+                }
             }
-            self.kf.cancelDownloadTask()
-            _ = self.kf.setImage(with: imageResource,
-                                 placeholder: placeHolderImage,
+            let kf = self.kf
+            kf.cancelDownloadTask()
+            kf.indicatorType = indicatorType
+            _ = kf.setImage(with: imageResource,
+                            placeholder: placeHolderImage,
                                  options: options,
                                  progressBlock: nil,
                                  completionHandler: completionHandler)

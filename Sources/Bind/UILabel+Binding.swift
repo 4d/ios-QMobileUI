@@ -393,60 +393,67 @@ extension UILabel {
     @objc dynamic public var restImage: [String: Any]? {
         get {
             if let text = self.text {
-                let deffered = Deferred(uri: text, image: true)
-                return deffered.dictionary
+                return Deferred(uri: text, image: true).dictionary
             }
             return nil
         }
         set {
-            guard let dico = newValue, let uri = ImportableParser.parseImage(dico) else {
+            guard let imageResource = ApplicationImageCache.imageResource(for: newValue) else {
                 self.text = nil
                 return
             }
-            self.text = uri
+            self.text = imageResource.downloadURL.absoluteString
 
-            let restTarget = DataSync.instance.rest.base
-            let urlString = restTarget.baseURL.absoluteString +
-                (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
-            guard let components = URLComponents(string: urlString), let url = components.url else {
-                self.text = nil
-                return
-            }
+            logger.verbose("Setting \(imageResource) to view \(self)")
 
-            let modifier = AnyModifier { request in
-                return APIManager.instance.configure(request: request)
-            }
-            var options: KingfisherOptionsInfo = [.requestModifier(modifier)]
+            // Setup placeHolder image or other options defined by custom builders
+            var options = ApplicationImageCache.options()
             var placeHolderImage: UIImage?
-            if let builder = self as? KingfisherOptionsInfoBuilder {
-                options = builder.option(for: url, currentOptions: options)
+            if let builder = self as? ImageCacheOptionsBuilder {
+                options = builder.option(for: imageResource.downloadURL, currentOptions: options)
                 placeHolderImage = builder.placeHolderImage
             }
 
-            let cacheKey = components.path.replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
-                .replacingOccurrences(of: "/", with: "")
+            /// Check cache, bundle
+            ApplicationImageCache.checkCached(imageResource)
 
-            //let resource = ImageResource(downloadURL: url, cacheKey: cacheKey)
-            let imageCache = options.targetCache
-
-            if !imageCache.imageCachedType(forKey: cacheKey).cached {
-                let subdirectory = ApplicationImageCache.subdirectory
-                let ext = ApplicationImageCache.extension
-                if let url = Bundle.main.url(forResource: cacheKey, withExtension: ext, subdirectory: subdirectory),
-                    let image = Image(url: url) {
-                    imageCache.store(image, forKey: cacheKey)
-                    options += [.forceRefresh]
+            // Do the request
+            let completionHandler: CompletionHandler = { [weak self] image, error, cacheType, imageURL in
+                if let error = error {
+                    ApplicationImageCache.log(error: error, for: imageURL)
+                } else if let image = image {
+                    self?.setImage(image)
                 }
             }
-            //if imageCache.imageCachedType(forKey: cacheKey).cached {
-            if let image = imageCache.retrieveImageInDiskCache(forKey: cacheKey) ?? placeHolderImage {
-                let attachmentImage = NSTextAttachment()
-                attachmentImage.image = image
-                self.attributedText = NSAttributedString(attachment: attachmentImage)
+            cancelDownloadTask()
+            if let placeHolderImage = placeHolderImage {
+                setImage(placeHolderImage)
             }
-            //}
-
+            let task = KingfisherManager.shared.retrieveImage(
+                with: imageResource,
+                options: options,
+                progressBlock: nil,
+                completionHandler: completionHandler)
+            setImageTask(task)
         }
     }
 
+    fileprivate func setImage(_ image: UIImage) {
+        let attachmentImage = NSTextAttachment()
+        attachmentImage.image = image
+        self.attributedText = NSAttributedString(attachment: attachmentImage)
+    }
+
+    fileprivate func cancelDownloadTask() {
+        imageTask?.cancel()
+    }
+
+    fileprivate var imageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+    }
+
+    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
+private var imageTaskKey: Void?

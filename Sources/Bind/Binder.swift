@@ -52,9 +52,6 @@ open class Binder: NSObject {
         didSet {
             record = table?.record
             table?.add(indexPathObserver: self)
-            if /*updateViewOnDidSet && */ (self.table != nil) {
-                updateView()
-            }
         }
     }
 

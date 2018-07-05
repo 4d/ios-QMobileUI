@@ -18,18 +18,23 @@ class ApplicationImageCache: NSObject {
     var listeners: [NSObjectProtocol] = []
 }
 
-extension ApplicationImageCache: ApplicationService {
+extension ApplicationImageCache {
 
     static var instance: ApplicationService = ApplicationImageCache()
 
-    static var pref: MutablePreferencesType {
+    private static let imageCache: ImageCache = ImageCache(name: "imageCache") { (_, _) -> String in
+        let dstPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+        return (dstPath as NSString).appendingPathComponent("imageCache")
+    }
+
+    private static var pref: MutablePreferencesType {
         return MutableProxyPreferences(preferences: preferences, key: "imageCache.", separator: "")
     }
 
-    static var atLaunch: Bool {
+    private static var atLaunch: Bool {
         return pref["atLaunch"] as? Bool ?? false
     }
-    static var atLaunchDone: Bool {
+    private static var atLaunchDone: Bool {
         get {
             return pref["atLaunchDone"] as? Bool ?? false
         }
@@ -37,13 +42,15 @@ extension ApplicationImageCache: ApplicationService {
             pref.set(newValue, forKey: "atLaunchDone")
         }
     }
-    static var subdirectory: String {
+    private static var subdirectory: String {
         return pref["subdirectory"] as? String ?? "Pictures"
     }
-    static var `extension`: String {
+    private static var `extension`: String {
         return pref["extension"] as? String ?? "png"
     }
-    public static func fill(imageCache: ImageCache = .default, from bundle: Bundle = .main) {
+
+    // MARK: function
+    private static func fill(from bundle: Bundle = .main) {
         guard let urls = bundle.urls(forResourcesWithExtension: self.extension, subdirectory: self.subdirectory) else {
             return
 
@@ -58,12 +65,100 @@ extension ApplicationImageCache: ApplicationService {
         }
     }
 
-    public static func clear(imageCache: ImageCache = .default) {
+    private static func clear() {
         imageCache.clearDiskCache()
         imageCache.clearMemoryCache()
     }
 
-    static func imageResource(for restDictionary: [String: Any]?) -> ImageResource? {
+    static func imageResource(for restDictionary: [String: Any]?) -> RestImageResource? {
+        return RestImageResource(restDictionary: restDictionary)
+    }
+
+    private static func imageInBundle(for resource: RestImageResource) -> UIImage? {
+        if let url = Bundle.main.url(forResource: resource.cacheKey,
+                                     withExtension: resource.extension ?? self.extension,
+                                     subdirectory: self.subdirectory) {
+            return UIImage(url: url)
+        }
+        return nil
+    }
+
+    static func options() -> KingfisherOptionsInfo {
+        let modifier = AnyModifier { request in // Setup some request modification
+            return APIManager.instance.configure(request: request)
+        }
+        return [
+            .targetCache(ApplicationImageCache.imageCache),
+            .requestModifier(modifier)
+        ]
+    }
+
+    private static func store(image: UIImage, for resource: RestImageResource) {
+        imageCache.store(image, forKey: resource.cacheKey)
+    }
+
+    static func log(error: NSError, for imageURL: URL?) {
+        if let kfError = KingfisherError.from(error) {
+            switch kfError {
+            case .downloadCancelledBeforeStarting:
+                logger.warning("Task for \(String(describing: imageURL)) cancelled")
+            default:
+                logger.warning("Failed to download image \(String(describing: imageURL)): \(kfError)")
+            }
+        } else {
+            logger.warning("Failed to download image \(String(describing: imageURL)): \(error)")
+        }
+    }
+
+    static func checkCached(_ imageResource: RestImageResource) {
+        if !ApplicationImageCache.isCached(imageResource),
+            let image = ApplicationImageCache.imageInBundle(for: imageResource) {
+            ApplicationImageCache.store(image: image, for: imageResource)
+        }
+    }
+
+    private static func isCached(_ imageResource: RestImageResource) -> Bool {
+        return imageCache.imageCachedType(forKey: imageResource.cacheKey).cached
+    }
+
+    private static func fillAtLaunch() {
+            if atLaunch {
+                if !atLaunchDone {
+                fill()
+                atLaunchDone = true
+            }
+        }
+    }
+}
+
+extension ApplicationImageCache: ApplicationService {
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        ApplicationImageCache.fillAtLaunch()
+
+        let center = NotificationCenter.default
+        let listener = center.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { (_) in
+            ApplicationImageCache.clear()
+        }
+        listeners += [listener]
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        let center = NotificationCenter.default
+        for listener in listeners {
+            center.removeObserver(listener)
+        }
+    }
+}
+
+// MARK: resource
+struct RestImageResource: Resource {
+
+    var restDictionary: [String: Any]?
+    var cacheKey: String
+    var downloadURL: URL
+
+    init?(restDictionary: [String: Any]?) {
         guard let restDictionary = restDictionary,
             let uri = ImportableParser.parseImage(restDictionary) else {
                 return nil
@@ -76,42 +171,40 @@ extension ApplicationImageCache: ApplicationService {
             logger.warning("Cannot encode URI \(uri) to download image from 4D server")
             return nil
         }
-        // Check cache
+        let version = components.queryItems?.filter { $0.name == "$version"}.first?.value ?? ""
         let cacheKey = components.path
             .replacingOccurrences(of: "/"+restTarget.path+"/", with: "")
-            .replacingOccurrences(of: "/", with: "")
-        return ImageResource(downloadURL: url, cacheKey: cacheKey)
+            .replacingOccurrences(of: "/", with: "_")+"_"+version
+        self.downloadURL = url
+        self.cacheKey = cacheKey
     }
 
-    static func imageInBundle(for resource: ImageResource) -> UIImage? {
-        if let url = Bundle.main.url(forResource: resource.cacheKey,
-                                     withExtension: self.extension,
-                                     subdirectory: self.subdirectory) {
-            return Image(url: url)
+    var `extension`: String? {
+        return nil // could return according to restDictionary maybe nil if "best"
+    }
+
+}
+
+// MARK: error
+extension KingfisherError: Error {
+
+    static func from(_ nsError: NSError) -> KingfisherError? {
+        guard nsError.domain == KingfisherErrorDomain else {
+            return nil
         }
-        return nil
+        return KingfisherError(rawValue: nsError.code)
     }
 
-    private static func fillAtLaunch() {
-            if atLaunch {
-                if !atLaunchDone {
-                fill()
-                atLaunchDone = true
-            }
-        }
-    }
+}
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
-        ApplicationImageCache.fillAtLaunch()
+/// Protocol allowing to customize rest image download using Kingfisher option api.
+protocol ImageCacheOptionsBuilder {
 
-       /* listeners += [NotificationCenter.default.addObserver(forName: .dataSyncSuccess) { (_: Notification) in
-             // XXX  reset cache image ?
-            }]*/
-    }
+    /// Return the new options to display or download the images.
+    func option(for url: URL, currentOptions options: KingfisherOptionsInfo) -> KingfisherOptionsInfo
 
-    func applicationWillTerminate(_ application: UIApplication) {
-        /*for listener in listeners {
-            NotificationCenter.default.removeObserver(listener)
-        }*/
-    }
+    var placeHolderImage: UIImage? { get }
+
+    var indicatorType: IndicatorType? { get }
+
 }
