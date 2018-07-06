@@ -67,33 +67,24 @@ extension ApplicationCrashManager: ApplicationService {
 
         // Try loading the crash report
         if ApplicationServerCrashAPI.crashURL != nil {
-            let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
+            var crashs = crashDirectory.children(recursive: true)
+            crashs = crashs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
+            crashs = crashs.filter { $0.parent.fileName == CrashType.nsexception.rawValue || $0.parent.fileName == CrashType.signal.rawValue }
             if !crashs.isEmpty {
-                var crashs = crashDirectory.children(recursive: true)
-                crashs = crashs.filter { !$0.isDirectory }
-                crashs = crashs.filter { $0.parent.fileName=="nsexception" || $0.parent.fileName == "signal"}
-                var dsStory = false
-                for crash in crashs {
-                    if (crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal") && crash.fileName != ".DS_Store" {
-                        dsStory = true
-                    }
-                }
-                if dsStory {
-                    // swiftlint:disable:next line_length
-                    let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?", message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "Save report for later", style: UIAlertActionStyle.cancel, handler: nil))
-                    alert.addAction(UIAlertAction(title: "Send report", style: UIAlertActionStyle.default, handler: { _ in
-                        self.sendReport()
-                    }))
-                    alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: { _ in
-                        self.notSendReport()
-                    }))
-                    let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-                    alertWindow.rootViewController = UIViewController()
-                    alertWindow.windowLevel = UIWindowLevelAlert + 1
-                    alertWindow.makeKeyAndVisible()
-                    alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
-                }
+                // swiftlint:disable:next line_length
+                let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?", message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Save report for later", style: UIAlertActionStyle.cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Send report", style: UIAlertActionStyle.default, handler: { _ in
+                    self.fileToSendReport(crashs: crashs)
+                }))
+                alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: { _ in
+                    self.notSendReport()
+                }))
+                let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+                alertWindow.rootViewController = UIViewController()
+                alertWindow.windowLevel = UIWindowLevelAlert + 1
+                alertWindow.makeKeyAndVisible()
+                alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
             }
         }
     }
@@ -102,36 +93,39 @@ extension ApplicationCrashManager: ApplicationService {
         return Path.userCaches
     }
 
-    func sendReport() {
-        let crashDirectory = ApplicationCrashManager.crashDirectory
-        let crashs = crashDirectory.children(recursive: true).filter { !$0.isDirectory }
+    func fileToSendReport(crashs: [Path]) {
         for crash in crashs {
-            if (crash.parent.fileName=="nsexception" || crash.parent.fileName=="signal" || crash.parent.fileName=="logs") && crash.fileName != ".DS_Store" {
-                if let zipPath = self.tempZipPath(fileName: crash.fileName), let pathCrash = self.tempPathFile(parent: crash.parent.fileName) {
-                    self.saveCrashFile(pathCrash: crash.absolute, zipPath: zipPath)
-                    let target = ApplicationServerCrashAPI(fileURL: zipPath.url, parameters: ApplicationCrashManager.applicationInformation(fileName: crash.fileName))
-                    let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
-                    crashServeProvider.request(target) { (result) in
-                        switch result {
-                        case .success(let response):
-                            do {
-                                _ = try response.filterSuccessfulStatusCodes()
-                                let data = try response.mapJSON()
-                                if "\(data)" == "ok" {
-                                    self.deleteCrashFile(pathCrash: crash.absolute, zipPath: zipPath)
-                                }
-                            } catch let error {
-                                logger.warning(error)
-                            }
-                        case .failure(let error):
-                            logger.warning(error)
-                        }
-                    }
-                }
-            }
+           zipfile(crashFile: crash)
         }
     }
 
+    func zipfile(crashFile: Path) {
+        if let zipPath = self.tempZipPath(fileName: crashFile.fileName) {
+            self.saveCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+            sendData(zipPath: zipPath, fileName: crashFile)
+        }
+    }
+
+    func sendData(zipPath: Path, fileName: Path) {
+        let target = ApplicationServerCrashAPI(fileURL: zipPath.url, parameters: ApplicationCrashManager.applicationInformation(fileName: fileName.fileName))
+        let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
+        crashServeProvider.request(target) { (result) in
+            switch result {
+            case .success(let response):
+                do {
+                    _ = try response.filterSuccessfulStatusCodes()
+                    let data = try response.mapJSON()
+                    if "\(data)" == "ok" {
+                        self.deleteCrashFile(pathCrash: fileName.absolute, zipPath: zipPath)
+                    }
+                } catch let error {
+                    logger.warning(error)
+                }
+            case .failure(let error):
+                logger.warning(error)
+            }
+        }
+    }
     func notSendReport() {
         let crashDirectory = ApplicationCrashManager.crashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
