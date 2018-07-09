@@ -13,42 +13,43 @@ import XCGLogger
 import Prephirences
 import FileKit
 import Moya
+import DeviceKit
+import QMobileAPI
 
-class ApplicationCrashManager: NSObject {}
-
-enum CrashType: String {
-    case nsexception
-    case signal
-}
-
-extension ApplicationCrashManager: ApplicationService {
-    static var instance: ApplicationService = ApplicationCrashManager()
+// Service to manage application crash and send report.
+class ApplicationCrashManager: NSObject {
 
     var pref: PreferencesType {
         return ProxyPreferences(preferences: preferences, key: "crash.")
     }
 
+    static var crashDirectory: Path {
+        return Path.userCaches
+    }
+
+}
+
+// TODO add log files corresponding to the crash files
+
+extension ApplicationCrashManager: ApplicationService {
+
+    static var instance: ApplicationService = ApplicationCrashManager()
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         guard pref["manage"] as? Bool ?? true else { // manage by default
             return
         }
-        let crashDirectory = ApplicationCrashManager.crashDirectory
-        // Register
-        if pref[CrashType.nsexception.rawValue] as? Bool ?? true {
-            NSSetUncaughtExceptionHandler(nsExceptionHandler)
 
-            let path = crashDirectory + CrashType.nsexception.rawValue
-            if !path.exists {
-                try? path.createDirectory()
-            }
+        // Register to crash
+        if pref[CrashType.nsexception.rawValue] as? Bool ?? true {
+            ApplicationCrashManager.checkDirectory(.nsexception)
+            NSSetUncaughtExceptionHandler(nsExceptionHandler)
         }
 
         if pref[CrashType.signal.rawValue] as? Bool ?? true {
-            signal(SIGABRT, signalHandler)
-            signal(SIGSEGV, signalHandler)
-            signal(SIGBUS, signalHandler)
-            signal(SIGTRAP, signalHandler)
-            signal(SIGILL, signalHandler)
+            ApplicationCrashManager.checkDirectory(.signal)
+
+            registerSignalHandler()
 
             if pref["signal.experimental"] as? Bool ?? false {
                 signal(SIGHUP, signalHandler)
@@ -57,100 +58,119 @@ extension ApplicationCrashManager: ApplicationService {
                 signal(SIGFPE, signalHandler)
                 signal(SIGPIPE, signalHandler)
             }
-            let path = crashDirectory + CrashType.signal.rawValue
-            if !path.exists {
-                try? path.createDirectory()
-            }
         }
 
-        // Maybe at start
-
         // Try loading the crash report
-        if ApplicationServerCrashAPI.crashURL != nil {
-            var crashs = crashDirectory.children(recursive: true)
+        if pref["server.url"] != nil { // do nothing if we not define crash server url
+
+            var crashs = ApplicationCrashManager.crashDirectory.children(recursive: true)
             crashs = crashs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
             crashs = crashs.filter { $0.parent.fileName == CrashType.nsexception.rawValue || $0.parent.fileName == CrashType.signal.rawValue }
             if !crashs.isEmpty {
+                logger.info("\(crashs.count) crash file found")
+
+                // Ask user about reporting it:
                 // swiftlint:disable:next line_length
-                let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?", message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.", preferredStyle: UIAlertControllerStyle.alert)
+                let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?",
+                                              message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.",
+                                              preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Save report for later", style: UIAlertActionStyle.cancel, handler: nil))
                 alert.addAction(UIAlertAction(title: "Send report", style: UIAlertActionStyle.default, handler: { _ in
-                    self.fileToSendReport(crashs: crashs)
+                    self.send(crashs: crashs)
                 }))
-                alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: { _ in
-                    self.notSendReport()
-                }))
-                let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-                alertWindow.rootViewController = UIViewController()
-                alertWindow.windowLevel = UIWindowLevelAlert + 1
-                alertWindow.makeKeyAndVisible()
-                alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+                alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: deleteCrashFile))
+
+                alert.present()
             }
         }
     }
 
-    static var crashDirectory: Path {
-        return Path.userCaches
+}
+
+// MARK: present dialog
+extension UIAlertController {
+    fileprivate func present() {
+        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+        alertWindow.rootViewController = UIViewController()
+        alertWindow.windowLevel = UIWindowLevelAlert + 1
+        alertWindow.makeKeyAndVisible()
+        alertWindow.rootViewController?.present(self, animated: true, completion: nil)
+    }
+}
+
+extension ApplicationCrashManager {
+
+    // MARK: Actions
+    open func deleteCrashFile(_ action: UIAlertAction) {
+        let crashDirectory = ApplicationCrashManager.crashDirectory
+        self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }
 
-    func fileToSendReport(crashs: [Path]) {
+    fileprivate func send(crashs: [Path]) {
         for crash in crashs {
-           zipfile(crashFile: crash)
+           zipAndSend(crashFile: crash)
         }
     }
 
-    func zipfile(crashFile: Path) {
-        if let zipPath = self.tempZipPath(fileName: crashFile.fileName) {
-            self.saveCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
-            sendData(zipPath: zipPath, fileName: crashFile)
+    fileprivate func zipAndSend(crashFile: Path) {
+        let zipPath = self.tempZipPath(fileName: crashFile.fileName)
+        if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
+
+            let applicationInformation = ApplicationCrashManager.applicationInformation(fileName: crashFile.fileName)
+            send(file: zipPath, parameters: applicationInformation) {
+                self.deleteCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+            }
         }
     }
 
-    func sendData(zipPath: Path, fileName: Path) {
-        let target = ApplicationServerCrashAPI(fileURL: zipPath.url, parameters: ApplicationCrashManager.applicationInformation(fileName: fileName.fileName))
+    fileprivate func send(file: Path, parameters: [String: String], onSuccess: @escaping () -> Void) {
+        let target = ApplicationServerCrashAPI(fileURL: file.url, parameters: parameters)
         let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
         crashServeProvider.request(target) { (result) in
             switch result {
             case .success(let response):
                 do {
-                    _ = try response.filterSuccessfulStatusCodes()
-                    let data = try response.mapJSON()
-                    if "\(data)" == "ok" {
-                        self.deleteCrashFile(pathCrash: fileName.absolute, zipPath: zipPath)
+                    // TODO Anass, mapJSON and then just compare to a string...??? mapString or ?
+                    // You can decode json into struture like `Status`
+                    // I submit the code with `Status` but the server must return { "ok": true } if ok
+                    // You can have your own object CrashStatus with many information in it, decoded from json
+                    let status = try response.map(to: Status.self)
+                    if status.ok {
+                        onSuccess()
+                    } else {
+                        logger.warning("Server did not accept the crash file")
                     }
                 } catch let error {
-                    logger.warning(error)
+                    logger.warning("Failed to decode response from crash server \(error)")
                 }
             case .failure(let error):
-                logger.warning(error)
+                logger.warning("Failed to send crash file \(error)")
             }
         }
     }
-    func notSendReport() {
-        let crashDirectory = ApplicationCrashManager.crashDirectory
-        self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
+
+    // MARK: Files
+
+    /// Return the directory for specific crash type.
+    fileprivate static func directory(for type: CrashType) -> Path {
+        return ApplicationCrashManager.crashDirectory + type.rawValue
     }
 
-    func tempPathFile(parent: String) -> Path? {
-        let path = Path.userTemporary + parent//"nsexception"
-        do {
-            try path.createDirectory(withIntermediateDirectories: true)
-        } catch {
-            return nil
+    /// Ensure crash directory is created for crash `type`.
+    fileprivate static func checkDirectory(_ type: CrashType) {
+        let path = directory(for: type)
+        if !path.exists {
+            try? path.createDirectory()
         }
-        return path
     }
 
-    func tempZipPath(fileName: String, ext: String = "zip") -> Path? {
-        return Path.userTemporary + "\(fileName).\(ext)"
-    }
-
-    static func save(crash: String, ofType type: CrashType) {
+    /// Save a crash.
+    fileprivate static func save(crash: String, ofType type: CrashType) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYYMMdd-HHmmss"
         if let appName = Bundle.main["CFBundleIdentifier"] as? String {
             let fName = "\(appName)_\(dateFormatter.string(from: Date()))"
-            let path = Path.userCaches + type.rawValue + fName
+            let path = directory(for: type) + fName
             var crashLog = "\r\n information application: "
             for item in applicationInformation(fileName: path.fileName) {
                 crashLog += "\r\n \(item.key) : \(item.value)"
@@ -160,47 +180,90 @@ extension ApplicationCrashManager: ApplicationService {
         }
     }
 
-    static func applicationInformation(fileName: String) -> [String: String] {
-        var information = [String: String]()
-
-        let bundle = Bundle.main
-        information["CFBundleShortVersionString"] =  bundle[.CFBundleShortVersionString] as? String
-        information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String
-        information["CFBundleIdentifier"] = bundle[.CFBundleIdentifier] as? String
-        information["CFBundleName"] = bundle[.CFBundleName] as? String
-        information["AppIdentifierPrefix"] = bundle["AppIdentifierPrefix"] as? String
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
-        information["SendDate"] = formatter.string(from: Date())
-        information["fileName"] = fileName
-        return information
-    }
-
-    func saveCrashFile(pathCrash source: Path, zipPath: Path) {
+    fileprivate func zipCrashFile(pathCrash source: Path, zipPath: Path) -> Bool {
         do {
             try source.zip(to: zipPath)
+            return true
         } catch {
-            logger.warning(error.localizedDescription)
+            logger.warning("Failed to zip crash file \(error.localizedDescription)")
+            return false
         }
     }
 
-    func deleteCrashFile(pathCrash: Path, zipPath: Path) {
+    fileprivate func deleteCrashFile(pathCrash: Path, zipPath: Path) {
         do {
             try pathCrash.deleteFile()
         } catch {
-            logger.warning(error.localizedDescription)
+            logger.warning("Failed to delete crash file \(error.localizedDescription)")
         }
         do {
             try zipPath.deleteFile()
         } catch {
-            logger.warning(error.localizedDescription)
+            logger.warning("Failed to delete zipped crash file\(error.localizedDescription)")
         }
     }
+
+    // MARK: Temporary files
+
+    fileprivate func tempZipPath(fileName: String, ext: String = "zip") -> Path {
+        return Path.userTemporary + "\(fileName).\(ext)"
+    }
+
+    // MARK: Get application information
+
+    fileprivate static func applicationInformation(fileName: String) -> [String: String] {
+        var information = [String: String]()
+
+        let bundle = Bundle.main
+        // Application
+        information["CFBundleShortVersionString"] =  bundle[.CFBundleShortVersionString] as? String ?? ""
+        information["CFBundleIdentifier"] = bundle[.CFBundleIdentifier] as? String ?? ""
+        information["CFBundleName"] = bundle[.CFBundleName] as? String ?? ""
+
+        // Team id
+        information["AppIdentifierPrefix"] = bundle["AppIdentifierPrefix"] as? String ?? ""
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
+        information["SendDate"] = formatter.string(from: Date())
+
+        // File
+        information["fileName"] = fileName
+
+        // OS
+        information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String ?? "" // XXX UIDevice.current.systemVersion ??
+
+        // Device
+        let device = Device.current
+        let underlying = device.real
+        information["device.description"] = underlying.description
+        if device.isSimulator {
+            information["device.simulator"] = "YES"
+        }
+
+        return information
+    }
+
+}
+
+// MARK: Crash management
+
+/// Type of crash
+enum CrashType: String {
+    case nsexception
+    case signal
 }
 
 public func unSetUncaughtException() {
     NSSetUncaughtExceptionHandler(nil)
+}
+
+public func registerSignalHandler() {
+    signal(SIGABRT, signalHandler)
+    signal(SIGSEGV, signalHandler)
+    signal(SIGBUS, signalHandler)
+    signal(SIGTRAP, signalHandler)
+    signal(SIGILL, signalHandler)
 }
 
 public func unregisterSignalHandler() {
