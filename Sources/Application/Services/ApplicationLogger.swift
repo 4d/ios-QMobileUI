@@ -102,6 +102,9 @@ extension ApplicationLogger: ApplicationService {
                 autodestination.autoRotationCompletion = { success in
                     if success {
                         print("Log has been autorotated")
+
+                        logger.logAppDetails()
+                        logger.info("IDE \(Bundle.main["4D"] ?? [:])")
                     }
                     print("Log has failed to autorotate")
                 }
@@ -131,6 +134,7 @@ extension ApplicationLogger: ApplicationService {
         }
 
         logger.logAppDetails()
+        logger.info("IDE \(Bundle.main["4D"] ?? [:])")
     }
 
     func logDirectory(_ directory: String?) -> URL? {
