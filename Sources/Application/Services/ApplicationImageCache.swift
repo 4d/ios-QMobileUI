@@ -16,25 +16,55 @@ import QMobileAPI
 
 class ApplicationImageCache: NSObject {
     var listeners: [NSObjectProtocol] = []
-}
-
-extension ApplicationImageCache {
 
     static var instance: ApplicationService = ApplicationImageCache()
 
-    private static let imageCache: ImageCache = ImageCache(name: "imageCache") { (_, _) -> String in
+    private static var instanceCached: ApplicationImageCache {
+        //swiftlint:disable:next force_cast
+        return instance as! ApplicationImageCache
+    }
+
+    private lazy var imageCache: ImageCache = { ImageCache(name: "imageCache") { (_, _) -> String in
         let dstPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         return (dstPath as NSString).appendingPathComponent("imageCache")
-    }
+        }}()
 
-    private static var pref: MutablePreferencesType {
+    private lazy var pref: MutablePreferencesType = {
         return MutableProxyPreferences(preferences: preferences, key: "imageCache.", separator: "")
-    }
+    }()
 
-    private static var atLaunch: Bool {
-        return pref["atLaunch"] as? Bool ?? false
-    }
-    private static var atLaunchDone: Bool {
+    private lazy var subdirectory: String = {
+        return pref["subdirectory"] as? String ?? "Pictures"
+    }()
+    private lazy var `extension`: String = {
+        return pref["extension"] as? String ?? "png"
+    }()
+
+    private lazy var clearOnReload: Bool = {
+        return pref["clear.onReload"] as? Bool ?? false
+    }()
+
+    private lazy var clearAtLaunch: Bool = {
+        return pref["clear.atLaunch"] as? Bool ?? false
+    }()
+
+    private lazy var forceRefresh: Bool = {
+        return pref["forceRefresh"] as? Bool ?? false
+    }()
+
+    private lazy var onlyFromCache: Bool = {
+        return pref["noNetwork"] as? Bool ?? false
+    }()
+
+    private lazy var cacheMemoryOnly: Bool = {
+        return pref["memoryOnly"] as? Bool ?? false
+    }()
+
+    private lazy var atLaunch: Bool = {
+        return pref["fill.atLaunch"] as? Bool ?? false
+    }()
+
+    private var atLaunchDone: Bool {
         get {
             return pref["atLaunchDone"] as? Bool ?? false
         }
@@ -42,18 +72,14 @@ extension ApplicationImageCache {
             pref.set(newValue, forKey: "atLaunchDone")
         }
     }
-    private static var subdirectory: String {
-        return pref["subdirectory"] as? String ?? "Pictures"
-    }
-    private static var `extension`: String {
-        return pref["extension"] as? String ?? "png"
-    }
 
+}
+
+extension ApplicationImageCache {
     // MARK: function
-    private static func fill(from bundle: Bundle = .main) {
-        guard let urls = bundle.urls(forResourcesWithExtension: self.extension, subdirectory: self.subdirectory) else {
+    private func fill(from bundle: Bundle = .main) {
+        guard let urls = bundle.urls(forResourcesWithExtension: self.extension, subdirectory: subdirectory) else {
             return
-
         }
         for url in urls {
             let cacheKey = url.deletingPathExtension().lastPathComponent
@@ -65,9 +91,9 @@ extension ApplicationImageCache {
         }
     }
 
-    private static func clear() {
-        imageCache.clearDiskCache()
-        imageCache.clearMemoryCache()
+    public static func clear() {
+        instanceCached.imageCache.clearDiskCache()
+        instanceCached.imageCache.clearMemoryCache()
     }
 
     static func imageResource(for restDictionary: [String: Any]?) -> RestImageResource? {
@@ -76,8 +102,8 @@ extension ApplicationImageCache {
 
     private static func imageInBundle(for resource: RestImageResource) -> UIImage? {
         if let url = Bundle.main.url(forResource: resource.cacheKey,
-                                     withExtension: resource.extension ?? self.extension,
-                                     subdirectory: self.subdirectory) {
+                                     withExtension: resource.extension ?? instanceCached.extension,
+                                     subdirectory: instanceCached.subdirectory) {
             return UIImage(url: url)
         }
         return nil
@@ -87,14 +113,24 @@ extension ApplicationImageCache {
         let modifier = AnyModifier { request in // Setup some request modification
             return APIManager.instance.configure(request: request)
         }
-        return [
-            .targetCache(ApplicationImageCache.imageCache),
+        var options: KingfisherOptionsInfo = [
+            .targetCache(instanceCached.imageCache),
             .requestModifier(modifier)
         ]
+        if instanceCached.forceRefresh {
+            options.append(.forceRefresh)
+        }
+        if instanceCached.onlyFromCache {
+            options.append(.onlyFromCache)
+        }
+        if instanceCached.cacheMemoryOnly {
+            options.append(.cacheMemoryOnly)
+        }
+        return options
     }
 
     private static func store(image: UIImage, for resource: RestImageResource) {
-        imageCache.store(image, forKey: resource.cacheKey)
+        instanceCached.imageCache.store(image, forKey: resource.cacheKey, toDisk: !instanceCached.cacheMemoryOnly)
     }
 
     static func log(error: NSError, for imageURL: URL?) {
@@ -111,34 +147,35 @@ extension ApplicationImageCache {
     }
 
     static func checkCached(_ imageResource: RestImageResource) {
-        if !ApplicationImageCache.isCached(imageResource),
-            let image = ApplicationImageCache.imageInBundle(for: imageResource) {
-            ApplicationImageCache.store(image: image, for: imageResource)
+        if !isCached(imageResource),
+            let image = imageInBundle(for: imageResource) {
+            store(image: image, for: imageResource)
         }
     }
 
     private static func isCached(_ imageResource: RestImageResource) -> Bool {
-        return imageCache.imageCachedType(forKey: imageResource.cacheKey).cached
+        return instanceCached.imageCache.imageCachedType(forKey: imageResource.cacheKey).cached
     }
 
-    private static func fillAtLaunch() {
-            if atLaunch {
-                if !atLaunchDone {
-                fill()
-                atLaunchDone = true
-            }
-        }
-    }
 }
 
 extension ApplicationImageCache: ApplicationService {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
-        ApplicationImageCache.fillAtLaunch()
+        if atLaunch {
+            if !atLaunchDone {
+                fill()
+                atLaunchDone = true
+            }
+        } else if clearAtLaunch {
+            ApplicationImageCache.clear()
+        }
 
         let center = NotificationCenter.default
         let listener = center.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main) { (_) in
-            ApplicationImageCache.clear()
+            if self.clearOnReload {
+                ApplicationImageCache.clear()
+            }
         }
         listeners += [listener]
     }
@@ -206,5 +243,15 @@ protocol ImageCacheOptionsBuilder {
     var placeHolderImage: UIImage? { get }
 
     var indicatorType: IndicatorType? { get }
+
+}
+
+// MARK: Application
+extension QApplication {
+
+    /// Clear image cache.
+    public func clearImageCache() {
+        ApplicationImageCache.clear()
+    }
 
 }

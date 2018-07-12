@@ -429,7 +429,8 @@ extension UILabel {
             if let placeHolderImage = placeHolderImage {
                 setImage(placeHolderImage)
             }
-            let task = KingfisherManager.shared.retrieveImage(
+            let imageDownloader = KingfisherManager.shared
+            let task = imageDownloader.retrieveImage(
                 with: imageResource,
                 options: options,
                 progressBlock: nil,

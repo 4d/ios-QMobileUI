@@ -110,10 +110,10 @@ extension UIImageView {
                     //self.setNeedsDisplay() // force refresh ??
                 }
             }
-            let kf = self.kf
-            kf.cancelDownloadTask()
-            kf.indicatorType = indicatorType
-            _ = kf.setImage(with: imageResource,
+            let imageDownloader = self.kf
+            imageDownloader.cancelDownloadTask()
+            imageDownloader.indicatorType = indicatorType
+            _ = imageDownloader.setImage(with: imageResource,
                             placeholder: placeHolderImage,
                                  options: options,
                                  progressBlock: nil,
