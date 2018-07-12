@@ -54,8 +54,6 @@ extension ApplicationServerCrashAPI: TargetType {
     }
 
     var headers: [String: String]? {
-        // TODO QUESTION Anass you put app info in headers, is it safe?
-        // other means, upload multipart data
         return self.parameters
     }
 

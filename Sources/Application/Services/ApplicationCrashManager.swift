@@ -29,8 +29,6 @@ class ApplicationCrashManager: NSObject {
 
 }
 
-// TODO add log files corresponding to the crash files
-
 extension ApplicationCrashManager: ApplicationService {
 
     static var instance: ApplicationService = ApplicationCrashManager()
@@ -107,18 +105,58 @@ extension ApplicationCrashManager {
     }
 
     fileprivate func send(crashs: [Path]) {
+        //clean tmp
+        self.deleteCrashFile(pathCrash: Path.userTemporary + "data", zipPath: Path.userTemporary + "data.zip")
+        //add log files corresponding to the crash files
         for crash in crashs {
-           zipAndSend(crashFile: crash)
+            zipFile(crashFile: crash)
+            getLogFromCrach(crashFile: crash)
+        }
+        //zip folder tmp and send
+        zipAndSend(crashFile: Path.userTemporary + "data", crashsFiles: crashs)
+    }
+
+    fileprivate func getLogFromCrach(crashFile: Path) {
+        var logs = ApplicationCrashManager.crashDirectory.children(recursive: true)
+        logs = logs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
+        logs = logs.filter { $0.parent.fileName == "logs"  }
+        for log in logs {
+            if getLog(nameLogFile: log.fileName, nameCrashFile: crashFile.fileName) {
+                zipFile(crashFile: log)
+            }
         }
     }
 
-    fileprivate func zipAndSend(crashFile: Path) {
-        let zipPath = self.tempZipPath(fileName: crashFile.fileName)
-        if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
+    fileprivate func getLog(nameLogFile: String, nameCrashFile: String) -> Bool {
+        var nameCrashFileArr = nameCrashFile.components(separatedBy: "-")
+        if !nameCrashFileArr.isEmpty {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYYMMdd"
+            if let date = dateFormatter.date(from: "\(nameCrashFileArr[0])") {
+                dateFormatter.dateFormat = "YYYY-MM-dd"
+                if nameLogFile.contains("debug_\(dateFormatter.string(from: (date)))") {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
+    fileprivate func zipFile(crashFile: Path) {
+        let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: false)
+        zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+    }
+
+    fileprivate func zipAndSend(crashFile: Path, crashsFiles: [Path]) {
+        let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: true)
+        if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
             let applicationInformation = ApplicationCrashManager.applicationInformation(fileName: crashFile.fileName)
             send(file: zipPath, parameters: applicationInformation) {
-                self.deleteCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+                //delete crash file
+                for crash in crashsFiles {
+                    self.deleteCrashFile(pathCrash: crash, zipPath: zipPath)
+                }
+                self.deleteCrashFile(pathCrash: Path.userTemporary + "data", zipPath: Path.userTemporary + "data.zip")
             }
         }
     }
@@ -130,7 +168,6 @@ extension ApplicationCrashManager {
             switch result {
             case .success(let response):
                 do {
-                    // TODO Anass, mapJSON and then just compare to a string...??? mapString or ?
                     // You can decode json into struture like `Status`
                     // I submit the code with `Status` but the server must return { "ok": true } if ok
                     // You can have your own object CrashStatus with many information in it, decoded from json
@@ -205,8 +242,16 @@ extension ApplicationCrashManager {
 
     // MARK: Temporary files
 
-    fileprivate func tempZipPath(fileName: String, ext: String = "zip") -> Path {
-        return Path.userTemporary + "\(fileName).\(ext)"
+    fileprivate func tempZipPath(fileName: String, isDirectory: Bool, ext: String = "zip") -> Path {
+        if !isDirectory {
+            let zipFolder = Path.userTemporary + "data"
+            if !zipFolder.exists {
+                try? zipFolder.createDirectory()
+            }
+            return Path.userTemporary + "data/\(fileName).\(ext)"
+        } else {
+            return Path.userTemporary + "\(fileName).\(ext)"
+        }
     }
 
     // MARK: Get application information
@@ -240,7 +285,11 @@ extension ApplicationCrashManager {
         if device.isSimulator {
             information["device.simulator"] = "YES"
         }
-
+        let versions = Bundle.main["4D"] as? [String: String] ?? [:]
+        information["build"] = versions["build"]
+        information["component"] = versions["component"]
+        information["ide"] = versions["ide"]
+        information["sdk"] = versions["sdk"]
         return information
     }
 
