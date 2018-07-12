@@ -290,6 +290,9 @@ extension ApplicationCrashManager {
         information["component"] = versions["component"]
         information["ide"] = versions["ide"]
         information["sdk"] = versions["sdk"]
+        if let uuid = Prephirences.sharedInstance["uuid"] as? String {
+            information["uuid"] = uuid
+        }
         return information
     }
 
