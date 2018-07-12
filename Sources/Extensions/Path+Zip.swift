@@ -19,14 +19,14 @@ extension Path {
     ///     `Archive.ArchiveError.unwritableArchive`
     ///     `Archive.ArchiveError.invalidStartOfCentralDirectoryOffset`
     ///     ...
-    public func zip(to destination: Path) throws {
+    public func zip(to destination: Path, shouldKeepParent: Bool = true, progress: Progress? = nil) throws {
         if destination.exists {
             throw FileKitError.fileAlreadyExists(path: destination)
         }
         if !self.exists {
             throw FileKitError.fileDoesNotExist(path: self)
         }
-        try FileManager.default.zipItem(at: self.url, to: destination.url)
+        try FileManager.default.zipItem(at: self.url, to: destination.url, shouldKeepParent: shouldKeepParent, progress: progress)
     }
 
     /// Unzip current path to destination.
@@ -51,4 +51,70 @@ extension Path {
             throw FileKitError.readFromFileFail(path: self, error: error)
         }
     }
+}
+
+// MARK: Archive
+extension Path {
+
+    /// Get a zip archive from path.
+    public func archive(mode: Archive.AccessMode) -> Archive? {
+        return Archive(path: self, mode: mode)
+    }
+
+}
+
+extension Archive {
+
+    /// Init an archive from `Path`.
+    public convenience init?(path: Path, mode: Archive.AccessMode) {
+        self.init(url: path.url, accessMode: mode)
+    }
+
+    /// Extract an entry to `path`
+    public func extract(_ entry: Entry, to path: Path, bufferSize: UInt32 = defaultReadChunkSize) throws -> CRC32 {
+        return try self.extract(entry, to: path.url, bufferSize: bufferSize)
+    }
+
+    /// Add a path to zip archive.
+    public func addEntry(with path: Path, type: Entry.EntryType, permissions: UInt16? = nil,
+                         compressionMethod: CompressionMethod = .none, bufferSize: UInt32 = defaultWriteChunkSize,
+                         progress: Progress? = nil) throws {
+        try addEntry(with: path.fileName, type: type, uncompressedSize: UInt32(path.fileSize ?? 0),
+                     modificationDate: path.modificationDate ?? path.creationDate ?? Date(), permissions: permissions,
+                     compressionMethod: compressionMethod, bufferSize: bufferSize,
+                     progress: progress) { _, _ in
+                        return try File<Data>(path: path).read()
+        }
+    }
+}
+
+// MARK: Sequence
+
+extension Sequence where Element == Path {
+
+    /// Zip a list of `Path`
+    func zip(to destination: Path, update: Bool = false, compressionMethod: CompressionMethod = .none) throws -> Archive? {
+        var mode: Archive.AccessMode = .create
+        if destination.exists {
+            if update {
+                mode = .update
+            } else {
+                try destination.deleteFile()
+            }
+        }
+        var iterator = makeIterator()
+        var path = iterator.next()
+
+        guard let archive = destination.archive(mode: mode) else {
+            return nil
+        }
+        while path != nil {
+            if let path = path {
+                /*let entry = */try archive.addEntry(with: path, type: .file, compressionMethod: compressionMethod)
+            }
+            path = iterator.next()
+        }
+        return archive
+    }
+
 }

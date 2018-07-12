@@ -11,6 +11,7 @@ import QMobileDataStore
 import XCGLogger
 import Prephirences
 import FileKit
+import ZIPFoundation
 
 class ApplicationLogger: NSObject {}
 
@@ -20,12 +21,13 @@ extension ApplicationLogger: ApplicationService {
 
     static var instance: ApplicationService = ApplicationLogger()
 
-    var logPref: PreferencesType {
+    static var logPref: PreferencesType {
         return ProxyPreferences(preferences: preferences, key: "log.")
     }
 
     // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        let logPref = ApplicationLogger.logPref
         let showThreadName = logPref["showThreadName"] as? Bool ?? true
         let showLevel = logPref["showLevel"] as? Bool ?? true
         let showFileNames = logPref["showFileNames"] as? Bool ?? true
@@ -33,8 +35,6 @@ extension ApplicationLogger: ApplicationService {
         let showFunctionName = logPref["showFunctionName"] as? Bool ?? true
         let showDate = logPref["showDate"] as? Bool ?? true
         let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
-        let writeToFile = logPref["writeToFile"] as? String ?? "debug.log"
-        let directory = logPref["directory"] as? String ?? "logs"
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8
@@ -64,6 +64,7 @@ extension ApplicationLogger: ApplicationService {
 
         logger.outputLevel = level
 
+        // MARK: output log
         if let destination = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination {
             destination.showLogIdentifier = showLogIdentifier
             destination.showFunctionName = showFunctionName
@@ -82,73 +83,116 @@ extension ApplicationLogger: ApplicationService {
             }
         }
 
-        if let writeURL = logDirectory(directory)?.appendingPathComponent(writeToFile) {
-            print("Log will be written into file '\(writeURL)'")
-            let destination: FileDestination
-            if !autorotate {
-                destination = FileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier)
-            } else {
-                let autodestination = AutoRotatingFileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier, shouldAppend: true, appendMarker: nil, archiveSuffixDateFormatter: nil)
+        // MARK: File destination
+        let writeURL = ApplicationLogger.currentLog.url
+        print("Log will be written into file '\(writeURL)'")
+        let destination: FileDestination
+        if !autorotate {
+            destination = FileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier)
+        } else {
+            let autodestination = AutoRotatingFileDestination(writeToFile: writeURL, identifier: XCGLogger.Constants.fileDestinationIdentifier, shouldAppend: true, appendMarker: nil, archiveSuffixDateFormatter: nil)
 
-                if let maxFileSize = maxFileSize {
-                    autodestination.targetMaxFileSize = maxFileSize
-                }
-                if let maxLogFiles = maxLogFiles {
-                    autodestination.targetMaxLogFiles = maxLogFiles
-                }
-                if let maxTimeInterval = maxTimeInterval {
-                    autodestination.targetMaxTimeInterval = maxTimeInterval
-                }
-                autodestination.autoRotationCompletion = { success in
-                    if success {
-                        print("Log has been autorotated")
-
-                        logger.logAppDetails()
-                        logger.info("IDE \(Bundle.main["4D"] ?? [:])")
-                    }
+            if let maxFileSize = maxFileSize {
+                autodestination.targetMaxFileSize = maxFileSize
+            }
+            if let maxLogFiles = maxLogFiles {
+                autodestination.targetMaxLogFiles = maxLogFiles
+            }
+            if let maxTimeInterval = maxTimeInterval {
+                autodestination.targetMaxTimeInterval = maxTimeInterval
+            }
+            autodestination.autoRotationCompletion = { success in
+                if success {
+                    print("Log has been autorotated")
+                    self.logAppDetails()
+                } else {
                     print("Log has failed to autorotate")
                 }
-                destination = autodestination
-
-                autodestination.cleanUpLogFiles() // XXX maybe do it in task
             }
-            destination.showLogIdentifier = showLogIdentifier
-            destination.showFunctionName = showFunctionName
-            destination.showThreadName = showThreadName
-            destination.showLevel = showLevel
-            destination.showFileName = showFileNames
-            destination.showLineNumber = showLineNumbers
-            destination.showDate = showDate
-            destination.outputLevel = fileLevel ?? level
+            destination = autodestination
 
-            if !immediate {
-                destination.logQueue = XCGLogger.logQueue
-            }
-
-            destination.formatters = [LogFormatter.ansi.formatter]
-
-            logger.add(destination: destination)
+            autodestination.cleanUpLogFiles() // XXX maybe do it in task
         }
+        destination.showLogIdentifier = showLogIdentifier
+        destination.showFunctionName = showFunctionName
+        destination.showThreadName = showThreadName
+        destination.showLevel = showLevel
+        destination.showFileName = showFileNames
+        destination.showLineNumber = showLineNumbers
+        destination.showDate = showDate
+        destination.outputLevel = fileLevel ?? level
+        if !immediate {
+            destination.logQueue = XCGLogger.logQueue
+        }
+
+        destination.formatters = [LogFormatter.ansi.formatter]
+
+        logger.add(destination: destination)
+
+        // MARK: appleSystem destination
         if appleSystem {
             logger.add(destination: AppleSystemLogDestination())
         }
 
-        logger.logAppDetails()
-        logger.info("IDE \(Bundle.main["4D"] ?? [:])")
+        // MARK: end
+        logAppDetails()
+
+        //let dst: Path = Path.userCaches + "test.zip"
+        // ApplicationLogger.compressAllLog(to: dst)
     }
 
-    func logDirectory(_ directory: String?) -> URL? {
+    // MARK: Functions
+    fileprivate static func logDirectory(_ directory: String?) -> Path {
         if let directory = directory, !directory.isEmpty {
             let path = Path.userCaches + directory
             if !path.exists {
                 try? path.createDirectory()
             }
-            return path.url
+            return path
         } else {
-            return Path.userCaches.url
+            return Path.userCaches
         }
     }
 
+    static open var currentLog: Path {
+        return ApplicationLogger.logDirectory + ApplicationLogger.logFilename
+    }
+    static open var logDirectory: Path {
+        return logDirectory(logPref["directory"] as? String ?? "logs")
+    }
+
+    static open var logFilename: String {
+        return logPref["writeToFile"] as? String ?? "debug.log"
+    }
+
+    static open func logFiles(includeCurrent: Bool = true, rangeDate: Range<Date>? = nil) -> [Path] {
+        let currentLog = ApplicationLogger.currentLog
+        let pathExtension = currentLog.pathExtension
+        let prefix = currentLog.nameWithoutExtension
+
+        var logs = ApplicationLogger.logDirectory.children()
+        logs = logs.filter { $0.pathExtension == pathExtension } // only logs
+        logs = logs.filter { $0.fileName.starts(with: prefix) } // only with same prefix ex: debug
+        if !includeCurrent {
+             logs = logs.filter { $0.fileName != currentLog.fileName } // exclude current
+        }
+        if let rangeDate = rangeDate {
+            logs = logs.filter {
+                guard let date = $0.modificationDate ?? $0.creationDate else {
+                    return false
+                }
+                return rangeDate.contains(date) // date in specific range
+            }
+        }
+        return logs
+    }
+
+    open func logAppDetails() {
+        logger.logAppDetails()
+        logger.info("IDE \(Bundle.main["4D"] ?? [:])")
+    }
+
+    // MARK: custom formatter
     enum LogFormatter: String {
         case emoticon
         case ansi
@@ -177,4 +221,21 @@ extension ApplicationLogger: ApplicationService {
         }
     }
 
+    // MARK: Compress
+
+    static func compressAllLog(to dst: Path) {
+        let logFileste = logFiles()
+        do {
+            _ = try logFileste.zip(to: dst, compressionMethod: .deflate)
+        } catch {
+            logger.warning("Failed to zip \(error)")
+        }
+    }
+
+}
+
+extension Path {
+    public var nameWithoutExtension: String {
+        return (fileName as NSString).deletingPathExtension
+    }
 }
