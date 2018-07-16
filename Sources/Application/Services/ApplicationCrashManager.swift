@@ -78,22 +78,11 @@ extension ApplicationCrashManager: ApplicationService {
                 }))
                 alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: deleteCrashFile))
 
-                alert.present()
+                alert.presentOnTop()
             }
         }
     }
 
-}
-
-// MARK: present dialog
-extension UIAlertController {
-    fileprivate func present() {
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = UIWindowLevelAlert + 1
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(self, animated: true, completion: nil)
-    }
 }
 
 extension ApplicationCrashManager {

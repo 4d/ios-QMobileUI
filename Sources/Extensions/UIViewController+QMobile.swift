@@ -179,6 +179,15 @@ extension UIViewController {
         }
     }
 
+    // present constroller on new windows
+    func presentOnTop(windowLevel: UIWindowLevel = UIWindowLevelAlert + 1, animated: Bool = true, completion: (() -> Swift.Void)? = nil) {
+        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+        alertWindow.rootViewController = UIViewController()
+        alertWindow.windowLevel = windowLevel
+        alertWindow.makeKeyAndVisible()
+        alertWindow.rootViewController?.present(self, animated: true, completion: completion)
+    }
+
 }
 
 extension NSObject {
