@@ -71,12 +71,12 @@ extension ApplicationCrashManager: ApplicationService {
                 // swiftlint:disable:next line_length
                 let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?",
                                               message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.",
-                                              preferredStyle: UIAlertControllerStyle.alert)
-                alert.addAction(UIAlertAction(title: "Save report for later", style: UIAlertActionStyle.cancel, handler: nil))
-                alert.addAction(UIAlertAction(title: "Send report", style: UIAlertActionStyle.default, handler: { _ in
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Save report for later", style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Send report", style: .default, handler: { _ in
                     self.send(crashs: crashs)
                 }))
-                alert.addAction(UIAlertAction(title: "Don't send a report", style: UIAlertActionStyle.destructive, handler: deleteCrashFile))
+                alert.addAction(UIAlertAction(title: "Don't send a report", style: .destructive, handler: deleteCrashFile))
 
                 alert.presentOnTop()
             }
@@ -145,7 +145,7 @@ extension ApplicationCrashManager {
                 for crash in crashsFiles {
                     self.deleteCrashFile(pathCrash: crash, zipPath: zipPath)
                 }
-                self.deleteCrashFile(pathCrash: Path.userTemporary + "data", zipPath: Path.userTemporary + "data.zip")
+                self.deleteCrashFile(pathCrash: crashFile, zipPath: crashFile + ".zip")
             }
         }
     }
