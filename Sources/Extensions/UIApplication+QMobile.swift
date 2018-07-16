@@ -33,6 +33,20 @@ extension UIApplication {
         return "v\(version)"
     }
 
+    /// Check if app is running in debugging mode, ie. compilator flag DEBUG is set.
+    public static var isInDebuggingMode: Bool {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }
+
+    /// Check if app is running in TestFlight mode.
+    public static var isInTestFlight: Bool {
+        // http://stackoverflow.com/questions/12431994/detect-testflight
+        return Bundle.main.appStoreReceiptURL?.path.contains("sandboxReceipt") == true
+    }
 }
 
 // MARK: Shared application shortcut

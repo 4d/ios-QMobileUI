@@ -185,7 +185,7 @@ extension UIViewController {
         alertWindow.rootViewController = UIViewController()
         alertWindow.windowLevel = windowLevel
         alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(self, animated: true, completion: completion)
+        alertWindow.rootViewController?.present(self, animated: animated, completion: completion)
     }
 
 }

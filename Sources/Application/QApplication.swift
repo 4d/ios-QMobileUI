@@ -34,14 +34,31 @@ open class QApplication: UIApplication {
         return done
     }
 
+     */
+
+    var shakeEvent: UIEvent?
+
     open override func sendEvent(_ event: UIEvent) {
         super.sendEvent(event)
+
+        if event.subtype == .motionShake {
+            let center = NotificationCenter.default
+            if shakeEvent == nil {
+                shakeEvent = event
+                center.post(name: .motionShakeBegin, object: event)
+            } else {
+                shakeEvent = nil // maybe cancelled
+                center.post(name: .motionShakeEnd, object: event)
+            }
+        }
     }
-  */
 
     func initServices() {
         // Logger
         services.register(ApplicationLogger.instance)
+
+        // Feedback
+        services.register(ApplicationFeedback.instance)
 
         // Launch option handler
         services.register(ApplicationLaunchOptions.instance)
@@ -79,4 +96,9 @@ open class QApplication: UIApplication {
         return true
     }
 
+}
+
+extension Notification.Name {
+    static let motionShakeBegin = Notification.Name(rawValue: "motionShakeBegin")
+    static let motionShakeEnd = Notification.Name(rawValue: "motionShakeEnd")
 }

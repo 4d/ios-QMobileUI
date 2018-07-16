@@ -10,6 +10,12 @@ import Foundation
 
 extension DateFormatter {
 
+    static func now(with format: String = "YYYYMMdd") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: Date())
+    }
+
     open static let rfc822: DateFormatter = {
         let formatter = DateFormatter()
         // formatter.calendar = Calendar(identifier: .iso8601)

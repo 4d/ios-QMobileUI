@@ -7,7 +7,9 @@
 //
 
 import Foundation
+
 import QMobileDataStore
+
 import XCGLogger
 import Prephirences
 import FileKit
@@ -28,6 +30,8 @@ extension ApplicationLogger: ApplicationService {
     // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         let logPref = ApplicationLogger.logPref
+
+        // Show configuration
         let showThreadName = logPref["showThreadName"] as? Bool ?? true
         let showLevel = logPref["showLevel"] as? Bool ?? true
         let showFileNames = logPref["showFileNames"] as? Bool ?? true
@@ -35,13 +39,18 @@ extension ApplicationLogger: ApplicationService {
         let showFunctionName = logPref["showFunctionName"] as? Bool ?? true
         let showDate = logPref["showDate"] as? Bool ?? true
         let showLogIdentifier = logPref["showLogIdentifier"] as? Bool ?? false
+
+        // file conf
         let autorotate = logPref["autorotate"] as? Bool ?? true
         let maxFileSize = logPref["maxFileSize"] as? UInt64
         let maxLogFiles = logPref["maxLogFiles"] as? UInt8
         let maxTimeInterval = logPref["maxTimeInterval"] as? TimeInterval
+
+        // debug conf
         let appleSystem = logPref["appleSystem"] as? Bool ?? false
         let immediate = logPref["immediate"] as? Bool ?? false // if true, debug is easiest, but app perf will discrease
 
+        // level
         let levelPref: Preference<XCGLogger.Level> = logPref.preference(forKey: "level")
         levelPref.transformation = XCGLogger.Level.preferenceTransformation
         #if DEBUG
@@ -54,15 +63,14 @@ extension ApplicationLogger: ApplicationService {
         fileLevelPref.transformation = XCGLogger.Level.preferenceTransformation
         let fileLevel: XCGLogger.Level? = fileLevelPref.value
 
+        // formatter
         let formatterPref: Preference<LogFormatter> = logPref.preference(forKey: "formatter")
         formatterPref.transformation = LogFormatter.preferenceTransformation
         #if DEBUG
-            let formatter: LogFormatter? = formatterPref.value ?? LogFormatter.emoticon
+            let formatter: LogFormatter? = formatterPref.value ?? LogFormatter.heart
         #else
             let formatter: LogFormatter? = formatterPref.value
         #endif
-
-        logger.outputLevel = level
 
         // MARK: output log
         if let destination = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination {
@@ -124,7 +132,6 @@ extension ApplicationLogger: ApplicationService {
         if !immediate {
             destination.logQueue = XCGLogger.logQueue
         }
-
         destination.formatters = [LogFormatter.ansi.formatter]
 
         logger.add(destination: destination)
@@ -136,9 +143,6 @@ extension ApplicationLogger: ApplicationService {
 
         // MARK: end
         logAppDetails()
-
-        //let dst: Path = Path.userCaches + "test.zip"
-        // ApplicationLogger.compressAllLog(to: dst)
     }
 
     // MARK: Functions
@@ -196,17 +200,47 @@ extension ApplicationLogger: ApplicationService {
     enum LogFormatter: String {
         case emoticon
         case ansi
+        case heart
+        case circle
+        case ball
 
         var formatter: LogFormatterProtocol {
             switch self {
             case .emoticon:
                 let prePostFixLogFormatter = PrePostFixLogFormatter()
-                prePostFixLogFormatter.apply(prefix: "🗯🗯🗯", postfix: "", to: .verbose)
-                prePostFixLogFormatter.apply(prefix: "🔹🔹🔹", postfix: "", to: .debug)
-                prePostFixLogFormatter.apply(prefix: "ℹ️ℹ️ℹ️", postfix: "", to: .info)
-                prePostFixLogFormatter.apply(prefix: "⚠️⚠️⚠️", postfix: "", to: .warning)
-                prePostFixLogFormatter.apply(prefix: "‼️‼️‼️", postfix: "", to: .error)
-                prePostFixLogFormatter.apply(prefix: "💣💣💣", postfix: "", to: .severe)
+                prePostFixLogFormatter.apply(prefix: "🗯", postfix: "", to: .verbose)
+                prePostFixLogFormatter.apply(prefix: "🔹", postfix: "", to: .debug)
+                prePostFixLogFormatter.apply(prefix: "ℹ️", postfix: "", to: .info)
+                prePostFixLogFormatter.apply(prefix: "⚠️", postfix: "", to: .warning)
+                prePostFixLogFormatter.apply(prefix: "‼️", postfix: "", to: .error)
+                prePostFixLogFormatter.apply(prefix: "💣", postfix: "", to: .severe)
+                return prePostFixLogFormatter
+            case .heart:
+                let prePostFixLogFormatter = PrePostFixLogFormatter()
+                prePostFixLogFormatter.apply(prefix: "💕", postfix: "", to: .verbose)
+                prePostFixLogFormatter.apply(prefix: "💙", postfix: "", to: .debug)
+                prePostFixLogFormatter.apply(prefix: "💚", postfix: "", to: .info)
+                prePostFixLogFormatter.apply(prefix: "🧡", postfix: "", to: .warning)
+                prePostFixLogFormatter.apply(prefix: "❤️", postfix: "", to: .error)
+                prePostFixLogFormatter.apply(prefix: "🖤", postfix: "", to: .severe)
+                return prePostFixLogFormatter
+            case .circle:
+                let prePostFixLogFormatter = PrePostFixLogFormatter()
+                prePostFixLogFormatter.apply(prefix: "⚽", postfix: "", to: .verbose)
+                prePostFixLogFormatter.apply(prefix: "🔵", postfix: "", to: .debug)
+                prePostFixLogFormatter.apply(prefix: "⚪", postfix: "", to: .info)
+                prePostFixLogFormatter.apply(prefix: "🏀", postfix: "", to: .warning)
+                prePostFixLogFormatter.apply(prefix: "🔴", postfix: "", to: .error)
+                prePostFixLogFormatter.apply(prefix: "⚫", postfix: "", to: .severe)
+                return prePostFixLogFormatter
+            case .ball:
+                let prePostFixLogFormatter = PrePostFixLogFormatter()
+                prePostFixLogFormatter.apply(prefix: "⚽", postfix: "", to: .verbose)
+                prePostFixLogFormatter.apply(prefix: "⚾", postfix: "", to: .debug)
+                prePostFixLogFormatter.apply(prefix: "🏐", postfix: "", to: .info)
+                prePostFixLogFormatter.apply(prefix: "🎾", postfix: "", to: .warning)
+                prePostFixLogFormatter.apply(prefix: "🏈", postfix: "", to: .error)
+                prePostFixLogFormatter.apply(prefix: "🎱", postfix: "", to: .severe)
                 return prePostFixLogFormatter
             case .ansi:
                 let ansiColorLogFormatter: ANSIColorLogFormatter = ANSIColorLogFormatter()
@@ -223,13 +257,15 @@ extension ApplicationLogger: ApplicationService {
 
     // MARK: Compress
 
-    static func compressAllLog(to dst: Path) {
-        let logFileste = logFiles()
+    static func compressAllLog(to dst: Path) -> Bool {
+        let files = logFiles()
         do {
-            _ = try logFileste.zip(to: dst, compressionMethod: .deflate)
+            _ = try files.zip(to: dst, compressionMethod: .deflate)
+            return true
         } catch {
             logger.warning("Failed to zip \(error)")
         }
+        return false
     }
 
 }
