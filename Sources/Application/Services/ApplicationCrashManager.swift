@@ -112,6 +112,12 @@ extension ApplicationCrashManager {
         for log in logs {
             if getLog(nameLogFile: log.fileName, nameCrashFile: crashFile.fileName) {
                 zipFile(crashFile: log)
+            } else {
+                if let namedLog = Prephirences.sharedInstance["log.writeToFile"] as? String {
+                    if log.fileName == namedLog {
+                        zipFile(crashFile: log)
+                    }
+                }
             }
         }
     }
