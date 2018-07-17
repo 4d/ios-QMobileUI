@@ -151,7 +151,8 @@ extension ApplicationCrashManager {
     fileprivate func zipAndSend(crashFile: Path, crashsFiles: [Path]) {
         let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: true)
         if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
-            let applicationInformation = ApplicationCrashManager.applicationInformation(fileName: crashFile.fileName)
+            var applicationInformation = ApplicationCrashManager.applicationInformation
+            applicationInformation["fileName"] = crashFile.fileName
             send(file: zipPath, parameters: applicationInformation) {
                 //delete crash file
                 for crash in crashsFiles {
@@ -210,7 +211,7 @@ extension ApplicationCrashManager {
             let fName = "\(appName)_\(dateFormatter.string(from: Date()))"
             let path = directory(for: type) + fName
             var crashLog = "\r\n information application: "
-            for item in applicationInformation(fileName: path.fileName) {
+            for item in applicationInformation {
                 crashLog += "\r\n \(item.key) : \(item.value)"
             }
             crashLog += "\r\n *** First throw call "+crash
@@ -257,7 +258,7 @@ extension ApplicationCrashManager {
 
     // MARK: Get application information
 
-    fileprivate static func applicationInformation(fileName: String) -> [String: String] {
+    static var applicationInformation: [String: String] {
         var information = [String: String]()
 
         let bundle = Bundle.main
@@ -272,9 +273,6 @@ extension ApplicationCrashManager {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
         information["SendDate"] = formatter.string(from: Date())
-
-        // File
-        information["fileName"] = fileName
 
         // OS
         information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String ?? "" // XXX UIDevice.current.systemVersion ??
