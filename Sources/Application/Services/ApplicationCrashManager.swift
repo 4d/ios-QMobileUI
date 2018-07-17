@@ -152,7 +152,12 @@ extension ApplicationCrashManager {
         let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: true)
         if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
             var applicationInformation = ApplicationCrashManager.applicationInformation
+
             applicationInformation["fileName"] = crashFile.fileName
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
+            applicationInformation["SendDate"] = formatter.string(from: Date())
+
             send(file: zipPath, parameters: applicationInformation) {
                 //delete crash file
                 for crash in crashsFiles {
@@ -269,10 +274,6 @@ extension ApplicationCrashManager {
 
         // Team id
         information["AppIdentifierPrefix"] = bundle["AppIdentifierPrefix"] as? String ?? ""
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
-        information["SendDate"] = formatter.string(from: Date())
 
         // OS
         information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String ?? "" // XXX UIDevice.current.systemVersion ??
