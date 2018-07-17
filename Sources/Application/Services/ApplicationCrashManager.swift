@@ -18,17 +18,18 @@ import QMobileAPI
 
 // Service to manage application crash and send report.
 class ApplicationCrashManager: NSObject {
-
     var pref: PreferencesType {
         return ProxyPreferences(preferences: preferences, key: "crash.")
     }
-
+    static var pref: PreferencesType {
+        return ProxyPreferences(preferences: preferences, key: "crash.")
+    }
     static var crashDirectory: Path {
         return Path.userCaches
     }
-
 }
 
+// MARK : Service
 extension ApplicationCrashManager: ApplicationService {
 
     static var instance: ApplicationService = ApplicationCrashManager()
@@ -59,11 +60,9 @@ extension ApplicationCrashManager: ApplicationService {
         }
 
         // Try loading the crash report
-        if pref["server.url"] != nil { // do nothing if we not define crash server url
+        if ApplicationCrashManager.isConfigured { // do nothing if we not define crash server url
 
-            var crashs = ApplicationCrashManager.crashDirectory.children(recursive: true)
-            crashs = crashs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
-            crashs = crashs.filter { $0.parent.fileName == CrashType.nsexception.rawValue || $0.parent.fileName == CrashType.signal.rawValue }
+            let crashs = ApplicationCrashManager.crash()
             if !crashs.isEmpty {
                 logger.info("\(crashs.count) crash file found")
 
@@ -87,22 +86,34 @@ extension ApplicationCrashManager: ApplicationService {
 
 extension ApplicationCrashManager {
 
+    static var isConfigured: Bool {
+        return pref["server.url"] != nil
+    }
+
+    static func crash() -> [Path] {
+        var crashs = ApplicationCrashManager.crashDirectory.children(recursive: true)
+        crashs = crashs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
+        crashs = crashs.filter { $0.parent.fileName == CrashType.nsexception.rawValue || $0.parent.fileName == CrashType.signal.rawValue }
+        return crashs
+    }
+
     // MARK: Actions
     open func deleteCrashFile(_ action: UIAlertAction) {
         let crashDirectory = ApplicationCrashManager.crashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }
 
-    fileprivate func send(crashs: [Path]) {
+    func send(crashs: [Path]) {
+        let data: Path = .userTemporary + "data"
         //clean tmp
-        self.deleteCrashFile(pathCrash: Path.userTemporary + "data", zipPath: Path.userTemporary + "data.zip")
+        self.deleteCrashFile(pathCrash: data, zipPath: .userTemporary + "data.zip")
         //add log files corresponding to the crash files
         for crash in crashs {
             zipFile(crashFile: crash)
             getLogFromCrach(crashFile: crash)
         }
         //zip folder tmp and send
-        zipAndSend(crashFile: Path.userTemporary + "data", crashsFiles: crashs)
+        zipAndSend(crashFile: data, crashsFiles: crashs)
     }
 
     fileprivate func getLogFromCrach(crashFile: Path) {
@@ -110,14 +121,9 @@ extension ApplicationCrashManager {
         logs = logs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
         logs = logs.filter { $0.parent.fileName == "logs"  }
         for log in logs {
-            if getLog(nameLogFile: log.fileName, nameCrashFile: crashFile.fileName) {
+            if getLog(nameLogFile: log.fileName, nameCrashFile: crashFile.fileName) ||
+                log.fileName == ApplicationLogger.logFilename /* or current log*/ {
                 zipFile(crashFile: log)
-            } else {
-                if let namedLog = Prephirences.sharedInstance["log.writeToFile"] as? String {
-                    if log.fileName == namedLog {
-                        zipFile(crashFile: log)
-                    }
-                }
             }
         }
     }
@@ -137,9 +143,9 @@ extension ApplicationCrashManager {
         return false
     }
 
-    fileprivate func zipFile(crashFile: Path) {
+    fileprivate func zipFile(crashFile: Path) -> Bool {
         let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: false)
-        zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+        return zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
     }
 
     fileprivate func zipAndSend(crashFile: Path, crashsFiles: [Path]) {

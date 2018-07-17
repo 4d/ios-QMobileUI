@@ -102,3 +102,18 @@ extension Notification.Name {
     static let motionShakeBegin = Notification.Name(rawValue: "motionShakeBegin")
     static let motionShakeEnd = Notification.Name(rawValue: "motionShakeEnd")
 }
+
+/*
+ // other way to detect
+public extension UIWindow {
+
+    open override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        guard let event = event else {
+            return
+        }
+        if event.type == .motion && event.subtype == .motionShake {
+            NotificationCenter.default.post(name: .motionShakeEnd, object: self)
+        }
+    }
+}
+ */
