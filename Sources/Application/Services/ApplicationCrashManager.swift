@@ -179,8 +179,8 @@ extension ApplicationCrashManager {
                     let status = try response.map(to: CrashStatus.self)
                     if status.ok {
                         onSuccess()
-                        alert.title = "Crash file has been received."
-                        alert.message = ""
+                        alert.title = "Report sent"
+                        alert.message = "Thanks for helping improve this app!"
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                     } else {
                         logger.warning("Server did not accept the crash file")
