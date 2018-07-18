@@ -12,6 +12,7 @@ import UIKit
 import XCGLogger
 import Prephirences
 import FileKit
+import DeviceKit
 
 import MessageUI
 
@@ -85,13 +86,16 @@ extension ApplicationFeedback: ApplicationService {
         /*alert.addAction(UIAlertAction(title: "📣 Suggest an improvement", style: .default, handler: { _ in
             self.mailCompose(subject: "Suggest an improvement", body: "here sugest improvement")
         }))*/
-        /*alert.addAction(UIAlertAction(title: "📄 Show current log", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "📄 Show current log", style: .default, handler: { _ in
             guard let topVC = UIApplication.topViewController else {
                 logger.error("No view controller to show log")
                 return
             }
-            LogForm().viewLog(in: ApplicationLogger.currentLog, from: topVC)
-        }))*/
+            if let logForm = LogForm.instantiate() {
+                logForm.path = ApplicationLogger.currentLog
+                topVC.show(logForm.navigationController ?? logForm, sender: topVC)
+            }
+        }))
 
         alert.addAction(UIAlertAction(title: "🐞 Report a problem", style: .destructive, handler: { _ in
             self.mailCompose(subject: "Problem report", body: "", attachLog: true)
@@ -116,20 +120,28 @@ extension ApplicationFeedback: ApplicationService {
 extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
 
     func showSendMailErrorAlert(toRecipient: String) {
+        let message: String
+        if Device.current.isSimulator {
+            message = "Email could not be set up using simulator."
+        } else {
+            message = "Make sure that you have at least one email account set up."
+        }
         let alert = UIAlertController(title: "Could Not Send Email",
-                                      message: "Make sure that you have at least one email account set up.",
+                                      message: message,
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "📧 Open Mail app", style: .default, handler: { _ in
-            if let url = URL(string: "mailto:\(toRecipient)") {
-                UIApplication.shared.open(url)
-            }
-        }))
+        if !Device.current.isSimulator {
+            alert.addAction(UIAlertAction(title: "📧 Open Mail app", style: .default, handler: { _ in
+                if let url = URL(string: "mailto:\(toRecipient)") {
+                    UIApplication.shared.open(url)
+                }
+            }))
+        }
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
 
         alert.presentOnTop()
     }
 
-    func mailCompose(subject: String, body: String, isBodyHTML: Bool = false, attachLog: Bool = false, toRecipient: String = "eric.marchand@4d.com") {
+    func mailCompose(subject: String, body: String, isBodyHTML: Bool = false, attachLog: Bool = false, screenshot: Bool = false, toRecipient: String = "eric.marchand@4d.com") {
         guard MFMailComposeViewController.canSendMail() else {
             logger.info("Mail services are not available")
             showSendMailErrorAlert(toRecipient: toRecipient)
@@ -155,7 +167,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
                     logger.warning("Failed to read log data \(error)")
                 }
             }
-            if let image = UIApplication.shared.keyWindow?.rootViewController?.view?.window?.screenshot() {
+            if screenshot, let image = UIApplication.shared.keyWindow?.rootViewController?.view?.window?.screenshot() {
                 if let data = UIImagePNGRepresentation(image) {
                     mailComposerVC.addAttachmentData(data, mimeType: "application/png", fileName: "screenshot.jpg")
                 }

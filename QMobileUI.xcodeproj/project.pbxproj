@@ -34,6 +34,8 @@
 		480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */; };
 		480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435C1E842699007C90DD /* NSObject+QMobile.swift */; };
 		480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435E1E842EF9007C90DD /* UIViewCell.swift */; };
+		4810B01F20FF38AD0049F31D /* LogForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4810B01E20FF38AD0049F31D /* LogForm.storyboard */; };
+		4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4810B02120FF4C6D0049F31D /* LogSettingForm.swift */; };
 		48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */; };
 		48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */; };
 		481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */; };
@@ -189,6 +191,8 @@
 		480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard+QMobile.swift"; sourceTree = "<group>"; };
 		480B435C1E842699007C90DD /* NSObject+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+QMobile.swift"; sourceTree = "<group>"; };
 		480B435E1E842EF9007C90DD /* UIViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewCell.swift; sourceTree = "<group>"; };
+		4810B01E20FF38AD0049F31D /* LogForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LogForm.storyboard; sourceTree = "<group>"; };
+		4810B02120FF4C6D0049F31D /* LogSettingForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSettingForm.swift; sourceTree = "<group>"; };
 		48112D491E9FB11000A3A88C /* .slather.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .slather.yml; sourceTree = "<group>"; };
 		48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+QMobile.swift"; sourceTree = "<group>"; };
 		48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBAttributable.swift; sourceTree = "<group>"; };
@@ -443,6 +447,16 @@
 				48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */,
 			);
 			path = DetailsForm;
+			sourceTree = "<group>";
+		};
+		4810B02020FF38B40049F31D /* LogForm */ = {
+			isa = PBXGroup;
+			children = (
+				4881205C20FDEF510041D774 /* LogForm.swift */,
+				4810B01E20FF38AD0049F31D /* LogForm.storyboard */,
+				4810B02120FF4C6D0049F31D /* LogSettingForm.swift */,
+			);
+			path = LogForm;
 			sourceTree = "<group>";
 		};
 		4826191720BFE05C00226632 /* Frameworks */ = {
@@ -713,7 +727,7 @@
 				480B6B721E7FD1C500D1E583 /* DetailsForm */,
 				48F8E2C01F7D0B07000080FB /* SettingsForm */,
 				48EE077A1E7AE9A600A8546E /* LogInForm */,
-				4881205C20FDEF510041D774 /* LogForm.swift */,
+				4810B02020FF38B40049F31D /* LogForm */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -921,6 +935,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4810B01F20FF38AD0049F31D /* LogForm.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1102,6 +1117,7 @@
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
+				4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */,
 				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,
 				480392C11E929660008CF992 /* UIImageView+Binding.swift in Sources */,
 				480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */,

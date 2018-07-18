@@ -29,7 +29,7 @@ class ApplicationCrashManager: NSObject {
     }
 }
 
-// MARK : Service
+// MARK: Service
 extension ApplicationCrashManager: ApplicationService {
 
     static var instance: ApplicationService = ApplicationCrashManager()
@@ -67,7 +67,6 @@ extension ApplicationCrashManager: ApplicationService {
                 logger.info("\(crashs.count) crash file found")
 
                 // Ask user about reporting it:
-                // swiftlint:disable:next line_length
                 let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?",
                                               message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.",
                                               preferredStyle: .alert)
@@ -172,24 +171,32 @@ extension ApplicationCrashManager {
         let target = ApplicationServerCrashAPI(fileURL: file.url, parameters: parameters)
         let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
         crashServeProvider.request(target) { (result) in
+
+            let alert = UIAlertController(title: "Failed to send crash file.", message: "", preferredStyle: .alert)
             switch result {
             case .success(let response):
                 do {
-                    // You can decode json into struture like `Status`
-                    // I submit the code with `Status` but the server must return { "ok": true } if ok
-                    // You can have your own object CrashStatus with many information in it, decoded from json
-                    let status = try response.map(to: Status.self)
+                    let status = try response.map(to: CrashStatus.self)
                     if status.ok {
                         onSuccess()
+                        alert.title = "Crash file has been received."
+                        alert.message = ""
+                        /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                     } else {
                         logger.warning("Server did not accept the crash file")
+                        alert.message = "Server did not accept the crash file"
                     }
                 } catch let error {
                     logger.warning("Failed to decode response from crash server \(error)")
+                    alert.message = "Failed to decode response from crash server"
                 }
             case .failure(let error):
                 logger.warning("Failed to send crash file \(error)")
+                alert.message = "Maybe check your network."
             }
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+
+            alert.presentOnTop()
         }
     }
 
@@ -243,7 +250,7 @@ extension ApplicationCrashManager {
         do {
             try zipPath.deleteFile()
         } catch {
-            logger.warning("Failed to delete zipped crash file\(error.localizedDescription)")
+            logger.warning("Failed to delete zipped crash file \(error.localizedDescription)")
         }
     }
 

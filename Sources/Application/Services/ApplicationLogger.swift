@@ -132,14 +132,15 @@ extension ApplicationLogger: ApplicationService {
         if !immediate {
             destination.logQueue = XCGLogger.logQueue
         }
-        destination.formatters = [LogFormatter.ansi.formatter]
-
         logger.add(destination: destination)
 
         // MARK: appleSystem destination
         if appleSystem {
             logger.add(destination: AppleSystemLogDestination())
         }
+
+        // Apply level to all destination. (no level by destination currently)
+        logger.outputLevel = level
 
         // MARK: end
         logAppDetails()
@@ -203,45 +204,10 @@ extension ApplicationLogger: ApplicationService {
         case heart
         case circle
         case ball
+        case circledLetter
 
         var formatter: LogFormatterProtocol {
             switch self {
-            case .emoticon:
-                let prePostFixLogFormatter = PrePostFixLogFormatter()
-                prePostFixLogFormatter.apply(prefix: "🗯", postfix: "", to: .verbose)
-                prePostFixLogFormatter.apply(prefix: "🔹", postfix: "", to: .debug)
-                prePostFixLogFormatter.apply(prefix: "ℹ️", postfix: "", to: .info)
-                prePostFixLogFormatter.apply(prefix: "⚠️", postfix: "", to: .warning)
-                prePostFixLogFormatter.apply(prefix: "‼️", postfix: "", to: .error)
-                prePostFixLogFormatter.apply(prefix: "💣", postfix: "", to: .severe)
-                return prePostFixLogFormatter
-            case .heart:
-                let prePostFixLogFormatter = PrePostFixLogFormatter()
-                prePostFixLogFormatter.apply(prefix: "💕", postfix: "", to: .verbose)
-                prePostFixLogFormatter.apply(prefix: "💙", postfix: "", to: .debug)
-                prePostFixLogFormatter.apply(prefix: "💚", postfix: "", to: .info)
-                prePostFixLogFormatter.apply(prefix: "🧡", postfix: "", to: .warning)
-                prePostFixLogFormatter.apply(prefix: "❤️", postfix: "", to: .error)
-                prePostFixLogFormatter.apply(prefix: "🖤", postfix: "", to: .severe)
-                return prePostFixLogFormatter
-            case .circle:
-                let prePostFixLogFormatter = PrePostFixLogFormatter()
-                prePostFixLogFormatter.apply(prefix: "⚽", postfix: "", to: .verbose)
-                prePostFixLogFormatter.apply(prefix: "🔵", postfix: "", to: .debug)
-                prePostFixLogFormatter.apply(prefix: "⚪", postfix: "", to: .info)
-                prePostFixLogFormatter.apply(prefix: "🏀", postfix: "", to: .warning)
-                prePostFixLogFormatter.apply(prefix: "🔴", postfix: "", to: .error)
-                prePostFixLogFormatter.apply(prefix: "⚫", postfix: "", to: .severe)
-                return prePostFixLogFormatter
-            case .ball:
-                let prePostFixLogFormatter = PrePostFixLogFormatter()
-                prePostFixLogFormatter.apply(prefix: "⚽", postfix: "", to: .verbose)
-                prePostFixLogFormatter.apply(prefix: "⚾", postfix: "", to: .debug)
-                prePostFixLogFormatter.apply(prefix: "🏐", postfix: "", to: .info)
-                prePostFixLogFormatter.apply(prefix: "🎾", postfix: "", to: .warning)
-                prePostFixLogFormatter.apply(prefix: "🏈", postfix: "", to: .error)
-                prePostFixLogFormatter.apply(prefix: "🎱", postfix: "", to: .severe)
-                return prePostFixLogFormatter
             case .ansi:
                 let ansiColorLogFormatter: ANSIColorLogFormatter = ANSIColorLogFormatter()
                 ansiColorLogFormatter.colorize(level: .verbose, with: .colorIndex(number: 244), options: [.faint])
@@ -251,7 +217,59 @@ extension ApplicationLogger: ApplicationService {
                 ansiColorLogFormatter.colorize(level: .error, with: .red, options: [.bold])
                 ansiColorLogFormatter.colorize(level: .severe, with: .white, on: .red)
                 return ansiColorLogFormatter
+            default:
+                let prePostFixLogFormatter = PrePostFixLogFormatter()
+                if let prefixes = prefixes {
+                    for (level, prefix) in prefixes {
+                        prePostFixLogFormatter.apply(prefix: prefix, postfix: "", to: level)
+                    }
+                }
+                return prePostFixLogFormatter
             }
+        }
+
+        var prefixes: [XCGLogger.Level: String]? {
+            var prefixes: [XCGLogger.Level: String] = [:]
+            switch self {
+            case .emoticon:
+                prefixes[.verbose] = "🗯"
+                prefixes[.debug] = "🔹"
+                prefixes[.info] = "ℹ️"
+                prefixes[.warning] = "⚠️"
+                prefixes[.error] = "‼️"
+                prefixes[.severe] = "💣"
+            case .heart:
+                prefixes[.verbose] = "💕"
+                prefixes[.debug] = "💙"
+                prefixes[.info] = "💚"
+                prefixes[.warning] = "🧡"
+                prefixes[.error] = "❤️"
+                prefixes[.severe] = "🖤"
+            case .circle:
+                prefixes[.verbose] = "🔘"
+                prefixes[.debug] = "🔵"
+                prefixes[.info] = "⚪"
+                prefixes[.warning] = "☢️"
+                prefixes[.error] = "🔴"
+                prefixes[.severe] = "⚫"
+            case .ball:
+                prefixes[.verbose] = "⚽"
+                prefixes[.debug] = "⚾"
+                prefixes[.info] = "🏐"
+                prefixes[.warning] = "🎾"
+                prefixes[.error] = "🏈"
+                prefixes[.severe] = "🎱"
+            case .circledLetter:
+                prefixes[.verbose] = "ⓥ"
+                prefixes[.debug] = "ⓓ"
+                prefixes[.info] = "ⓘ"
+                prefixes[.warning] = "ⓦ"
+                prefixes[.error] = "ⓔ"
+                prefixes[.severe] = "ⓢ"
+            case .ansi:
+                return nil
+            }
+            return prefixes
         }
     }
 
