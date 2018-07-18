@@ -108,8 +108,9 @@ extension ApplicationCrashManager {
         self.deleteCrashFile(pathCrash: data, zipPath: .userTemporary + "data.zip")
         //add log files corresponding to the crash files
         for crash in crashs {
-            zipFile(crashFile: crash)
-            getLogFromCrach(crashFile: crash)
+            if zipFile(crashFile: crash) {
+                getLogFromCrach(crashFile: crash)
+            }
         }
         //zip folder tmp and send
         zipAndSend(crashFile: data, crashsFiles: crashs)
@@ -122,7 +123,7 @@ extension ApplicationCrashManager {
         for log in logs {
             if getLog(nameLogFile: log.fileName, nameCrashFile: crashFile.fileName) ||
                 log.fileName == ApplicationLogger.logFilename /* or current log*/ {
-                zipFile(crashFile: log)
+                _ = zipFile(crashFile: log)
             }
         }
     }
@@ -144,7 +145,11 @@ extension ApplicationCrashManager {
 
     fileprivate func zipFile(crashFile: Path) -> Bool {
         let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: false)
-        return zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+        if !zipPath.exists {
+            return zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath)
+        } else {
+            return false
+        }
     }
 
     fileprivate func zipAndSend(crashFile: Path, crashsFiles: [Path]) {
@@ -219,16 +224,14 @@ extension ApplicationCrashManager {
     fileprivate static func save(crash: String, ofType type: CrashType) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYYMMdd-HHmmss"
-        if let appName = Bundle.main["CFBundleIdentifier"] as? String {
-            let fName = "\(appName)_\(dateFormatter.string(from: Date()))"
-            let path = directory(for: type) + fName
-            var crashLog = "\r\n information application: "
-            for item in applicationInformation {
-                crashLog += "\r\n \(item.key) : \(item.value)"
-            }
-            crashLog += "\r\n *** First throw call "+crash
-            try? TextFile(path: path).write(crashLog)
+        let fName = dateFormatter.string(from: Date())
+        let path = directory(for: type) + fName
+        var crashLog = "\r\n information application: "
+        for item in applicationInformation {
+            crashLog += "\r\n \(item.key) : \(item.value)"
         }
+        crashLog += "\r\n *** First throw call "+crash
+        try? TextFile(path: path).write(crashLog)
     }
 
     fileprivate func zipCrashFile(pathCrash source: Path, zipPath: Path) -> Bool {
