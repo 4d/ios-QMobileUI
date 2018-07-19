@@ -246,12 +246,16 @@ extension ApplicationCrashManager {
 
     fileprivate func deleteCrashFile(pathCrash: Path, zipPath: Path) {
         do {
-            try pathCrash.deleteFile()
+            if pathCrash.exists {
+                try pathCrash.deleteFile()
+            }
         } catch {
             logger.warning("Failed to delete crash file \(error.localizedDescription)")
         }
         do {
-            try zipPath.deleteFile()
+            if zipPath.exists {
+                try zipPath.deleteFile()
+            }
         } catch {
             logger.warning("Failed to delete zipped crash file \(error.localizedDescription)")
         }
