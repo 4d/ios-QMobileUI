@@ -8,6 +8,7 @@
 
 import Foundation
 import Prephirences
+import DeviceKit
 
 // Root class of QMobile application
 open class QApplication: UIApplication {
@@ -96,6 +97,40 @@ open class QApplication: UIApplication {
         return true
     }
 
+    // MARK: Get application information
+
+    static var applicationInformation: [String: String] {
+        var information = [String: String]()
+
+        let bundle = Bundle.main
+        // Application
+        information["CFBundleShortVersionString"] =  bundle[.CFBundleShortVersionString] as? String ?? ""
+        information["CFBundleIdentifier"] = bundle[.CFBundleIdentifier] as? String ?? ""
+        information["CFBundleName"] = bundle[.CFBundleName] as? String ?? ""
+
+        // Team id
+        information["AppIdentifierPrefix"] = bundle["AppIdentifierPrefix"] as? String ?? ""
+
+        // OS
+        information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String ?? "" // XXX UIDevice.current.systemVersion ??
+
+        // Device
+        let device = Device.current
+        let underlying = device.real
+        information["device.description"] = underlying.description
+        if device.isSimulator {
+            information["device.simulator"] = "YES"
+        }
+        let versions = Bundle.main["4D"] as? [String: String] ?? [:]
+        information["build"] = versions["build"]
+        information["component"] = versions["component"]
+        information["ide"] = versions["ide"]
+        information["sdk"] = versions["sdk"]
+        if let uuid = Prephirences.sharedInstance["uuid"] as? String {
+            information["uuid"] = uuid
+        }
+        return information
+    }
 }
 
 extension Notification.Name {

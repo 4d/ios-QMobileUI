@@ -16,16 +16,6 @@ import DeviceKit
 
 import MessageUI
 
-enum FeedbackEvent: String {
-    case shake
-    /*
-     case screenshot
-     case floatingButton
-     case twoFindersSwipeLeft, rightEdgePan // some gestures
-     */
-    case none
-}
-
 class ApplicationFeedback: NSObject {
 
     var shakeListener: AnyObject?
@@ -81,7 +71,7 @@ extension ApplicationFeedback: ApplicationService {
                                       message: tips,
                                       preferredStyle: .actionSheet)
         /*alert.addAction(UIAlertAction(title: "💬 Talk to us", style: .default, handler: { _ in
-         self.mailCompose(subject: "Talk to us", body: "here sugest improvement")
+             self.mailCompose(subject: "Talk to us", body: "here sugest improvement")
          }))*/
         /*alert.addAction(UIAlertAction(title: "📣 Suggest an improvement", style: .default, handler: { _ in
             self.mailCompose(subject: "Suggest an improvement", body: "here sugest improvement")
@@ -97,9 +87,37 @@ extension ApplicationFeedback: ApplicationService {
             }
         }))
 
-        alert.addAction(UIAlertAction(title: "🐞 Report a problem", style: .destructive, handler: { _ in
-            self.mailCompose(subject: "Problem report", body: "", attachLog: true)
-        }))
+        if ApplicationFeedback.isConfigured {
+            alert.addAction(UIAlertAction(title: "🐞 Report a problem", style: .destructive, handler: { _ in
+                guard let topVC = UIApplication.topViewController else {
+                    logger.error("No view controller to show log")
+                    return
+                }
+                if let form = FeedbackForm.instantiate() {
+                    form.delegate = self
+                    var feedback = Feedback()
+                    feedback.title = "Report a problem"
+                    feedback.summaryPlaceholder = "What went wrong?"
+                    feedback.attach = { // attach log
+                        let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
+                        if !ApplicationLogger.compressAllLog(to: zipPath) {
+                            logger.error("Failed to compress the logs")
+                        }
+                        return zipPath
+                    }
+                    form.feedback = feedback
+                    topVC.show(form.navigationController ?? form, sender: topVC)
+                } else {
+                    self.mailCompose(subject: "Report a problem", body: "What went wrong?", attachLog: true) // Alternative by mail
+                }
+            }))
+        }
+
+        if ApplicationCrashManager.pref["me"] as? Bool ?? false {
+            alert.addAction(UIAlertAction(title: "💣 Crash me", style: .destructive, handler: { _ in
+                self.crashMe()
+            }))
+        }
 
         if ApplicationCrashManager.isConfigured {
             let crashs = ApplicationCrashManager.crash()
@@ -113,6 +131,51 @@ extension ApplicationFeedback: ApplicationService {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         alert.presentOnTop()
+    }
+
+    static var isConfigured: Bool {
+        return ApplicationCrashManager.isConfigured // We use same server as crash management do
+    }
+
+    /// Force crash
+    func crashMe() {
+        _ = [Any]()[13]
+    }
+}
+
+extension ApplicationFeedback: FeedbackFormDelegate {
+
+    func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void) {
+        let path = feedback.attach?() ?? .userTemporary + "empty.txt"
+        if !path.exists {
+            try? path.touch() // touch file because server maybe wait for attachment everytime
+        }
+
+        var applicationInformation = QApplication.applicationInformation
+        applicationInformation["email"] = feedback.email ?? ""
+        applicationInformation["summary"] = feedback.summary ?? ""
+
+        applicationInformation["fileName"] = path.fileName
+        applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
+        applicationInformation["isCrash"] = "0"
+
+        //swiftlint:disable:next force_cast
+        let manager = ApplicationCrashManager.instance as! ApplicationCrashManager
+        manager.send(file: path, parameters: applicationInformation) { success in
+            if success {
+                logger.info("Report send")
+                dismiss(true/*animated*/)
+            } else {
+                logger.warning("Failed to send report")
+            }
+            if path.exists, feedback.deleteAttach {
+                try? path.deleteFile()
+            }
+        }
+    }
+
+    func discard(feedback: Feedback?) {
+        logger.info("Report discarded")
     }
 
 }
@@ -187,6 +250,32 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
             logger.error("Mail: \(error)")
         }
     }
+}
+
+// MARk: Feedback
+
+public struct Feedback {
+
+    init() {
+    }
+
+    var title: String?
+    var summaryPlaceholder: String?
+    var attach: (() -> Path)?
+    var deleteAttach: Bool = true
+
+    var email: String?
+    var summary: String?
+}
+
+enum FeedbackEvent: String {
+    case shake
+    /*
+     case screenshot
+     case floatingButton
+     case twoFindersSwipeLeft, rightEdgePan // some gestures
+     */
+    case none
 }
 
 // MARK: Screenshot

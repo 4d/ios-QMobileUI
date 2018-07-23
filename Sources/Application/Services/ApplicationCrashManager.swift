@@ -13,7 +13,6 @@ import XCGLogger
 import Prephirences
 import FileKit
 import Moya
-import DeviceKit
 import QMobileAPI
 
 // Service to manage application crash and send report.
@@ -24,7 +23,7 @@ class ApplicationCrashManager: NSObject {
     static var pref: PreferencesType {
         return ProxyPreferences(preferences: preferences, key: "crash.")
     }
-    static var crashDirectory: Path {
+    static var parentCrashDirectory: Path {
         return Path.userCaches
     }
 }
@@ -51,11 +50,7 @@ extension ApplicationCrashManager: ApplicationService {
             registerSignalHandler()
 
             if pref["signal.experimental"] as? Bool ?? false {
-                signal(SIGHUP, signalHandler)
-                signal(SIGINT, signalHandler)
-                signal(SIGQUIT, signalHandler)
-                signal(SIGFPE, signalHandler)
-                signal(SIGPIPE, signalHandler)
+                registerSignalExperimentalHandler()
             }
         }
 
@@ -90,15 +85,16 @@ extension ApplicationCrashManager {
     }
 
     static func crash() -> [Path] {
-        var crashs = ApplicationCrashManager.crashDirectory.children(recursive: true)
+        var crashs = ApplicationCrashManager.parentCrashDirectory.children(recursive: true)
         crashs = crashs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
         crashs = crashs.filter { $0.parent.fileName == CrashType.nsexception.rawValue || $0.parent.fileName == CrashType.signal.rawValue }
+        // XXX For anass it is better to look for file in this parent CrashType folder directly instead of parentCrashDirectory
         return crashs
     }
 
     // MARK: Actions
     open func deleteCrashFile(_ action: UIAlertAction) {
-        let crashDirectory = ApplicationCrashManager.crashDirectory
+        let crashDirectory = ApplicationCrashManager.parentCrashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }
 
@@ -117,7 +113,7 @@ extension ApplicationCrashManager {
     }
 
     fileprivate func getLogFromCrach(crashFile: Path) {
-        var logs = ApplicationCrashManager.crashDirectory.children(recursive: true)
+        var logs = ApplicationCrashManager.parentCrashDirectory.children(recursive: true)
         logs = logs.filter { !$0.isDirectory }.filter { $0.fileName != ".DS_Store" }
         logs = logs.filter { $0.parent.fileName == "logs"  }
         for log in logs {
@@ -155,24 +151,25 @@ extension ApplicationCrashManager {
     fileprivate func zipAndSend(crashFile: Path, crashsFiles: [Path]) {
         let zipPath = self.tempZipPath(fileName: crashFile.fileName, isDirectory: true)
         if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
-            var applicationInformation = ApplicationCrashManager.applicationInformation
+            var applicationInformation = QApplication.applicationInformation
 
             applicationInformation["fileName"] = crashFile.fileName
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd_MM_yyyy_HH_mm_ss"
-            applicationInformation["SendDate"] = formatter.string(from: Date())
+            applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
+            applicationInformation["isCrash"] = "1"
 
-            send(file: zipPath, parameters: applicationInformation) {
-                //delete crash file
-                for crash in crashsFiles {
-                    self.deleteCrashFile(pathCrash: crash, zipPath: zipPath)
+            send(file: zipPath, parameters: applicationInformation) { success in
+                if success {
+                    //delete crash file
+                    for crash in crashsFiles {
+                        self.deleteCrashFile(pathCrash: crash, zipPath: zipPath)
+                    }
+                    self.deleteCrashFile(pathCrash: crashFile, zipPath: crashFile + ".zip")
                 }
-                self.deleteCrashFile(pathCrash: crashFile, zipPath: crashFile + ".zip")
             }
         }
     }
 
-    fileprivate func send(file: Path, parameters: [String: String], onSuccess: @escaping () -> Void) {
+    func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
         let target = ApplicationServerCrashAPI(fileURL: file.url, parameters: parameters)
         let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
         crashServeProvider.request(target) { (result) in
@@ -183,21 +180,24 @@ extension ApplicationCrashManager {
                 do {
                     let status = try response.map(to: CrashStatus.self)
                     if status.ok {
-                        onSuccess()
+                        onComplete(true)
                         alert.title = "Report sent"
                         alert.message = "Thanks for helping improve this app!"
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                     } else {
                         logger.warning("Server did not accept the crash file")
                         alert.message = "Server did not accept the crash file"
+                        onComplete(false)
                     }
                 } catch let error {
                     logger.warning("Failed to decode response from crash server \(error)")
                     alert.message = "Failed to decode response from crash server"
+                    onComplete(false)
                 }
             case .failure(let error):
                 logger.warning("Failed to send crash file \(error)")
                 alert.message = "Maybe check your network."
+                onComplete(false)
             }
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
 
@@ -209,7 +209,7 @@ extension ApplicationCrashManager {
 
     /// Return the directory for specific crash type.
     fileprivate static func directory(for type: CrashType) -> Path {
-        return ApplicationCrashManager.crashDirectory + type.rawValue
+        return ApplicationCrashManager.parentCrashDirectory + type.rawValue
     }
 
     /// Ensure crash directory is created for crash `type`.
@@ -227,7 +227,7 @@ extension ApplicationCrashManager {
         let fName = dateFormatter.string(from: Date())
         let path = directory(for: type) + fName
         var crashLog = "\r\n information application: "
-        for item in applicationInformation {
+        for item in QApplication.applicationInformation {
             crashLog += "\r\n \(item.key) : \(item.value)"
         }
         crashLog += "\r\n *** First throw call "+crash
@@ -275,41 +275,6 @@ extension ApplicationCrashManager {
         }
     }
 
-    // MARK: Get application information
-
-    static var applicationInformation: [String: String] {
-        var information = [String: String]()
-
-        let bundle = Bundle.main
-        // Application
-        information["CFBundleShortVersionString"] =  bundle[.CFBundleShortVersionString] as? String ?? ""
-        information["CFBundleIdentifier"] = bundle[.CFBundleIdentifier] as? String ?? ""
-        information["CFBundleName"] = bundle[.CFBundleName] as? String ?? ""
-
-        // Team id
-        information["AppIdentifierPrefix"] = bundle["AppIdentifierPrefix"] as? String ?? ""
-
-        // OS
-        information["DTPlatformVersion"] = bundle[.DTPlatformVersion] as? String ?? "" // XXX UIDevice.current.systemVersion ??
-
-        // Device
-        let device = Device.current
-        let underlying = device.real
-        information["device.description"] = underlying.description
-        if device.isSimulator {
-            information["device.simulator"] = "YES"
-        }
-        let versions = Bundle.main["4D"] as? [String: String] ?? [:]
-        information["build"] = versions["build"]
-        information["component"] = versions["component"]
-        information["ide"] = versions["ide"]
-        information["sdk"] = versions["sdk"]
-        if let uuid = Prephirences.sharedInstance["uuid"] as? String {
-            information["uuid"] = uuid
-        }
-        return information
-    }
-
 }
 
 // MARK: Crash management
@@ -332,12 +297,28 @@ public func registerSignalHandler() {
     signal(SIGILL, signalHandler)
 }
 
+public func registerSignalExperimentalHandler() {
+    signal(SIGHUP, signalHandler)
+    signal(SIGINT, signalHandler)
+    signal(SIGQUIT, signalHandler)
+    signal(SIGFPE, signalHandler)
+    signal(SIGPIPE, signalHandler)
+}
+
 public func unregisterSignalHandler() {
     signal(SIGINT, SIG_DFL)
     signal(SIGSEGV, SIG_DFL)
     signal(SIGTRAP, SIG_DFL)
     signal(SIGABRT, SIG_DFL)
     signal(SIGILL, SIG_DFL)
+}
+
+public func unregisterSignalExperimentalHandler() {
+    signal(SIGHUP, SIG_DFL)
+    signal(SIGINT, SIG_DFL)
+    signal(SIGQUIT, SIG_DFL)
+    signal(SIGFPE, SIG_DFL)
+    signal(SIGPIPE, SIG_DFL)
 }
 
 func nsExceptionHandler(exception: NSException) {
