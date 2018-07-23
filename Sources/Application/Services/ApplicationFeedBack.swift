@@ -19,6 +19,7 @@ import MessageUI
 class ApplicationFeedback: NSObject {
 
     var shakeListener: AnyObject?
+    var inShake: Bool = false
 
 }
 
@@ -48,14 +49,22 @@ extension ApplicationFeedback: ApplicationService {
         case .shake:
             application.applicationSupportsShakeToEdit = true
             shakeListener = center.addObserver(forName: .motionShakeEnd, object: nil, queue: .main) { [weak self] _ in
-                self?.showDialog(tips: "💡 Shake the device to display this dialog again.")
+                guard let strongSelf = self else {
+                    return
+                }
+                if !strongSelf.inShake {
+                    strongSelf.inShake = true
+                    strongSelf.showDialog(tips: "💡 Shake the device to display this dialog again.") {
+                        strongSelf.inShake = false
+                    }
+                }
             }
        /* case .screenshot:
             shakeListener = center.addObserver(forName: .UIApplicationUserDidTakeScreenshot, object: nil, queue: .main) { [weak self] _ in
              self?.showLogSendDialog()
              }*/
         case .none:
-            logger.info("Feedback not activated")
+            logger.info("Feedback not activated by automatic action.")
         }
 
     }
@@ -66,7 +75,7 @@ extension ApplicationFeedback: ApplicationService {
         }
     }
 
-    func showDialog(tips: String) { // tips must depend of parent event
+    func showDialog(tips: String, presented: (() -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil) { // tips must depend of parent event
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
@@ -85,6 +94,7 @@ extension ApplicationFeedback: ApplicationService {
                 logForm.path = ApplicationLogger.currentLog
                 topVC.show(logForm.navigationController ?? logForm, sender: topVC)
             }
+            completion?()
         }))
 
         if ApplicationFeedback.isConfigured {
@@ -110,12 +120,18 @@ extension ApplicationFeedback: ApplicationService {
                 } else {
                     self.mailCompose(subject: "Report a problem", body: "What went wrong?", attachLog: true) // Alternative by mail
                 }
+                completion?()
             }))
         }
 
         if ApplicationCrashManager.pref["me"] as? Bool ?? false {
             alert.addAction(UIAlertAction(title: "💣 Crash me", style: .destructive, handler: { _ in
-                self.crashMe()
+                if ApplicationCrashManager.pref["me.throw"] as? Bool ?? false {
+                    self.throwMe()
+                } else {
+                    self.crashMe()
+                }
+                completion?()
             }))
         }
 
@@ -124,13 +140,15 @@ extension ApplicationFeedback: ApplicationService {
             if !crashs.isEmpty {
                 alert.addAction(UIAlertAction(title: "📤 Report previous crash", style: .destructive, handler: { _ in
                     (ApplicationCrashManager.instance as? ApplicationCrashManager)?.send(crashs: crashs)
+                     completion?()
                 }))
             }
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        alert.presentOnTop()
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            completion?() // XXX find a way to listen to dismiss, and do not put in each action...
+        }))
+        alert.presentOnTop(completion: presented)
     }
 
     static var isConfigured: Bool {
@@ -138,8 +156,12 @@ extension ApplicationFeedback: ApplicationService {
     }
 
     /// Force crash
-    func crashMe() {
+    fileprivate func crashMe() {
         _ = [Any]()[13]
+    }
+
+    fileprivate func throwMe() {
+       NSException(name: .genericException, reason: "throw me testing", userInfo: nil).raise()
     }
 }
 
