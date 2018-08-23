@@ -8,37 +8,39 @@
 
 import UIKit
 
-/*
 extension UIImageView {
 
-    public var imageNamed: String? {
+   @objc dynamic public var imageNamed: String? {
         get {
-            return (self.image as? UIImageNamed)?.name
+            return self.image?.accessibilityIdentifier
         }
         set {
             guard let name = newValue else {
                 self.image = nil
+                return
             }
             self.image = UIImage(named: name)
+            self.image?.accessibilityIdentifier = name
         }
     }
 
+    /*@objc dynamic public var localized: String? {
+        get {
+            guard let localized = self.text else {
+                return nil
+            }
+            return localized // Cannot undo it...
+        }
+        set {
+            guard let string = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = string.localizedBinding
+        }
+    }*/
+
 }
-
-// UIImage extension to keep a reference on the name
-fileprivate class UIImageNamed: UIImage {
-    fileprivate let name: String
-
-    required init(imageLiteralResourceName name: String) {
-        self.name = name
-        super.init(imageLiteralResourceName: name)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-}*/
 
 // MARK: using URL and cache
 import Kingfisher

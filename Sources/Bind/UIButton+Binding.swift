@@ -219,7 +219,7 @@ public extension UIButton {
     }
 
     /// Display yes or no for boolean value
-    @objc dynamic public var yesOrNo: Bool {
+    @objc dynamic public var noOrYes: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -232,7 +232,7 @@ public extension UIButton {
     }
 
     /// Display true or false for boolean value
-    @objc dynamic public var trueOrFalse: Bool {
+    @objc dynamic public var falseOrTrue: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -382,4 +382,13 @@ public extension UIButton {
         }
     }
 
+    @objc dynamic public var imageNamed: String? {
+        get {
+            return self.imageView?.imageNamed
+        }
+        set {
+            // XXX create imageView?
+            self.imageView?.imageNamed = newValue
+        }
+    }
 }

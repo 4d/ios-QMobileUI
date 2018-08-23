@@ -109,7 +109,7 @@ extension ApplicationDataSync: ApplicationService {
 
         let future: DataSync.SyncFuture = sync ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
-            logger.debug("data from data store initilized")
+            logger.debug("data from data store initiliazed")
             if sync {
                 SwiftMessages.info("Data updated")
             }
@@ -130,7 +130,7 @@ public func dataReload(_ completionHandler: @escaping QMobileDataSync.DataSync.S
 }
 
 /// Get the last data sync date.
-public func dataLastSync() -> Date? {
+public func dataLastSync() -> Foundation.Date? {
     let dataStore = ApplicationDataSync.dataSync.dataStore
     var metadata = dataStore.metadata
     return metadata?.lastSync

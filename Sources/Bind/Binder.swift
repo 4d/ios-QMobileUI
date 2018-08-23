@@ -66,6 +66,7 @@ open class Binder: NSObject {
             }
         }
     }
+    private static let reservedKey = [recordVarKey, tableVarKey, settingsKey]
 
     // entry created by undefined key set to this object
     fileprivate var entries = [KeyPathEntry]()
@@ -97,23 +98,21 @@ open class Binder: NSObject {
     }
 
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
-        if let string = value as? String {
-            let viewKey = string.viewKeyCased
+        if let viewKey = value as? String {
             #if TARGET_INTERFACE_BUILDER
-                if ui.ibAttritutable == nil {
-                    if let attributable = binded as? IBAttributable {
-                        ui.ibAttritutable = "[]\(key)"
-                    }
+            if ui.ibAttritutable == nil {
+                if let attributable = binded as? IBAttributable {
+                    ui.ibAttritutable = "[]\(key)"
                 }
+            }
             #else
-                createEntry(for: viewKey, key: key)
+            createEntry(for: viewKey, key: key)
             #endif
         }
     }
 
     fileprivate func createEntry(for viewKey: String, key: String) {
         if let view = self.view {
-
             var currentRecordView: Binded? = view
 
             var entryKeyPathArray = [String]()
@@ -121,18 +120,17 @@ open class Binder: NSObject {
             // Look up potential other view hierarchy using path component parsing
             var localVarKey: String? = nil
 
-            for pathComponent in self.keyPaths {
-                if [Binder.recordVarKey, Binder.tableVarKey, Binder.settingsKey].contains(pathComponent) {
+            let keyPaths = self.keyPaths
+            for pathComponent in keyPaths {
+                if Binder.reservedKey.contains(pathComponent) {
                     localVarKey = pathComponent
+                } else if localVarKey == nil {
+                    currentRecordView = self.binded(for: currentRecordView, pathComponent: pathComponent)
                 } else {
-                    if localVarKey == nil {
-                        currentRecordView = self.binded(for: currentRecordView, pathComponent: pathComponent)
-                    } else {
-                        entryKeyPathArray.append(pathComponent)
-                    }
+                    entryKeyPathArray.append(pathComponent)
                 }
             }
-            if self.keyPaths.count == 1 && localVarKey != nil {
+            if keyPaths.count == 1 && localVarKey != nil {
                 currentRecordView = currentRecordView?.bindedRoot
             }
             self.resetKeyPath()
@@ -141,21 +139,29 @@ open class Binder: NSObject {
 
             // create the binder entry
             var entryKeyPath = entryKeyPathArray.joined(separator: ".")
-
-            let temp = entryKeyPath.components(separatedBy: ",")
-            if let first = temp.first {
-                entryKeyPath = first
+            /// trim entry key path
+            var entryKeyPathComponents = ArraySlice(entryKeyPath.components(separatedBy: ","))
+            if let firstComponent = entryKeyPathComponents.popFirst() {
+                entryKeyPath = firstComponent
             }
-            let newEntry = KeyPathEntry(keyPath: entryKeyPath, viewKey: viewKey, view: self.view, localVarKey: localVarKey)
-            if let second = temp.second {
-                newEntry.transformer = ValueTransformer(forName: NSValueTransformerName(second))
+            /// trim viewKey key path
+            var viewKey = viewKey
+            var viewKeyComponents = ArraySlice(viewKey.components(separatedBy: ","))
+            if let firstComponent = viewKeyComponents.popFirst() {
+                viewKey = firstComponent
             }
 
+            /// Create the entry
+            let newEntry = KeyPathEntry(keyPath: entryKeyPath, viewKey: viewKey.viewKeyCased, view: self.view, localVarKey: localVarKey)
+
+            // Check if additional information has been added to create a transformer in entry
+            newEntry.transformer = transformer(for: Array(entryKeyPathComponents + viewKeyComponents))
+
+            // Add the entry to the view
             if let bindTo = currentRecordView?.bindTo {
-
                 for entry in entries {
                     if entry.keyPath == newEntry.keyPath {
-                        logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(String(describing: currentRecordView))")
+                        logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(String(describing: currentRecordView)). Please remove it from storyboard.")
                         return // already set
                     } else if newEntry.keyPath.contains(entry.keyPath) {
                         logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
@@ -169,8 +175,22 @@ open class Binder: NSObject {
         }
     }
 
+    fileprivate func transformer(for components: [String]) -> ValueTransformer? {
+        if let component  = components.first {
+            for name in [NSValueTransformerName(component), NSValueTransformerName(StringPrefixer.namePrefix + component)] {
+                if let transformer = ValueTransformer(forName: name) {
+                    return transformer
+                }
+            }
+            logger.debug("Undefined transformer \(component ). Will be created.")
+            let transformer = StringPrefixer(prefix: component)
+            transformer.register()
+            return transformer
+        }
+        return nil
+    }
     /*open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if let context = context {
+     if let context = context {
             // XXX check safety
             let entry = Unmanaged<KeyPathEntry>.fromOpaque(context).takeUnretainedValue()
             self.updateView(for: entry)
@@ -204,6 +224,17 @@ open class Binder: NSObject {
     }
    */
 
+    fileprivate func fixKey(_ key: inout String, _ extractedValue: Any?) {
+        //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
+        if key == "restImage" { // for test purpose, fix type
+            if extractedValue is Data {
+                key = "imageData"
+            } else if extractedValue is UIImage {
+                key = "image"
+            }
+        }
+    }
+
     fileprivate func updateView(for entry: KeyPathEntry) {
         // CLEAN factorize code, maybe using closure, KVC will not work using  entry.localVarKey
         if let key = entry.localVarKey, key == Binder.tableVarKey {
@@ -221,29 +252,21 @@ open class Binder: NSObject {
             if let view = entry.binded {
                 var extractedValue: Any? = nil
                 switch entry.localVarKey ?? "" {
-                case "record":
+                case Binder.recordVarKey:
                     if let record = self.record {
                         extractedValue = record.value(forKeyPath: entry.keyPath)
                     }
-                case "settings":
+                case Binder.settingsKey:
                     extractedValue = self.settings?[entry.keyPath]
                 default:
                     extractedValue = nil
                 }
+                var key = entry.viewKey
+                assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
                 if let transformer = entry.transformer {
-                    view.setProperty(name: entry.viewKey, value: transformer.transformedValue(extractedValue))
+                    view.setProperty(name: key, value: transformer.transformedValue(extractedValue))
                 } else {
-                    var key = entry.viewKey
-                    assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
-                    //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
-
-                    if key == "restImage" { // for test purpose, fix type
-                        if extractedValue is Data {
-                            key = "imageData"
-                        } else if extractedValue is UIImage {
-                            key = "image"
-                        }
-                    }
+                    fixKey(&key, extractedValue)
                     view.setProperty(name: key, value: extractedValue)
                 }
             }

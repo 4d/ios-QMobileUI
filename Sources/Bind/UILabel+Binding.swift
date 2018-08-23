@@ -31,10 +31,19 @@ extension String {
 
 // Use some Formatter to bind label
 public extension UILabel {
-
+    @objc dynamic public var systemToPosixPath: String? {
+        get {
+            // Return the original
+            return text?.replacingOccurrences(of: "/", with: ":")
+        }
+        set {
+            // Set the value you want to display
+            self.text = text?.replacingOccurrences(of: ":", with: "/")
+        }
+    }
     // MARK: - string
 
-    /// Display a data with RFC 822 format
+    /// Display a localized bundle
     @objc dynamic public var localized: String? {
         get {
             guard let localized = self.text else {
@@ -48,6 +57,24 @@ public extension UILabel {
                 return
             }
             self.text = string.localizedBinding
+        }
+    }
+
+    /// Display an image from bundle.
+    @objc dynamic public var imageNamed: String? {
+        get {
+            return self.text // Cannot undo it without storing...
+        }
+        set {
+            guard let name = newValue else {
+                self.text = nil
+                return
+            }
+            guard let image = UIImage(named: name) else {
+                self.text = nil // XXX maybe instead add a missing image, a placeholder image?
+                return
+            }
+            self.setImage(image)
         }
     }
 
@@ -230,7 +257,7 @@ public extension UILabel {
     }
 
     /// Display yes or no for boolean value
-    @objc dynamic public var yesOrNo: Bool {
+    @objc dynamic public var noOrYes: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -243,7 +270,7 @@ public extension UILabel {
     }
 
     /// Display true or false for boolean value
-    @objc dynamic public var trueOrFalse: Bool {
+    @objc dynamic public var falseOrTrue: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -380,6 +407,37 @@ public extension UILabel {
             }
             self.text = NumberFormatter.ordinal.string(from: number)
 
+        }
+    }
+
+    // MARK: simple string transforamtion
+
+    @objc dynamic public var capitalised: String? {
+        get {
+            return self.text // N.B. no reverse transformation
+        }
+        set {
+            self.text = newValue?.capitalized
+
+        }
+    }
+
+    @objc dynamic public var lowercased: String? {
+        get {
+            return self.text // N.B. no reverse transformation
+        }
+        set {
+            self.text = newValue?.lowercased()
+
+        }
+    }
+
+    @objc dynamic public var uppercased: String? {
+        get {
+            return self.text // N.B. no reverse transformation
+        }
+        set {
+            self.text = newValue?.uppercased()
         }
     }
 }

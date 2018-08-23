@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Prephirences
 
 extension NumberFormatter {
 
@@ -21,13 +22,6 @@ extension NumberFormatter {
     static let decimal: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        return formatter
-    }()
-
-    /// Specifies a currency style format; for example, in the en_US_POSIX locale, 1234.5678 is represented as “$ 1234.57”.
-    static let currency: NumberFormatter  = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
         return formatter
     }()
 
@@ -52,10 +46,20 @@ extension NumberFormatter {
         return formatter
     }()
 
+    // MARK: currency
+    /// Specifies a currency style format; for example, in the en_US_POSIX locale, 1234.5678 is represented as “$ 1234.57”.
+    static let currency: NumberFormatter  = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        configureCurrencyLocal(formatter: formatter)
+        return formatter
+    }()
+
     /// Specifies a currency style format using ISO 4217 currency codes; for example, in the en_US_POSIX locale, 1234.5678 is represented as “USD 1234.57”.
     static let currencyISOCode: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currencyISOCode
+        configureCurrencyLocal(formatter: formatter)
         return formatter
     }()
 
@@ -63,6 +67,7 @@ extension NumberFormatter {
     static let currencyPlural: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currencyPlural
+        configureCurrencyLocal(formatter: formatter)
         return formatter
     }()
 
@@ -71,7 +76,38 @@ extension NumberFormatter {
     static let currencyAccounting: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currencyAccounting
+        configureCurrencyLocal(formatter: formatter)
         return formatter
     }()
 
+    static func configureCurrencyLocal(formatter: NumberFormatter) {
+        if let identifier = Prephirences.sharedInstance.string(forKey: "currency.local") {
+            formatter.locale = Locale(identifier: identifier)
+        }
+    }
+
+    static let currencyUSD: NumberFormatter  = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = .us
+        // formatter.currencyCode = "USD"
+        return formatter
+    }()
+
+    static let currencyEuro: NumberFormatter  = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = .fr //
+        //formatter.currencyCode = "EURO"
+        return formatter
+    }()
+}
+
+extension Locale {
+    //swiftlint:disable:next identifier_name
+    public static let us = Locale(identifier: "en_US")
+    //swiftlint:disable:next identifier_name
+    public static let jp = Locale(identifier: "ja_JP")
+    //swiftlint:disable:next identifier_name
+    public static let fr = Locale(identifier: "fr_FR")
 }
