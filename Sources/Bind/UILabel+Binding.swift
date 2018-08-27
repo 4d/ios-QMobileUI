@@ -16,10 +16,15 @@ extension Bundle {
 
 extension String {
 
+    /// File name where to find localizedBinding. Default 'Formatters'.
+    @nonobjc public static var localizedBindingTableName: String = "Formatters"
+
+    /// Localized string for binding
     var localizedBinding: String {
-        return NSLocalizedString(self, bundle: .uiBinding, comment: "")
+        return NSLocalizedString(self, tableName: String.localizedBindingTableName, bundle: .uiBinding, comment: "")
     }
 
+    /// Loocalized string found in this framework
     var localizedFramework: String {
         return NSLocalizedString(self, bundle: Bundle(for: Binder.self), comment: "")
     }
@@ -28,6 +33,14 @@ extension String {
         return NSLocalizedString(self, bundle: bundle, comment: comment)
     }
 }
+
+/*
+Make it generic with other text widget
+ public protocol UITextOwner {
+    var text: String? {get set}
+    var attributedText: NSAttributedString? {get set}
+}
+extension UILabel: UITextOwner {}*/
 
 // Use some Formatter to bind label
 public extension UILabel {
