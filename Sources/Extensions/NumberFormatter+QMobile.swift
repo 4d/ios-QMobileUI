@@ -48,7 +48,7 @@ extension NumberFormatter {
 
     // MARK: currency
     /// Specifies a currency style format; for example, in the en_US_POSIX locale, 1234.5678 is represented as “$ 1234.57”.
-    static let currency: NumberFormatter  = {
+   /* static let currency: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         configureCurrencyLocal(formatter: formatter)
@@ -84,30 +84,44 @@ extension NumberFormatter {
         if let identifier = Prephirences.sharedInstance.string(forKey: "currency.local") {
             formatter.locale = Locale(identifier: identifier)
         }
-    }
+    }*/
 
-    static let currencyUSD: NumberFormatter  = {
+    static let currencyDollar: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = .us
-        // formatter.currencyCode = "USD"
         return formatter
     }()
 
     static let currencyEuro: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = .fr //
-        //formatter.currencyCode = "EURO"
+        formatter.locale = .fr
+        return formatter
+    }()
+
+    static let currencyYen: NumberFormatter  = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = .jp
+        return formatter
+    }()
+
+    static let currencyLivreSterling: NumberFormatter  = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = .gb
         return formatter
     }()
 }
 
 extension Locale {
     //swiftlint:disable:next identifier_name
-    public static let us = Locale(identifier: "en_US")
+    static let us = Locale(identifier: "en_US")
     //swiftlint:disable:next identifier_name
-    public static let jp = Locale(identifier: "ja_JP")
+    static let jp = Locale(identifier: "ja_JP")
     //swiftlint:disable:next identifier_name
-    public static let fr = Locale(identifier: "fr_FR")
+    static let fr = Locale(identifier: "fr_FR")
+    //swiftlint:disable:next identifier_name
+    static let gb = Locale(identifier: "en_GB")
 }

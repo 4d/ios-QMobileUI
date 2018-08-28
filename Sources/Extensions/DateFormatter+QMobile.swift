@@ -106,9 +106,14 @@ open class TimeFormatter {
         }
     }
 
-    open var timeFormat: String? {
-        return dateFormatter.dateFormat
-        // do not add `set` without checking if it's a correct time only format
+    open private(set) var timeFormat: String? {
+        get {
+            return dateFormatter.dateFormat
+        }
+        set {
+            dateFormatter.dateFormat = newValue
+            // do not add `set` without checking if it's a correct time only format
+        }
     }
 
     open func string(from time: TimeInterval) -> String {
@@ -174,4 +179,10 @@ open class TimeFormatter {
         return formatter
     }()
 
+    /// Specifies a short style, typically numeric only, such as “20:52:55”.
+    open static let simple: TimeFormatter = {
+        let formatter = TimeFormatter()
+        formatter.timeFormat = "HH:mm:ss"
+        return formatter
+    }()
 }

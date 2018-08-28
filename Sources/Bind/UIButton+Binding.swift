@@ -129,6 +129,23 @@ public extension UIButton {
 
     // MARK: - time (duration)
 
+    /// Display a time with a short style, typically numeric only, such as “3:30”.
+    @objc dynamic public var duration: NSNumber? {
+        get {
+            guard let text = self.text else {
+                return nil
+            }
+            return TimeFormatter.simple.number(from: text)
+        }
+        set {
+            guard let number = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = TimeFormatter.simple.string(from: number)
+        }
+    }
+
     /// Display a time with a short style, typically numeric only, such as “3:30 PM”.
     @objc dynamic public var shortTime: NSNumber? {
         get {
@@ -200,6 +217,7 @@ public extension UIButton {
     // MARK: - bool
 
     /// Display 1 or 0 for boolean value
+    @available(iOS, deprecated: 1.0)
     @objc dynamic public var bool: Bool {
         get {
             return integer == 1
@@ -209,6 +227,7 @@ public extension UIButton {
         }
     }
 
+    @available(iOS, deprecated:1.0)
     @objc dynamic public var boolean: NSNumber? {
         get {
             return integer
@@ -246,6 +265,23 @@ public extension UIButton {
 
     // MARK: - number
 
+    /// Display a number with no style, such that an integer representation is used; for example, 105.12345679111 is represented as “105.12345679”.
+    @objc dynamic public var real: NSNumber? {
+        get {
+            guard let text = self.text else {
+                return nil
+            }
+            return NumberFormatter.none.number(from: text)
+        }
+        set {
+            guard let number = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = number.description
+        }
+    }
+
     /// Display a number with a decimal style format; for example, 1234.5678 is represented as “1234.5678”.
     @objc dynamic public var decimal: NSNumber? {
         get {
@@ -264,38 +300,74 @@ public extension UIButton {
         }
     }
 
-    /// Display a number with a currency style format; for example, in the en_US_POSIX locale, 1234.5678 is represented as “$ 1234.57”.
-    @objc dynamic public var currency: NSNumber? {
+    /// Display a number with a currency style format; for example, 1234.5678 is represented as “$ 1234.57”.
+    @objc dynamic public var currencyDollar: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
             }
-            return NumberFormatter.currency.number(from: text)
+            return NumberFormatter.currencyDollar.number(from: text)
         }
         set {
             guard let number = newValue else {
                 self.text = nil
                 return
             }
-            self.text = NumberFormatter.currency.string(from: number)
+            self.text = NumberFormatter.currencyDollar.string(from: number)
 
         }
     }
 
-    /// Display a number with a currency style format using ISO 4217 currency codes; for example, in the en_US_POSIX locale, 1234.5678 is represented as “USD 1234.57”.
-    @objc dynamic public var currencyISOCode: NSNumber? {
+    /// Display a number with a currency style format; for example,  1234.5678 is represented as “1234,57 €”.
+    @objc dynamic public var currencyEuro: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
             }
-            return NumberFormatter.currencyISOCode.number(from: text)
+            return NumberFormatter.currencyEuro.number(from: text)
         }
         set {
             guard let number = newValue else {
                 self.text = nil
                 return
             }
-            self.text = NumberFormatter.currencyISOCode.string(from: number)
+            self.text = NumberFormatter.currencyEuro.string(from: number)
+
+        }
+    }
+
+    /// Display a number with a currency style format; for example, 1234.5678 is represented as “£ 1234.57”.
+    @objc dynamic public var currencyLivreSterling: NSNumber? {
+        get {
+            guard let text = self.text else {
+                return nil
+            }
+            return NumberFormatter.currencyLivreSterling.number(from: text)
+        }
+        set {
+            guard let number = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = NumberFormatter.currencyLivreSterling.string(from: number)
+
+        }
+    }
+
+    /// Display a number with a currency style format; for example, 1234.5678 is represented as “¥ 1234”.
+    @objc dynamic public var currencyYen: NSNumber? {
+        get {
+            guard let text = self.text else {
+                return nil
+            }
+            return NumberFormatter.currencyYen.number(from: text)
+        }
+        set {
+            guard let number = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = NumberFormatter.currencyYen.string(from: number)
 
         }
     }
