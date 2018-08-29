@@ -24,7 +24,7 @@ extension UIImageView {
         }
     }
 
-    /*@objc dynamic public var localized: String? {
+    /*@objc dynamic public var localizedText: String? {
         get {
             guard let localized = self.text else {
                 return nil

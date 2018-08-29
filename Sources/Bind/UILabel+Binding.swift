@@ -56,8 +56,8 @@ public extension UILabel {
     }
     // MARK: - string
 
-    /// Display a localized bundle
-    @objc dynamic public var localized: String? {
+    /// Display a localized text found in Formatters.strings
+    @objc dynamic public var localizedText: String? {
         get {
             guard let localized = self.text else {
                 return nil
@@ -73,7 +73,7 @@ public extension UILabel {
         }
     }
 
-    /// Display an image from bundle.
+    /// Display an image from asset.
     @objc dynamic public var imageNamed: String? {
         get {
             return self.text // Cannot undo it without storing...
@@ -93,7 +93,7 @@ public extension UILabel {
 
     // MARK: - date
 
-    /// Display a data with RFC 822 format
+    /// Display a date with RFC 822 format
     @objc dynamic public var date: Date? {
         get {
             guard let text = self.text else {
@@ -110,7 +110,7 @@ public extension UILabel {
         }
     }
 
-    /// Display a data with a short style, typically numeric only, such as “11/23/37”.
+    /// Display a date with a short style, typically numeric only, such as “11/23/37”.
     @objc dynamic public var shortDate: Date? {
         get {
             guard let text = self.text else {
@@ -127,7 +127,7 @@ public extension UILabel {
         }
     }
 
-    /// Display a data with a medium style, typically with abbreviated text, such as “Nov 23, 1937”.
+    /// Display a date with a medium style, typically with abbreviated text, such as “Nov 23, 1937”.
     @objc dynamic public var mediumDate: Date? {
         get {
             guard let text = self.text else {
@@ -144,7 +144,7 @@ public extension UILabel {
         }
     }
 
-    /// Display a data with a long style, typically with full text, such as “November 23, 1937”.
+    /// Display a date with a long style, typically with full text, such as “November 23, 1937”.
     @objc dynamic public var longDate: Date? {
         get {
             guard let text = self.text else {
@@ -161,7 +161,7 @@ public extension UILabel {
         }
     }
 
-    /// Display a data with a full style with complete details, such as “Tuesday, April 12, 1952 AD”.
+    /// Display a date with a full style with complete details, such as “Tuesday, April 12, 1952 AD”.
     @objc dynamic public var fullDate: Date? {
         get {
             guard let text = self.text else {
