@@ -68,9 +68,11 @@ open class SettingsForm: UITableViewController {
     }
 
     // MARK: event
+
     final public override func viewDidLoad() {
         super.viewDidLoad()
         initSections() // Register external UI from other file
+        initFooter()
         onLoad()
 
         let center = NotificationCenter.default
@@ -139,6 +141,25 @@ open class SettingsForm: UITableViewController {
         }
     }
 
+    // Footer
+
+    /// Fill footer view with application information
+    open func initFooter() {
+        if let footerLabel = self.tableView?.tableFooterView as? UILabel {
+            if let footerLabelText = Prephirences.sharedInstance["settings.footer.label.text"] as? String {
+                footerLabel.text = footerLabelText
+            } else {
+                footerLabel.text = UIApplication.appName + " (" + UIApplication.appVersion + ")"
+            }
+        }
+        self.tableView?.adjustFooterViewHeightToFillTableView()
+    }
+
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.tableView?.adjustFooterViewHeightToFillTableView()
+    }
+
     // init section
 
     private func initSections() {
@@ -175,8 +196,6 @@ open class SettingsForm: UITableViewController {
     }
 
     open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        //let cells = tableView.visibleCells
-
         if let sectionEnum = Section(rawValue: section),
             let footer = sectionEnum.dequeueHeader(in: tableView) {
             footer.index = section

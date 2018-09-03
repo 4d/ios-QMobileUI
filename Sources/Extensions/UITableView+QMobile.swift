@@ -12,6 +12,24 @@ extension UITableView {
         let location = view.convert(CGPoint.zero, to: self)
         return indexPathForRow(at: location)
     }
+
+    func adjustFooterViewHeightToFillTableView() {
+        if let tableFooterView = self.tableFooterView {
+            let minHeight = tableFooterView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+
+            let currentFooterHeight = tableFooterView.frame.height
+
+            let fitHeight = self.frame.height - self.adjustedContentInset.top - self.contentSize.height  + currentFooterHeight
+            let nextHeight = (fitHeight > minHeight) ? fitHeight : minHeight
+
+            if round(nextHeight) != round(currentFooterHeight) {
+                var frame = tableFooterView.frame
+                frame.size.height = nextHeight
+                tableFooterView.frame = frame
+                self.tableFooterView = tableFooterView
+            }
+        }
+    }
 }
 
 private var xoAssociationKey: UInt8 = 0
