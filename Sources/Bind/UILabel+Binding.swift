@@ -248,6 +248,23 @@ public extension UILabel {
         }
     }
 
+    /// Display a time with a short style, typically numeric only, such as “3:30”.
+    @objc dynamic public var duration: NSNumber? {
+        get {
+            guard let text = self.text else {
+                return nil
+            }
+            return TimeFormatter.simple.number(from: text)
+        }
+        set {
+            guard let number = newValue else {
+                self.text = nil
+                return
+            }
+            self.text = TimeFormatter.simple.string(from: number)
+        }
+    }
+
     // MARK: - bool
 
     /// Display 1 or 0 for boolean value
