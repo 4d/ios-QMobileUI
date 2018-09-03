@@ -111,7 +111,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     /// Return the email from `loginTextField`.
     open var email: String {
-        return self.loginTextField.text ?? ""
+        return self.loginTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
     /// Return any custom informations that must be send when authenticate.
