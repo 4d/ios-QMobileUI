@@ -81,7 +81,7 @@ open class WebAreaForm: UIViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    // TODO ADD events for URL loading, see navigation delegate
+    // TODO WEBFORM ADD events for URL loading, see navigation delegate
 
     // MARK: Web view functions
     @objc public dynamic var isLoading: Bool {

@@ -304,7 +304,7 @@ extension ApplicationUpdate {
     }
     public func openUpdateUI() {
         self.delegate?.applicationUpdateUserDidOpenUpdateUI()
-        openUpdateURL() // TODO implement a real UI, segue?
+        openUpdateURL() // TODO APP UPDATE implement a real UI, segue?
     }
 
     public func openUpdateURL() {

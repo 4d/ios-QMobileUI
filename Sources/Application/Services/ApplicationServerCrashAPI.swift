@@ -75,9 +75,9 @@ public struct CrashStatus {
     static let successKey = "success"
 
     /// `true` if server ok
-    public var ok: Bool
+    public var ok: Bool // swiftlint:disable:this identifier_name
 
-    public init(ok: Bool) {
+    public init(ok: Bool) { // swiftlint:disable:this identifier_name
         self.ok = ok
     }
 
