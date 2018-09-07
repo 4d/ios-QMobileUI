@@ -19,13 +19,17 @@ open class ListFormTable: UITableViewController, ListForm {
 
     @IBOutlet open var searchBar: UISearchBar!
     public private(set) var searchActive: Bool = false
-    /// Operator used to search. contains, beginwith,endwith. Default contains
-    @IBInspectable open var searchOperator: String = "contains" // beginwith, endwitch
-    /// Case sensitivity when searching. Default cd
+    /// Operator used to search. contains, beginwith, endwith. Default contains
+    @IBInspectable open var searchOperator: String = "contains" {
+        didSet {
+            assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
+        }
+    }
+        /// Case sensitivity when searching. Default cd
     @IBInspectable open var searchSensitivity: String = "cd"
-    /// Name of the search field
+    /// Name(s) of the search field(s)
     @IBInspectable open var searchableField: String = "name"
-    /// If no sort field, use search field as sort field
+    /// Add search bar in place of navigation bar title
     @IBInspectable open var searchableAsTitle: Bool = true
 
     /// Name of the field used to sort. (You use multiple field using coma)
@@ -35,7 +39,9 @@ open class ListFormTable: UITableViewController, ListForm {
     /// If no sort field, use search field as sort field
     @IBInspectable open var searchFieldAsSortField: Bool = true
 
+    /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
+    /// Go no the previous record.
     @IBOutlet open var previousButton: UIButton?
 
     /// Optional section for table using one field name
@@ -215,7 +221,8 @@ open class ListFormTable: UITableViewController, ListForm {
 
     open func onSearchBegin() {}
     open func onSearchButtonClicked() {}
-    open func onSearchCancelButtonClicked() {}
+    open func onSearchCancel() {}
+    open func onSearchFetching() {}
 
     /// Called after a clicked on a record. 
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
@@ -445,25 +452,22 @@ extension ListFormTable: DataSourceSearchable {
         searchBar.endEditing(true)
         dataSource?.predicate = nil
         dataSource?.performFetch()
-        onSearchCancelButtonClicked()
+        onSearchCancel()
     }
 
     // Function to do search
+
     func performSearch(_ searchText: String) {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
-            if !searchText.isEmpty {
-                assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
+            // Create the search predicate
+            let fieldsByName = self.tableInfo?.fieldsByName ?? [:]
+            dataSource?.predicate = createSearchPredicate(searchText, table: table) { return fieldsByName[String($0)] != nil }
 
-                if self.tableInfo?.fieldsByName[searchableField] != nil {
-                    dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
-                } else {
-                    assertionFailure("Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))")
-                }
-            } else {
-                dataSource?.predicate = nil
-            }
+            // Perform the search
             dataSource?.performFetch()
+            // Event
+            onSearchFetching()
         }
         // XXX API here could load more from network
     }

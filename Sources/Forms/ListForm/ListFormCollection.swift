@@ -34,10 +34,12 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBInspectable open var sortField: String = ""
     /// Sort ascending on `sortField`
     @IBInspectable open var sortAscending: Bool = true
-    /// If no sort field, use search field as sort field
+   /// Add search bar in place of navigation bar title
     @IBInspectable open var searchFieldAsSortField: Bool = true
 
+    /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
+    /// Go no the previous record.
     @IBOutlet open var previousButton: UIButton?
 
     /// Optional section for table using one field name
@@ -221,7 +223,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     open func onSearchBegin() {}
     open func onSearchButtonClicked() {}
-    open func onSearchCancelButtonClicked() {}
+    open func onSearchCancel() {}
     open func onSearchFetching() {}
 
     /// Called after a clicked on a record.
@@ -406,22 +408,15 @@ extension ListFormCollection: DataSourceSearchable {
     }
     func performSearch(_ searchText: String) {
         if !isSearchBarMustBeHidden {
-            if !searchText.isEmpty {
-                assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
+            // Create the search predicate
+            let fieldsByName = self.tableInfo?.fieldsByName ?? [:]
+            dataSource?.predicate = createSearchPredicate(searchText, table: table) { return fieldsByName[String($0)] != nil }
 
-                if self.tableInfo?.fieldsByName[searchableField] != nil {
-                    dataSource?.predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
-                } else {
-                    assertionFailure("Configured field to search '\(searchableField)' is not in table field.\n Check search identifier list form storyboard for class \(self).\n Table: \(String(unwrappedDescrib: table))")
-                }
-            } else {
-                dataSource?.predicate = nil
-            }
+            // Perform the search
             dataSource?.performFetch()
-
+            // Event
             onSearchFetching()
         }
-
         // XXX API here could load more from network
     }
 
@@ -444,7 +439,7 @@ extension ListFormCollection: DataSourceSearchable {
         searchBar.endEditing(true)
         dataSource?.predicate = nil
         dataSource?.performFetch()
-        onSearchCancelButtonClicked()
+        onSearchCancel()
     }
 
     public func updateSearchResults(for searchController: UISearchController) {
