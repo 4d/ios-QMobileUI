@@ -17,3 +17,5 @@ github "nvzqz/FileKit"
 github "antitypical/Result"
 github "DaveWoodCom/XCGLogger"
 github "weichsel/ZIPFoundation"
+#DataSync
+github "Thomvis/BrightFutures"

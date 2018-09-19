@@ -118,7 +118,7 @@ open class Binder: NSObject {
             var entryKeyPathArray = [String]()
 
             // Look up potential other view hierarchy using path component parsing
-            var localVarKey: String? = nil
+            var localVarKey: String?
 
             let keyPaths = self.keyPaths
             for pathComponent in keyPaths {
@@ -250,7 +250,7 @@ open class Binder: NSObject {
         } else { // record
 
             if let view = entry.binded {
-                var extractedValue: Any? = nil
+                var extractedValue: Any?
                 switch entry.localVarKey ?? "" {
                 case Binder.recordVarKey:
                     if let record = self.record {
@@ -276,7 +276,7 @@ open class Binder: NSObject {
     // MARK: parsers
     // Find view according to pathComponent in view hierarchy
     fileprivate func binded(for view: Binded?, pathComponent: String) -> Binded? {
-        var result: Binded? = nil
+        var result: Binded?
 
         // OPTI: could put parsers in dico if a parser match pathComponent only on function attribute
         for parser in Binder.parsers {

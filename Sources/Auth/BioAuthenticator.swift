@@ -12,7 +12,7 @@ import LocalAuthentication
 class BioAuthentificator {
 
     public static var isAvailable: Bool {
-        var error: NSError? = nil
+        var error: NSError?
         if LAContext().canEvaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             return (error == nil)
         }

@@ -8,61 +8,61 @@
 
 import Foundation
 
-class ApplicationOpenApp {
+open class ApplicationOpenAppBeta {
 
-    static func openSafari(url: String) {
-        self.openURL(url)
+    open static func openSafari(url: String) {
+        self.openURL(url.trimmed)
     }
 
-    static func openMap(query: String) {
-        self.openURL("http://maps.apple.com/?q=\(query)")
+    open static func openMap(query: String) {
+        self.openURL("http://maps.apple.com/?q=\(query.trimmed)")
     }
 
-    static func openMap(address: String) {
+    open static func openMap(address: String) {
         self.openURL("http://maps.apple.com/?address=\(address)")
     }
 
-    static func openMap(location: String) {
+    open static func openMap(location: String) {
         self.openURL("http://maps.apple.com/?ll=\(location)")
     }
 
-    static func openPhone(phone number: String) {
-        self.openURL("tel:\(number)")
+    open static func openPhone(phone number: String) {
+        self.openURL("tel:\(number.noSpace)")
     }
 
-    static func openSMS(phone number: String) {
-        self.openURL("sms:\(number)")
+    open static func openSMS(phone number: String) {
+        self.openURL("sms:\(number.noSpace)")
     }
 
-    static func openFaceTime(call: String) {
+    open static func openFaceTime(call: String) {
         self.openURL("facetime://\(call)")
     }
 
-    static func openFaceTimeAudio(call: String) {
+    open static func openFaceTimeAudio(call: String) {
         self.openURL("facetime-audio://\(call)")
     }
 
-    static func openMail(mailto: String) {
-        self.openURL("mailto:\(mailto)")
+    open static func openMail(mailto: String) {
+        self.openURL("mailto:\(mailto.trimmed)")
     }
 
-    static func openMail(mailto: String, subject: String, body: String) {
-        self.openURL("mailto:\(mailto)?subject=\(subject)&body=\(body)")
+    open static func openMail(mailto: String, subject: String, body: String) {
+        self.openURL("mailto:\(mailto.trimmed)?subject=\(subject)&body=\(body)")
     }
 
-    static func openiBooks(isbn: String) {
-        self.openURL("itms-bookss://itunes.apple.com/book/isbn\(isbn)")
+    open static func openiBooks(isbn: String) {
+        self.openURL("itms-bookss://itunes.apple.com/book/isbn\(isbn.trimmed)")
     }
 
-    static func openiBooks(bookid: String) {
-        self.openURL("itms-bookss://itunes.apple.com/book/id\(bookid)")
+    open static func openiBooks(bookid: String) {
+        self.openURL("itms-bookss://itunes.apple.com/book/id\(bookid.trimmed)")
     }
 
-    static func openAppStore(appid: String) {
-        self.openURL("itms-apps://itunes.apple.com/app/pages/id\(appid)")
+    open static func openAppStore(appid: String) {
+        self.openURL("itms-apps://itunes.apple.com/app/pages/id\(appid.trimmed)")
     }
 
-    static func openPhotoLibary() {
+    open static func openPhotoLibary() {
         self.openURL("photos-redirect://")
     }
 
@@ -84,4 +84,13 @@ class ApplicationOpenApp {
         }
     }
 
+}
+
+extension String {
+    var trimmed: String {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    var noSpace: String {
+       return self.components(separatedBy: .whitespacesAndNewlines).joined()
+    }
 }

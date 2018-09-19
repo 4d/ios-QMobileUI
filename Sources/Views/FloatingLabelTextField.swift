@@ -386,7 +386,7 @@ import UIKit
     // MARK: - Title handling
 
     fileprivate func configureTitleLabel(_ animated: Bool = false) {
-        var titleText: String? = nil
+        var titleText: String?
         if hasErrorMessage {
             titleText = titleFormatter(errorMessage!)
         } else {

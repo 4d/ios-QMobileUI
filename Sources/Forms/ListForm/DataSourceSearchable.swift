@@ -27,7 +27,7 @@ extension DataSourceSearchable {
     }
 
     func createSearchPredicate(_ searchText: String, table: Any?, valid: (Substring) -> Bool) -> NSPredicate? {
-        var predicate: NSPredicate? = nil
+        var predicate: NSPredicate?
         // need text to seach
         if !searchText.isEmpty {
             var searchableFields = searchableField.split(separator: ",")

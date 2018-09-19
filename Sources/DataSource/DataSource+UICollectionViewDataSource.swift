@@ -58,7 +58,7 @@ extension DataSource: UICollectionViewDataSource {
     }
 
     func cacheSectionNames(using keyPath: String) {
-        var keyPathascending: Bool? = nil
+        var keyPathascending: Bool?
 
         let sortDescriptorsTmp = self.fetchedResultsController.fetchRequest.sortDescriptors
         guard let sortDescriptors = sortDescriptorsTmp else {
