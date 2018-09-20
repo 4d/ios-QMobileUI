@@ -155,7 +155,7 @@ open class Binder: NSObject {
             let newEntry = KeyPathEntry(keyPath: entryKeyPath, viewKey: viewKey.viewKeyCased, view: self.view, localVarKey: localVarKey)
 
             // Check if additional information has been added to create a transformer in entry
-            newEntry.transformer = transformer(for: Array(entryKeyPathComponents + viewKeyComponents))
+            newEntry.transformer = transformer(for: Array(entryKeyPathComponents + viewKeyComponents), viewKey: viewKey.viewKeyCased)
 
             // Add the entry to the view
             if let bindTo = currentRecordView?.bindTo {
@@ -175,16 +175,27 @@ open class Binder: NSObject {
         }
     }
 
-    fileprivate func transformer(for components: [String]) -> ValueTransformer? {
+    fileprivate func transformer(for components: [String], viewKey: String) -> ValueTransformer? {
         if let component  = components.first {
-            for name in [NSValueTransformerName(component), NSValueTransformerName(StringPrefixer.namePrefix + component)] {
-                if let transformer = ValueTransformer(forName: name) {
-                    return transformer
-                }
+            if let transformer = ValueTransformer(forName: NSValueTransformerName(component)) {
+                return transformer
             }
-            logger.debug("Undefined transformer \(component ). Will be created.")
-            let transformer = StringPrefixer(prefix: component)
-            transformer.register()
+            let name = NSValueTransformerName(viewKey + component)
+            if let transformer = ValueTransformer(forName: name) {
+                return transformer
+            }
+
+            var transformer: ValueTransformer?
+            switch viewKey {
+            case "localizedText", "imageNamed":
+                transformer = StringPrefixer(prefix: component)
+                logger.debug("Undefined transformer \(component) or \(viewKey),\(component). Will be created.")
+            default:
+                transformer = nil
+            }
+            if let transformer = transformer {
+                ValueTransformer.setValueTransformer(transformer, forName: name)
+            }
             return transformer
         }
         return nil
