@@ -37,13 +37,13 @@ fileprivate extension ApplicationServices {
     }
 
     fileprivate func addObservers() {
-        center.addObserver(self, selector: #selector(application(didFinishLaunching:)), name: .UIApplicationDidFinishLaunching, object: nil)
-        center.addObserver(self, selector: #selector(application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
-        center.addObserver(self, selector: #selector(application(willEnterForeground:)), name: .UIApplicationWillEnterForeground, object: nil)
-        center.addObserver(self, selector: #selector(application(didBecomeActive:)), name: .UIApplicationDidBecomeActive, object: nil)
-        center.addObserver(self, selector: #selector(application(willResignActive:)), name: .UIApplicationWillResignActive, object: nil)
-        center.addObserver(self, selector: #selector(application(didReceiveMemoryWarning:)), name: .UIApplicationDidReceiveMemoryWarning, object: nil)
-        center.addObserver(self, selector: #selector(application(willTerminate:)), name: .UIApplicationWillTerminate, object: nil)
+        center.addObserver(self, selector: #selector(application(didFinishLaunching:)), name: UIApplication.didFinishLaunchingNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(willEnterForeground:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(didBecomeActive:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(willResignActive:)), name: UIApplication.willResignActiveNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(didReceiveMemoryWarning:)), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(willTerminate:)), name: UIApplication.willTerminateNotification, object: nil)
         /* // status bar event
          .UIApplicationWillChangeStatusBarOrientation
          .UIApplicationDidChangeStatusBarOrientation
@@ -53,13 +53,13 @@ fileprivate extension ApplicationServices {
          */
 
         // receive info
-        center.addObserver(self, selector: #selector(application(didRegisterForRemoteWithDeviceToken:)), name: .UIApplicationDidRegisterForRemoteWithDeviceToken, object: nil)
-        center.addObserver(self, selector: #selector(application(openUrlWithOptions:)), name: .UIApplicationOpenUrlWithOptions, object: nil)
+        center.addObserver(self, selector: #selector(application(didRegisterForRemoteWithDeviceToken:)), name: UIApplication.didRegisterForRemoteWithDeviceTokenNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(openUrlWithOptions:)), name: UIApplication.openUrlWithOptionsNotification, object: nil)
         // activity
-        center.addObserver(self, selector: #selector(application(didUpdateUserActivity:)), name: .UIApplicationDidUpdateUserActivity, object: nil)
-        center.addObserver(self, selector: #selector(application(didFailToContinueUserActivity:)), name: .UIApplicationDidFailToContinueUserActivity, object: nil)
-        center.addObserver(self, selector: #selector(application(willContinueUserActivity:)), name: .UIApplicationWillContinueUserActivity, object: nil)
-        center.addObserver(self, selector: #selector(application(continueUserActivity:)), name: .UIApplicationContinueUserActivity, object: nil)
+        center.addObserver(self, selector: #selector(application(didUpdateUserActivity:)), name: UIApplication.didUpdateUserActivityNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(didFailToContinueUserActivity:)), name: UIApplication.didFailToContinueUserActivityNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(willContinueUserActivity:)), name: UIApplication.willContinueUserActivityNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(continueUserActivity:)), name: UIApplication.continueUserActivityNotification, object: nil)
     }
 
     func removeObjservers() {
@@ -88,24 +88,24 @@ public struct ApplicationServiceUserInfoKey {
     public static let restorationHandler = "__restorationHandler"
 }
 
-extension Notification.Name {
+extension UIApplication {
 
-    public static let UIApplicationOpenUrlWithOptions: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
+    public static let openUrlWithOptionsNotification: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
     //swiftlint:disable:next identifier_name
-    public static let UIApplicationDidRegisterForRemoteWithDeviceToken: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
+    public static let didRegisterForRemoteWithDeviceTokenNotification: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
 
-    public static let UIApplicationDidUpdateUserActivity: NSNotification.Name = .init("UIApplicationDidUpdateUserActivity")
+    public static let didUpdateUserActivityNotification: NSNotification.Name = .init("UIApplicationDidUpdateUserActivity")
     //swiftlint:disable:next identifier_name
-    public static let UIApplicationDidFailToContinueUserActivity: NSNotification.Name = .init("UIApplicationDidFailToContinueUserActivity")
-    public static let UIApplicationWillContinueUserActivity: NSNotification.Name = .init("UIApplicationWillContinueUserActivity")
-    public static let UIApplicationContinueUserActivity: NSNotification.Name = .init("UIApplicationContinueUserActivity")
+    public static let didFailToContinueUserActivityNotification: NSNotification.Name = .init("UIApplicationDidFailToContinueUserActivity")
+    public static let willContinueUserActivityNotification: NSNotification.Name = .init("UIApplicationWillContinueUserActivity")
+    public static let continueUserActivityNotification: NSNotification.Name = .init("UIApplicationContinueUserActivity")
 
 }
 // create missing notifications
 public extension UIApplicationDelegate {
 
     public static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        ApplicationServices.instance.center.post(name: .UIApplicationDidRegisterForRemoteWithDeviceToken, object: application,
+        ApplicationServices.instance.center.post(name: UIApplication.didRegisterForRemoteWithDeviceTokenNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.deviceToken: deviceToken])
     }
 
@@ -113,35 +113,35 @@ public extension UIApplicationDelegate {
         type(of: self).application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }*/ // not working anymore, code is put in generated project instead
 
-    public static func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
-        ApplicationServices.instance.center.post(name: .UIApplicationOpenUrlWithOptions, object: app,
+    public static func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        ApplicationServices.instance.center.post(name: UIApplication.openUrlWithOptionsNotification, object: app,
                                                  userInfo: [ApplicationServiceUserInfoKey.openUrl: url, ApplicationServiceUserInfoKey.openUrlOptions: options])
         return true
     }
 
-    /*func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    /*func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return type(of: self).application(app, open: url, options: options)
      }*/
 
     public static func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        ApplicationServices.instance.center.post(name: .UIApplicationContinueUserActivity, object: application,
+        ApplicationServices.instance.center.post(name: UIApplication.continueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity, ApplicationServiceUserInfoKey.restorationHandler: restorationHandler])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
     public static func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
-        ApplicationServices.instance.center.post(name: .UIApplicationWillContinueUserActivity, object: application,
+        ApplicationServices.instance.center.post(name: UIApplication.willContinueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
     public static func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {
-        ApplicationServices.instance.center.post(name: .UIApplicationDidFailToContinueUserActivity, object: application,
+        ApplicationServices.instance.center.post(name: UIApplication.didFailToContinueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType, ApplicationServiceUserInfoKey.error: error])
     }
 
     public static func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {
-        ApplicationServices.instance.center.post(name: .UIApplicationDidUpdateUserActivity, object: application,
+        ApplicationServices.instance.center.post(name: UIApplication.didUpdateUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity])
     }
 
@@ -156,7 +156,7 @@ fileprivate extension Notification {
 }
 
 extension ApplicationServices {
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) {
         services.forEach { service in
             service.application(app, open: url, options: options)
         }
@@ -167,7 +167,7 @@ private extension ApplicationServices {
 
     @objc func application(didFinishLaunching notification: Notification) {
         services.forEach { service in
-            service.application(notification.application, didFinishLaunchingWithOptions: notification.userInfo as? [UIApplicationLaunchOptionsKey: Any])
+            service.application(notification.application, didFinishLaunchingWithOptions: notification.userInfo as? [UIApplication.LaunchOptionsKey: Any])
         }
     }
 
@@ -209,7 +209,7 @@ private extension ApplicationServices {
 
     @objc func application(openUrlWithOptions notification: Notification) {
         guard let url = notification.userInfo?[ApplicationServiceUserInfoKey.openUrl] as? URL,
-            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplicationOpenURLOptionsKey: Any] else {
+            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplication.OpenURLOptionsKey: Any] else {
                 return
         }
         application(notification.application, open: url, options: options)

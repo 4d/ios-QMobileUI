@@ -13,7 +13,7 @@ public protocol ApplicationService {
 
     // MARK: application flow
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
 
     func applicationDidEnterBackground(_ application: UIApplication)
 
@@ -31,7 +31,7 @@ public protocol ApplicationService {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any])
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any])
 
     // MARK: User activity
 
@@ -47,7 +47,7 @@ public protocol ApplicationService {
 
 extension ApplicationService {
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {}
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {}
 
     public func applicationDidEnterBackground(_ application: UIApplication) {}
 
@@ -63,7 +63,7 @@ extension ApplicationService {
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {}
 
-    public func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {}
+    public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {}
 
     public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool { return false }
 

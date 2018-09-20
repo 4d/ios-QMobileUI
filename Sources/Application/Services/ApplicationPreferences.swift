@@ -29,7 +29,7 @@ extension ApplicationPreferences: ApplicationService {
         return preferences
     }()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let preferences = ApplicationPreferences.preferences
         var resetDefaults = preferences["resetDefaults"] as? Bool ?? false
 

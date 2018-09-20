@@ -98,7 +98,7 @@ open class CircleProgressBar: UIView {
             animation.fromValue = strokeStart
             animation.toValue = strokeEnd
             animation.duration = 1.5
-            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             arc.add(animation, forKey: "drawLineAnimation")
         }
         arc.lineWidth = lineWidth
@@ -112,7 +112,7 @@ open class CircleProgressBar: UIView {
         arc.shadowOpacity = shadowOpacity
         arc.shadowOffset = shadowOffsset
         arc.opacity = 0.2
-        arc.lineCap = kCALineCapRound
+        arc.lineCap = .round
         layer.addSublayer(arc)
     }
 
@@ -131,7 +131,7 @@ open class CircleProgressBar: UIView {
             animation.fromValue = strokeStart
             animation.toValue = strokeEnd
             animation.duration = 1.5
-            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             arc2.add(animation, forKey: "drawLineAnimation")
         }
         arc2.lineWidth = lineWidth
@@ -144,7 +144,7 @@ open class CircleProgressBar: UIView {
         arc2.shadowRadius = shadowRadius
         arc2.shadowOpacity = shadowOpacity
         arc2.shadowOffset = shadowOffsset
-        arc2.lineCap = kCALineCapRound
+        arc2.lineCap = .round
         layer.addSublayer(arc2)
     }
 

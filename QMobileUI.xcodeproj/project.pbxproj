@@ -924,12 +924,12 @@
 					};
 					48D5845D1E7830E1006F56B5 = {
 						CreatedOnToolsVersion = 8.2.1;
-						LastSwiftMigration = 0910;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 					};
 					48D5846E1E7831B2006F56B5 = {
 						CreatedOnToolsVersion = 8.2.1;
-						LastSwiftMigration = 0910;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 					};
 					48EE07811E7AEDAD00A8546E = {
@@ -1420,7 +1420,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -1439,7 +1439,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.4d.QMobileUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;

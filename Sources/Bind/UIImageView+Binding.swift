@@ -128,7 +128,7 @@ extension UIImageView {
             guard let image = self.image else {
                 return nil
             }
-            return UIImagePNGRepresentation(image)
+            return image.pngData()
         }
         set {
             if let data = newValue {

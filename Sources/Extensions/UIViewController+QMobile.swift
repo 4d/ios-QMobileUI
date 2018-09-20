@@ -14,12 +14,12 @@ extension UIViewController {
     /// FIXME Currently not working, because `presentedViewController` could be filled even if not in hierachy.
     func findPresenter(of viewController: UIViewController) -> UIViewController? {
         // recursive
-        for child in self.childViewControllers {
+        for child in self.children {
             if let presentator = child.findPresenter(of: viewController) {
                 return presentator
             }
         }
-        for child in self.childViewControllers where child.presentedViewController == viewController {
+        for child in self.children where child.presentedViewController == viewController {
             return child
         }
         return nil
@@ -175,12 +175,12 @@ extension UIViewController {
     ///
     func addChildViewController(storyboardName: String, bundle: Bundle? = nil) {
         if let childVc = UIStoryboard(name: storyboardName, bundle: bundle).instantiateInitialViewController() {
-            addChildViewController(childVc)
+            addChild(childVc)
         }
     }
 
     // present constroller on new windows
-    func presentOnTop(windowLevel: UIWindowLevel = UIWindowLevelAlert + 1, animated: Bool = true, completion: (() -> Swift.Void)? = nil) {
+    func presentOnTop(windowLevel: UIWindow.Level = UIWindow.Level.alert + 1, animated: Bool = true, completion: (() -> Swift.Void)? = nil) {
         let alertWindow = UIWindow(frame: UIScreen.main.bounds)
         alertWindow.rootViewController = UIViewController()
         alertWindow.windowLevel = windowLevel
@@ -212,7 +212,7 @@ extension UIViewController {
         print("presented: \(String(describing: self.presentedViewController))")
         print("presenting: \(String(describing: self.presentingViewController))")
 
-        print("children: \(self.childViewControllers)")
+        print("children: \(self.children)")
         print("parent: \(String(describing: self.parent))")
         print("parents: \(String(describing: self.parents))")
         print("----------------------------------------------------")
@@ -234,7 +234,7 @@ extension UIViewController {
             print("\(padding) - presenting: \(presenting.debugString)")
         }
         print("\(padding) - children:")
-        for child in viewController.childViewControllers {
+        for child in viewController.children {
             printHierarchy(for: child, depth: depth + 1)
         }
     }

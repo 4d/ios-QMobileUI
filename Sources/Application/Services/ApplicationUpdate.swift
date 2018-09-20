@@ -45,7 +45,7 @@ extension ApplicationUpdate: ApplicationService {
         return instance as! ApplicationUpdate
     }
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
 
     }
 
@@ -359,7 +359,7 @@ extension UIAlertController {
     func show() {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = AppUpdateViewController() // keep style
-        window.windowLevel = UIWindowLevelAlert + 1 // on top
+        window.windowLevel = UIWindow.Level.alert + 1 // on top
 
        ApplicationUpdate.shared.updaterWindow = window
 

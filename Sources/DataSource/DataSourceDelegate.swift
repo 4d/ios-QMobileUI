@@ -37,7 +37,7 @@ import QMobileDataStore
 
     // MARK: Editing
     @objc optional func dataSource(_ dataSource: DataSource, tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool
-    @objc optional func dataSource(_ dataSource: DataSource, tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath)
+    @objc optional func dataSource(_ dataSource: DataSource, tableView: UITableView, commitEditingStyle editingStyle: UITableViewCell.EditingStyle, forRowAtIndexPath indexPath: IndexPath)
 
     // MARK: Moving or Reordering
     @objc optional func dataSource(_ dataSource: DataSource, tableView: UITableView, canMoveRowAtIndexPath indexPath: IndexPath) -> Bool

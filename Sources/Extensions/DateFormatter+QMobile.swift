@@ -16,7 +16,7 @@ extension DateFormatter {
         return dateFormatter.string(from: Date())
     }
 
-    open static let rfc822: DateFormatter = {
+    public static let rfc822: DateFormatter = {
         let formatter = DateFormatter()
         // formatter.calendar = Calendar(identifier: .iso8601)
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -26,7 +26,7 @@ extension DateFormatter {
     }()
 
     /// Specifies a short style, typically numeric only, such as “11/23/37”.
-    open static let shortDate: DateFormatter = {
+    public static let shortDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .none
@@ -34,7 +34,7 @@ extension DateFormatter {
     }()
 
     /// Specifies a medium style, typically with abbreviated text, such as “Nov 23, 1937”.
-    open static let mediumDate: DateFormatter = {
+    public static let mediumDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
@@ -42,7 +42,7 @@ extension DateFormatter {
     }()
 
     /// Specifies a long style, typically with full text, such as “November 23, 1937”.
-    open static let longDate: DateFormatter = {
+    public static let longDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
@@ -50,35 +50,35 @@ extension DateFormatter {
     }()
 
     /// Specifies a full style with complete details, such as “Tuesday, April 12, 1952 AD”.
-    open static let fullDate: DateFormatter = {
+    public static let fullDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         formatter.timeStyle = .none
         return formatter
     }()
 
-    open static let shortTime: DateFormatter = {
+    public static let shortTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         return formatter
     }()
 
-    open static let mediumTime: DateFormatter = {
+    public static let mediumTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .medium
         return formatter
     }()
 
-    open static let longTime: DateFormatter = {
+    public static let longTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .long
         return formatter
     }()
 
-    open static let shortDateAndTime: DateFormatter = {
+    public static let shortDateAndTime: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
@@ -152,35 +152,35 @@ open class TimeFormatter {
     }
 
     /// Specifies a short style, typically numeric only, such as “3:30 PM”.
-    open static let short: TimeFormatter = {
+    public static let short: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .short
         return formatter
     }()
 
     /// Specifies a medium style, typically with abbreviated text, such as “3:30:32 PM”.
-    open static let medium: TimeFormatter = {
+    public static let medium: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .medium
         return formatter
     }()
 
     /// Specifies a long style, typically with full text, such as “3:30:32 PM PST”.
-    open static let long: TimeFormatter = {
+    public static let long: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .long
         return formatter
     }()
 
     /// Specifies a full style with complete details, such as “3:30:42 PM Pacific Standard Time”.
-    open static let full: TimeFormatter = {
+    public static let full: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .full
         return formatter
     }()
 
     /// Specifies a short style, typically numeric only, such as “20:52:55”.
-    open static let simple: TimeFormatter = {
+    public static let simple: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeFormat = "HH:mm:ss"
         return formatter

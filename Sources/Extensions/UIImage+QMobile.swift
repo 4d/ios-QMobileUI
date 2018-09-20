@@ -16,7 +16,7 @@ extension UIImage {
         let drawText = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
 
         let font = UIFont.systemFont(ofSize: textSize)
-        let textFontAttributes = [NSAttributedStringKey.font: font, NSAttributedStringKey.foregroundColor: color]
+        let textFontAttributes = [NSAttributedString.Key.font: font, NSAttributedString.Key.foregroundColor: color]
 
         let widthOfText = widthForView(text: text, font: font, height: size.height)
         let heightOfText = heightForView(text: text, font: font, width: size.width)

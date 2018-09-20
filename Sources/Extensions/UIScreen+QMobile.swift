@@ -31,7 +31,7 @@ public extension UIScreen {
     }
 
     public static var screenHeightWithoutStatusBar: CGFloat {
-        return UIInterfaceOrientationIsPortrait(orientation) ? UIScreen.main.bounds.size.height - screenStatusBarHeight :
+        return orientation.isPortrait ? UIScreen.main.bounds.size.height - screenStatusBarHeight :
             UIScreen.main.bounds.size.width - screenStatusBarHeight
     }
 

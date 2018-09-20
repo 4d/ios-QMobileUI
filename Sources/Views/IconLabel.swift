@@ -141,7 +141,7 @@ open class IconLabel: UILabel {
         }
         return nil
     }
-    open func configureRenderingMode(for image: UIImage) -> UIImageRenderingMode {
+    open func configureRenderingMode(for image: UIImage) -> UIImage.RenderingMode {
         switch image.renderingMode {
         case .alwaysOriginal:
             return .alwaysOriginal

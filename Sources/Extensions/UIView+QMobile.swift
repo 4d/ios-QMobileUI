@@ -101,7 +101,7 @@ extension UIView {
         animation.toValue = frame.height
         animation.duration = duration
         animation.timingFunction = timingFunction
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         if let completion = completion {
             animation.delegate = AnimationDelegate(completion: completion)
@@ -117,7 +117,7 @@ extension UIView {
         animation.toValue = 26.0
         animation.timingFunction = timingFunction
         animation.duration = duration
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         if let completion = completion {
             animation.delegate = AnimationDelegate(completion: completion)
@@ -142,5 +142,5 @@ open class AnimationDelegate: NSObject, CAAnimationDelegate {
 }
 
 extension CAMediaTimingFunction {
-    public static let linear = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+    public static let linear = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
 }

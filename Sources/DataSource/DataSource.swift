@@ -50,7 +50,7 @@ public class DataSource: NSObject {
     open weak var delegate: DataSourceDelegate?
 
     // Dictionary to configurate the animations to be applied by each change type. If not configured `.automatic` will be used.
-    open var animations: [FetchedResultsChangeType: UITableViewRowAnimation]?
+    open var animations: [FetchedResultsChangeType: UITableView.RowAnimation]?
 
     // MARK: Init
     /// Initialize data source for a table view.
@@ -79,7 +79,7 @@ public class DataSource: NSObject {
 
         self.collectionView?.dataSource = self
 
-        self.collectionView?.register(DataSourceCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier)
+        self.collectionView?.register(DataSourceCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier)
 
         self.fetchedResultsController.delegate = self
         self.performFetch()

@@ -76,7 +76,7 @@ open class SettingsForm: UITableViewController {
         onLoad()
 
         let center = NotificationCenter.default
-        center.addObserver(self, selector: #selector(self.application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
+        center.addObserver(self, selector: #selector(self.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     final public override func viewWillAppear(_ animated: Bool) {

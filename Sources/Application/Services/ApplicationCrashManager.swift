@@ -33,7 +33,7 @@ extension ApplicationCrashManager: ApplicationService {
 
     static var instance: ApplicationService = ApplicationCrashManager()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard pref["manage"] as? Bool ?? true else { // manage by default
             return
         }

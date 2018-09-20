@@ -32,7 +32,7 @@ extension ApplicationFeedback: ApplicationService {
     }
 
     // swiftlint:disable:next function_body_length
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let pref = ApplicationFeedback.pref
 
         let eventPref: Preference<FeedbackEvent> = pref.preference(forKey: "event")
@@ -253,7 +253,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
                 }
             }
             if screenshot, let image = UIApplication.shared.keyWindow?.rootViewController?.view?.window?.screenshot() {
-                if let data = UIImagePNGRepresentation(image) {
+                if let data = image.pngData() {
                     mailComposerVC.addAttachmentData(data, mimeType: "application/png", fileName: "screenshot.jpg")
                 }
             }

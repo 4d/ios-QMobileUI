@@ -28,7 +28,7 @@ extension ApplicationLogger: ApplicationService {
     }
 
     // swiftlint:disable:next function_body_length
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let logPref = ApplicationLogger.logPref
 
         // Show configuration
@@ -159,18 +159,18 @@ extension ApplicationLogger: ApplicationService {
         }
     }
 
-    static open var currentLog: Path {
+    static public var currentLog: Path {
         return ApplicationLogger.logDirectory + ApplicationLogger.logFilename
     }
-    static open var logDirectory: Path {
+    static public var logDirectory: Path {
         return logDirectory(logPref["directory"] as? String ?? "logs")
     }
 
-    static open var logFilename: String {
+    static public var logFilename: String {
         return logPref["writeToFile"] as? String ?? "debug.log"
     }
 
-    static open func logFiles(includeCurrent: Bool = true, rangeDate: Range<Date>? = nil) -> [Path] {
+    static public func logFiles(includeCurrent: Bool = true, rangeDate: Range<Date>? = nil) -> [Path] {
         let currentLog = ApplicationLogger.currentLog
         let pathExtension = currentLog.pathExtension
         let prefix = currentLog.nameWithoutExtension

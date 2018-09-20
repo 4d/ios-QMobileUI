@@ -121,7 +121,7 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
 
     // MARK: Swipe gesture
 
-    fileprivate var swipes: [UISwipeGestureRecognizerDirection: UISwipeGestureRecognizer] = [:]
+    fileprivate var swipes: [UISwipeGestureRecognizer.Direction: UISwipeGestureRecognizer] = [:]
 
     @IBInspectable open var hasSwipeGestureRecognizer: Bool = true {
         didSet {
@@ -134,7 +134,7 @@ open class DetailsFormTable: UITableViewController, DetailsForm {
             return
         }
         if hasSwipeGestureRecognizer {
-            for direction in UISwipeGestureRecognizerDirection.allArray {
+            for direction in UISwipeGestureRecognizer.Direction.allArray {
                 let recognizer =  UISwipeGestureRecognizer(target: self, action: #selector(onSwipe(_:)))
                 recognizer.direction = direction
                 swipes[direction] = recognizer

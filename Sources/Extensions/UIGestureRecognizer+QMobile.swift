@@ -11,12 +11,12 @@ import UIKit
 
 // A temp file allow fast cocoapod developement allowing to inject code in dev pods when new files must be created
 
-extension UISwipeGestureRecognizerDirection: Hashable {
+extension UISwipeGestureRecognizer.Direction: Hashable {
     public var hashValue: Int {
         return Int(self.rawValue)
     }
 
-    public static let allArray: [UISwipeGestureRecognizerDirection] = [.left, .right, .up, .down]
+    public static let allArray: [UISwipeGestureRecognizer.Direction] = [.left, .right, .up, .down]
 
 }
 

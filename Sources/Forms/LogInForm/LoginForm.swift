@@ -54,7 +54,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         loginTextField.becomeFirstResponder()
         onWillAppear(animated)
     }
@@ -68,7 +68,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillChangeFrame, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         onWillDisappear(animated)
     }
 
@@ -93,15 +93,15 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     /// Animate bottom constraint when keyboard show or hide.
     @objc open func keyboardChanged(_ notification: NSNotification) {
         guard let userInfo = notification.userInfo,
-            let animationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? UInt,
-            let keyboardEndFrame = userInfo[UIKeyboardFrameEndUserInfoKey] as? CGRect else {
+            let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
+            let keyboardEndFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
                 return
         }
         let convertedKeyboardEndFrame = view.convert(keyboardEndFrame, from: view.window)
 
         bottomLayoutConstraint.constant = view.bounds.maxY - convertedKeyboardEndFrame.minY + 20
-        let animationCurve = UIViewKeyframeAnimationOptions(rawValue: curve)
+        let animationCurve = UIView.KeyframeAnimationOptions(rawValue: curve)
 
         UIView.animateKeyframes(withDuration: animationDuration, delay: 0.0, options: animationCurve, animations: {
             self.view.layoutIfNeeded()

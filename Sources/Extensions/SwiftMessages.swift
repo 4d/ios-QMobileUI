@@ -52,7 +52,7 @@ extension SwiftMessages {
 
             var config = SwiftMessages.Config()
             if case .statusLine = layout {
-                config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
+                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
             } else {
                 config.presentationContext = .automatic
             }
@@ -94,7 +94,7 @@ extension SwiftMessages {
             var config = SwiftMessages.Config()
             config.duration = .seconds(seconds: warningDuration)
             if case .statusLine = layout {
-                config.presentationContext = .window(windowLevel: UIWindowLevelStatusBar)
+                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
             } else {
                 config.presentationContext = .automatic
             }

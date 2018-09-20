@@ -41,7 +41,7 @@ extension UIButton {
         self.alpha = CGFloat(alpha.floatValue) / 100.0
     }
 
-    func setBackgroundColor(_ color: UIColor, forState state: UIControlState) {
+    func setBackgroundColor(_ color: UIColor, forState state: UIControl.State) {
         backgroundColors[state.rawValue] = color
 
         if state == .normal {
@@ -49,7 +49,7 @@ extension UIButton {
         }
     }
 
-    private func updateBackgroundColorForState(_ state: UIControlState) {
+    private func updateBackgroundColorForState(_ state: UIControl.State) {
         if let backgroundcolor = backgroundColors[state.rawValue] {
             self.backgroundColor = backgroundcolor
         }

@@ -47,7 +47,7 @@ extension DataSource: UICollectionViewDataSource {
                 return view
             }
 
-            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier, for: indexPath) as? DataSourceCollectionViewHeader {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier, for: indexPath) as? DataSourceCollectionViewHeader {
                 headerView.title = title != nil ? String(describing: title!) : ""
                 return headerView
             }

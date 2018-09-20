@@ -29,7 +29,7 @@ extension ApplicationDataStore: ApplicationService {
         return DataStoreFactory.dataStore  // must use same in dataSync
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         // swiftlint:disable:next identifier_name
         var ds = dataStore
         ds.delegate = self

@@ -22,7 +22,7 @@ public class ApplicationLaunchOptions {
 
 extension ApplicationLaunchOptions: ApplicationService {
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         url = launchOptions?[.url] as? URL
         sourceApplication = launchOptions?[.sourceApplication] as? String
         apns = launchOptions?[.remoteNotification] as? [AnyHashable: Any]
@@ -67,7 +67,7 @@ extension ApplicationLaunchOptions: ApplicationService {
         return true
     }
 
-    public func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {
+    public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
 
     }
 

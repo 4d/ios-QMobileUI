@@ -161,7 +161,7 @@ extension ApplicationImageCache {
 
 extension ApplicationImageCache: ApplicationService {
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if atLaunch {
             if !atLaunchDone {
                 fill()

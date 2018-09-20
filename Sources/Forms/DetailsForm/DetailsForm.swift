@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import QMobileDataStore
 
 public protocol DetailsForm: class {
@@ -132,7 +133,7 @@ extension DetailsForm {
 // MARK: transtion on self
 extension DetailsForm {
 
-    public func transitionOnSelf(duration: TimeInterval, options: UIViewAnimationOptions = [], changeViewContent: () -> Void) {
+    public func transitionOnSelf(duration: TimeInterval, options: UIView.AnimationOptions = [], changeViewContent: () -> Void) {
         var initialView: UIView?
         if self.view is TransitionContainerViewType {
             initialView = self.view?.subviews.first

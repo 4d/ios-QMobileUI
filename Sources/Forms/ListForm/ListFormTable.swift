@@ -107,7 +107,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }
         logger.info("ListForm for '\(self.tableName)' table loaded.")
         logger.verbose {
-            return "source: \(self.dataSource) , count: \(self.dataSource.count)"
+            return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
         }
     }
 
@@ -132,7 +132,7 @@ open class ListFormTable: UITableViewController, ListForm {
         onDidDisappear(animated)
     }
 
-    override open func willMove(toParentViewController parent: UIViewController?) {
+    override open func willMove(toParent parent: UIViewController?) {
         if parent == nil {
             self.originalParent = self.parent
         } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
@@ -140,7 +140,7 @@ open class ListFormTable: UITableViewController, ListForm {
                 moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
             }
         }
-        super.willMove(toParentViewController: parent)
+        super.willMove(toParent: parent)
     }
 
     // MARK: table view delegate
@@ -300,13 +300,13 @@ open class ListFormTable: UITableViewController, ListForm {
         return nil
     }
 
-    public func scrollToRecord(_ record: Record, at scrollPosition: UITableViewScrollPosition = .top) { // more swift notation: scroll(to record: Record
+    public func scrollToRecord(_ record: Record, at scrollPosition: UITableView.ScrollPosition = .top) { // more swift notation: scroll(to record: Record
         if let indexPath = dataSource?.indexPath(for: record) {
             self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
         }
     }
 
-    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UITableViewScrollPosition = .middle) {
+    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UITableView.ScrollPosition = .middle) {
         if let indexPath = dataSource?.indexPath(for: record) {
             self.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }

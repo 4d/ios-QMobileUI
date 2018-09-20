@@ -38,7 +38,7 @@ extension ApplicationDataSync: ApplicationService {
         return ProxyPreferences(preferences: preferences, key: "dataSync.")
     }
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 

@@ -15,10 +15,12 @@ class ApplicationValueTransformers: NSObject {
     func loadValueTransformers() {
         // Register uppercased, lowercased, capitalized, see StringTransformers
         for trans in StringTransformers.transformers {
-            ValueTransformer.setValueTransformer(trans, for: trans.rawValue)
+            let name = trans.name.rawValue.replacingFirstOccurrence(of: StringTransformers.namePrefix, with: "")
+            ValueTransformer.setValueTransformer(trans, for: name)
         }
         for trans in NumberTransformers.transformers {
-            ValueTransformer.setValueTransformer(trans, for: trans.rawValue)
+            let name = trans.name.rawValue.replacingFirstOccurrence(of: NumberTransformers.namePrefix, with: "")
+            ValueTransformer.setValueTransformer(trans, for: name)
         }
 
         let names = ValueTransformer.valueTransformerNames()
@@ -27,12 +29,18 @@ class ApplicationValueTransformers: NSObject {
     }
 
 }
+fileprivate extension String {
+    func replacingFirstOccurrence(of string: String, with replacement: String) -> String {
+        guard let range = self.range(of: string) else { return self }
+        return replacingCharacters(in: range, with: replacement)
+    }
+}
 
 extension ApplicationValueTransformers: ApplicationService {
 
     static var instance: ApplicationService = ApplicationValueTransformers()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         loadValueTransformers()
     }
 

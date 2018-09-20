@@ -58,7 +58,7 @@ class DataSourceTests: XCTestCase {
             
             let timeOut = Date(timeIntervalSinceNow: 10)
             while (!loaded && Date() < timeOut) {
-                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date(timeIntervalSinceNow: 1))
+                RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 1))
             }
         }
     }

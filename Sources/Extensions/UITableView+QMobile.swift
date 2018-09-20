@@ -15,7 +15,7 @@ extension UITableView {
 
     func adjustFooterViewHeightToFillTableView() {
         if let tableFooterView = self.tableFooterView {
-            let minHeight = tableFooterView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+            let minHeight = tableFooterView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
 
             let currentFooterHeight = tableFooterView.frame.height
 

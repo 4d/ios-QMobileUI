@@ -105,7 +105,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
         logger.info("ListForm for '\(self.tableName)' table loaded.")
         logger.verbose {
-            return "source: \(self.dataSource) , count: \(self.dataSource.count)"
+            return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
         }
     }
 
@@ -130,7 +130,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         onDidDisappear(animated)
     }
 
-    override open func willMove(toParentViewController parent: UIViewController?) {
+    override open func willMove(toParent parent: UIViewController?) {
         if parent == nil {
             self.originalParent = self.parent
         } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
@@ -138,7 +138,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
                 moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
             }
         }
-        super.willMove(toParentViewController: parent)
+        super.willMove(toParent: parent)
     }
 
     // MARK: segue
@@ -321,14 +321,14 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     /// Scroll to the specific record
-    public func scrollToRecord(_ record: Record, at scrollPosition: UICollectionViewScrollPosition = .top) { // more swift notation: scroll(to record: Record
+    public func scrollToRecord(_ record: Record, at scrollPosition: UICollectionView.ScrollPosition = .top) { // more swift notation: scroll(to record: Record
         if let indexPath = dataSource?.indexPath(for: record) {
             self.collectionView?.scrollToItem(at: indexPath, at: scrollPosition, animated: true)
         }
     }
 
     /// Show the detail form the specific record
-    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionViewScrollPosition = .centeredVertically) {
+    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionView.ScrollPosition = .centeredVertically) {
         if let indexPath = dataSource?.indexPath(for: record) {
             self.collectionView?.selectItem(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }

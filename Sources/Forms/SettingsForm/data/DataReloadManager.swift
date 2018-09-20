@@ -65,7 +65,7 @@ class DataReloadManager {
             }
 
             let center = NotificationCenter.default
-            center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: .UIApplicationDidEnterBackground, object: nil)
+            center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
             let reload = dataReload { [weak self] result in
                 if let this = self {

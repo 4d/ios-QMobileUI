@@ -10,7 +10,7 @@ import Foundation
 
 extension Bundle {
     /// Bundle used to get binded localized value, default .main bundle of your application
-    @nonobjc open static var uiBinding: Bundle = .main
+    @nonobjc public static var uiBinding: Bundle = .main
 }
 
 extension String {

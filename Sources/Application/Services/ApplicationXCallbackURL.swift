@@ -22,7 +22,7 @@ extension ApplicationXCallbackURL: ApplicationService {
 
     static var instance: ApplicationService = ApplicationXCallbackURL()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let scheme = preferences.string(forKey: "com.4d.qa.urlScheme"),
             let urlSchemes = Manager.urlSchemes, urlSchemes.contains(scheme) else {
                 return
@@ -105,7 +105,7 @@ extension ApplicationXCallbackURL: ApplicationService {
         }
     }
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
         if  Manager.shared.handleOpen(url: url) {
             logger.debug("Callback url action receive: \(url)")
         }

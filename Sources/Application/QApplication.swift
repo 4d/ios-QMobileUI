@@ -92,7 +92,7 @@ open class QApplication: UIApplication {
         services.register(ApplicationXCallbackURL.instance)
     }
 
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         services.application(app, open: url, options: options)
         return true
     }

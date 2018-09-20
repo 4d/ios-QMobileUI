@@ -30,7 +30,7 @@ extension ApplicationAuthenticate: ApplicationService {
 
     static var instance: ApplicationService = ApplicationAuthenticate()
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let apiManager = APIManager.instance
         if let authToken = apiManager.authToken, authToken.isValidToken {
             logger.info("Application already logged with session \(authToken.id)")
@@ -84,7 +84,7 @@ extension ApplicationAuthenticate: ApplicationService {
         //    do authentification with it
     }
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) {
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
         // if application could verify a token in url to verify auth
         //    do authentification with it
     }
