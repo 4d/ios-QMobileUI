@@ -94,6 +94,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.view.table = DataSourceEntry(dataSource: self.dataSource)
 
         dataSource.delegate = self
+        self.fixNavigationBarColorFromAsset()
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()
@@ -231,6 +232,17 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     open func onClicked(record: Record, at index: IndexPath) {}
 
     // MARK: Install components
+
+    /// Apple issue with navigation bar color which use asset color as foreground color
+    /// If we detect the issue ie. alpha color less than 0.5, we apply your "ForegroundColor" color
+    open func fixNavigationBarColorFromAsset() {
+        var attributes = self.navigationController?.navigationBar.titleTextAttributes ?? [:]
+        if let oldColor = attributes[.foregroundColor] as? UIColor,
+            oldColor.rgba.alpha < 0.5, let namedColor = UIColor(named: "ForegroundColor") {
+            attributes = [.foregroundColor: namedColor]
+            self.navigationController?.navigationBar.titleTextAttributes = attributes
+        }
+    }
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {

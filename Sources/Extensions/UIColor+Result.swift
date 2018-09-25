@@ -15,7 +15,7 @@ extension UIColor {
     /// A basic red color for failure
     public static let statusFailure: UIColor = UIColor(named: "statusFailure") ?? UIColor(red: 244/255, green: 101/255, blue: 96/255, alpha: 1)
 
-    public var hexString: String {
+    var hexString: String {
         // swiftlint:disable identifier_name
         var r: CGFloat = 0
         var g: CGFloat = 0
@@ -29,4 +29,16 @@ extension UIColor {
 
         return String(format: "#%06x", rgb)
     }
+
+    //swiftlint:disable:next large_tuple
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        return (red, green, blue, alpha)
+    }
+
 }
