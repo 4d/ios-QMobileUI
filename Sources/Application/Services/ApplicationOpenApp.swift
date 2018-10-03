@@ -121,6 +121,7 @@ open class ApplicationOpenAppBeta: NSObject {
 
 }
 
+// MARK: String extension to format data for url
 extension String {
     var trimmed: String {
         return self.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -133,6 +134,34 @@ extension String {
     }
     var queryEncoded: String {
         return self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? self
+    }
+}
+
+extension ApplicationOpenAppBeta {
+
+    class ActionOpenTapGestureRecognizer: UITapGestureRecognizer {
+
+        var text: String
+        var kind: ApplicationOpenAppBeta.Kind
+
+        init?(text: String, kind: ApplicationOpenAppBeta.Kind) {
+            self.text = text
+            self.kind = kind
+            super.init(target: nil, action: nil)
+            // XXX valide kind with text and return nil if not valid
+
+            addTarget(self, action: #selector(self.tapURLFunction(_:)))
+        }
+
+        @objc func tapURLFunction(_ sender: UITapGestureRecognizer) {
+            if sender is ActionOpenTapGestureRecognizer {
+                ApplicationOpenAppBeta.open(kind: kind, string: text)
+            }
+        }
+    }
+
+    public static func openActionTagGesture(text: String, kind: ApplicationOpenAppBeta.Kind) -> UITapGestureRecognizer? {
+        return ActionOpenTapGestureRecognizer(text: text, kind: kind)
     }
 }
 
@@ -207,6 +236,33 @@ extension ApplicationOpenAppBeta {
         controller(title, message, actions).presentOnTop()
     }
 
+}
+
+extension ApplicationOpenAppBeta {
+
+    private class MenuActionOpenTapGestureRecognizer: ActionOpenTapGestureRecognizer {
+
+        override init?(text: String, kind: ApplicationOpenAppBeta.Kind) {
+            super.init(text: text, kind: kind)
+        }
+
+        @objc override func tapURLFunction(_ sender: UITapGestureRecognizer) {
+            if sender is MenuActionOpenTapGestureRecognizer {
+                switch self.kind {
+                case .phone:
+                    alertPhone(self.text)
+                case .map:
+                    alertAddress(self.text)
+                default:
+                    super.tapURLFunction(sender)
+                }
+            }
+        }
+    }
+
+    public static func openMenuActionTagGesture(text: String, kind: ApplicationOpenAppBeta.Kind) -> UITapGestureRecognizer? {
+        return MenuActionOpenTapGestureRecognizer(text: text, kind: kind)
+    }
 }
 
 /*

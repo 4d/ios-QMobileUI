@@ -26,6 +26,18 @@ public extension UIAlertController {
 
 }
 
+extension UIAlertAction {
+
+    public var leftImage: UIImage? {
+        get {
+            return self.value(forKey: "image") as? UIImage
+        }
+        set {
+            self.setValue(newValue, forKey: "image")
+        }
+    }
+}
+
 /// Display an alert message
 public func alert(title: String, message: String? = nil) {
     UIAlertController.show(title: title, message: message)
