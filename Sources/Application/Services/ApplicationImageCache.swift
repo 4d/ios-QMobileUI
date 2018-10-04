@@ -96,7 +96,7 @@ extension ApplicationImageCache {
         instanceCached.imageCache.clearMemoryCache()
     }
 
-    static func imageResource(for restDictionary: [String: Any]?) -> RestImageResource? {
+    public static func imageResource(for restDictionary: [String: Any]?) -> RestImageResource? {
         return RestImageResource(restDictionary: restDictionary)
     }
 
@@ -129,7 +129,13 @@ extension ApplicationImageCache {
         return options
     }
 
-    private static func store(image: UIImage, for resource: RestImageResource) {
+    public static func store(image: UIImage, for restDictionary: [String: Any]?) {
+        if let resource = imageResource(for: restDictionary) {
+            store(image: image, for: resource)
+        }
+    }
+
+    public static func store(image: UIImage, for resource: RestImageResource) {
         instanceCached.imageCache.store(image, forKey: resource.cacheKey, toDisk: !instanceCached.cacheMemoryOnly)
     }
 
@@ -191,7 +197,6 @@ extension ApplicationImageCache: ApplicationService {
 // MARK: resource
 struct RestImageResource: Resource {
 
-    var restDictionary: [String: Any]?
     var cacheKey: String
     var downloadURL: URL
 

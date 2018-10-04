@@ -214,6 +214,7 @@ open class Binder: NSObject {
         self.keyPaths.removeAll()
     }
 
+    /// Update all binding views.
     internal func updateView() {
         for entry in self.entries {
             self.updateView(for: entry)
@@ -235,6 +236,7 @@ open class Binder: NSObject {
     }
    */
 
+    /// If put an image or data into restImage, manage it
     fileprivate func fixKey(_ key: inout String, _ extractedValue: Any?) {
         //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
         if key == "restImage" { // for test purpose, fix type

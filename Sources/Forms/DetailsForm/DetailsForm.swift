@@ -90,6 +90,10 @@ extension DetailsForm {
         }
     }
 
+    public func updateViews() {
+        self.view?.bindTo.updateView()
+    }
+
     // check if action must be enabled or not.
     func checkActions() {
         guard let table = self.view.table else {
