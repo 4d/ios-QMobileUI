@@ -41,7 +41,7 @@ extension DetailsForm {
 
     /// The record in `dataSource` at the `indexPath`
     public var record: AnyObject? {
-        return self.view.table?.record
+        return (self.view.table?.record as? Record)?.store
     }
 
     /// Table name of the data source. (same as `dataSource?.tableName`)
