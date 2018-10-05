@@ -273,9 +273,9 @@ extension ApplicationOpenAppBeta {
             if sender is MenuActionOpenTapGestureRecognizer {
                 switch self.kind {
                 case .phone:
-                    alertPhone(self.text)
+                    alertPhone(self.text, sender: self)
                 case .map:
-                    alertAddress(self.text)
+                    alertAddress(self.text, sender: self)
                 default:
                     super.tapURLFunction(sender)
                 }
