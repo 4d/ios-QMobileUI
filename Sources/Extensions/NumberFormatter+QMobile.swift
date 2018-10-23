@@ -15,6 +15,7 @@ extension NumberFormatter {
     static let none: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -22,6 +23,7 @@ extension NumberFormatter {
     static let decimal: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -29,6 +31,7 @@ extension NumberFormatter {
     static let percent: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -36,6 +39,7 @@ extension NumberFormatter {
     static let spellOut: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .spellOut
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -43,7 +47,27 @@ extension NumberFormatter {
     static let ordinal: NumberFormatter  = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .ordinal
+        configureLocal(formatter)
         return formatter
+    }()
+
+    static func configureLocal(_ formatter: NumberFormatter) {
+        if let locale = preferredLocale {
+            formatter.locale = locale
+        } // else we use currentLocal
+    }
+
+    static var preferredLocale: Locale?  = {
+        if let identifier = Prephirences.sharedInstance.string(forKey: "number.locale") ??
+            Prephirences.sharedInstance.string(forKey: kFormatterLocal) {
+            if identifier == kFormatterLocalPreferred, let identifier = Locale.preferredLanguages.first {
+                // iOS 10 behaviour: try to use user language when formatting number
+                return Locale(identifier: identifier)
+            } else {
+                return Locale(identifier: identifier)
+            }
+        }
+        return nil
     }()
 
     // MARK: currency

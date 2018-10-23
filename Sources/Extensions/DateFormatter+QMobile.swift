@@ -7,6 +7,12 @@
 //
 
 import Foundation
+import Prephirences
+
+/// property to define locale of formatters
+let kFormatterLocal = "formatter.locale"
+/// value of `kFormatterLocal` to use use preferred language
+let kFormatterLocalPreferred = "preferred"
 
 extension DateFormatter {
 
@@ -30,6 +36,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .none
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -38,7 +45,28 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
+        configureLocal(formatter)
         return formatter
+    }()
+
+    /// Configure date locale
+    static func configureLocal(_ formatter: DateFormatter) {
+        if let locale = preferredLocale {
+            formatter.locale = locale
+        } // else we use currentLocal
+    }
+
+    static var preferredLocale: Locale?  = {
+        if let identifier = Prephirences.sharedInstance.string(forKey: "date.locale") ??
+            Prephirences.sharedInstance.string(forKey: kFormatterLocal) {
+            if identifier == kFormatterLocalPreferred, let identifier = Locale.preferredLanguages.first {
+                // iOS 10 behaviour: try to use user language when formatting date
+                return Locale(identifier: identifier)
+            } else {
+                return Locale(identifier: identifier)
+            }
+        }
+        return nil
     }()
 
     /// Specifies a long style, typically with full text, such as “November 23, 1937”.
@@ -46,6 +74,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -54,6 +83,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .full
         formatter.timeStyle = .none
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -61,6 +91,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -68,6 +99,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .medium
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -75,6 +107,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .long
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -82,6 +115,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
+        configureLocal(formatter)
         return formatter
     }()
 
@@ -113,6 +147,15 @@ open class TimeFormatter {
         set {
             dateFormatter.dateFormat = newValue
             // do not add `set` without checking if it's a correct time only format
+        }
+    }
+
+    open var locale: Locale {
+        get {
+            return dateFormatter.locale
+        }
+        set {
+            dateFormatter.locale = newValue
         }
     }
 
@@ -151,10 +194,30 @@ open class TimeFormatter {
         return NSNumber(value: time)
     }
 
+    static func configureLocal(_ formatter: TimeFormatter) {
+        if let locale = preferredLocale {
+            formatter.locale = locale
+        } // else we use currentLocal
+    }
+
+    static var preferredLocale: Locale?  = {
+        if let identifier = Prephirences.sharedInstance.string(forKey: "time.locale") ??
+            Prephirences.sharedInstance.string(forKey: kFormatterLocal) {
+            if identifier == kFormatterLocalPreferred, let identifier = Locale.preferredLanguages.first {
+                // iOS 10 behaviour: try to use user language when formatting time
+                return Locale(identifier: identifier)
+            } else {
+                return Locale(identifier: identifier)
+            }
+        }
+        return nil
+    }()
+
     /// Specifies a short style, typically numeric only, such as “3:30 PM”.
     public static let short: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .short
+        configureLocal(formatter)
         return formatter
     }()
 
