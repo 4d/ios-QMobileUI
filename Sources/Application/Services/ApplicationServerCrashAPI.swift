@@ -83,7 +83,7 @@ public struct CrashStatus {
 
 }
 
-extension CrashStatus: JSONable {
+extension CrashStatus: JSONDecodable {
 
     public init?(json: JSON) {
         ok = json[CrashStatus.okKey].bool ?? json[CrashStatus.successKey].boolValue
