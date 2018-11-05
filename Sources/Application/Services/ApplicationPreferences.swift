@@ -9,6 +9,7 @@
 import UIKit
 
 import Prephirences
+import QMobileAPI
 
 class ApplicationPreferences: NSObject {}
 
@@ -37,15 +38,21 @@ extension ApplicationPreferences: ApplicationService {
         let userDefaults = Foundation.UserDefaults.standard
         let uuidKey = ApplicationPreferences.uuidKey
         let settings = CompositePreferences(preferences.immutableArray)
-        if let uuid = userDefaults[uuidKey] as? String, uuid != settings[uuidKey] as? String {
-            resetDefaults = true // and uuid in pref, but not same as settings file -> reset
+        if let uuid = userDefaults[uuidKey] as? String {
+            if uuid != settings[uuidKey] as? String {
+                resetDefaults = true // and uuid in pref, but not same as settings file -> reset
+            }
+        } else {
+            resetDefaults = true // no uuid in pref -> reset
         }
         if resetDefaults {
             logger.info("Reset settings")
             userDefaults.clearAll()
             userDefaults.synchronize()
             // remove also keychain.
-            KeychainPreferences.sharedInstance.clearAll()
+            let keyChain = KeychainPreferences.sharedInstance
+            keyChain.clearAll() // keyChain.lastStatus allow to see that not work
+            APIManager.removeAuthToken() //workaround because keychain is not removed
         }
         userDefaults[uuidKey] = settings[uuidKey]
         userDefaults.synchronize()
