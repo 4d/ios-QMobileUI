@@ -33,9 +33,9 @@ open class SettingsDataSectionFooter: UITableViewHeaderFooterView, UINibable, Re
         }
         let center = NotificationCenter.default
         // swiftlint:disable:next discarded_notification_center_observer
-        observers.append(center.addObserver(forName: .dataSyncSuccess, object: self, queue: .main, using: refresh))
+        observers.append(center.addObserver(forName: .dataSyncSuccess, object: nil, queue: .main, using: refresh))
         // swiftlint:disable:next discarded_notification_center_observer
-        observers.append(center.addObserver(forName: .dataSyncFailed, object: self, queue: .main, using: refresh))
+        observers.append(center.addObserver(forName: .dataSyncFailed, object: nil, queue: .main, using: refresh))
     }
 
     deinit {

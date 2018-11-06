@@ -11,10 +11,12 @@ import Foundation
 import UIKit
 import Prephirences
 import QMobileAPI
+import QMobileDataSync
 
 /// Log the step of application launching
 class ApplicationAuthenticate: NSObject {
 
+    private var observers: [NSObjectProtocol] = []
     override init() {
     }
 
@@ -28,6 +30,7 @@ extension Prephirences {
 
 extension ApplicationAuthenticate: ApplicationService {
 
+    // MARK: ApplicationService
     static var instance: ApplicationService = ApplicationAuthenticate()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
@@ -35,26 +38,20 @@ extension ApplicationAuthenticate: ApplicationService {
         if let authToken = apiManager.authToken, authToken.isValidToken {
             logger.info("Application already logged with session \(authToken.id)")
         } else {
-            if !Prephirences.hasLoginForm {
-                // login guest mode
-                let guestLogin = ""
-                let cancellable = apiManager.authentificate(login: guestLogin) { result in
-                    switch result {
-                    case .success(let authToken):
-                        if !authToken.isValidToken {
-                            logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided."
-                                + " Server admin must validate the session or accept it or next action on server could not working")
-                        }
-                    case .failure(let error):
-                        let error: Error = error.restErrors ?? error
-                        logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
-                        /// XXX show full screen dialog with error message ?
-                        /// Or keep the information in api for next failed request.
-                    }
-                }
-                logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")
-            } // else login form must be displayed, show flow controller or main view controller
+            login()
         }
+
+        let center = NotificationCenter.default
+        let observer = center.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { [weak self] notification in
+            if let syncError = notification.error as? DataSyncError, let error = syncError.error as? APIError,
+                let restErrors = error.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
+                // authentificaton information are invalid, logout
+                self?.logout {
+                    self?.login()
+                }
+            }
+        }
+        observers.append(observer)
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -87,6 +84,44 @@ extension ApplicationAuthenticate: ApplicationService {
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
         // if application could verify a token in url to verify auth
         //    do authentification with it
+    }
+
+}
+
+// MARK: login
+extension ApplicationAuthenticate {
+
+    func login() {
+        if !Prephirences.hasLoginForm {
+            self.guestLogin()
+        }
+        // else login form must be displayed, show flow controller or main view controller
+    }
+
+    func guestLogin() {
+        assert(!Prephirences.hasLoginForm)
+        let apiManager = APIManager.instance
+        // login guest mode
+        let guestLogin = ""
+        let cancellable = apiManager.authentificate(login: guestLogin) { result in
+            switch result {
+            case .success(let authToken):
+                if !authToken.isValidToken {
+                    logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided."
+                        + " Server admin must validate the session or accept it or next action on server could not working")
+                }
+            case .failure(let error):
+                let error: Error = error.restErrors ?? error
+                logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
+                /// XXX show full screen dialog with error message ?
+                /// Or keep the information in api for next failed request.
+            }
+        }
+        logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")
+    }
+
+    func logout(completionHandler: () -> Void) {
+
     }
 
 }
