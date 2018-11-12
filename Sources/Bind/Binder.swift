@@ -100,9 +100,9 @@ open class Binder: NSObject {
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
         if let viewKey = value as? String {
             #if TARGET_INTERFACE_BUILDER
-            if ui.ibAttritutable == nil {
+            if view.ibAttritutable == nil {
                 if let attributable = binded as? IBAttributable {
-                    ui.ibAttritutable = "[]\(key)"
+                    view.ibAttritutable = "[]\(key)"
                 }
             }
             #else
