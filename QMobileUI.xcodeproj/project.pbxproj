@@ -87,6 +87,8 @@
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
 		48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */; };
 		48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */; };
+		48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
+		48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
 		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
 		48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
 		48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
@@ -254,6 +256,7 @@
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
 		48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUpdate.swift; sourceTree = "<group>"; };
 		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
+		48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMessages.framework; path = Carthage/Build/iOS/SwiftMessages.framework; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
@@ -330,6 +333,7 @@
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF41EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
 				48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */,
+				48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */,
 				48E49CFA1EB9DC33002B60AF /* Moya.framework in Frameworks */,
 				48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48E49CF11EB9D28D002B60AF /* QMobileDataSync.framework in Frameworks */,
@@ -361,6 +365,7 @@
 				48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
 				48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
+				48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,6 +638,7 @@
 		48D3F98E1F7D16E600B96947 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */,
 				4859D9491F82773600C8A020 /* IBAnimatable.framework */,
 				4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */,
 				48AE2C611F4577A40013FDEE /* BrightFutures.framework */,
@@ -1030,13 +1036,14 @@
 				"$(SRCROOT)/Carthage/Build/iOS/FileKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/IBAnimatable.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftMessages.framework",
 			);
 			name = carthage;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 		48AE2C5C1F455C850013FDEE /* swiftlint autocorrect */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1050,7 +1057,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint autocorrect\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint autocorrect\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
