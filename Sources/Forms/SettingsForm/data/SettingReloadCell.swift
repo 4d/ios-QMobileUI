@@ -71,14 +71,13 @@ extension SettingReloadCell: DialogFormDelegate {
 
     /// Return true if application need to display login form.
     /// see application preferences.
-    public var hasLoginForm: Bool {
-        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
-    }
 
     public func logout(_ completion: (() -> Void)? = nil) {
-        foreground {
-            self.viewController?.performSegue(withIdentifier: "logout", sender: self)
-            completion?()
+        _ = APIManager.instance.logout { _ in
+            foreground {
+                self.viewController?.performSegue(withIdentifier: "logout", sender: self)
+                completion?()
+            }
         }
     }
 
@@ -90,11 +89,11 @@ extension SettingReloadCell: DialogFormDelegate {
             SwiftMessages.info("Data has been reloaded")
         case .failure(let error):
             let title = "Issue when reloading data"
-            if case .apiError(let apiError) = error, apiError.isHTTPResponseWith(code: .unauthorized) {
-                if hasLoginForm {
+            if error.mustRetry {
+                if Prephirences.Auth.withForm {
                     // Display error before logout
                     SwiftMessages.error(title: error.errorDescription ?? title,
-                                        message: "You have been disconnected",
+                                        message: error.mustRetryMessage,
                                         configure: configure())
                 } else {
                     _ = APIManager.instance.authentificate(login: "") { result in
@@ -116,7 +115,7 @@ extension SettingReloadCell: DialogFormDelegate {
                     }
                 }
             } else {
-                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                SwiftMessages.error(title: error.errorDescription ?? title, message: error.failureReason ?? "")
             }
         }
 
@@ -139,6 +138,34 @@ extension SettingReloadCell: DialogFormDelegate {
             config.dimMode = .gray(interactive: false)
             return config
         }
+    }
+
+}
+
+extension DataSyncError {
+
+    fileprivate var mustRetry: Bool {
+        if case .apiError(let apiError) = self {
+            if apiError.isHTTPResponseWith(code: .unauthorized) {
+                return true
+            }
+            if let restErrors = apiError.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fileprivate var mustRetryMessage: String {
+        if case .apiError(let apiError) = self {
+            if apiError.isHTTPResponseWith(code: .unauthorized) {
+                return "You have been disconnected"
+            }
+            if let restErrors = apiError.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
+                return "You need to reconnect to reload."
+            }
+        }
+        return ""
     }
 
 }

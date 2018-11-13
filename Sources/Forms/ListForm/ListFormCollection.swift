@@ -62,28 +62,10 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         super.viewDidLoad()
         guard let collectionView = self.collectionView  else { fatalError("CollectionView is nil") }
 
-        var sortDescriptors: [NSSortDescriptor] = []
-        if !sortField.isEmpty {
-            let sortFields = sortField.split(separator: ",")
-            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
-        } else if !searchableField.isEmpty && searchFieldAsSortField {
-            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
-        } else {
-            // XXX Find in UI Cell first/main field?
-
-            // for the moment take the first in data store
-            if let firstField = self.tableInfo?.fields.first {
-                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
-                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
-            } else {
-                assertionFailure("No sort field. Please fill sortField with a field name")
-            }
-        }
-
         let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: sortDescriptors)
+                                                                          sortDescriptors: self.makeSortDescriptors())
         dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         dataSource.showSectionBar = showSectionBar
 
@@ -349,6 +331,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBAction open func searchBarFirstResponder(_ sender: Any?) {
         self.searchBar?.resignFirstResponder()
     }
+
     @IBAction open func searchBarEndEditing(_ sender: Any?) {
         self.searchBar?.endEditing(true)
     }
@@ -378,6 +361,32 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
     }
 }
+
+extension ListFormCollection {
+
+    open func makeSortDescriptors() -> [NSSortDescriptor] {
+        var sortDescriptors: [NSSortDescriptor] = []
+        if !sortField.isEmpty {
+            let sortFields = sortField.split(separator: ",")
+            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
+        } else if !searchableField.isEmpty && searchFieldAsSortField {
+            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
+        } else {
+            // XXX Find in UI Cell first/main field?
+
+            // for the moment take the first in data store
+            if let firstField = self.tableInfo?.fields.first {
+                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
+                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+            } else {
+                //assertionFailure("No sort field. Please fill sortField with a field name")
+            }
+        }
+        return sortDescriptors
+    }
+
+}
+
 // MARK: ListForm is IndexPathObserver
 extension ListFormCollection: IndexPathObserver {
 

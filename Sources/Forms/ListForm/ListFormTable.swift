@@ -55,31 +55,13 @@ open class ListFormTable: UITableViewController, ListForm {
     public var originalParent: UIViewController?
 
     // MARK: override
+
     final public override func viewDidLoad() {
         super.viewDidLoad()
-
-        var sortDescriptors: [NSSortDescriptor] = []
-        if !sortField.isEmpty {
-            let sortFields = sortField.split(separator: ",")
-            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
-        } else if !searchableField.isEmpty && searchFieldAsSortField {
-            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
-        } else {
-            // XXX Find in UI Cell first/main field?
-
-            // for the moment take the first in data store
-            if let firstField = self.tableInfo?.fields.first {
-                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
-                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
-            } else {
-                //assertionFailure("No sort field. Please fill sortField with a field name")
-            }
-        }
-
         let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: sortDescriptors)
+                                                                          sortDescriptors: self.makeSortDescriptors())
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         dataSource.showSectionBar = showSectionBar
 
@@ -375,23 +357,35 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-   /* open override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        var headerCellIdentifier = "EntityHeader"
-        
-        if let value = self.dataSource.delegate?.dataSource?(self.dataSource, headCellIdentifierFor: section) {
-            headerCellIdentifier = value
-        }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: headerCellIdentifier)
-        
-        return cell
-    }*/
-
     @IBAction open func searchBarFirstResponder(_ sender: Any?) {
         self.searchBar?.resignFirstResponder()
     }
     @IBAction open func searchBarEndEditing(_ sender: Any?) {
         self.searchBar?.endEditing(true)
+    }
+}
+
+extension ListFormTable {
+
+    open func makeSortDescriptors() -> [NSSortDescriptor] {
+        var sortDescriptors: [NSSortDescriptor] = []
+        if !sortField.isEmpty {
+            let sortFields = sortField.split(separator: ",")
+            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
+        } else if !searchableField.isEmpty && searchFieldAsSortField {
+            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
+        } else {
+            // XXX Find in UI Cell first/main field?
+
+            // for the moment take the first in data store
+            if let firstField = self.tableInfo?.fields.first {
+                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
+                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+            } else {
+                //assertionFailure("No sort field. Please fill sortField with a field name")
+            }
+        }
+        return sortDescriptors
     }
 }
 

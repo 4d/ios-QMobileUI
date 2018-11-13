@@ -52,7 +52,7 @@ extension ApplicationPreferences: ApplicationService {
             // remove also keychain.
             let keyChain = KeychainPreferences.sharedInstance
             keyChain.clearAll() // keyChain.lastStatus allow to see that not work
-            APIManager.removeAuthToken() //workaround because keychain is not removed
+            APIManager.removeAuthToken() // workaround because keychain is not really removed
         }
         userDefaults[uuidKey] = settings[uuidKey]
         userDefaults.synchronize()

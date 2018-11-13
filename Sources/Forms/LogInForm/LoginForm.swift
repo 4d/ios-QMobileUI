@@ -11,6 +11,7 @@ import UIKit
 
 import Prephirences
 import Moya
+import Result
 
 import SwiftMessages
 
@@ -38,15 +39,14 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     /// The text field for the login information ie. the email.
     @IBOutlet open weak var loginTextField: FloatingLabelTextField!
 
-    var cancellable: Cancellable?
+    /// The current action of login ie. the process cancellable.
+    var logInAction: Cancellable?
 
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let login = Prephirences.sharedInstance["auth.login"] as? String {
-            loginTextField.text = login
-        }
+        initLoginText()
         loginTextField.delegate = self
         _ = checkLoginClickable()
         onLoad()
@@ -54,21 +54,26 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        // objserve keyboard for bottom change
+        registerKeyboard()
+        // login field is selected
         loginTextField.becomeFirstResponder()
         onWillAppear(animated)
     }
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // By default to not allow to log XXX maybe already done by viewDidLoad
         loginButton.isUserInteractionEnabled = false
+
+        // login field is selected
         loginTextField.becomeFirstResponder()
         onDidAppear(animated)
     }
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        unresisterKeyboard()
         onWillDisappear(animated)
     }
 
@@ -90,8 +95,19 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     // MARK: - Notifications
 
-    /// Animate bottom constraint when keyboard show or hide.
+    func registerKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+    func unresisterKeyboard() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+
     @objc open func keyboardChanged(_ notification: NSNotification) {
+        update(constraint: bottomLayoutConstraint, with: notification )
+    }
+
+    /// Animate bottom constraint when keyboard show or hide.
+    func update(constraint: NSLayoutConstraint, with notification: NSNotification) {
         guard let userInfo = notification.userInfo,
             let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
             let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
@@ -100,13 +116,14 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
         }
         let convertedKeyboardEndFrame = view.convert(keyboardEndFrame, from: view.window)
 
-        bottomLayoutConstraint.constant = view.bounds.maxY - convertedKeyboardEndFrame.minY + 20
+        constraint.constant = view.bounds.maxY - convertedKeyboardEndFrame.minY + 20
         let animationCurve = UIView.KeyframeAnimationOptions(rawValue: curve)
 
         UIView.animateKeyframes(withDuration: animationDuration, delay: 0.0, options: animationCurve, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
+
     // MARK: - Get info
 
     /// Return the email from `loginTextField`.
@@ -129,12 +146,20 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
                 loginTextField.errorMessage = "Invalid email"
             } else {
                 loginTextField.errorMessage = ""
-
-                if saveLoginInfo {
-                    var pref = Prephirences.sharedMutableInstance
-                    pref?["auth.login"] = email
-                }
             }
+        }
+    }
+
+    open func initLoginText() {
+        if let login = Prephirences.sharedInstance["auth.login"] as? String {
+            loginTextField.text = login
+        }
+    }
+
+    fileprivate func saveLoginText() {
+        if saveLoginInfo {
+            var pref = Prephirences.sharedMutableInstance
+            pref?["auth.login"] = email
         }
     }
 
@@ -161,9 +186,20 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
         return email.isValidEmail
     }
 
-    fileprivate func updateUIForLogin() {
+    fileprivate func startLoginUI() {
         loginButton.startAnimation()
         loginTextField.isEnabled = false
+    }
+
+    fileprivate func stopLoginUI(completion: @escaping () -> Void) {
+        onForeground {
+            self.loginButton.stopAnimation {
+                self.loginButton.reset()
+                self.loginTextField.isEnabled = true
+
+                completion()
+            }
+        }
     }
 
     fileprivate func displayError(_ error: (APIError)) {
@@ -194,53 +230,92 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
         }
     }
 
-    @IBAction open func login(_ sender: Any!) {
-        guard isLoginClickable else {
-            self.loginTextField.shake()
-            return
+    fileprivate func displayStatusText(_ token: (AuthToken)) {
+        if let statusText = token.statusText, !statusText.isEmpty {
+            // Maybe some issues with displaying during segue
+            SwiftMessages.info(statusText)
         }
-        let date = Date() + 1
-        updateUIForLogin()
-        cancellable = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
-            guard let this = self else { return }
+    }
 
-            Thread.sleep(until: date) // allow to start animation if server respond to quickly
+    /// After authentification, log change UI, display status or error.
+    func manageAuthentificationResult(_ result: Result<AuthToken, APIError>, sender: Any!) {
+        switch result {
+        case .success(let token):
+            logger.info("Application has been authenticated.")
+            self.performSegue(withIdentifier: self.loggedSegueIdentifier, sender: sender)
+            self.displayStatusText(token)
 
-            onForeground {
-                this.loginButton.stopAnimation {
-                    this.loginButton.reset()
-                    this.loginTextField.isEnabled = true
-
+            if Prephirences.Auth.reloadData {
+                DataReloadManager.instance.reload { result in
                     switch result {
-                    case .success(let token):
-                        logger.warning("Application has been authenticated.")
-                        this.performSegue(withIdentifier: this.loggedSegueIdentifier, sender: sender)
-
-                        if let statusText = token.statusText, !statusText.isEmpty {
-                            // Maybe some issues with displaying during segue
-                            SwiftMessages.info(statusText)
-                        }
-
+                    case .success:
+                        SwiftMessages.info("Data has been reloaded")
                     case .failure(let error):
-                        logger.warning("Failed to login: \(error)")
-
-                        this.displayError(error)
-
-                        this.loginTextField.becomeFirstResponder()
+                        let title = "Issue when reloading data"
+                        // Display error before logout
+                        SwiftMessages.error(title: error.errorDescription ?? title,
+                                            message: error.failureReason ?? "",
+                                            configure: self.configure())
                     }
-
                 }
+            }
+
+        case .failure(let error):
+            logger.warning("Failed to login: \(error)")
+            self.displayError(error)
+            self.loginTextField.becomeFirstResponder()
+        }
+    }
+    // Configure logout dialog and action
+    fileprivate func configure() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+        return { (messageView, config) in
+            messageView.tapHandler = { _ in
+                SwiftMessages.hide()
+            }
+            var config = config
+            config.presentationStyle = .center
+            config.duration = .forever
+            // no interactive because there is no way yet to get background tap handler to make logout
+            config.dimMode = .gray(interactive: false)
+            return config
+        }
+    }
+    /// Cancel the login.
+    func cancelLogIn() {
+        logInAction?.cancel()
+        // XXX maybe reset ui component
+    }
+
+    fileprivate func logIn(_ sender: Any?) {
+        let startDate = Date() // keep start date
+        // Start UI animation
+        startLoginUI()
+        saveLoginText()
+        logInAction = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
+            guard let this = self else { return } // memory
+
+            Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
+
+            this.stopLoginUI {
+                this.manageAuthentificationResult(result, sender: sender)
             }
         }
     }
 
-    @IBAction open func cancel(_ sender: Any!) {
-        cancel()
+    // MARK: IBAction
+
+    @IBAction open func login(_ sender: Any!) {
+        // if click but not available -> shake
+        guard isLoginClickable else {
+            self.loginTextField.shake()
+            return
+        }
+
+        logIn(sender)
     }
 
-    func cancel() {
-        cancellable?.cancel()
-        // XXX maybe reset ui component
+    @IBAction open func cancel(_ sender: Any!) {
+        cancelLogIn()
     }
 
 }

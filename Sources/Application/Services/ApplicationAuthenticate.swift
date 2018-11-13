@@ -23,9 +23,21 @@ class ApplicationAuthenticate: NSObject {
 }
 
 extension Prephirences {
-    public static var hasLoginForm: Bool {
-        return Prephirences.sharedInstance["auth.withForm"] as? Bool ?? false
+
+    static func sharedProxy(_ key: String) -> PreferencesType {
+        return ProxyPreferences(preferences: sharedInstance, key: key)
     }
+
+    public struct Auth {
+        private static var instance = sharedProxy("auth.")
+        public static var withForm: Bool {
+            return instance["withForm"] as? Bool ?? false
+        }
+        public static var reloadData: Bool {
+            return instance["reloadData"] as? Bool ?? false
+        }
+    }
+
 }
 
 extension ApplicationAuthenticate: ApplicationService {
@@ -41,7 +53,7 @@ extension ApplicationAuthenticate: ApplicationService {
             login()
         }
 
-        let center = NotificationCenter.default
+        /*let center = NotificationCenter.default
         let observer = center.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { [weak self] notification in
             if let syncError = notification.error as? DataSyncError, let error = syncError.error as? APIError,
                 let restErrors = error.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
@@ -51,7 +63,7 @@ extension ApplicationAuthenticate: ApplicationService {
                 }
             }
         }
-        observers.append(observer)
+        observers.append(observer)*/
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -92,14 +104,14 @@ extension ApplicationAuthenticate: ApplicationService {
 extension ApplicationAuthenticate {
 
     func login() {
-        if !Prephirences.hasLoginForm {
+        if !Prephirences.Auth.withForm {
             self.guestLogin()
         }
         // else login form must be displayed, show flow controller or main view controller
     }
 
     func guestLogin() {
-        assert(!Prephirences.hasLoginForm)
+        assert(!Prephirences.Auth.withForm)
         let apiManager = APIManager.instance
         // login guest mode
         let guestLogin = ""
@@ -120,8 +132,10 @@ extension ApplicationAuthenticate {
         logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")
     }
 
-    func logout(completionHandler: () -> Void) {
-
+    func logout(completionHandler: @escaping () -> Void) {
+        _ = APIManager.instance.logout { _ in
+            completionHandler()
+        }
     }
 
 }
