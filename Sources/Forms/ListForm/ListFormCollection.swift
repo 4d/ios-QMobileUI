@@ -65,7 +65,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: self.makeSortDescriptors())
+                                                                          sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         dataSource.showSectionBar = showSectionBar
 
@@ -360,31 +360,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             previousButton?.alpha = 0.2
         }
     }
-}
-
-extension ListFormCollection {
-
-    open func makeSortDescriptors() -> [NSSortDescriptor] {
-        var sortDescriptors: [NSSortDescriptor] = []
-        if !sortField.isEmpty {
-            let sortFields = sortField.split(separator: ",")
-            sortDescriptors = sortFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
-        } else if !searchableField.isEmpty && searchFieldAsSortField {
-            sortDescriptors = [NSSortDescriptor(key: searchableField, ascending: sortAscending)]
-        } else {
-            // XXX Find in UI Cell first/main field?
-
-            // for the moment take the first in data store
-            if let firstField = self.tableInfo?.fields.first {
-                logger.warning("There is no sort field for \(tableName) list form. Please fill sortField.")
-                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
-            } else {
-                //assertionFailure("No sort field. Please fill sortField with a field name")
-            }
-        }
-        return sortDescriptors
-    }
-
 }
 
 // MARK: ListForm is IndexPathObserver
