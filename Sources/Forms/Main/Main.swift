@@ -41,6 +41,7 @@ open class Main: UIViewController {
     /// Main view will appear.
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        appearTransition()
         onWillAppear(animated)
     }
 
@@ -62,9 +63,7 @@ open class Main: UIViewController {
     /// Called after the view has been loaded. Default does nothing
     open func onLoad() {}
     /// Called when the view is about to made visible. Default transition to next controller.
-    open func onWillAppear(_ animated: Bool) {
-        appearTransition()
-    }
+    open func onWillAppear(_ animated: Bool) {}
     /// Called when the view has been fully transitioned onto the screen. Default does nothing
     open func onDidAppear(_ animated: Bool) {}
     /// Called when the view is dismissed, covered or otherwise hidden. Default does nothing
