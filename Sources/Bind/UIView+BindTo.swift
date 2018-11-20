@@ -14,7 +14,7 @@ public typealias BindedRecord = AnyObject // XXX replace by Record?
 extension UIView {
 
     #if TARGET_INTERFACE_BUILDER
-    open var bindTo: Binder {
+    @objc dynamic open var bindTo: Binder {
         return Binder(view: self)
     }
     #else
