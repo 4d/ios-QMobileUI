@@ -81,7 +81,10 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
     open func startAnimation() {
         // Remove the title
         let state: UIControl.State = .normal
-        self.cachedTitle = title(for: state)
+        let titleForState = title(for: state)
+        if !titleForState.isEmpty {
+            self.cachedTitle = titleForState
+        }
         self.setTitle("", for: state)
 
         // Animate radius
