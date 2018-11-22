@@ -56,37 +56,16 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     public var originalParent: UIViewController?
 
-    // MARK: override
+    // MARK: - override
 
     final public override func viewDidLoad() {
         super.viewDidLoad()
-        guard let collectionView = self.collectionView  else { fatalError("CollectionView is nil") }
-
-        let dataStore = DataStoreFactory.dataStore // must use same in dataSync
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
-                                                                          sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
-        dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
-        dataSource.showSectionBar = showSectionBar
-
-        dataSource.collectionConfigurationBlock = { [unowned self] cell, record, index in
-            self.configureListFormView(cell, record, index)
-        }
-
-        self.view.table = DataSourceEntry(dataSource: self.dataSource)
-
-        dataSource.delegate = self
-        self.fixNavigationBarColorFromAsset()
-        self.installRefreshControll()
-        self.installDataEmptyView()
-        self.installSearchBar()
-        self.installDataSourcePrefetching()
-
+        initDataSource()
+        initComponents()
         onLoad()
-        if isSearchBarMustBeHidden {
-            self.searchBar.isHidden = true
-        }
         logger.info("ListForm for '\(self.tableName)' table loaded.")
+
+        self.dataSource.performFetch()
         logger.verbose {
             return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
         }
@@ -114,17 +93,11 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 
     override open func willMove(toParent parent: UIViewController?) {
-        if parent == nil {
-            self.originalParent = self.parent
-        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
-            if let navigationController = self.originalParent  as? UINavigationController {
-                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
-            }
-        }
+        manageMoreNavigationControllerStyle(parent)
         super.willMove(toParent: parent)
     }
 
-    // MARK: segue
+    // MARK: - segue
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = self.indexPath(for: sender) else {
@@ -134,18 +107,18 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             return
         }
         // create a new entry to bind
-        let table = DataSourceEntry(dataSource: self.dataSource)
-        table.indexPath = indexPath
+        let entry = self.dataSource.entry
+        entry.indexPath = indexPath
 
         // pass to view controllers and views
         if let navigation = segue.destination as? UINavigationController {
-            navigation.navigationBar.table = table
+            navigation.navigationBar.table = entry
         }
         let destination = segue.destination.firstController
-        destination.view.table = table
+        destination.view.table = entry
 
         // listen to index path change, to scroll table to new selected record
-        table.add(indexPathObserver: self)
+        entry.add(indexPathObserver: self)
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -161,7 +134,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.present(viewController, animated: true, completion: nil)
     }
 
-    // MARK: Collection View
+    // MARK: - Collection View
 
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // super.collectionView(collectionView, didSelectItemAt: indexPath)
@@ -187,7 +160,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         //(cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
 
-    // MARK: Events
+    // MARK: - Events
     /// Called after the view has been loaded. Default does nothing
     open func onLoad() {}
     /// Called when the view is about to made visible. Default does nothing
@@ -212,6 +185,45 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     /// Called after a clicked on a record.
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
     open func onClicked(record: Record, at index: IndexPath) {}
+
+    // MARK: - Init
+
+    fileprivate func initDataSource() {
+        guard let collectionView = self.collectionView  else { fatalError("CollectionView is nil") }
+        let dataStore = DataStoreFactory.dataStore // must use same in dataSync
+        let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
+                                                                          sectionNameKeyPath: self.sectionFieldname,
+                                                                          sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
+        dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
+        dataSource.showSectionBar = showSectionBar
+        dataSource.performFetch()
+
+        dataSource.collectionConfigurationBlock = { [unowned self] cell, record, index in
+            self.configureListFormView(cell, record, index)
+        }
+
+        self.view.table = self.dataSource.entry
+
+        dataSource.delegate = self
+    }
+
+    fileprivate func initComponents() {
+        self.fixNavigationBarColorFromAsset()
+        self.installRefreshControll()
+        self.installDataEmptyView()
+        self.installSearchBar()
+        self.installDataSourcePrefetching()
+    }
+
+    fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
+        if parent == nil {
+            self.originalParent = self.parent
+        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
+            if let navigationController = self.originalParent  as? UINavigationController {
+                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
+            }
+        }
+    }
 
     // MARK: Install components
 
@@ -268,11 +280,17 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             }
         }
         self.searchBar?.delegate = self
+
+        if isSearchBarMustBeHidden {
+            searchBar.isHidden = true
+        }
     }
 
     open func installBackButton() {
         checkBackButton()
     }
+
+    // MARK: - Utility
 
     open func indexPath(for cell: Any?) -> IndexPath? {
         if let cell = cell as? UICollectionViewCell {
@@ -290,7 +308,21 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         return defaultTableName
     }
 
-    // MARK: IBActions
+    /// Scroll to the specific record
+    public func scrollToRecord(_ record: Record, at scrollPosition: UICollectionView.ScrollPosition = .top) { // more swift notation: scroll(to record: Record
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.collectionView?.scrollToItem(at: indexPath, at: scrollPosition, animated: true)
+        }
+    }
+
+    /// Show the detail form the specific record
+    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionView.ScrollPosition = .centeredVertically) {
+        if let indexPath = dataSource?.indexPath(for: record) {
+            self.collectionView?.selectItem(at: indexPath, animated: animated, scrollPosition: scrollPosition)
+        }
+    }
+
+    // MARK: - IBActions
     @IBAction func refresh(_ sender: Any?) {
         onRefreshBegin()
 
@@ -311,20 +343,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBAction open func scrollToLastRow(_ sender: Any?) {
         if let indexPath = self.dataSource.lastIndexPath {
             self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
-        }
-    }
-
-    /// Scroll to the specific record
-    public func scrollToRecord(_ record: Record, at scrollPosition: UICollectionView.ScrollPosition = .top) { // more swift notation: scroll(to record: Record
-        if let indexPath = dataSource?.indexPath(for: record) {
-            self.collectionView?.scrollToItem(at: indexPath, at: scrollPosition, animated: true)
-        }
-    }
-
-    /// Show the detail form the specific record
-    public func showDetailsForm(_ record: Record, animated: Bool = true, scrollPosition: UICollectionView.ScrollPosition = .centeredVertically) {
-        if let indexPath = dataSource?.indexPath(for: record) {
-            self.collectionView?.selectItem(at: indexPath, animated: animated, scrollPosition: scrollPosition)
         }
     }
 
@@ -362,7 +380,8 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     }
 }
 
-// MARK: ListForm is IndexPathObserver
+// MARK: - Extension
+
 extension ListFormCollection: IndexPathObserver {
 
     func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
@@ -374,7 +393,7 @@ extension ListFormCollection: IndexPathObserver {
     }
 
 }
-// MARK: DataSourceSearchable
+
 import Kingfisher
 extension ListFormCollection: UICollectionViewDataSourcePrefetching {
 
@@ -394,7 +413,6 @@ extension ListFormCollection: UICollectionViewDataSourcePrefetching {
     // public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {}
 }
 
-// MARK: DataSourceSearchable
 extension ListFormCollection: DataSourceSearchable {
 
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -445,23 +463,4 @@ extension ListFormCollection: DataSourceSearchable {
         //}
     }
 
-}
-
-struct Recursive {
-    static func flatten<T>(value: T, childrenClosure: (T) -> [T]) -> [T] {
-        var result: [T] = childrenClosure(value)
-        result = result.flatMap { flatten(value: $0, childrenClosure: childrenClosure) }
-        return [value] + result
-    }
-
-    static func filter<T>(isIncluded: (T) -> Bool, value: T, childrenClosure: (T) -> [T]) -> [T] {
-        let children: [T] = childrenClosure(value)
-        var result: [T] = children.filter(isIncluded)
-        result += children.flatMap { filter(isIncluded: isIncluded, value: $0, childrenClosure: childrenClosure) }
-
-        if isIncluded(value) {
-            return [value] + result
-        }
-        return  result
-    }
 }

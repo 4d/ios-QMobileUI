@@ -30,7 +30,7 @@ public class DataSource: NSObject {
     open var fetchedResultsController: FetchedResultsController
 
     /// Default cell identifier for cell reuse.
-    internal var cellIdentifier: String
+    open /*private(set)*/ var cellIdentifier: String
 
     // MARK: Customization
     /// Allow to configure each table cell with selected record
@@ -65,7 +65,6 @@ public class DataSource: NSObject {
         self.tableView?.dataSource = self
 
         self.fetchedResultsController.delegate = self
-        self.performFetch()
     }
 
     /// Initialize data source for a collection view.
@@ -82,7 +81,6 @@ public class DataSource: NSObject {
         self.collectionView?.register(DataSourceCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier)
 
         self.fetchedResultsController.delegate = self
-        self.performFetch()
     }
 
     deinit {
@@ -172,9 +170,9 @@ public class DataSource: NSObject {
 
     /// Configure a table or collection cell
     func configure(_ cell: UIView, indexPath: IndexPath) {
-        if let record = self.record(at: indexPath) {
-            if let tableView = self.tableView, let cell = cell as? UITableViewCell {
-                cell.tableView = tableView
+        if let tableView = self.tableView, let cell = cell as? UITableViewCell {
+            cell.tableView = tableView
+            if let record = self.record(at: indexPath) {
                 if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) == true {
                     self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
                 } else if let configuration = self.tableConfigurationBlock {
@@ -182,8 +180,12 @@ public class DataSource: NSObject {
                 } else {
                     logger.warning("No cell configuration for \(self)")
                 }
-            } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
-                cell.collectionView = collectionView
+            } else {
+                logger.verbose("No record at index \(indexPath) for \(self)")
+            }
+        } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
+            cell.collectionView = collectionView
+            if let record = self.record(at: indexPath) {
                 if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) == true {
                     self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
                 } else if let configuration = self.collectionConfigurationBlock {
@@ -191,6 +193,8 @@ public class DataSource: NSObject {
                 } else {
                     logger.warning("No cell configuration for \(self)")
                 }
+            } else {
+                logger.verbose("No record at index \(indexPath) for \(self)")
             }
         }
     }

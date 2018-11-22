@@ -54,41 +54,16 @@ open class ListFormTable: UITableViewController, ListForm {
 
     public var originalParent: UIViewController?
 
-    // MARK: override
+    // MARK: - override
 
     final public override func viewDidLoad() {
         super.viewDidLoad()
-        let dataStore = DataStoreFactory.dataStore // must use same in dataSync
-        let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
-                                                                          sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
-        dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
-        dataSource.showSectionBar = showSectionBar
-
-        dataSource.tableConfigurationBlock = { [weak self] cell, record, index in
-            self?.configureListFormView(cell, record, index)
-
-            if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {
-                self?.onOpenLastRow()
-            }
-        }
-
-        dataSource.delegate = self
-
-       // self.tableView.delegate = self
-
-        self.view.table = DataSourceEntry(dataSource: self.dataSource)
-
-        self.fixNavigationBarColorFromAsset()
-        self.installRefreshControll()
-        self.installDataEmptyView()
-        self.installSearchBar()
-        self.installDataSourcePrefetching()
+        initDataSource()
+        initComponents()
         onLoad()
-        if isSearchBarMustBeHidden {
-            searchBar.isHidden = true
-        }
         logger.info("ListForm for '\(self.tableName)' table loaded.")
+
+        self.dataSource.performFetch()
         logger.verbose {
             return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
         }
@@ -116,17 +91,11 @@ open class ListFormTable: UITableViewController, ListForm {
     }
 
     override open func willMove(toParent parent: UIViewController?) {
-        if parent == nil {
-            self.originalParent = self.parent
-        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
-            if let navigationController = self.originalParent as? UINavigationController {
-                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
-            }
-        }
+        manageMoreNavigationControllerStyle(parent)
         super.willMove(toParent: parent)
     }
 
-    // MARK: table view delegate
+    // MARK: - table view delegate
     open override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // super.tableView(tableView, didSelectRowAt: indexPath)
         if let record = dataSource.record(at: indexPath) {
@@ -134,37 +103,37 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    //var triggerTreshold = 10
     open override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
        // super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
 
-       /* Could load more data if pagination 
+       /* XXX Could load more data if pagination
          if (self.dataSource.items.count - triggerTreshold) == indexPath.row
             && indexPath.row > triggerTreshold {
             onScrollDown(...)
         }*/
     }
+    //var triggerTreshold = 10
 
-    // MARK: segue
+    // MARK: - segue
 
     /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // get current index
         guard let indexPath = self.indexPath(for: sender) else { return }
         // create a new entry to bind
-        let table = DataSourceEntry(dataSource: self.dataSource)
-        table.indexPath = indexPath
+        let entry = self.dataSource.entry
+        entry.indexPath = indexPath
 
         // pass to view controllers and views
         if let navigation = segue.destination as? UINavigationController {
-            navigation.navigationBar.table = table
+            navigation.navigationBar.table = entry
         }
         // by pass navigation controller if any to get real controller
         let destination = segue.destination.firstController
-        destination.view.table = table
+        destination.view.table = entry
 
         // listen to index path change, to scroll table to new selected record
-        table.add(indexPathObserver: self)
+        entry.add(indexPathObserver: self)
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -184,7 +153,7 @@ open class ListFormTable: UITableViewController, ListForm {
         super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
-    // MARK: Events
+    // MARK: - Events
 
     /// Called after the view has been loaded. Default does nothing
     open func onLoad() {}
@@ -213,6 +182,49 @@ open class ListFormTable: UITableViewController, ListForm {
 
     // this function is called when last row displayed. Could do some stuff like loading data...
     func onOpenLastRow() {}
+
+    // MARK: - init
+
+    fileprivate func initDataSource() {
+        let dataStore = DataStoreFactory.dataStore // must use same in dataSync
+        let fetchedResultsController = dataStore.fetchedResultsController(
+            tableName: self.tableName,
+            sectionNameKeyPath: self.sectionFieldname,
+            sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
+        dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
+        dataSource.showSectionBar = showSectionBar
+
+        dataSource.tableConfigurationBlock = { [weak self] cell, record, index in
+            self?.configureListFormView(cell, record, index)
+
+            if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {
+                self?.onOpenLastRow()
+            }
+        }
+
+        dataSource.delegate = self
+
+        // self.tableView.delegate = self
+        self.view.table = self.dataSource.entry
+    }
+
+    fileprivate func initComponents() {
+        self.fixNavigationBarColorFromAsset()
+        self.installRefreshControll()
+        self.installDataEmptyView()
+        self.installSearchBar()
+        self.installDataSourcePrefetching()
+    }
+
+    fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
+        if parent == nil {
+            self.originalParent = self.parent
+        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
+            if let navigationController = self.originalParent as? UINavigationController {
+                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
+            }
+        }
+    }
 
     // MARK: Install components
 
@@ -265,6 +277,10 @@ open class ListFormTable: UITableViewController, ListForm {
             }
         }
         self.searchBar?.delegate = self
+
+        if isSearchBarMustBeHidden {
+            searchBar.isHidden = true
+        }
     }
 
     /// Install the back button in navigation bar.
@@ -277,7 +293,7 @@ open class ListFormTable: UITableViewController, ListForm {
         self.tableView.tableFooterView = UIView()
     }
 
-    // MARK: Utility
+    // MARK: - Utility
 
     /// The table name for this controller.
     /// By default generated from first word in controller name.
@@ -306,7 +322,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    // MARK: IBAction
+    // MARK: - IBAction
 
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
@@ -369,7 +385,7 @@ public class TableSectionHeader: UITableViewHeaderFooterView {
    // @IBOutlet weak var titleLabel: UILabel!
 }
 
-// MARK: DataSourceSearchable
+// MARK: - Extension
 import Kingfisher
 
 extension ListFormTable: UITableViewDataSourcePrefetching {
@@ -388,7 +404,6 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 
 }
 
-// MARK: ListForm is IndexPathObserver
 extension ListFormTable: IndexPathObserver {
 
     func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
@@ -401,7 +416,6 @@ extension ListFormTable: IndexPathObserver {
 
 }
 
-// MARK: ListForm is Searchable
 extension ListFormTable: DataSourceSearchable {
 
     /// Perform a seach when text change

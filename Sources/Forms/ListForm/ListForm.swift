@@ -13,9 +13,6 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }
-    var selectedSegueIdentifier: String { get set }
-
-    //func refresh()
 }
 
 let searchController = UISearchController(searchResultsController: nil)
@@ -23,11 +20,10 @@ extension ListForm {
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
         // Give view information about records, let binding fill the UI components
-        //view.record = record
-
-        let table = DataSourceEntry(dataSource: self.dataSource)
-        table.indexPath = indexPath
-        view.table = table
+        let entry = self.dataSource.entry
+        entry.indexPath = indexPath
+        view.table = entry
+        // view.record = record
     }
 
     var defaultTableName: String {
