@@ -16,7 +16,6 @@ extension DataSource: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
         return self.fetchedResultsController.numberOfRecords(in: section)
     }
 
@@ -29,7 +28,7 @@ extension DataSource: UITableViewDataSource {
 
         assert(tableView.dequeueReusableCell(withIdentifier: cellIdentifier) != nil, "Table view cell not well configured in storyboard to \(cellIdentifier)")
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-        self.configure(cell, indexPath: indexPath)
+        self.configure(cell, tableView, indexPath)
         return cell
     }
 

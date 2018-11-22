@@ -41,6 +41,7 @@
 		481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */; };
 		4826191620BFE05000226632 /* SwiftMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4826191520BFE05000226632 /* SwiftMessages.swift */; };
 		4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */; };
+		4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
 		483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA821E826C9900FAF84B /* UIView+QMobile.swift */; };
 		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
@@ -211,6 +212,7 @@
 		48268C5B1E8136E9000F7719 /* Binder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binder.swift; sourceTree = "<group>"; };
 		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
 		4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationFeedBack.swift; sourceTree = "<group>"; };
+		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		483FDA821E826C9900FAF84B /* UIView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IndexPath+QMobile.swift"; sourceTree = "<group>"; };
@@ -504,6 +506,15 @@
 			path = Bind;
 			sourceTree = "<group>";
 		};
+		4832A7CB21A6E0FE000AC181 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */,
+				480B435E1E842EF9007C90DD /* UIViewCell.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		483FDA811E826C8A00FAF84B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -749,15 +760,15 @@
 		48EE07751E7ADEC000A8546E /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
-				480B435E1E842EF9007C90DD /* UIViewCell.swift */,
+				4832A7CB21A6E0FE000AC181 /* UI */,
 				48D5847A1E783447006F56B5 /* DataSource.swift */,
-				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
+				4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */,
 				48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */,
 				48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */,
 				48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */,
-				48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */,
 				48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */,
 				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
+				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";
@@ -1082,6 +1093,7 @@
 				480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */,
 				483FDA891E8283DA00FAF84B /* DetailsForm.swift in Sources */,
 				480392BD1E929524008CF992 /* QApplication.swift in Sources */,
+				4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */,
 				480392C71E929DA3008CF992 /* DetailsFormTable.swift in Sources */,
 				480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */,
 				483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */,

@@ -16,7 +16,7 @@ protocol IndexPathObserver: NSObjectProtocol {
 
 }
 
-/// Object which represent the table and an optional record index
+/// Object which represent the table and an optional record index.
 public class DataSourceEntry: NSObject {
 
     /// The data source which represent a table

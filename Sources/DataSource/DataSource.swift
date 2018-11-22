@@ -13,11 +13,10 @@ import XCGLogger
 /// Class to present data to table or collection views
 public class DataSource: NSObject {
 
+    // MARK: - Views
     public enum ViewType {
         case table, collection
     }
-    open var showSectionBar: Bool = false
-    // MARK: Views
 
     open var viewType: ViewType
 
@@ -26,13 +25,19 @@ public class DataSource: NSObject {
     /// The collection view
     weak var collectionView: UICollectionView?
 
+    // MARK: - data
     /// The controller to fetch data
     open var fetchedResultsController: FetchedResultsController
 
     /// Default cell identifier for cell reuse.
     open /*private(set)*/ var cellIdentifier: String
 
-    // MARK: Customization
+    // Cache for collection view
+    internal lazy var collectionChanges: CollectionChanges = {
+        return CollectionChanges()
+    }()
+
+    // MARK: - Customization
     /// Allow to configure each table cell with selected record
     open var tableConfigurationBlock: ((_ cell: UITableViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)? {
         willSet {
@@ -48,11 +53,12 @@ public class DataSource: NSObject {
     }
 
     open weak var delegate: DataSourceDelegate?
+    open var showSectionBar: Bool = false
 
     // Dictionary to configurate the animations to be applied by each change type. If not configured `.automatic` will be used.
     open var animations: [FetchedResultsChangeType: UITableView.RowAnimation]?
 
-    // MARK: Init
+    // MARK: - Init
     /// Initialize data source for a table view.
     public init(tableView: UITableView, fetchedResultsController: FetchedResultsController, cellIdentifier: String? = nil) {
         self.tableView = tableView
@@ -88,13 +94,6 @@ public class DataSource: NSObject {
         self.collectionView?.dataSource = nil
         self.fetchedResultsController.delegate = nil
     }
-
-    // CLEAN: do two convenience init and one private
-
-    // Cache for collection view
-    internal lazy var collectionChanges: CollectionChanges = {
-        return CollectionChanges()
-    }()
 
     // MARK: - Variables and shortcut on internal fetchedResultsController
 
@@ -166,49 +165,58 @@ public class DataSource: NSObject {
         return self.fetchedResultsController.tableName
     }
 
-    // MARK: Cell configuration
+    // MARK: - Cell configuration
 
-    /// Configure a table or collection cell
-    func configure(_ cell: UIView, indexPath: IndexPath) {
-        if let tableView = self.tableView, let cell = cell as? UITableViewCell {
-            cell.tableView = tableView
-            if let record = self.record(at: indexPath) {
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) == true {
-                    self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
-                } else if let configuration = self.tableConfigurationBlock {
-                    configuration(cell, record, indexPath)
-                } else {
-                    logger.warning("No cell configuration for \(self)")
-                }
+    /// Configure a table cell
+    func configure(_ cell: UITableViewCell, _ tableView: UITableView, _ indexPath: IndexPath) {
+        cell.tableView = tableView
+        if let record = self.record(at: indexPath) {
+            if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureTableViewCell:withRecord:atIndexPath:))) == true {
+                self.delegate?.dataSource?(self, configureTableViewCell: cell, withRecord: record, atIndexPath: indexPath)
+            } else if let configuration = self.tableConfigurationBlock {
+                configuration(cell, record, indexPath)
             } else {
-                logger.verbose("No record at index \(indexPath) for \(self)")
+                logger.warning("No cell configuration for \(self)")
             }
-        } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
-            cell.collectionView = collectionView
-            if let record = self.record(at: indexPath) {
-                if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) == true {
-                    self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
-                } else if let configuration = self.collectionConfigurationBlock {
-                    configuration(cell, record, indexPath)
-                } else {
-                    logger.warning("No cell configuration for \(self)")
-                }
-            } else {
-                logger.verbose("No record at index \(indexPath) for \(self)")
-            }
+        } else {
+            logger.verbose("No record at index \(indexPath) for \(self)")
         }
     }
+
+    /// Configure a collection cell
+    func configure(_ cell: UICollectionViewCell, _ collectionView: UICollectionView, _ indexPath: IndexPath) {
+        cell.collectionView = collectionView
+        if let record = self.record(at: indexPath) {
+            if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) == true {
+                self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
+            } else if let configuration = self.collectionConfigurationBlock {
+                configuration(cell, record, indexPath)
+            } else {
+                logger.warning("No cell configuration for \(self)")
+            }
+        } else {
+            logger.verbose("No record at index \(indexPath) for \(self)")
+        }
+    }
+
+    /*fileprivate func configure(_ cell: UIView, indexPath: IndexPath) {
+        if let tableView = self.tableView, let cell = cell as? UITableViewCell {
+            configure(cell, tableView, indexPath)
+        } else if let collectionView = self.collectionView, let cell = cell as? UICollectionViewCell {
+            configure(cell, collectionView, indexPath)
+        }
+    }*/
 
     /// Reload cells at specific index path
     public func reloadCells(at indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
             if let tableView = self.tableView {
                 if let cell = tableView.cellForRow(at: indexPath) {
-                    self.configure(cell, indexPath: indexPath)
+                    self.configure(cell, tableView, indexPath)
                 }
             } else if let collectionView = self.collectionView {
                 if let cell = collectionView.cellForItem(at: indexPath) {
-                    self.configure(cell, indexPath: indexPath)
+                    self.configure(cell, collectionView, indexPath)
                 }
             }
         }
@@ -243,130 +251,6 @@ public class DataSource: NSObject {
              self.collectionView?.reloadItems(at: visibleIndexPaths)
              }*/
         }
-    }
-
-}
-
-// MARK: functions about IndexPath
-extension DataSource {
-
-    public func hasNext(at indexPath: IndexPath) -> Bool {
-        let numberOfSections = self.numberOfSections
-        if numberOfSections == 0 {
-            return false // no section
-        }
-        if indexPath.section < numberOfSections - 1 {
-            return true
-        }
-
-        return true
-    }
-
-    public func nextIndexPath(for indexPath: IndexPath) -> IndexPath? {
-        var row = indexPath.row + 1
-        var section = indexPath.section
-
-        if isLastInSection(indexPath: indexPath) {
-            if isLastSection(indexPath.section) {
-                return nil
-            }
-            section += 1
-
-            let numberOfObjects = self.fetchedResultsController.numberOfRecords(in: section)
-            if numberOfObjects == 0 {
-                return nil
-            }
-            row = 0
-        }
-
-        return IndexPath(row: row, section: section)
-    }
-
-    public func previousIndexPath(for indexPath: IndexPath) -> IndexPath? {
-
-        var row = indexPath.row - 1
-        var section = indexPath.section
-
-        if indexPath.isFirstRowInSection {
-            if isFirstSection(section) {
-                return nil // No previous if first object
-            }
-
-            section -= 1
-
-            let numberOfObjects = self.fetchedResultsController.numberOfRecords(in: section)
-            if numberOfObjects == 0 {
-                return nil
-            }
-
-            row = numberOfObjects - 1
-        }
-
-        return IndexPath(row: row, section: section)
-    }
-
-    func isFirstSection (_ section: Int) -> Bool {
-        return self.previousSection(for: section) == nil
-    }
-
-    func isLastSection(_ section: Int) -> Bool {
-        return self.nextSection(for: section) == nil
-    }
-
-    func nextSection(for section: Int) -> Int? {
-        let numberOfSections = self.numberOfSections
-        if section >= numberOfSections - 1 {
-            return nil
-        }
-        return section + 1
-    }
-    func previousSection(for section: Int) -> Int? {
-        if section == 0 {
-            return nil
-        }
-        return section - 1
-    }
-
-    public func hasPrevious(at indexPath: IndexPath) -> Bool {
-        return indexPath.hasPreviousRow // TEST : row or item?
-    }
-
-    public func isLastInSection(indexPath: IndexPath) -> Bool {
-        let lastItem = self.fetchedResultsController.numberOfRecords(in: indexPath.section)
-        return lastItem - 1 == indexPath.row
-    }
-
-    public var lastIndexPath: IndexPath? {
-        let numberOfSections = self.numberOfSections
-        if numberOfSections == 0 {
-            return nil
-        }
-        return lastIndexPath(section: numberOfSections - 1)
-    }
-
-    public func lastIndexPath(section: Int) -> IndexPath {
-        let lastItem = self.fetchedResultsController.numberOfRecords(in: section)
-        if lastItem == NSNotFound {
-            return IndexPath(row: NSNotFound, section: section)
-        }
-        return IndexPath(row: lastItem - 1, section: section)
-    }
-
-    /*public func isLastInLine(indexPath: IndexPath) -> Bool {
-     let nextIndexPath = indexPath.nextRowInSection
-     
-     if let cellAttributes = collectionView.layout.layoutAttributesForItem(at: indexPath), let nextCellAttributes = self.layoutAttributesForItem(at: nextIndexPath) {
-     return !(cellAttributes.frame.minY == nextCellAttributes.frame.minY)
-     }
-     return false
-     }*/
-
-    func inBounds(indexPath: IndexPath) -> Bool {
-        return self.fetchedResultsController.inBounds(indexPath: indexPath)
-    }
-
-    public func indexPath(for record: Record) -> IndexPath? {
-        return self.fetchedResultsController.indexPath(for: record)
     }
 
 }

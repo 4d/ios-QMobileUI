@@ -27,9 +27,7 @@ extension DataSource: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)
-
-        self.configure(cell, indexPath: indexPath)
-
+        self.configure(cell, collectionView, indexPath)
         return cell
     }
 
@@ -97,7 +95,7 @@ extension DataSource: UICollectionViewDataSourcePrefetching {
 
 }
 
-// MARK: UICollectionView - update using a list of changes
+// MARK: - UICollectionView - update using a list of changes
 // struct to manage collection cell updates
 struct CollectionChanges {
     internal var objectChanges: [FetchedResultsChangeType: Set<IndexPath>] = [FetchedResultsChangeType: Set<IndexPath>]()
