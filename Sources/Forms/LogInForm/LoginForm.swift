@@ -26,7 +26,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     @IBInspectable open var loggedSegueIdentifier: String = "logged"
 
     /// If true save login information and fill it at start.
-    @IBInspectable open var saveLoginInfo: Bool = false
+    @IBInspectable open var saveLoginInfo: Bool = Prephirences.sharedInstance["auth.login.save"] as? Bool ?? false
 
     /// Segue to go to passcode form
     //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"
@@ -63,8 +63,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // By default to not allow to log XXX maybe already done by viewDidLoad
-        loginButton.isUserInteractionEnabled = false
+
+        _ = checkLoginClickable()
 
         // login field is selected
         loginTextField.becomeFirstResponder()
@@ -243,21 +243,25 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
         case .success(let token):
             logger.info("Application has been authenticated.")
             self.performSegue(withIdentifier: self.loggedSegueIdentifier, sender: sender)
-            self.displayStatusText(token)
 
             if Prephirences.Auth.reloadData {
-                DataReloadManager.instance.reload { result in
-                    switch result {
-                    case .success:
-                        SwiftMessages.info("Data has been reloaded")
-                    case .failure(let error):
-                        let title = "Issue when reloading data"
-                        // Display error before logout
-                        SwiftMessages.error(title: error.errorDescription ?? title,
-                                            message: error.failureReason ?? "",
-                                            configure: self.configure())
+                DispatchQueue.background.async {
+                    DataReloadManager.instance.reload { result in
+                        SwiftMessages.hide()
+                        switch result {
+                        case .success:
+                            SwiftMessages.info("Data has been reloaded")
+                        case .failure(let error):
+                            let title = "Issue when reloading data"
+                            // Display error before logout
+                            SwiftMessages.error(title: error.errorDescription ?? title,
+                                                message: error.failureReason ?? "",
+                                                configure: self.configure())
+                        }
                     }
                 }
+            } else {
+                self.displayStatusText(token)
             }
 
         case .failure(let error):
