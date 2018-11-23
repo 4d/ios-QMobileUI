@@ -26,7 +26,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     @IBInspectable open var loggedSegueIdentifier: String = "logged"
 
     /// If true save login information and fill it at start.
-    @IBInspectable open var saveLoginInfo: Bool = Prephirences.sharedInstance["auth.login.save"] as? Bool ?? false
+    @IBInspectable open var saveLoginInfo: Bool = Prephirences.Auth.LogIn.save
 
     /// Segue to go to passcode form
     //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"

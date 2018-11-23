@@ -24,12 +24,8 @@ class ApplicationAuthenticate: NSObject {
 
 extension Prephirences {
 
-    static func sharedProxy(_ key: String) -> PreferencesType {
-        return ProxyPreferences(preferences: sharedInstance, key: key)
-    }
-
     public struct Auth {
-        private static var instance = sharedProxy("auth.")
+        private static var instance = ProxyPreferences(preferences: sharedInstance, key: "auth.")
         public static var withForm: Bool {
             return instance["withForm"] as? Bool ?? false
         }
@@ -38,6 +34,13 @@ extension Prephirences {
         }
         public static var mustLog: Bool {
             return instance["mustLog"] as? Bool ?? false
+        }
+
+        public struct LogIn {
+            private static var instance = ProxyPreferences(preferences: Auth.instance, key: "logIn.")
+            public static var save: Bool {
+                return instance["save"] as? Bool ?? false
+            }
         }
     }
 
