@@ -36,6 +36,9 @@ extension Prephirences {
         public static var reloadData: Bool {
             return instance["reloadData"] as? Bool ?? false
         }
+        public static var mustLog: Bool {
+            return instance["mustLog"] as? Bool ?? false
+        }
     }
 
 }

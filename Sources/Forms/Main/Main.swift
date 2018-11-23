@@ -18,8 +18,10 @@ open class Main: UIViewController {
         guard Prephirences.Auth.withForm else {
             return .navigation // no login form
         }
-        if let token = APIManager.instance.authToken, token.isValidToken {
-            return .navigation // direct login
+        if !Prephirences.Auth.mustLog {
+            if let token = APIManager.instance.authToken, token.isValidToken {
+                return .navigation // direct login
+            }
         }
         return .login // need login
     }
