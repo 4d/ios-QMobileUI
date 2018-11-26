@@ -138,7 +138,8 @@ public func dataLastSync() -> Foundation.Date? {
 
 // MARK: DataSyncDelegate
 extension ApplicationDataSync: DataSyncDelegate {
-    public func willDataSyncBegin(tables: [QMobileAPI.Table]) -> Bool {
+    public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) {}
+    public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
         if applicationWillTerminate /* stop sync is app shutdown */ {
             return true
         }
@@ -146,16 +147,16 @@ extension ApplicationDataSync: DataSyncDelegate {
         return false
     }
 
-    public func willDataSyncBegin(for table: QMobileAPI.Table) {}
+    public func willDataSyncBegin(for table: QMobileAPI.Table, operation: DataSync.Operation) {}
 
-    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {}
+    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {}
 
-    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo) {}
+    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {}
 
-    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError) {}
+    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError, operation: DataSync.Operation) {}
 
-    public func didDataSyncEnd(tables: [QMobileAPI.Table]) {}
+    public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {}
 
-    public func didDataSyncFailed(error: DataSyncError) {}
+    public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {}
 
 }
