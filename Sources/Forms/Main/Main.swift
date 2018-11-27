@@ -26,12 +26,20 @@ open class Main: UIViewController {
         return .login // need login
     }
 
-    /// We do a transition immediately according to application state.
+    /// Do in main thread segue transition according to application state.
     /// If logged, go to app, else go to login form.
-    public func appearTransition() {
+    public final func performTransition() {
         foreground {
             self.perform(segue: self.segue)
         }
+    }
+
+    /// By default we do a transition immediately according to application state.
+    /// By calling performTransition.
+    /// If logged, go to app, else go to login form.
+    /// Override this method to deactivate the default transition.
+    public func appearTransition() {
+        performTransition()
     }
 
     // MARK: event
