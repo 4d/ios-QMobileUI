@@ -38,7 +38,7 @@ open class Main: UIViewController {
     /// By calling performTransition.
     /// If logged, go to app, else go to login form.
     /// Override this method to deactivate the default transition.
-    public func appearTransition() {
+    open func appearTransition() {
         performTransition()
     }
 
