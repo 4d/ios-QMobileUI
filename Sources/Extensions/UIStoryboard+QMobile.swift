@@ -33,9 +33,34 @@ extension UIStoryboard {
 
 }
 
+/// Object which can be associated to a `Storyboard`.
 public protocol Storyboard {
+    /// Returne the storyboard.
     static var storyboard: UIStoryboard { get }
+    /// The storynoard identifier.
     static var identifier: String { get }
+}
+
+extension Storyboard {
+    public static var storyboard: UIStoryboard {
+        return UIStoryboard(name: self.identifier, bundle: nil)
+    }
+
+    public static func instantiateNavigationViewController() -> UINavigationController? {
+        return self.storyboard.instantiateInitialViewController() as? UINavigationController
+    }
+    public static func instantiateInitialViewController() -> UIViewController? {
+        return self.storyboard.instantiateInitialViewController()
+    }
+}
+
+extension Storyboard where Self: UIViewController {
+    public static var identifier: String {
+        return self.className
+    }
+    public static func instantiate() -> Self? {
+        return self.storyboard.instantiateInitialViewController() as? Self
+    }
 }
 
 // MARK: - ReusableKind

@@ -67,7 +67,7 @@ extension ApplicationLogger: ApplicationService {
         let formatterPref: Preference<LogFormatter> = logPref.preference(forKey: "formatter")
         formatterPref.transformation = LogFormatter.preferenceTransformation
         #if DEBUG
-            let formatter: LogFormatter? = formatterPref.value ?? LogFormatter.heart
+            let formatter: LogFormatter? = formatterPref.value ?? LogFormatter.emoticon
         #else
             let formatter: LogFormatter? = formatterPref.value
         #endif

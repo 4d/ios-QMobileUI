@@ -24,26 +24,55 @@ class ApplicationAuthenticate: NSObject {
 
 extension Prephirences {
 
-    public struct Auth {
-        private static var instance = ProxyPreferences(preferences: sharedInstance, key: "auth.")
-        public static var withForm: Bool {
-            return instance["withForm"] as? Bool ?? false
-        }
-        public static var reloadData: Bool {
-            return instance["reloadData"] as? Bool ?? false
-        }
-        public static var mustLog: Bool {
-            return instance["mustLog"] as? Bool ?? false
-        }
+    public struct Auth: StructPrephirencable {
+        static let key: String = "auth."
 
-        public struct LogIn {
-            private static var instance = ProxyPreferences(preferences: Auth.instance, key: "logIn.")
-            public static var save: Bool {
-                return instance["save"] as? Bool ?? false
+        //private static var instance = ProxyPreferences(preferences: sharedInstance, key: "auth.")
+        /// Application will start with login form.
+        public static let withForm: Bool = instance["withForm"] as? Bool ?? false
+        /// Application will reload data after logIn.
+        public static let reloadData: Bool = instance["reloadData"] as? Bool ?? false
+        /// Application will ask for login screen each time, event if alread logged before. (Default false)
+        public static let mustLog: Bool = instance["mustLog"] as? Bool ?? false
+
+        // swiftlint:disable:next nesting
+        public struct Login: StructPrephirencable {
+            static let key: String = "login."
+            static let parent = Auth.instance
+            /// Save or not log in information for next log in. (save email).
+            public static let save: Bool = instance["save"] as? Bool ?? false
+            /// Email saved to log
+            public static var email: String? {
+                get {
+                    return instance["email"] as? String
+                }
+                set {
+                    mutableInstance?.set(newValue, forKey: "email")
+                }
             }
         }
     }
 
+}
+
+/// some test about automatic proxy creation
+protocol StructPrephirencable {
+    static var key: String {get}
+    static var parent: PreferencesType {get}
+}
+extension StructPrephirencable {
+    static var parent: PreferencesType {
+        return Prephirences.sharedInstance
+    }
+    static var instance: PreferencesType {
+        return ProxyPreferences(preferences: parent, key: key)
+    }
+    static var mutableInstance: MutablePreferencesType? {
+        guard let parent = parent as? MutablePreferencesType else {
+            return nil
+        }
+        return MutableProxyPreferences(preferences: parent, key: key)
+    }
 }
 
 extension ApplicationAuthenticate: ApplicationService {

@@ -14,20 +14,19 @@ extension UITableView {
     }
 
     func adjustFooterViewHeightToFillTableView() {
-        if let tableFooterView = self.tableFooterView {
-            let minHeight = tableFooterView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        guard let tableFooterView = self.tableFooterView else { return }
+        let minHeight = tableFooterView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
 
-            let currentFooterHeight = tableFooterView.frame.height
+        let currentFooterHeight = tableFooterView.frame.height
 
-            let fitHeight = self.frame.height - self.adjustedContentInset.top - self.contentSize.height  + currentFooterHeight
-            let nextHeight = (fitHeight > minHeight) ? fitHeight : minHeight
+        let fitHeight = self.frame.height - self.adjustedContentInset.top - self.contentSize.height  + currentFooterHeight
+        let nextHeight = (fitHeight > minHeight) ? fitHeight : minHeight
 
-            if round(nextHeight) != round(currentFooterHeight) {
-                var frame = tableFooterView.frame
-                frame.size.height = nextHeight
-                tableFooterView.frame = frame
-                self.tableFooterView = tableFooterView
-            }
+        if round(nextHeight) != round(currentFooterHeight) {
+            var frame = tableFooterView.frame
+            frame.size.height = nextHeight
+            tableFooterView.frame = frame
+            self.tableFooterView = tableFooterView
         }
     }
 }
