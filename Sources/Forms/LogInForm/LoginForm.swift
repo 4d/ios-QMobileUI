@@ -18,15 +18,16 @@ import SwiftMessages
 import QMobileAPI
 import QMobileDataSync
 
+protocol LoginFormDelegate: NSObjectProtocol {
+    func didLogin()
+}
+
 /// Form to login
 @IBDesignable
 open class LoginForm: UIViewController, UITextFieldDelegate {
 
-    /// Identifier for segue when successfuly logged. Default value "logged"
-    @IBInspectable open var loggedSegueIdentifier: String = "logged"
-
     /// If true save login information and fill it at start.
-    @IBInspectable open var saveLoginInfo: Bool = Prephirences.Auth.LogIn.save
+    @IBInspectable open var saveLoginInfo: Bool = Prephirences.Auth.Login.save
 
     /// Segue to go to passcode form
     //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"
@@ -41,6 +42,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
 
     /// The current action of login ie. the process cancellable.
     var logInAction: Cancellable?
+
+    weak var delegate: LoginFormDelegate?
 
     // MARK: event
     final public override func viewDidLoad() {
@@ -151,15 +154,14 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
     }
 
     open func initLoginText() {
-        if let login = Prephirences.sharedInstance["auth.login"] as? String {
-            loginTextField.text = login
+        if let email = Prephirences.Auth.Login.email {
+            loginTextField.text = email
         }
     }
 
     fileprivate func saveLoginText() {
         if saveLoginInfo {
-            var pref = Prephirences.sharedMutableInstance
-            pref?["auth.login"] = email
+            Prephirences.Auth.Login.email = email
         }
     }
 
@@ -197,6 +199,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
                 self.loginButton.reset()
                 self.loginTextField.isEnabled = true
 
+                self.loginTextField.becomeFirstResponder()
                 completion()
             }
         }
@@ -237,71 +240,61 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
         }
     }
 
-    /// After authentification, log change UI, display status or error.
-    func manageAuthentificationResult(_ result: Result<AuthToken, APIError>, sender: Any!) {
+    fileprivate func display(result: Result<AuthToken, APIError>) {
         switch result {
         case .success(let token):
-            logger.info("Application has been authenticated.")
-            self.performSegue(withIdentifier: self.loggedSegueIdentifier, sender: sender)
-
-            if Prephirences.Auth.reloadData {
-                DispatchQueue.background.async {
-                    DataReloadManager.instance.reload { result in
-                        SwiftMessages.hide()
-                        switch result {
-                        case .success:
-                            SwiftMessages.info("Data has been reloaded")
-                        case .failure(let error):
-                            let title = "Issue when reloading data"
-                            // Display error before logout
-                            SwiftMessages.error(title: error.errorDescription ?? title,
-                                                message: error.failureReason ?? "",
-                                                configure: self.configure())
-                        }
-                    }
-                }
-            } else {
-                self.displayStatusText(token)
-            }
-
+            self.displayStatusText(token)
         case .failure(let error):
-            logger.warning("Failed to login: \(error)")
             self.displayError(error)
-            self.loginTextField.becomeFirstResponder()
         }
     }
-    // Configure logout dialog and action
-    fileprivate func configure() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
-        return { (messageView, config) in
-            messageView.tapHandler = { _ in
-                SwiftMessages.hide()
-            }
-            var config = config
-            config.presentationStyle = .center
-            config.duration = .forever
-            // no interactive because there is no way yet to get background tap handler to make logout
-            config.dimMode = .gray(interactive: false)
-            return config
-        }
+
+    /// Use the `Segue` to make the transition, otherwise instanciate hard coded transition.
+    open var performSegue = true
+
+    open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
+
     /// Cancel the login.
     func cancelLogIn() {
         logInAction?.cancel()
         // XXX maybe reset ui component
     }
 
-    fileprivate func logIn(_ sender: Any?) {
+    fileprivate func log(_ result: (Result<AuthToken, APIError>)) {
+        switch result {
+        case .success(let token):
+            logger.info("Application has been authenticated with \(String(describing: token.email)).")
+        case .failure(let error):
+            logger.warning("Failed to login: \(error)")
+        }
+    }
+
+    fileprivate func doLogin(_ sender: Any?) {
         let startDate = Date() // keep start date
         // Start UI animation
         startLoginUI()
         saveLoginText()
         logInAction = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
-            guard let this = self else { return } // memory
+            guard let this = self else { return }
 
+            this.log(result)
+
+            // Then sleep a little before stop login ui
             Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
 
             this.stopLoginUI {
-                this.manageAuthentificationResult(result, sender: sender)
+                this.delegate?.didLogin()
+                // Display message
+                this.display(result: result)
+
+                // If success, transition (otherway to do that, ask a delegate to do it)
+                switch result {
+                case .success:
+                    this.performTransition(sender)
+                case .failure:
+                    break
+                }
             }
         }
     }
@@ -315,7 +308,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
             return
         }
 
-        logIn(sender)
+        doLogin(sender)
     }
 
     @IBAction open func cancel(_ sender: Any!) {

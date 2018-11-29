@@ -10,37 +10,8 @@ import Prephirences
 import QMobileAPI
 
 /// Main controller. This controller present a view similar to the launchscreen,
-/// then transition to the next controller according to application state.
+/// then transition to the next controller according to the application state.
 open class Main: UIViewController {
-
-    /// Transition to perform
-    var segue: Segue {
-        guard Prephirences.Auth.withForm else {
-            return .navigation // no login form
-        }
-        if !Prephirences.Auth.mustLog {
-            if let token = APIManager.instance.authToken, token.isValidToken {
-                return .navigation // direct login
-            }
-        }
-        return .login // need login
-    }
-
-    /// Do in main thread segue transition according to application state.
-    /// If logged, go to app, else go to login form.
-    public final func performTransition() {
-        foreground {
-            self.perform(segue: self.segue)
-        }
-    }
-
-    /// By default we do a transition immediately according to application state.
-    /// By calling performTransition.
-    /// If logged, go to app, else go to login form.
-    /// Override this method to deactivate the default transition.
-    open func appearTransition() {
-        performTransition()
-    }
 
     // MARK: event
     final public override func viewDidLoad() {
@@ -70,6 +41,12 @@ open class Main: UIViewController {
         onDidDisappear(animated)
     }
 
+    open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let loginForm = segue.destination as? LoginForm {
+            loginForm.delegate = self
+        }
+    }
+
     /// Called after the view has been loaded. Default does nothing
     open func onLoad() {}
     /// Called when the view is about to made visible. Default transition to next controller.
@@ -81,4 +58,27 @@ open class Main: UIViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    // MARK: default behaviour
+
+    /// Use the `Segue` to make the transition, otherwise instanciate hard coded transition.
+    open var performSegue = true
+
+    /// By default we do a transition immediately according to application state.
+    /// By calling performTransition.
+    /// If logged, go to app, else go to login form.
+    /// Override this method to deactivate the default transition.
+    open func appearTransition() {
+        performTransition()
+    }
+
 }
+
+#if DEBUG
+extension UIViewController {
+    // /!\ This method use private information
+    func canPerformSegue(withIdentifier identifier: String) -> Bool {
+        guard let segues = self.value(forKey: "storyboardSegueTemplates") as? [NSObject] else { return false }
+        return segues.first { $0.value(forKey: "identifier") as? String == identifier } != nil
+    }
+}
+#endif

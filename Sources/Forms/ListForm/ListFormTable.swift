@@ -8,6 +8,8 @@
 
 import Foundation
 import QMobileDataStore
+import QMobileDataSync
+import QMobileAPI
 
 @IBDesignable
 open class ListFormTable: UITableViewController, ListForm {
@@ -113,6 +115,7 @@ open class ListFormTable: UITableViewController, ListForm {
         }*/
     }
     //var triggerTreshold = 10
+    var loadingView: UIView?
 
     // MARK: - segue
 
@@ -293,6 +296,50 @@ open class ListFormTable: UITableViewController, ListForm {
         self.tableView.tableFooterView = UIView()
     }
 
+    // MARK: QMobile Event
+
+    func initRegisterEvent() {
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableBegin, object: ApplicationDataSync.dataSync)
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableSuccess, object: ApplicationDataSync.dataSync)
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableFailed, object: ApplicationDataSync.dataSync)
+    }
+    @objc func dataSyncEvent(_ notification: Notification) {
+        guard let table = notification.userInfo?["table"] as? Table, self.table == table else {
+            return
+        }
+        switch notification.name {
+        case .dataSyncForTableBegin:
+            break
+        case .dataSyncForTableSuccess:
+            break
+        case .dataSyncForTableFailed:
+            break
+        default:
+            return
+        }
+    }
+
+    open func dataSourceWillChangeContent(_ dataSource: DataSource) {
+        loadingView = UIView(frame: self.view.frame)
+
+        loadingView?.backgroundColor = .red
+
+        let parentView: UIView = (self.navigationController?.view ?? self.view)
+
+        parentView.addSubview(loadingView!)
+        parentView.bringSubviewToFront(loadingView!)
+    }
+    //@objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
+
+    open func dataSourceDidChangeContent(_ dataSource: DataSource) {
+        DispatchQueue.main.async {
+            self.loadingView?.removeFromSuperview()
+        }
+    }
+
     // MARK: - Utility
 
     /// The table name for this controller.
@@ -322,7 +369,10 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
-    // MARK: - IBAction
+}
+
+// MARK: - IBAction
+extension ListFormTable {
 
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()

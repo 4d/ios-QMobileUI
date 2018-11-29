@@ -42,6 +42,7 @@
 		4826191620BFE05000226632 /* SwiftMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4826191520BFE05000226632 /* SwiftMessages.swift */; };
 		4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */; };
 		4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */; };
+		483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483A964A21B04465009F2330 /* LoginForm+Flow.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
 		483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA821E826C9900FAF84B /* UIView+QMobile.swift */; };
 		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
@@ -70,7 +71,6 @@
 		48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48657A36203590A900000D45 /* UIButton+Binding.swift */; };
 		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
 		48708B5D2195B36E005C9C4A /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* Main.swift */; };
-		48708B612195B3D4005C9C4A /* Main+Storyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B602195B3D4005C9C4A /* Main+Storyboards.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
 		4879495D20AC5264008876B8 /* SettingReloadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879495C20AC5264008876B8 /* SettingReloadCell.swift */; };
@@ -86,6 +86,8 @@
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
+		489C3F8321AECE990018664B /* Main+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C3F8221AECE990018664B /* Main+Flow.swift */; };
+		489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C3F8721AEDD810018664B /* MainNavigation.swift */; };
 		48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */; };
 		48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */; };
 		48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
@@ -213,6 +215,7 @@
 		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
 		4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationFeedBack.swift; sourceTree = "<group>"; };
 		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
+		483A964A21B04465009F2330 /* LoginForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginForm+Flow.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		483FDA821E826C9900FAF84B /* UIView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IndexPath+QMobile.swift"; sourceTree = "<group>"; };
@@ -242,7 +245,6 @@
 		48657A36203590A900000D45 /* UIButton+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Binding.swift"; sourceTree = "<group>"; };
 		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
 		48708B5C2195B36E005C9C4A /* Main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		48708B602195B3D4005C9C4A /* Main+Storyboards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Main+Storyboards.swift"; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
 		4879495C20AC5264008876B8 /* SettingReloadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingReloadCell.swift; sourceTree = "<group>"; };
@@ -256,6 +258,8 @@
 		4881205C20FDEF510041D774 /* LogForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogForm.swift; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
+		489C3F8221AECE990018664B /* Main+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Main+Flow.swift"; sourceTree = "<group>"; };
+		489C3F8721AEDD810018664B /* MainNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigation.swift; sourceTree = "<group>"; };
 		48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUpdate.swift; sourceTree = "<group>"; };
 		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
 		48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMessages.framework; path = Carthage/Build/iOS/SwiftMessages.framework; sourceTree = "<group>"; };
@@ -571,7 +575,7 @@
 			isa = PBXGroup;
 			children = (
 				48708B5C2195B36E005C9C4A /* Main.swift */,
-				48708B602195B3D4005C9C4A /* Main+Storyboards.swift */,
+				489C3F8221AECE990018664B /* Main+Flow.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -602,6 +606,14 @@
 				487EC33D20AD83B500646B5B /* SettingLogOutCell.swift */,
 			);
 			path = account;
+			sourceTree = "<group>";
+		};
+		489C3F8621AEDD6B0018664B /* MainNavigation */ = {
+			isa = PBXGroup;
+			children = (
+				489C3F8721AEDD810018664B /* MainNavigation.swift */,
+			);
+			path = MainNavigation;
 			sourceTree = "<group>";
 		};
 		48A9CB3020348BC9007183B4 /* Controller */ = {
@@ -777,26 +789,28 @@
 			isa = PBXGroup;
 			children = (
 				48708B572195B2E2005C9C4A /* Main */,
+				489C3F8621AEDD6B0018664B /* MainNavigation */,
 				4859D9551F827E4800C8A020 /* DialogForm.swift */,
 				4867450B20221BD20029924D /* WebAreaForm.swift */,
 				48EE077B1E7AE9B500A8546E /* ListForm */,
 				480B6B721E7FD1C500D1E583 /* DetailsForm */,
 				48F8E2C01F7D0B07000080FB /* SettingsForm */,
-				48EE077A1E7AE9A600A8546E /* LogInForm */,
+				48EE077A1E7AE9A600A8546E /* LoginForm */,
 				4810B02020FF38B40049F31D /* LogForm */,
 				4853BD672105ACE0004B2467 /* FeedbackForm */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
 		};
-		48EE077A1E7AE9A600A8546E /* LogInForm */ = {
+		48EE077A1E7AE9A600A8546E /* LoginForm */ = {
 			isa = PBXGroup;
 			children = (
 				4872590920528C23000D416B /* LoginForm.swift */,
+				483A964A21B04465009F2330 /* LoginForm+Flow.swift */,
 				4872590B20528CAD000D416B /* LoginPasscodeForm.swift */,
 				48F8DF282057F35E0087066F /* PasscodeField.swift */,
 			);
-			path = LogInForm;
+			path = LoginForm;
 			sourceTree = "<group>";
 		};
 		48EE077B1E7AE9B500A8546E /* ListForm */ = {
@@ -1083,6 +1097,7 @@
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
 				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
 				4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */,
+				489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */,
 				48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */,
 				48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */,
 				4846083620AF057A00EE4696 /* Timer+QMobile.swift in Sources */,
@@ -1101,7 +1116,6 @@
 				4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */,
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
-				48708B612195B3D4005C9C4A /* Main+Storyboards.swift in Sources */,
 				48F8E2C61F7D0F00000080FB /* UIColor+Result.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
 				FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */,
@@ -1112,6 +1126,7 @@
 				480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */,
 				48E49CEF1EB9CA70002B60AF /* ApplicationValueTransformers.swift in Sources */,
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
+				483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */,
 				4826191620BFE05000226632 /* SwiftMessages.swift in Sources */,
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */,
@@ -1178,6 +1193,7 @@
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
+				489C3F8321AECE990018664B /* Main+Flow.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				48E71DBE212AA475003D10BD /* UIStackVIew+QMobile.swift in Sources */,

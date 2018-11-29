@@ -128,4 +128,29 @@ extension SwiftMessages {
         }
     }
 
+    public static func modal(_ message: String) {
+        onForeground {
+            let layout: MessageView.Layout = .centeredView
+            let view = MessageView.viewFromNib(layout: layout)
+            view.backgroundView.backgroundColor = UIColor.init(white: 0.97, alpha: 1)
+            view.backgroundView.layer.cornerRadius = 10
+
+            view.configureTheme(.info)
+
+            view.configureContent(title: "", body: message)
+
+            view.button?.isHidden = true
+            view.tapHandler = { _ in }
+
+            var config = SwiftMessages.Config()
+
+            config.presentationStyle = .center
+            config.duration = .forever
+            config.dimMode = .blur(style: .dark, alpha: 1, interactive: true)
+            config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+
+            SwiftMessages.show(config: config, view: view)
+        }
+    }
+
 }
