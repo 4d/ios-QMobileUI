@@ -78,27 +78,43 @@ extension Main {
     }
 
 }
+// MARK: - did login
+import Result
+
+extension Result {
+    /// Returns `true` if the result is a success, `false` otherwise.
+    public var isSuccess: Bool {
+        switch self {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+}
 
 extension Main: LoginFormDelegate {
-    func didLogin() {
+
+    /// When login manage what to do.
+    func didLogin(result: Result<AuthToken, APIError>) {
+        // If reload data after login
+        guard result.isSuccess else { return }
         // If reload data after login
         guard Prephirences.Auth.reloadData else { return }
 
-        SwiftMessages.modal("Data will be reloaded")
+        SwiftMessages.loading("Data will be reloaded")
         // Launch a background task to reload
-        DispatchQueue.background.async {
-            DataReloadManager.instance.reload { result in
-                SwiftMessages.hide()
-                switch result {
-                case .success:
-                    SwiftMessages.info("Data has been reloaded")
-                case .failure(let error):
-                    let title = "Issue when reloading data"
-                    // Display error before logout
-                    SwiftMessages.error(title: error.errorDescription ?? title,
-                                        message: error.failureReason ?? "",
-                                        configure: self.configure())
-                }
+        _ = DataReloadManager.instance.reload { result in
+            SwiftMessages.hide()
+            switch result {
+            case .success:
+                SwiftMessages.info("Please wait until you personnal data are loaded")
+            case .failure(let error):
+                let title = "Issue when reloading data"
+                // Display error before logout
+                SwiftMessages.error(title: error.errorDescription ?? title,
+                                    message: error.failureReason ?? "",
+                                    configure: self.configure())
             }
         }
     }

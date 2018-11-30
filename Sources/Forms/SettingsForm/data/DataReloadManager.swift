@@ -13,81 +13,73 @@ import Moya
 import QMobileAPI
 import QMobileDataSync
 
-/// Listen to data reload result
-protocol DataReloadListener: NSObjectProtocol {
-    func dataReloaded(result: QMobileDataSync.DataSync.SyncResult)
-}
-
 /// Simple listener for data reload using closure.
-class DataReloadListenerBlock: NSObject, DataReloadListener {
-    var handler: QMobileDataSync.DataSync.SyncCompletionHandler
-    init(handler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) {
-        self.handler = handler
-    }
-    func dataReloaded(result: QMobileDataSync.DataSync.SyncResult) {
-        handler(result)
-    }
-}
 
 /// Manager data reload action
 class DataReloadManager {
 
     static let instance = DataReloadManager()
 
-    var listeners: [DataReloadListener] = []
+    //var listeners: [DataReloadListener] = []
     var cancellable = CancellableComposite()
 
-    @objc func application(didEnterBackground notification: Notification) {
+   /* @objc func application(didEnterBackground notification: Notification) {
         cancel()
-    }
+    }*/
 
-    func listen(_ block: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> DataReloadListener {
+   /* func listen(_ block: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> DataReloadListener {
         let listener = DataReloadListenerBlock(handler: block)
         self.listeners.append(listener)
         return listener
-    }
+    }*/
 
-    func remove(listener: DataReloadListener?) {
+   /* func remove(listener: DataReloadListener?) {
        // TODO implement remove listerer on data reload end
-    }
+    }*/
 
-    func cancel() {
+   /* func cancel() {
         cancellable.cancel()
+    }*/
+
+    fileprivate func log(_ result: DataSync.SyncResult) {
+        // Just log
+        switch result {
+        case .success:
+            logger.info("data reloaded")
+        case .failure(let error):
+            logger.error("data reloading failed \(error)")
+        }
     }
 
-    func reload(_ completionHandler: DataSync.SyncCompletionHandler? = nil) {
+  /*  fileprivate func notify(_ result: DataSync.SyncResult) {
+        for listener in self.listeners {
+            listener.dataReloaded(result: result)
+        }
+    }*/
+
+    func reload(delay: TimeInterval = 3, _ completionHandler: DataSync.SyncCompletionHandler? = nil) -> Cancellable {
         cancellable.cancel()
         cancellable = CancellableComposite()
 
-        background(3) { [weak self] in
-            guard let this = self, !this.cancellable.isCancelledUnlocked else {
-                return
-            }
+        let center = NotificationCenter.default
+        background(delay) { [weak self] in
+            guard let this = self else {return}
 
-            let center = NotificationCenter.default
-            center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+            //center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
             let reload = dataReload { [weak self] result in
-                if let this = self {
-                    center.removeObserver(this)
-                }
+                guard let this = self else {return}
 
-                // Just log
-                switch result {
-                case .success:
-                    logger.info("data reloaded")
-                case .failure(let error):
-                    logger.error("data reloading failed \(error)")
-                }
+                center.removeObserver(this)
 
-                for listener in this.listeners {
-                    listener.dataReloaded(result: result)
-                }
+                this.log(result)
+                //this.notify(result)
                 completionHandler?(result)
             }
             if let reload = reload {
-                self?.cancellable.append(reload)
+                this.cancellable.append(reload)
             }
         }
+        return cancellable
     }
 }

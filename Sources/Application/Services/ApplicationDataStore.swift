@@ -16,7 +16,9 @@ import Prephirences
 import Moya // Cancellable
 
 /// Load the mobile database
-class ApplicationDataStore: NSObject {}
+class ApplicationDataStore: NSObject {
+    var listeners: [NSObjectProtocol] = []
+}
 
 extension ApplicationDataStore: ApplicationService {
 
@@ -30,9 +32,8 @@ extension ApplicationDataStore: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        // swiftlint:disable:next identifier_name
-        var ds = dataStore
-        ds.delegate = self
+        var dataStore = self.dataStore
+        dataStore.delegate = self
 
         if let mustDrop = servicePreferences["drop.atStart"] as? Bool, mustDrop {
             // drop before loadingb
@@ -43,6 +44,8 @@ extension ApplicationDataStore: ApplicationService {
         } else {
             self.load()
         }
+
+        registerEvent(dataStore)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -53,10 +56,12 @@ extension ApplicationDataStore: ApplicationService {
         if let mustDrop = servicePreferences["drop.atEnd"] as? Bool, mustDrop {
             // drop data when application will terminate
             drop()
-
         } else {
             save()
         }
+        var dataStore = self.dataStore
+        dataStore.delegate =  nil
+        unregisterEvent(dataStore)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -103,39 +108,51 @@ extension ApplicationDataStore {
         }
     }
 
+    fileprivate func registerEvent(_ dataStore: DataStore) {
+        // Register to some event to log (XXX could be done by delegate some remove it and move the code)
+        //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
+        //listeners += [ds.onSave(queue: operationQueue) { _ in }]
+        let logDataStore: (Notification) -> Void = { notification in
+            logger.debug("\(notification)")
+        }
+        listeners += [dataStore.observe(.dataStoreWillMerge, using: logDataStore)]
+        listeners += [dataStore.observe(.dataStoreDidMerge, using: logDataStore)]
+        listeners += [dataStore.observe(.dataStoreWillPerformAction, using: logDataStore)]
+        listeners += [dataStore.observe(.dataStoreDidPerformAction, using: logDataStore)]
+    }
+
+    fileprivate func unregisterEvent(_ dataStore: DataStore) {
+        for listener in listeners {
+            dataStore.unobserve(listener)
+        }
+        listeners = []
+    }
+
 }
 
 extension ApplicationDataStore: DataStoreDelegate {
 
     func dataStoreWillSave(_ dataStore: DataStore, context: DataStoreContext) {
-
     }
 
     func dataStoreDidSave(_ dataStore: DataStore, context: DataStoreContext) {
-
     }
 
     func objectsDidChange(dataStore: DataStore, context: DataStoreContext) {
-
     }
 
     func dataStoreWillMerge(_ dataStore: DataStore, context: DataStoreContext, with: DataStoreContext) {
-
     }
 
     func dataStoreDidMerge(_ dataStore: DataStore, context: DataStoreContext, with: DataStoreContext) {
-
     }
 
     public func dataStoreWillLoad(_ dataStore: DataStore) {
-
     }
 
     public func dataStoreDidLoad(_ dataStore: DataStore) {
-
     }
 
     public func dataStoreAlreadyLoaded(_ dataStore: DataStore) {
-
     }
 }

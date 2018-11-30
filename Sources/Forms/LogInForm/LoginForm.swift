@@ -19,7 +19,7 @@ import QMobileAPI
 import QMobileDataSync
 
 protocol LoginFormDelegate: NSObjectProtocol {
-    func didLogin()
+    func didLogin(result: Result<AuthToken, APIError>)
 }
 
 /// Form to login
@@ -284,7 +284,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
             Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
 
             this.stopLoginUI {
-                this.delegate?.didLogin()
+                this.delegate?.didLogin(result: result)
                 // Display message
                 this.display(result: result)
 

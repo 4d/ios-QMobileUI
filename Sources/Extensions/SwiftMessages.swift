@@ -26,6 +26,54 @@ extension SwiftMessages {
 
     public static var defaultTapHandler: ((_ view: BaseView) -> Void) = { _ in SwiftMessages.hide() }
 
+    public static func debug(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+        #if DEBUG
+        let debugId = "debug"
+        SwiftMessages.hide(id: debugId)
+        onForeground {
+            var layout: MessageView.Layout = .statusLine
+            let lineDelimiterPos = message.index(of: "\n")
+            if lineDelimiterPos != nil {
+                layout = .messageView
+            }
+
+            let view = MessageView.viewFromNib(layout: layout)
+            view.id = debugId
+
+            let potentialError: Bool = message.contains("rror")
+            if potentialError, let backgroundColor = errorColor, let foregroundColor = errorForegroundColor {
+                view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
+            } else if let backgroundColor = infoColor, let foregroundColor = infoForegroundColor {
+                view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
+            } else {
+                view.configureTheme(potentialError ? .error: .info)
+            }
+            if let lineDelimiterPos = lineDelimiterPos {
+                let title = String(message[..<lineDelimiterPos])
+                let body = String(message[message.index(lineDelimiterPos, offsetBy: 1)...])
+                view.configureContent(title: title, body: body)
+            } else {
+                view.configureContent(body: message)
+            }
+            view.button?.isHidden = true
+            view.tapHandler = defaultTapHandler
+
+            var config = SwiftMessages.Config()
+            if case .statusLine = layout {
+                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+            } else {
+                config.presentationContext = .automatic
+            }
+            config.presentationStyle = .bottom
+            // config.duration = .seconds(seconds: infoDuration)
+
+            config = configure?(view, config) ?? config
+
+            SwiftMessages.show(config: config, view: view)
+        }
+        #endif
+    }
+
     public static func info(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         onForeground {
             var layout: MessageView.Layout = .statusLine
@@ -146,7 +194,32 @@ extension SwiftMessages {
 
             config.presentationStyle = .center
             config.duration = .forever
-            config.dimMode = .blur(style: .dark, alpha: 1, interactive: true)
+            config.dimMode = .blur(style: .dark, alpha: 1, interactive: false)
+            config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+
+            SwiftMessages.show(config: config, view: view)
+        }
+    }
+
+    public static func loading(_ message: String) {
+        onForeground {
+            //swiftlint:disable:next force_try
+            let view: LoadingView = try! SwiftMessages.viewFromNib()
+            view.backgroundView.backgroundColor = UIColor.init(white: 0.97, alpha: 1)
+            view.backgroundView.layer.cornerRadius = 10
+
+            view.configureTheme(.info)
+
+            view.configureContent(title: "", body: message)
+
+            view.button?.isHidden = true
+            view.tapHandler = { _ in }
+
+            var config = SwiftMessages.Config()
+
+            config.presentationStyle = .center
+            config.duration = .forever
+            config.dimMode = .gray(interactive: false)
             config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
 
             SwiftMessages.show(config: config, view: view)

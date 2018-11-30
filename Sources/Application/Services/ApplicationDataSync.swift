@@ -37,80 +37,66 @@ extension ApplicationDataSync: ApplicationService {
     public var servicePreferences: PreferencesType {
         return ProxyPreferences(preferences: preferences, key: "dataSync.")
     }
+    fileprivate var cancelAtTheEnd: Bool { return servicePreferences["cancel.atEnd"] as? Bool ?? true }
+    fileprivate var cancelIfEnterForeground: Bool { return servicePreferences["cancel.ifEnterForeground"] as? Bool ?? false }
+    fileprivate var cancelIfEnterBackground: Bool { return servicePreferences["cancel.ifEnterBackground"] as? Bool ?? true }
+    fileprivate var syncAtStart: Bool { return servicePreferences["sync.atStart"] as? Bool ?? false }
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 
-        // swiftlint:disable:next identifier_name
-        let ds = dataSync.dataStore
-
-        listeners += [ds.onLoad(queue: operationQueue) { [weak self] _ in
-            guard let this = self else {
-                return
-            }
-            if !this.syncAtStartDone {
-                this.syncAtStart()
-            }
+        listeners += [dataSync.dataStore.onLoad(queue: operationQueue) { [weak self] _ in
+            guard let this = self else { return }
+            this.startSync()
             }]
-        if ds.isLoaded {
-            syncAtStart() // XXX could have bug if loaded just before registering
+        if dataSync.dataStore.isLoaded {
+            startSync()
         }
+
+        // Register to some event to log
         //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
         //listeners += [ds.onSave(queue: operationQueue) { _ in }]
 
-        listeners += [ds.observe(.dataStoreWillMerge) { notification in
-            logger.debug("\(notification)")
-        }]
-        listeners += [ds.observe(.dataStoreDidMerge) { notification in
-            logger.debug("\(notification)")
-        }]
-        listeners += [ds.observe(.dataStoreWillPerformAction) { notification in
-            logger.debug("\(notification)")
-        }]
-        listeners += [ds.observe(.dataStoreDidPerformAction) { notification in
-            logger.debug("\(notification)")
-        }]
     }
 
     public func applicationWillTerminate(_ application: UIApplication) {
         applicationWillTerminate = true
-        let cancel = servicePreferences["cancel.atEnd"] as? Bool ?? true
+        let cancel = cancelAtTheEnd
+        let dataSync = ApplicationDataSync.dataSync
         if cancel {
-            ApplicationDataSync.dataSync.cancel()
+            dataSync.cancel()
         }
-        for listener in listeners {
-            let dataSync = ApplicationDataSync.dataSync
-            dataSync.delegate = nil
+        dataSync.delegate = nil
 
-            let dataStore = dataSync.dataStore
+        let dataStore = dataSync.dataStore
+        for listener in listeners {
             dataStore.unobserve(listener)
         }
+        listeners = []
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        let cancel = servicePreferences["cancel.ifEnterForeground"] as? Bool ?? false
-        if cancel {
+        if cancelIfEnterForeground {
             ApplicationDataSync.dataSync.cancel()
         }
     }
 
     public func applicationDidEnterBackground(_ application: UIApplication) {
-        let cancel = servicePreferences["cancel.ifEnterBackground"] as? Bool ?? true
-        if cancel {
+        if cancelIfEnterBackground {
             ApplicationDataSync.dataSync.cancel()
         }
     }
 
-    func syncAtStart() {
+    func startSync() {
+        guard !syncAtStartDone else { return }
         syncAtStartDone = true
-        let sync = self.servicePreferences["sync.atStart"] as? Bool ?? false
         let dataSync = ApplicationDataSync.dataSync
-
-        let future: DataSync.SyncFuture = sync ? dataSync.sync(): dataSync.initFuture()
+        let syncAtStart = self.syncAtStart
+        let future: DataSync.SyncFuture = syncAtStart ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
             logger.debug("data from data store initiliazed")
-            if sync {
+            if syncAtStart {
                 SwiftMessages.info("Data updated")
             }
         }
@@ -138,25 +124,50 @@ public func dataLastSync() -> Foundation.Date? {
 
 // MARK: DataSyncDelegate
 extension ApplicationDataSync: DataSyncDelegate {
-    public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) {}
+
+    func willDataSyncWillLoad(tables: [Table]) {
+        SwiftMessages.debug("Data will be loaded from embedded data")
+    }
+
+    func willDataSyncDidLoad(tables: [Table]) {
+        SwiftMessages.debug("Data has been loaded from embedded data")
+    }
+
+    public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Cancellable) {
+
+        SwiftMessages.debug("Data \(operation) will begin")
+    }
     public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
         if applicationWillTerminate /* stop sync is app shutdown */ {
             return true
         }
+        SwiftMessages.debug("Data \(operation) did begin")
         // XXX could ask user here
         return false
     }
 
-    public func willDataSyncBegin(for table: QMobileAPI.Table, operation: DataSync.Operation) {}
+    public func willDataSyncBegin(for table: QMobileAPI.Table, operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) begin for \(table.name)")
+    }
 
-    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {}
+    public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) page \(page) for \(table.name)")
+    }
 
-    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {}
+    public func didDataSyncEnd(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) did end for \(table.name)")
+    }
 
-    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError, operation: DataSync.Operation) {}
+    public func didDataSyncFailed(for table: QMobileAPI.Table, error: DataSyncError, operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) did end with for \(table.name).\n \(error)")
+    }
 
-    public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {}
+    public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) did end")
+    }
 
-    public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {}
+    public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {
+        SwiftMessages.debug("Data \(operation) did end.\n \(error)")
+    }
 
 }

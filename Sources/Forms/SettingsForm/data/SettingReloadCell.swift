@@ -18,8 +18,8 @@ import QMobileDataSync
 open class SettingReloadCell: UITableViewCell {
 
     @IBOutlet open weak var reloadButton: UIButton!
+    var cancellable: Cancellable?
 
-    //weak var listener: DataReloadListener?
     static let maxRetryCount = 2
     var tryCount = 0
     private var stopBlock: () -> Void = {}
@@ -58,12 +58,12 @@ extension SettingReloadCell: DialogFormDelegate {
             ServerStatusManager.instance.checkStatus(0) // XXX do elsewhere (break using listener)
         }
         tryCount = 1
-        DataReloadManager.instance.reload(didReload)
+        cancellable = DataReloadManager.instance.reload(didReload)
     }
 
     // if cancel pressed
     public func onCancel(dialog: DialogForm, sender: Any) {
-        DataReloadManager.instance.cancel()
+        cancellable?.cancel()
         onForeground {
             dialog.dismiss(animated: true) /// XXX maybe wait cancel
         }
@@ -103,7 +103,7 @@ extension SettingReloadCell: DialogFormDelegate {
                             if self.tryCount < SettingReloadCell.maxRetryCount {
                                 didEnd = false
                                 self.tryCount += 1
-                                DataReloadManager.instance.reload(self.didReload)
+                                _ = DataReloadManager.instance.reload(self.didReload)
                             }
                         case .failure(let authError):
                             if let statusText = authError.restErrors?.statusText {
