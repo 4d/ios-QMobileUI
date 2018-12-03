@@ -50,6 +50,9 @@ extension ApplicationPreferences: ApplicationService {
             userDefaults.clearAll()
             userDefaults.synchronize()
             // remove also keychain.
+            if Prephirences.Auth.Logout.atStart {
+                Prephirences.Auth.Logout.token = APIManager.instance.authToken?.token // keep a token for logout
+            }
             let keyChain = KeychainPreferences.sharedInstance
             keyChain.clearAll() // keyChain.lastStatus allow to see that not work
             APIManager.removeAuthToken() // workaround because keychain is not really removed

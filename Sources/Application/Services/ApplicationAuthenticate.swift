@@ -27,20 +27,15 @@ class ApplicationAuthenticate: NSObject {
 
 extension Prephirences {
 
-    public struct Auth: StructPrephirencable {
-        static let key: String = "auth."
-
-        //private static var instance = ProxyPreferences(preferences: sharedInstance, key: "auth.")
-        /// Application will start with login form.
-        public static let withForm: Bool = instance["withForm"] as? Bool ?? false
+    /// Authentification preferences.
+    public struct Auth: Prephirencable {
+        /// Application will start with login form. (deprecated)
+        fileprivate static let withForm: Bool = instance["withForm"] as? Bool ?? false
         /// Application will reload data after logIn.
         public static let reloadData: Bool = instance["reloadData"] as? Bool ?? false
-        /// Application will ask for login screen each time, event if alread logged before. (Default false)
-        public static let mustLog: Bool = instance["mustLog"] as? Bool ?? false
 
-        // swiftlint:disable:next nesting
-        public struct Login: StructPrephirencable {
-            static let key: String = "login."
+        /// Login authentification preferences.
+        public struct Login: Prephirencable { // swiftlint:disable:this nesting
             static let parent = Auth.instance
             /// Save or not log in information for next log in. (save email).
             public static let save: Bool = instance["save"] as? Bool ?? false
@@ -53,17 +48,38 @@ extension Prephirences {
                     mutableInstance?.set(newValue, forKey: "email")
                 }
             }
+             /// Application will start with login form.
+            public static let form: Bool = instance["form"] as? Bool ?? Prephirences.Auth.withForm
+        }
+
+        /// Logoutç authentification preferences.
+        public struct Logout: Prephirencable { // swiftlint:disable:this nesting
+            static let parent = Auth.instance
+            /// Application will ask for login screen each time, event if alread logged before. (Default false)
+            public static let atStart: Bool = instance["atStart"] as? Bool ?? false
+            /// token saved temporary to logout
+            public static var token: String? {
+                get {
+                    return instance["token"] as? String
+                }
+                set {
+                    mutableInstance?.set(newValue, forKey: "token")
+                }
+            }
         }
     }
 
 }
 
 /// some test about automatic proxy creation
-protocol StructPrephirencable {
+protocol Prephirencable {
     static var key: String {get}
     static var parent: PreferencesType {get}
 }
-extension StructPrephirencable {
+extension Prephirencable {
+    static var key: String {
+        return "\(self)".lowercased()+"."
+    }
     static var parent: PreferencesType {
         return Prephirences.sharedInstance
     }

@@ -112,7 +112,7 @@ extension SettingReloadCell: DialogFormDelegate {
         case .failure(let error):
             let title = "Issue when reloading data"
             if error.mustRetry {
-                if Prephirences.Auth.withForm {
+                if Prephirences.Auth.Login.form {
                     // Display error before logout
                     SwiftMessages.error(title: error.errorDescription ?? title,
                                         message: error.mustRetryMessage,

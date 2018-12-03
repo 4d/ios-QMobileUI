@@ -57,9 +57,15 @@ extension ApplicationDataSync: ApplicationService {
             startSync()
         }
 
+        let apiManager = dataSync.rest
+        if Prephirences.Auth.Logout.atStart {
+            _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { _ in
+                Prephirences.Auth.Logout.token = nil
+            }
+        }
+
         // Register to some event to log
         if Prephirences.Auth.reloadData {
-            let apiManager = dataSync.rest
             apiManagerListeners += [apiManager.observe(.apiManagerLogout) { _ in
                 _ = dataSync.drop()
                 }]

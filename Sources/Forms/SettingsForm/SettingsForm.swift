@@ -165,7 +165,7 @@ open class SettingsForm: UITableViewController {
     // MARK: table view
 
     open override func numberOfSections(in tableView: UITableView) -> Int {
-        if Prephirences.Auth.withForm {
+        if Prephirences.Auth.Login.form {
             return Section.all.count
         }
         return Section.all.count - 1

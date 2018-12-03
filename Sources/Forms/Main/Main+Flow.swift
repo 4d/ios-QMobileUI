@@ -68,10 +68,10 @@ extension Main {
 
     /// Transition to perform
     var segue: Segue {
-        guard Prephirences.Auth.withForm else {
+        guard Prephirences.Auth.Login.form else {
             return .navigation // no login form
         }
-        if !Prephirences.Auth.mustLog, let token = APIManager.instance.authToken, token.isValidToken {
+        if !Prephirences.Auth.Logout.atStart, let token = APIManager.instance.authToken, token.isValidToken {
             return .navigation // direct login
         }
         return .login // need login
