@@ -75,7 +75,8 @@ extension SettingReloadCell: DialogFormDelegate {
     public func logout() {
         _ = APIManager.instance.logout { _ in
             if Prephirences.Auth.reloadData {
-                ApplicationDataSync.dataSync.drop()
+                _ = ApplicationDataSync.dataSync.drop { _ in
+                }
             }
             self.performTransition()
         }
@@ -86,12 +87,12 @@ extension SettingReloadCell: DialogFormDelegate {
             guard let this = self else { return }
             guard let source = this.viewController else { return }
 
-            let performSegue = true
+            //let performSegue = true
             let identifier = "logout"
-            if performSegue {
+            //if performSegue {
                 // just perform the segue
                 source.performSegue(withIdentifier: identifier, sender: self)
-            } else {
+            /*} else {
                 if let destination = Main.instantiate() {
                     // prepare destination like done with segue
                     source.prepare(for: UIStoryboardSegue(identifier: identifier, source: source, destination: destination), sender: sender)
@@ -100,7 +101,7 @@ extension SettingReloadCell: DialogFormDelegate {
                         logger.debug("\(destination) presented by \(source)")
                     }
                 }
-            }
+            }*/
         }
     }
 
