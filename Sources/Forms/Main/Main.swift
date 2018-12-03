@@ -11,7 +11,7 @@ import QMobileAPI
 
 /// Main controller. This controller present a view similar to the launchscreen,
 /// then transition to the next controller according to the application state.
-open class Main: UIViewController {
+open class Main: UIViewController, Form {
 
     // MARK: event
     final public override func viewDidLoad() {
@@ -43,7 +43,7 @@ open class Main: UIViewController {
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let loginForm = segue.destination as? LoginForm {
-            loginForm.delegate = self
+            loginForm.delegate = ApplicationAuthenticate.instance as! ApplicationAuthenticate //swiftlint:disable:this force_cast
         }
     }
 

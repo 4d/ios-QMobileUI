@@ -9,7 +9,7 @@
 import Foundation
 import QMobileDataStore
 
-public protocol ListForm: DataSourceDelegate, DataSourceSortable {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, Form {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }

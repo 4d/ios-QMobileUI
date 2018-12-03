@@ -72,11 +72,34 @@ extension SettingReloadCell: DialogFormDelegate {
     /// Return true if application need to display login form.
     /// see application preferences.
 
-    public func logout(_ completion: (() -> Void)? = nil) {
+    public func logout() {
         _ = APIManager.instance.logout { _ in
-            foreground {
-                self.viewController?.performSegue(withIdentifier: "logout", sender: self)
-                completion?()
+            if Prephirences.Auth.reloadData {
+                ApplicationDataSync.dataSync.drop()
+            }
+            self.performTransition()
+        }
+    }
+
+    func performTransition(sender: Any? = nil) {
+        foreground { [weak self] in
+            guard let this = self else { return }
+            guard let source = this.viewController else { return }
+
+            let performSegue = true
+            let identifier = "logout"
+            if performSegue {
+                // just perform the segue
+                source.performSegue(withIdentifier: identifier, sender: self)
+            } else {
+                if let destination = Main.instantiate() {
+                    // prepare destination like done with segue
+                    source.prepare(for: UIStoryboardSegue(identifier: identifier, source: source, destination: destination), sender: sender)
+                    // and present it
+                    source.present(destination, animated: true) {
+                        logger.debug("\(destination) presented by \(source)")
+                    }
+                }
             }
         }
     }

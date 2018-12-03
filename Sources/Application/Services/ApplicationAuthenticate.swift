@@ -7,9 +7,12 @@
 //
 
 import Foundation
-
 import UIKit
+
 import Prephirences
+import Result
+import SwiftMessages
+
 import QMobileAPI
 import QMobileDataSync
 
@@ -157,6 +160,7 @@ extension ApplicationAuthenticate {
                     logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided."
                         + " Server admin must validate the session or accept it or next action on server could not working")
                 }
+                _ = self.didLogin(result: result)
             case .failure(let error):
                 let error: Error = error.restErrors ?? error
                 logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
@@ -173,4 +177,47 @@ extension ApplicationAuthenticate {
         }
     }
 
+}
+
+extension ApplicationAuthenticate: LoginFormDelegate {
+
+    /// When login manage what to do.
+    func didLogin(result: Result<AuthToken, APIError>) -> Bool {
+        // If reload data after login
+        guard result.isSuccess else { return false }
+        // If reload data after login
+        guard Prephirences.Auth.reloadData else { return false }
+
+        SwiftMessages.loading("Data will be reloaded")
+        // Launch a background task to reload
+        _ = DataReloadManager.instance.reload { result in
+            SwiftMessages.hide()
+            switch result {
+            case .success:
+                //SwiftMessages.info("Please wait until you personnal data are loaded")
+                break
+            case .failure(let error):
+                let title = "Issue when reloading data"
+                // Display error before logout
+                SwiftMessages.error(title: error.errorDescription ?? title,
+                                    message: error.failureReason ?? "",
+                                    configure: self.configure())
+            }
+        }
+        return true
+    }
+
+    fileprivate func configure() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+        return { (messageView, config) in
+            messageView.tapHandler = { _ in
+                SwiftMessages.hide()
+            }
+            var config = config
+            config.presentationStyle = .center
+            config.duration = .forever
+            // no interactive because there is no way yet to get background tap handler to make logout
+            config.dimMode = .gray(interactive: false)
+            return config
+        }
+    }
 }

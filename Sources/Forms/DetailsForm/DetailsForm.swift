@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import QMobileDataStore
 
-public protocol DetailsForm: class {
+public protocol DetailsForm: class, Form {
 
     // the root view of form
     var view: UIView! {get set}

@@ -19,12 +19,12 @@ import QMobileAPI
 import QMobileDataSync
 
 protocol LoginFormDelegate: NSObjectProtocol {
-    func didLogin(result: Result<AuthToken, APIError>)
+    func didLogin(result: Result<AuthToken, APIError>) -> Bool
 }
 
 /// Form to login
 @IBDesignable
-open class LoginForm: UIViewController, UITextFieldDelegate {
+open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// If true save login information and fill it at start.
     @IBInspectable open var saveLoginInfo: Bool = Prephirences.Auth.Login.save
@@ -284,9 +284,11 @@ open class LoginForm: UIViewController, UITextFieldDelegate {
             Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
 
             this.stopLoginUI {
-                this.delegate?.didLogin(result: result)
+                let consumed = this.delegate?.didLogin(result: result) ?? false
                 // Display message
-                this.display(result: result)
+                if !consumed {
+                    this.display(result: result)
+                }
 
                 // If success, transition (otherway to do that, ask a delegate to do it)
                 switch result {
