@@ -74,10 +74,6 @@ extension SettingReloadCell: DialogFormDelegate {
 
     public func logout() {
         _ = APIManager.instance.logout { _ in
-            if Prephirences.Auth.reloadData {
-                _ = ApplicationDataSync.dataSync.drop { _ in
-                }
-            }
             self.performTransition()
         }
     }
@@ -102,6 +98,8 @@ extension SettingReloadCell: DialogFormDelegate {
                     }
                 }
             }*/
+
+            // XXX other way to implement by code is too listen to logout event and show Main controller
         }
     }
 

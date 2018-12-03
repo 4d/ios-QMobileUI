@@ -39,9 +39,13 @@ extension SettingLogOutCell: DialogFormDelegate {
                 }
                 dialog.dismiss(animated: true)
 
-                self.viewController?.performSegue(withIdentifier: "logout", sender: sender)
+                self.performTransition(sender: sender)
             }
         }
+    }
+
+    func performTransition(sender: Any? = nil) {
+        self.viewController?.performSegue(withIdentifier: "logout", sender: sender)
     }
 
     // if cancel pressed

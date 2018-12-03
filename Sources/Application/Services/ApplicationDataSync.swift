@@ -7,16 +7,15 @@
 //
 
 import Foundation
-
 import UIKit
+
+import Prephirences
+import SwiftMessages
+import Moya // Cancellable
 
 import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
-import Prephirences
-import SwiftMessages
-
-import Moya // Cancellable
 
 /// Load the mobile database
 class ApplicationDataSync: NSObject {
@@ -25,7 +24,8 @@ class ApplicationDataSync: NSObject {
     static let dataSync: DataSync = DataSync.instance
 
     let operationQueue = OperationQueue(underlyingQueue: .background)
-    var listeners: [NSObjectProtocol] = []
+    var dataStoreListeners: [NSObjectProtocol] = []
+    var apiManagerListeners: [NSObjectProtocol] = []
     var syncAtStartDone: Bool = false
     var applicationWillTerminate: Bool = false
 }
@@ -46,17 +46,24 @@ extension ApplicationDataSync: ApplicationService {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 
-        listeners += [dataSync.dataStore.onLoad(queue: operationQueue) { [weak self] _ in
+        let dataStore = dataSync.dataStore
+        dataStoreListeners += [dataStore.onLoad(queue: operationQueue) { [weak self] _ in
             guard let this = self else { return }
             this.startSync()
             }]
+        //dataStoreListeners += [ds.onSave(queue: operationQueue) { _ in }]
+        //dataStoreListeners += [ds.onSave(queue: operationQueue) { _ in }]
         if dataSync.dataStore.isLoaded {
             startSync()
         }
 
         // Register to some event to log
-        //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
-        //listeners += [ds.onSave(queue: operationQueue) { _ in }]
+        if Prephirences.Auth.reloadData {
+            let apiManager = dataSync.rest
+            apiManagerListeners += [apiManager.observe(.apiManagerLogout) { _ in
+                _ = dataSync.drop()
+                }]
+        }
 
     }
 
@@ -70,10 +77,15 @@ extension ApplicationDataSync: ApplicationService {
         dataSync.delegate = nil
 
         let dataStore = dataSync.dataStore
-        for listener in listeners {
+        for listener in dataStoreListeners {
             dataStore.unobserve(listener)
         }
-        listeners = []
+        dataStoreListeners = []
+        let apiManager = dataSync.rest
+        for listener in apiManagerListeners {
+            apiManager.unobserve(listener)
+        }
+        apiManagerListeners = []
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
