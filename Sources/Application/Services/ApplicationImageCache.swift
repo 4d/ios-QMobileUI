@@ -206,7 +206,7 @@ struct RestImageResource: Resource {
                 return nil
         }
 
-        let restTarget = DataSync.instance.rest.base
+        let restTarget = DataSync.instance.apiManager.base
         let urlString = restTarget.baseURL.absoluteString
             + (uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri)
         guard let components = URLComponents(string: urlString), let url = components.url else {

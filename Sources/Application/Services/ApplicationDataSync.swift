@@ -57,7 +57,7 @@ extension ApplicationDataSync: ApplicationService {
             startSync()
         }
 
-        let apiManager = dataSync.rest
+        let apiManager = dataSync.apiManager
         if Prephirences.Auth.Logout.atStart {
             _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { _ in
                 Prephirences.Auth.Logout.token = nil
@@ -87,7 +87,7 @@ extension ApplicationDataSync: ApplicationService {
             dataStore.unobserve(listener)
         }
         dataStoreListeners = []
-        let apiManager = dataSync.rest
+        let apiManager = dataSync.apiManager
         for listener in apiManagerListeners {
             apiManager.unobserve(listener)
         }

@@ -92,7 +92,7 @@ open class ServerStatusManager {
             let context = self.queue.context
             checkstatus.onSuccess(context) { _ in
                 APIManager.instance = apiManager
-                DataSync.instance.rest = apiManager
+                DataSync.instance.apiManager = apiManager
             }
             checkstatus.onComplete(context) { [weak self] result in
                 self?.serverStatus(.done(result))
