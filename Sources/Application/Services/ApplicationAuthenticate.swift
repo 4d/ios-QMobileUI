@@ -169,7 +169,7 @@ extension ApplicationAuthenticate {
         let apiManager = APIManager.instance
         // login guest mode
         let guestLogin = ""
-        let cancellable = apiManager.authentificate(login: guestLogin) { result in
+        _ = apiManager.authentificate(login: guestLogin) { result in
             switch result {
             case .success(let authToken):
                 if !authToken.isValidToken {
@@ -184,7 +184,7 @@ extension ApplicationAuthenticate {
                 /// Or keep the information in api for next failed request.
             }
         }
-        logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode. \(cancellable)")
+        logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode.")
     }
 
     func logout(completionHandler: @escaping () -> Void) {

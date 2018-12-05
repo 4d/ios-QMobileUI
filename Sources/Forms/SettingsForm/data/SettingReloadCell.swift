@@ -118,20 +118,25 @@ extension SettingReloadCell: DialogFormDelegate {
                                         message: error.mustRetryMessage,
                                         configure: configure())
                 } else {
-                    _ = APIManager.instance.authentificate(login: "") { result in
-                        switch result {
-                        case .success:
-                            // retry XXX manage it elsewhere with a request retrier
-                            if self.tryCount < SettingReloadCell.maxRetryCount {
-                                didEnd = false
-                                self.tryCount += 1
-                                _ = DataReloadManager.instance.reload(self.didReload)
-                            }
-                        case .failure(let authError):
-                            if let statusText = authError.restErrors?.statusText {
-                                SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
-                            } else {
-                                SwiftMessages.error(title: error.errorDescription ?? title, message: error.failureReason ?? "")
+                    let api = APIManager.instance
+                    _ = api.logout { _ in
+                        _ = APIManager.instance.authentificate(login: "") { result in
+                            switch result {
+                            case .success:
+                                // retry XXX manage it elsewhere with a request retrier
+                                if self.tryCount < SettingReloadCell.maxRetryCount {
+                                    didEnd = false
+                                    self.tryCount += 1
+                                    _ = DataReloadManager.instance.reload(self.didReload)
+                                } else {
+                                    SwiftMessages.error(title: error.errorDescription ?? title, message: error.failureReason ?? "")
+                                }
+                            case .failure(let authError):
+                                if let statusText = authError.restErrors?.statusText {
+                                    SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
+                                } else {
+                                    SwiftMessages.error(title: error.errorDescription ?? title, message: error.failureReason ?? "")
+                                }
                             }
                         }
                     }
