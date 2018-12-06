@@ -20,7 +20,6 @@ open class SettingReloadCell: UITableViewCell {
     @IBOutlet open weak var reloadButton: UIButton!
     var cancellable: Cancellable?
 
-    static let maxRetryCount = 2
     var tryCount = 0
     private var stopBlock: () -> Void = {}
 
@@ -124,7 +123,7 @@ extension SettingReloadCell: DialogFormDelegate {
                             switch result {
                             case .success:
                                 // retry XXX manage it elsewhere with a request retrier
-                                if self.tryCount < SettingReloadCell.maxRetryCount {
+                                if self.tryCount < Prephirences.Auth.Login.Guest.maxRetry {
                                     didEnd = false
                                     self.tryCount += 1
                                     _ = DataReloadManager.instance.reload(self.didReload)
@@ -165,34 +164,6 @@ extension SettingReloadCell: DialogFormDelegate {
             config.dimMode = .gray(interactive: false)
             return config
         }
-    }
-
-}
-
-extension DataSyncError {
-
-    fileprivate var mustRetry: Bool {
-        if case .apiError(let apiError) = self {
-            if apiError.isHTTPResponseWith(code: .unauthorized) {
-                return true
-            }
-            if let restErrors = apiError.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fileprivate var mustRetryMessage: String {
-        if case .apiError(let apiError) = self {
-            if apiError.isHTTPResponseWith(code: .unauthorized) {
-                return "You have been disconnected"
-            }
-            if let restErrors = apiError.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
-                return "You need to reconnect to reload."
-            }
-        }
-        return ""
     }
 
 }

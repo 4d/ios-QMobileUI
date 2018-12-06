@@ -77,7 +77,6 @@
 		4879495D20AC5264008876B8 /* SettingReloadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879495C20AC5264008876B8 /* SettingReloadCell.swift */; };
 		4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496020AC548F008876B8 /* ServerStatusManager.swift */; };
 		4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496220AC5807008876B8 /* SettingURLCell.swift */; };
-		4879496C20AC6424008876B8 /* DataReloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496B20AC6424008876B8 /* DataReloadManager.swift */; };
 		4879496E20AC6991008876B8 /* SettingsDataSectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496D20AC6991008876B8 /* SettingsDataSectionFooter.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
@@ -253,7 +252,6 @@
 		4879495C20AC5264008876B8 /* SettingReloadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingReloadCell.swift; sourceTree = "<group>"; };
 		4879496020AC548F008876B8 /* ServerStatusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStatusManager.swift; sourceTree = "<group>"; };
 		4879496220AC5807008876B8 /* SettingURLCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLCell.swift; sourceTree = "<group>"; };
-		4879496B20AC6424008876B8 /* DataReloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReloadManager.swift; sourceTree = "<group>"; };
 		4879496D20AC6991008876B8 /* SettingsDataSectionFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDataSectionFooter.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
@@ -588,7 +586,6 @@
 			isa = PBXGroup;
 			children = (
 				4879495C20AC5264008876B8 /* SettingReloadCell.swift */,
-				4879496B20AC6424008876B8 /* DataReloadManager.swift */,
 				4879496D20AC6991008876B8 /* SettingsDataSectionFooter.swift */,
 			);
 			path = data;
@@ -1139,7 +1136,6 @@
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
-				4879496C20AC6424008876B8 /* DataReloadManager.swift in Sources */,
 				484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
