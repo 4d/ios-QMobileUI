@@ -138,7 +138,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
         // If reload data after login
         guard Prephirences.Auth.reloadData else { return false }
 
-        SwiftMessages.loading("Data will be reloaded")
+        SwiftMessages.loading("Reloading data")
         // Launch a background task to reload
         _ = DataReloadManager.instance.reload { result in
             SwiftMessages.hide()
