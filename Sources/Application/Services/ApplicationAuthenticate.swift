@@ -91,14 +91,14 @@ extension ApplicationAuthenticate: ApplicationService {
 extension ApplicationAuthenticate {
 
     func login() {
-        if !Prephirences.Auth.withForm {
+        if Prephirences.Auth.Login.Guest.enabled {
             self.guestLogin()
         }
         // else login form must be displayed, show flow controller or main view controller
     }
 
     func guestLogin() {
-        assert(!Prephirences.Auth.withForm)
+        assert(Prephirences.Auth.Login.Guest.enabled)
         let apiManager = APIManager.instance
         // login guest mode
         let guestLogin = ""
@@ -191,8 +191,6 @@ extension Prephirences {
 
     /// Authentification preferences.
     public struct Auth: Prephirencable {
-        /// Application will start with login form. (deprecated)
-        fileprivate static let withForm: Bool = instance["withForm"] as? Bool ?? false
         /// Application will reload data after logIn.
         public static let reloadData: Bool = instance["reloadData"] as? Bool ?? false
 
@@ -211,7 +209,7 @@ extension Prephirences {
                 }
             }
             /// Application will start with login form.
-            public static let form: Bool = instance["form"] as? Bool ?? Prephirences.Auth.withForm
+            public static let form: Bool = instance["form"] as? Bool ?? false
 
             /// Guest mode login authentification preferences.
             public struct Guest: Prephirencable { // swiftlint:disable:this nesting
