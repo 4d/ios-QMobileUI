@@ -82,7 +82,7 @@ class DataSourceTests: XCTestCase {
         }*/
     }
 
-    func testInsertInTableView() {
+    func _testInsertInTableView() {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 600))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
 
@@ -114,7 +114,7 @@ class DataSourceTests: XCTestCase {
         self.waitForExpectations(timeout: timeout, handler: waitHandler)
     }
     
-    func testInsertInCollectionView() {
+    func _testInsertInCollectionView() {
 
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
