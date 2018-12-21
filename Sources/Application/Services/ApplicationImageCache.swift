@@ -126,6 +126,7 @@ extension ApplicationImageCache {
         if instanceCached.cacheMemoryOnly {
             options.append(.cacheMemoryOnly)
         }
+        options.append(.processor(PDFProcessor.instance))
         return options
     }
 
@@ -144,6 +145,8 @@ extension ApplicationImageCache {
             switch kfError {
             case .downloadCancelledBeforeStarting:
                 logger.warning("Task for \(String(describing: imageURL)) cancelled")
+            case .invalidStatusCode:
+                logger.warning("Failed to download image \(String(describing: imageURL)) with invalid status code: \(String(describing: error.userInfo[KingfisherErrorStatusCodeKey]))")
             default:
                 logger.warning("Failed to download image \(String(describing: imageURL)): \(kfError)")
             }
@@ -222,9 +225,74 @@ struct RestImageResource: Resource {
     }
 
     var `extension`: String? {
+        guard let queryItems =  URLComponents(url: downloadURL, resolvingAgainstBaseURL: false)?.queryItems else {
+            return nil
+        }
+        for queryItem in queryItems {
+            switch queryItem.name {
+            case "$imageformat":
+                if let value = queryItem.value, value != "best" {
+                    return queryItem.value
+                }
+                return nil
+            default:
+                return nil
+            }
+        }
         return nil // could return according to restDictionary maybe nil if "best"
     }
 
+}
+
+// MARK: Processor
+struct PDFProcessor: ImageProcessor {
+
+    static let instance = PDFProcessor()
+
+    let identifier = "com.4d.image"
+
+    // Convert input data/image to target image and return it.
+    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image
+        case .data(let data):
+            switch data.kf.imageFormat {
+            case .JPEG:
+                return Image(data: data, scale: options.scaleFactor)
+            case .PNG:
+                return Image(data: data, scale: options.scaleFactor)
+            case .GIF:
+                return Kingfisher<Image>.animated(
+                    with: data,
+                    scale: options.scaleFactor,
+                    duration: 0.0,
+                    preloadAll: options.preloadAllAnimationData,
+                    onlyFirstFrame: options.onlyLoadFirstFrame)
+            case .unknown:
+                if let image = Image(data: data, scale: options.scaleFactor) {
+                    return image
+                }
+                // test pdf
+                let pdfData = data as CFData
+                guard let provider: CGDataProvider = CGDataProvider(data: pdfData),
+                    let pdfDoc: CGPDFDocument = CGPDFDocument(provider),
+                    let pdfPage: CGPDFPage = pdfDoc.page(at: 1)
+                    else { return nil }
+
+                let pageRect = pdfPage.getBoxRect(.mediaBox)
+                let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+                let pdfImage = renderer.image { ctx in
+                    UIColor.white.set()
+                    ctx.fill(pageRect)
+                    ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+                    ctx.cgContext.scaleBy(x: options.scaleFactor, y: -options.scaleFactor)
+                    ctx.cgContext.drawPDFPage(pdfPage)
+                }
+                return pdfImage
+            }
+        }
+    }
 }
 
 // MARK: error

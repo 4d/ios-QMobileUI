@@ -152,7 +152,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
                 let title = "Issue when reloading data"
                 if Prephirences.Auth.Login.Guest.enabled,
                     error.mustRetry, self.tryCount < Prephirences.Auth.Login.Guest.maxRetry {
-                    self.tryCount = self.tryCount + 1
+                    self.tryCount += 1
                     let api = APIManager.instance
                     _ = api.logout { _ in
                         _ = APIManager.instance.authentificate(login: "") { result in
