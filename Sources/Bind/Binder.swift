@@ -130,7 +130,7 @@ open class Binder: NSObject {
                     entryKeyPathArray.append(pathComponent)
                 }
             }
-            if keyPaths.count == 1 && localVarKey != nil {
+            if !keyPaths.isEmpty && localVarKey != nil {
                 currentRecordView = currentRecordView?.bindedRoot
             }
             self.resetKeyPath()
@@ -158,10 +158,11 @@ open class Binder: NSObject {
             newEntry.transformer = transformer(for: Array(entryKeyPathComponents + viewKeyComponents), viewKey: viewKey.viewKeyCased)
 
             // Add the entry to the view
-            if let bindTo = currentRecordView?.bindTo {
+            if let currentRecordView = currentRecordView {
+                // Just to check if there is some issue, log inforamtion
                 for entry in entries {
                     if entry.keyPath == newEntry.keyPath {
-                        logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(String(describing: currentRecordView)). Please remove it from storyboard.")
+                        logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(currentRecordView). Please remove it from storyboard.")
                         return // already set
                     } else if newEntry.keyPath.contains(entry.keyPath) {
                         logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
@@ -169,7 +170,10 @@ open class Binder: NSObject {
                         logger.debug("two binding have similar key. new: \(newEntry.keyPath), old: \(entry.keyPath)")
                     }
                 }
+                let bindTo = currentRecordView.bindTo
+                // Append the new entry
                 bindTo.entries.append(newEntry)
+                // if record already there, update view now for this entry
                 bindTo.updateView(for: newEntry) // XXX check if call is necessary or didSet on currentRecords is enought, maybe check status loaded
             }
         }

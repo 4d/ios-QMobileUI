@@ -94,15 +94,31 @@ extension DataSourceSearchable {
         return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    func createSearchPredicate(_ searchText: String, table: Any?, valid: (String) -> Bool) -> NSPredicate? {
+    func createSearchPredicate(_ searchText: String, tableInfo: DataStoreTableInfo?) -> NSPredicate? {
         var predicate: NSPredicate?
         // need text to seach
         if !searchText.isEmpty {
-            var searchableFields = self.searchableFields
-            searchableFields = searchableFields.filter(valid) // remove invalid fields
+            let fields = self.searchableFields
+            var searchableFields: [String] = []
 
+            // Filter if not exist in model, allow to not crash
+            let fieldsByName = tableInfo?.fieldsByName ?? [:]
+            let relationsByName = tableInfo?.relationshipsByName ?? [:]
+            for field in fields {
+                let fieldPath = field.split(separator: ".")
+                if let firstField = fieldPath.first {
+                    let first = String(firstField)
+                    if fieldsByName[first] != nil {
+                        searchableFields.append(first) // just field
+                    } else if relationsByName[first] != nil {
+                        searchableFields.append(field) // full path
+                    }
+                }
+            }
+
+            // Create predicate if there is one field or dev assert
             if searchableFields.isEmpty {
-                assertionFailure("Configured field(s) to search '\(searchableField)' is not in table fields.\n Check search identifier list form storyboard for class \(self).\n Table: \((String(unwrappedDescrib: table)))")
+                assertionFailure("Configured field(s) to search '\(searchableField)' is not in table fields.\n Check search identifier list form storyboard for class \(self).\n Table: \((String(unwrappedDescrib: tableInfo)))")
             } else if searchableFields.count == 1, let searchableField = searchableFields.first {
                 predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
             } else {

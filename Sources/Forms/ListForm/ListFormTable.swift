@@ -507,11 +507,8 @@ extension ListFormTable: DataSourceSearchable {
         // XXX could add other predicate
         if !isSearchBarMustBeHidden {
             // Create the search predicate
-            let fieldsByName = self.tableInfo?.fieldsByName ?? [:]
-            dataSource?.predicate = createSearchPredicate(searchText, table: table) { return fieldsByName[String($0)] != nil }
+            dataSource?.predicate = createSearchPredicate(searchText, tableInfo: tableInfo)
 
-            // Perform the search
-            dataSource?.performFetch()
             // Event
             onSearchFetching()
         }

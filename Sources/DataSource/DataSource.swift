@@ -108,7 +108,6 @@ public class DataSource: NSObject {
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.predicate = newValue
 
-            // CLEAN maybe only if already loaded data one time
             self.refresh()
         }
     }
@@ -124,7 +123,6 @@ public class DataSource: NSObject {
             var fetchRequest = self.fetchedResultsController.fetchRequest
             fetchRequest.sortDescriptors = sortDescriptors
 
-            // CLEAN maybe only if already loaded data one time, and do not do it many time
             self.refresh()
         }
     }
