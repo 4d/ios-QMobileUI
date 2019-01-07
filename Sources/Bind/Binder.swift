@@ -241,9 +241,9 @@ open class Binder: NSObject {
    */
 
     /// If put an image or data into restImage, manage it
-    fileprivate func fixKey(_ key: inout String, _ extractedValue: Any?) {
-        //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
+    fileprivate func fix(key: inout String, accordingTo extractedValue: Any?) {
         if key == "restImage" { // for test purpose, fix type
+            //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
             if extractedValue is Data {
                 key = "imageData"
             } else if extractedValue is UIImage {
@@ -253,41 +253,32 @@ open class Binder: NSObject {
     }
 
     fileprivate func updateView(for entry: KeyPathEntry) {
-        // CLEAN factorize code, maybe using closure, KVC will not work using  entry.localVarKey
-        if let key = entry.localVarKey, key == Binder.tableVarKey {
+        guard let view = entry.binded else { return }
 
-            guard let table = self.table else {
-                return // maybe ui component loading
-            }
-
-            if let view = entry.binded {
-                let extractedValue = table.value(forKeyPath: entry.keyPath)
-                view.setProperty(name: entry.viewKey, value: extractedValue)
-            }
-        } else { // record
-
-            if let view = entry.binded {
-                var extractedValue: Any?
-                switch entry.localVarKey ?? "" {
-                case Binder.recordVarKey:
-                    if let record = self.record {
-                        extractedValue = record.value(forKeyPath: entry.keyPath)
-                    }
-                case Binder.settingsKey:
-                    extractedValue = self.settings?[entry.keyPath]
-                default:
-                    extractedValue = nil
-                }
-                var key = entry.viewKey
-                assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
-                if let transformer = entry.transformer {
-                    view.setProperty(name: key, value: transformer.transformedValue(extractedValue))
-                } else {
-                    fixKey(&key, extractedValue)
-                    view.setProperty(name: key, value: extractedValue)
-                }
-            }
+        // Get the value according to key
+        var extractedValue: Any?
+        switch entry.localVarKey ?? "" {
+        case Binder.recordVarKey:
+            extractedValue = self.record?.value(forKeyPath: entry.keyPath)
+        case Binder.settingsKey:
+            extractedValue = self.settings?[entry.keyPath]
+        case Binder.tableVarKey:
+            extractedValue = self.table?.value(forKeyPath: entry.keyPath)
+        default:
+            extractedValue = nil
         }
+        // Transform value if a transformer is defined
+        if let transformer = entry.transformer {
+            extractedValue = transformer.transformedValue(extractedValue)
+        }
+
+        // Get the view key and check it
+        var key = entry.viewKey
+        assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
+        fix(key: &key, accordingTo: extractedValue)
+
+        // Set value to view
+        view.setProperty(name: key, value: extractedValue)
     }
 
     // MARK: parsers
