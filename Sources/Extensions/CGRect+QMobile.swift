@@ -10,19 +10,22 @@ import CoreGraphics
 
 public extension CGRect {
 
-    // swiftlint:disable variable_name
+    // swiftlint:disable:next identifier_name
     public var x: CGFloat {
         return origin.x
     }
 
+    // swiftlint:disable:next identifier_name
     public var y: CGFloat {
         return origin.y
     }
 
+    // swiftlint:disable:next identifier_name
     public func with(x: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
+    // swiftlint:disable:next identifier_name
     public func with(y: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }

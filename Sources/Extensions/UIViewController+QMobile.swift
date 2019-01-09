@@ -11,7 +11,7 @@ import Foundation
 extension UIViewController {
 
     /// Recursively find a controller which could present the passed view controllers.
-    /// FIXME Currently not working, because `presentedViewController` could be filled even if not in hierachy.
+    /// FIXME Currently not working everytime, because `presentedViewController` could be filled even if not in hierachy.
     func findPresenter(of viewController: UIViewController) -> UIViewController? {
         // recursive
         for child in self.children {
