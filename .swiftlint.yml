@@ -6,6 +6,7 @@ disabled_rules:
     - cyclomatic_complexity
     - large_tuple
     - superfluous_disable_command
+    - todo
 
 shorthand_operator: warning
 superfluous_disable_command: warning
