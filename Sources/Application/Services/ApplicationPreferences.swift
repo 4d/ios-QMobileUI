@@ -14,6 +14,11 @@ import QMobileAPI
 class ApplicationPreferences: NSObject {}
 
 private let kUUIDKey = "uuid"
+
+private let kFullVersion = "kFullVersion"
+private let kIDEVersion = "kIDEVersion"
+private let kSDKVersion = "kSDKVersion"
+
 extension ApplicationPreferences: ApplicationService {
 
     static var instance: ApplicationService = ApplicationPreferences()
@@ -34,7 +39,7 @@ extension ApplicationPreferences: ApplicationService {
         return preferences
     }()
 
-    fileprivate func resetSettings() {
+    static func resetSettings() {
         let userDefaults = Foundation.UserDefaults.standard
         logger.info("Reset settings")
         userDefaults.clearAll()
@@ -68,19 +73,32 @@ extension ApplicationPreferences: ApplicationService {
         } // else no uuid for app, cannot presume
 
         if resetDefaults {
-            resetSettings() // workaround because keychain is not really removed
+            ApplicationPreferences.resetSettings() // workaround because keychain is not really removed
         }
         // Set new uuid
         userDefaults[kUUIDKey] = settings[kUUIDKey]
-        userDefaults.synchronize()
+
+        // Transfert some information to UserDefaults from Info.plist for settting bundle
+        if let info = preferences["4D"] as? [String: String] {
+            if let ide = info["ide"], let build = info["build"] {
+                userDefaults[kIDEVersion] = "\(ide).\(build)"
+            }
+            if let sdk = info["sdk"], let frameworks = sdk.split(separator: "@").last {
+                userDefaults[kSDKVersion] = "\(frameworks)"
+            }
+        }
+        userDefaults[kFullVersion] = UIApplication.build
+
+        // Finish
+        userDefaults.synchronize() // XXX maybe now useless
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-       Foundation.UserDefaults.standard.synchronize() // save mutable to disk
+        Foundation.UserDefaults.standard.synchronize() // save mutable to disk // XXX maybe now useless
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        Foundation.UserDefaults.standard.synchronize() // save mutable to disk
+        Foundation.UserDefaults.standard.synchronize() // save mutable to disk // XXX maybe now useless
     }
 }
 

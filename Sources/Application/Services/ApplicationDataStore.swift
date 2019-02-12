@@ -23,8 +23,8 @@ class ApplicationDataStore: NSObject {
 extension ApplicationDataStore: ApplicationService {
 
     public static var instance: ApplicationService = ApplicationDataStore()
-    public var servicePreferences: PreferencesType {
-        return ProxyPreferences(preferences: preferences, key: "dataStore.")
+    public var servicePreferences: MutablePreferencesType {
+        return MutableProxyPreferences(preferences: preferences, key: "dataStore.")
     }
 
     var dataStore: DataStore {
@@ -35,14 +35,16 @@ extension ApplicationDataStore: ApplicationService {
         var dataStore = self.dataStore
         dataStore.delegate = self
 
-        if let mustDrop = servicePreferences["drop.atStart"] as? Bool, mustDrop {
-            // drop before loadingb
-            drop { [weak self] in
-                self?.load()
-            }
+        if !checkIfMustDropBySetting() {
+            if let mustDrop = servicePreferences["drop.atStart"] as? Bool, mustDrop {
+                // drop before loadingb
+                drop { [weak self] in
+                    self?.load()
+                }
 
-        } else {
-            self.load()
+            } else {
+                self.load()
+            }
         }
 
         registerEvent(dataStore)
@@ -64,10 +66,13 @@ extension ApplicationDataStore: ApplicationService {
         unregisterEvent(dataStore)
     }
 
-    func applicationWillEnterForeground(_ application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         logger.debug("Mobile database will be saved")
         save()
-        // XXX wait?
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        _ = checkIfMustDropBySetting()
     }
 
 }
@@ -126,6 +131,20 @@ extension ApplicationDataStore {
             dataStore.unobserve(listener)
         }
         listeners = []
+    }
+
+    fileprivate func checkIfMustDropBySetting() -> Bool {
+        if let mustDrop = servicePreferences["drop.bySetting"] as? Bool, mustDrop {
+            // drop other information like loggin information
+            ApplicationPreferences.resetSettings()
+            // servicePreferences.set(false, forKey: "drop.bySetting") // useless if all pref reseted
+
+            drop { [weak self] in
+                self?.load()
+            }
+            return true
+        }
+        return false
     }
 
 }
