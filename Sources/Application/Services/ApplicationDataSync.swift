@@ -34,38 +34,23 @@ extension ApplicationDataSync: ApplicationService {
 
     public static var instance: ApplicationService = ApplicationDataSync()
 
-    public var servicePreferences: PreferencesType {
-        return ProxyPreferences(preferences: preferences, key: "dataSync.")
-    }
-    fileprivate var cancelAtTheEnd: Bool { return servicePreferences["cancel.atEnd"] as? Bool ?? true }
-    fileprivate var cancelIfEnterForeground: Bool { return servicePreferences["cancel.ifEnterForeground"] as? Bool ?? false }
-    fileprivate var cancelIfEnterBackground: Bool { return servicePreferences["cancel.ifEnterBackground"] as? Bool ?? true }
-    fileprivate var syncAtStart: Bool { return servicePreferences["sync.atStart"] as? Bool ?? false }
-
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 
+        // Start sync after data store loading
         let dataStore = dataSync.dataStore
         dataStoreListeners += [dataStore.onLoad(queue: operationQueue) { [weak self] _ in
             guard let this = self else { return }
-            this.startSync()
+            this.startSyncAtStart()
             }]
-        //dataStoreListeners += [ds.onSave(queue: operationQueue) { _ in }]
-        //dataStoreListeners += [ds.onSave(queue: operationQueue) { _ in }]
         if dataSync.dataStore.isLoaded {
-            startSync()
-        }
-
-        let apiManager = dataSync.apiManager
-        if Prephirences.Auth.Logout.atStart {
-            _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { _ in
-                Prephirences.Auth.Logout.token = nil
-            }
+            startSyncAtStart()
         }
 
         // Register to some event to log
         if Prephirences.Auth.reloadData {
+             let apiManager = dataSync.apiManager
             apiManagerListeners += [apiManager.observe(.apiManagerLogout) { _ in
                 _ = dataSync.drop()
                 }]
@@ -75,7 +60,7 @@ extension ApplicationDataSync: ApplicationService {
 
     public func applicationWillTerminate(_ application: UIApplication) {
         applicationWillTerminate = true
-        let cancel = cancelAtTheEnd
+        let cancel = Prephirences.DataSync.Cancel.atTheEnd
         let dataSync = ApplicationDataSync.dataSync
         if cancel {
             dataSync.cancel()
@@ -95,22 +80,36 @@ extension ApplicationDataSync: ApplicationService {
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        if cancelIfEnterForeground {
+        if Prephirences.DataSync.Sync.ifEnterForeground {
+            // sync if enter foreground
+            let future: DataSync.SyncFuture = ApplicationDataSync.dataSync.sync()
+            future.onSuccess {
+                logger.debug("data from data store synchronized")
+                SwiftMessages.info("Data updated")
+            }
+            future.onFailure { error in
+                logger.warning("Failed to synchronize data - \(error)")
+            }
+        } else if Prephirences.DataSync.Cancel.ifEnterForeground {
             ApplicationDataSync.dataSync.cancel()
         }
     }
 
     public func applicationDidEnterBackground(_ application: UIApplication) {
-        if cancelIfEnterBackground {
+        if Prephirences.DataSync.Cancel.ifEnterBackground {
             ApplicationDataSync.dataSync.cancel()
         }
     }
 
-    func startSync() {
+}
+
+extension ApplicationDataSync {
+
+    func startSyncAtStart() {
         guard !syncAtStartDone else { return }
         syncAtStartDone = true
         let dataSync = ApplicationDataSync.dataSync
-        let syncAtStart = self.syncAtStart
+        let syncAtStart = Prephirences.DataSync.Sync.atStart
         let future: DataSync.SyncFuture = syncAtStart ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
             logger.debug("data from data store initiliazed")
@@ -119,7 +118,11 @@ extension ApplicationDataSync: ApplicationService {
             }
         }
         future.onFailure { error in
-            logger.warning("Failed to initialize data from data store \(error)")
+            if syncAtStart {
+                logger.warning("Failed to initialize data from data store or synchronize data: \(error)")
+            } else {
+                logger.warning("Failed to initialize data from data store \(error)")
+            }
         }
     }
 
@@ -186,6 +189,33 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end.\n \(error)")
+    }
+
+}
+
+// MARK: Preferences
+
+extension Prephirences {
+
+    /// DataSync preferences.
+    public struct DataSync: Prephirencable {
+
+        public struct Cancel: Prephirencable { // swiftlint:disable:this nesting
+            static let parent = DataSync.instance
+
+            public static let atTheEnd: Bool = instance["atEnd"] as? Bool ?? false
+            public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
+            public static let ifEnterBackground: Bool = instance["ifEnterBackground"] as? Bool ?? false
+
+        }
+
+        public struct Sync: Prephirencable { // swiftlint:disable:this nesting
+            static let parent = DataSync.instance
+
+            public static let atStart: Bool = instance["atStart"] as? Bool ?? false
+            public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
+
+        }
     }
 
 }

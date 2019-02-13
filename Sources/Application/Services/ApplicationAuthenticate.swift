@@ -32,12 +32,21 @@ extension ApplicationAuthenticate: ApplicationService {
     // MARK: ApplicationService
     static var instance: ApplicationService = ApplicationAuthenticate()
 
+    var apiManager: APIManager {
+        return APIManager.instance
+    }
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let apiManager = APIManager.instance
-        if let authToken = apiManager.authToken, authToken.isValidToken {
-            logger.info("Application already logged with session \(authToken.id)")
+
+        // If logout at start remove token
+        if Prephirences.Auth.Logout.atStart {
+            _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { [weak self] _ in
+                Prephirences.Auth.Logout.token = nil
+                self?.autoLogin()
+            }
         } else {
-            login()
+            autoLogin()
         }
 
         /*let center = NotificationCenter.default
@@ -90,6 +99,14 @@ extension ApplicationAuthenticate: ApplicationService {
 // MARK: login
 extension ApplicationAuthenticate {
 
+   func autoLogin() {
+        if let authToken = apiManager.authToken, authToken.isValidToken {
+            logger.info("Application already logged with session \(authToken.id)")
+        } else {
+            login()
+        }
+    }
+
     func login() {
         if Prephirences.Auth.Login.Guest.enabled {
             self.guestLogin()
@@ -99,25 +116,25 @@ extension ApplicationAuthenticate {
 
     func guestLogin() {
         assert(Prephirences.Auth.Login.Guest.enabled)
-        let apiManager = APIManager.instance
         // login guest mode
         let guestLogin = ""
+        let url = apiManager.base.baseURL
         _ = apiManager.authentificate(login: guestLogin) { result in
             switch result {
             case .success(let authToken):
                 if !authToken.isValidToken {
-                    logger.info("Application has been authenticated with 4d server `\(apiManager.base.baseURL)` using guest mode but no token provided."
+                    logger.info("Application has been authenticated with 4d server `\(url)` using guest mode but no token provided."
                         + " Server admin must validate the session or accept it or next action on server could not working")
                 }
                 _ = self.didLogin(result: result)
             case .failure(let error):
                 let error: Error = error.restErrors ?? error
-                logger.error("Failed to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode: \(error)")
+                logger.error("Failed to authenticate with 4d server `\(url)` using guest mode: \(error)")
                 /// XXX show full screen dialog with error message ?
                 /// Or keep the information in api for next failed request.
             }
         }
-        logger.info("Application is trying to authenticate with 4d server `\(apiManager.base.baseURL)` using guest mode.")
+        logger.info("Application is trying to authenticate with 4d server `\(url)` using guest mode.")
     }
 
     func logout(completionHandler: @escaping () -> Void) {
@@ -153,9 +170,9 @@ extension ApplicationAuthenticate: LoginFormDelegate {
                 if Prephirences.Auth.Login.Guest.enabled,
                     error.mustRetry, self.tryCount < Prephirences.Auth.Login.Guest.maxRetry {
                     self.tryCount += 1
-                    let api = APIManager.instance
-                    _ = api.logout { _ in
-                        _ = APIManager.instance.authentificate(login: "") { result in
+                    let apiManager = self.apiManager
+                    _ = apiManager.logout { _ in
+                        _ = apiManager.authentificate(login: "") { result in
                             _ = self.didLogin(result: result)
                         }
                     }
