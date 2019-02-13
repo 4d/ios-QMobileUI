@@ -7,7 +7,13 @@
 //
 
 import Foundation
+
+import QMobileAPI
 import QMobileDataStore
+import QMobileDataSync
+
+import Moya
+import SwiftMessages
 
 @IBDesignable
 open class ListFormCollection: UICollectionViewController, ListForm {
@@ -15,9 +21,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     public var dataSource: DataSource! = nil
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
-
-    @IBInspectable open var hasRefreshControl: Bool = false
-    public var refreshControl: UIRefreshControl?
 
     @IBOutlet open var searchBar: UISearchBar!
     public private(set) var searchActive: Bool = false
@@ -36,6 +39,13 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     @IBInspectable open var sortAscending: Bool = true
    /// Add search bar in place of navigation bar title
     @IBInspectable open var searchFieldAsSortField: Bool = true
+
+    /// Active or not a pull to refresh action on list form (default: true)
+    @IBInspectable open var hasRefreshControl: Bool = true
+    /// The pull to refresh control
+    public var refreshControl: UIRefreshControl?
+    /// Cancel reload data
+    var dataReloadTask: Cancellable?
 
     /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
@@ -290,6 +300,50 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         checkBackButton()
     }
 
+    // MARK: QMobile Event
+
+    func initRegisterEvent() {
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableBegin, object: ApplicationDataSync.dataSync)
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableSuccess, object: ApplicationDataSync.dataSync)
+        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableFailed, object: ApplicationDataSync.dataSync)
+    }
+    @objc func dataSyncEvent(_ notification: Notification) {
+        guard let table = notification.userInfo?["table"] as? Table, self.table == table else {
+            return
+        }
+        switch notification.name {
+        case .dataSyncForTableBegin:
+            break
+        case .dataSyncForTableSuccess:
+            break
+        case .dataSyncForTableFailed:
+            break
+        default:
+            return
+        }
+    }
+
+    open func dataSourceWillChangeContent(_ dataSource: DataSource) {
+        /*loadingView = UIView(frame: self.view.frame)
+
+         loadingView?.backgroundColor = .red
+
+         let parentView: UIView = (self.navigationController?.view ?? self.view)
+
+         parentView.addSubview(loadingView!)
+         parentView.bringSubviewToFront(loadingView!)*/
+    }
+    //@objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
+    //@objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
+
+    open func dataSourceDidChangeContent(_ dataSource: DataSource) {
+        DispatchQueue.main.async {
+            //self.loadingView?.removeFromSuperview()
+        }
+    }
+
     // MARK: - Utility
 
     open func indexPath(for cell: Any?) -> IndexPath? {
@@ -322,16 +376,33 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
     }
 
-    // MARK: - IBActions
-    @IBAction func refresh(_ sender: Any?) {
-        onRefreshBegin()
+    /// Display a message when data refresh end.
+    /// Could be overriden to display or not the result..
+    open func refreshMessage(_ result: DataSync.SyncResult) {
+        switch result {
+        case .success:
+            SwiftMessages.info("Data has been reloaded")
+        case .failure(let error):
+            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+        }
+    }
+}
 
-        //let dataSync = ApplicationLoadDataStore.castedInstance.dataSync
-        // _ = dataSync.sync { _ in
-        // self.dataSource.performFetch()
-        self.refreshControl?.endRefreshing()
-        self.onRefreshEnd()
-        //}
+// MARK: - IBAction
+extension ListFormCollection {
+
+    /// Action on pull to refresh
+    @IBAction open func refresh(_ sender: Any?) {
+        onRefreshBegin()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.dataReloadTask = dataSync { result in
+                DispatchQueue.main.async { [weak self] in
+                    self?.refreshControl?.endRefreshing()
+                    self?.refreshMessage(result)
+                    self?.onRefreshEnd()
+                }
+            }
+        }
     }
 
     /// Scroll to the top of the current list form

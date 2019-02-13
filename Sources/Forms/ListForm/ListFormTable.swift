@@ -7,9 +7,13 @@
 //
 
 import Foundation
+
+import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
-import QMobileAPI
+
+import Moya
+import SwiftMessages
 
 @IBDesignable
 open class ListFormTable: UITableViewController, ListForm {
@@ -17,7 +21,6 @@ open class ListFormTable: UITableViewController, ListForm {
     public var dataSource: DataSource! = nil
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
-    @IBInspectable open var hasRefreshControl: Bool = false
 
     @IBOutlet open var searchBar: UISearchBar!
     public private(set) var searchActive: Bool = false
@@ -40,6 +43,13 @@ open class ListFormTable: UITableViewController, ListForm {
     @IBInspectable open var sortAscending: Bool = true
     /// If no sort field, use search field as sort field
     @IBInspectable open var searchFieldAsSortField: Bool = true
+
+    /// Active or not a pull to refresh action on list form (default: true)
+    @IBInspectable open var hasRefreshControl: Bool = true
+    /// Cancel reload data
+    var dataReloadTask: Cancellable?
+    /// In dev: a view to do not allow action?
+    var loadingView: UIView?
 
     /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
@@ -115,7 +125,6 @@ open class ListFormTable: UITableViewController, ListForm {
         }*/
     }
     //var triggerTreshold = 10
-    var loadingView: UIView?
 
     // MARK: - segue
 
@@ -320,14 +329,14 @@ open class ListFormTable: UITableViewController, ListForm {
     }
 
     open func dataSourceWillChangeContent(_ dataSource: DataSource) {
-        loadingView = UIView(frame: self.view.frame)
+        /*loadingView = UIView(frame: self.view.frame)
 
         loadingView?.backgroundColor = .red
 
         let parentView: UIView = (self.navigationController?.view ?? self.view)
 
         parentView.addSubview(loadingView!)
-        parentView.bringSubviewToFront(loadingView!)
+        parentView.bringSubviewToFront(loadingView!)*/
     }
     //@objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
     //@objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
@@ -369,20 +378,33 @@ open class ListFormTable: UITableViewController, ListForm {
         }
     }
 
+    /// Display a message when data refresh end.
+    /// Could be overriden to display or not the result..
+    open func refreshMessage(_ result: DataSync.SyncResult) {
+        switch result {
+        case .success:
+            SwiftMessages.info("Data has been reloaded")
+        case .failure(let error):
+            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+        }
+    }
 }
 
 // MARK: - IBAction
 extension ListFormTable {
 
+    /// Action on pull to refresh
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
-
-        //let dataSync = ApplicationDataStore.castedInstance.dataSync
-        // _ = dataSync.sync { _ in
-        // self.dataSource.performFetch()
-        self.refreshControl?.endRefreshing()
-        self.onRefreshEnd()
-        //}
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.dataReloadTask = dataSync { result in
+                DispatchQueue.main.async { [weak self] in
+                    self?.refreshControl?.endRefreshing()
+                    self?.refreshMessage(result)
+                    self?.onRefreshEnd()
+                }
+            }
+        }
     }
 
     /// Scroll to the top of this list form.
