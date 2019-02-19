@@ -182,10 +182,15 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
-    /// Called before starting a refresh
+    /// Called before starting a refresh.
+    ///
+    /// Here you could add a message on refresh control:
+    ///  self.refreshControl.title = "Start loading"
     open func onRefreshBegin() {}
-    /// Called after a refresh
-    open func onRefreshEnd() {}
+    /// Called after a refresh. By default display a message. Override it to change this behaviour.
+    open func onRefreshEnd(_ result: DataSync.SyncResult) {
+        self.refreshMessage(result)
+    }
 
     open func onSearchBegin() {}
     open func onSearchButtonClicked() {}
@@ -223,6 +228,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
+        //self.installObservers()
     }
 
     fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
@@ -302,11 +308,12 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     // MARK: QMobile Event
 
-    func initRegisterEvent() {
+    func installObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableBegin, object: ApplicationDataSync.dataSync)
         NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableSuccess, object: ApplicationDataSync.dataSync)
         NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableFailed, object: ApplicationDataSync.dataSync)
     }
+
     @objc func dataSyncEvent(_ notification: Notification) {
         guard let table = notification.userInfo?["table"] as? Table, self.table == table else {
             return
@@ -314,9 +321,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         switch notification.name {
         case .dataSyncForTableBegin:
             break
-        case .dataSyncForTableSuccess:
-            break
-        case .dataSyncForTableFailed:
+        case .dataSyncForTableSuccess, .dataSyncForTableFailed:
             break
         default:
             return
@@ -376,16 +381,6 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
     }
 
-    /// Display a message when data refresh end.
-    /// Could be overriden to display or not the result..
-    open func refreshMessage(_ result: DataSync.SyncResult) {
-        switch result {
-        case .success:
-            SwiftMessages.info("Data has been reloaded")
-        case .failure(let error):
-            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
-        }
-    }
 }
 
 // MARK: - IBAction
@@ -398,8 +393,7 @@ extension ListFormCollection {
             self.dataReloadTask = dataSync { result in
                 DispatchQueue.main.async { [weak self] in
                     self?.refreshControl?.endRefreshing()
-                    self?.refreshMessage(result)
-                    self?.onRefreshEnd()
+                    self?.onRefreshEnd(result)
                 }
             }
         }

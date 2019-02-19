@@ -7,7 +7,12 @@
 //
 
 import Foundation
+
+import Result
+import SwiftMessages
+
 import QMobileDataStore
+import QMobileDataSync
 
 public protocol ListForm: DataSourceDelegate, DataSourceSortable, Form {
 
@@ -47,6 +52,17 @@ extension ListForm {
             return nil
         }
         return dataSource.record(at: index)
+    }
+
+    /// Display a message when data refresh end.
+    /// Could be overriden to display or not the result..
+    func refreshMessage(_ result: DataSync.SyncResult) {
+        switch result {
+        case .success:
+            SwiftMessages.info("Data has been reloaded")
+        case .failure(let error):
+            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+        }
     }
 
 }
