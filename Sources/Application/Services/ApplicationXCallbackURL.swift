@@ -51,7 +51,7 @@ extension ApplicationXCallbackURL: ApplicationService {
             if let cancel = parameters["cancel"], cancel.boolValue {
                 ApplicationDataSync.dataSync.cancel()
             } else {
-                _ = dataReload { result in
+                _ = dataSync(operation: .reload) { result in
                     switch result {
                     case .success:
                         success(nil)

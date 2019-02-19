@@ -60,7 +60,7 @@ extension DataSourceSortable {
 
         // for the moment take the first in data store
         if let firstField = fields.first {
-            logger.warning("There is no sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
+            logger.warning("There is no valid sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
             sortDescriptors = [firstField.sortDescriptor(ascending: true)]
         } else {
             //assertionFailure("No sort field. Please fill sortField with a field name")

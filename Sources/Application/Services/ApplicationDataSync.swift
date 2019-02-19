@@ -55,7 +55,6 @@ extension ApplicationDataSync: ApplicationService {
                 _ = dataSync.drop()
                 }]
         }
-
     }
 
     public func applicationWillTerminate(_ application: UIApplication) {
@@ -128,12 +127,8 @@ extension ApplicationDataSync {
 
 }
 
-public func dataSync(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
-    return ApplicationDataSync.dataSync.sync(completionHandler)
-}
-
-public func dataReload(_ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
-    return ApplicationDataSync.dataSync.reload(completionHandler)
+public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
+    return ApplicationDataSync.dataSync.sync(operation: operation, completionHandler)
 }
 
 /// Get the last data sync date.
@@ -143,7 +138,7 @@ public func dataLastSync() -> Foundation.Date? {
     return metadata?.lastSync
 }
 
-// MARK: DataSyncDelegate
+// MARK: - DataSyncDelegate
 extension ApplicationDataSync: DataSyncDelegate {
 
     func willDataSyncWillLoad(tables: [Table]) {
@@ -193,7 +188,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 
 }
 
-// MARK: Preferences
+// MARK: - Preferences
 
 extension Prephirences {
 

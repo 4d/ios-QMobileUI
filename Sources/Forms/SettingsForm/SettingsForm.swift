@@ -19,11 +19,10 @@ open class SettingsForm: UITableViewController {
 
     public enum Section: Int {
 
-        case data
         case server
         case account
 
-        public static let all: [Section] = [.data, .server, .account]
+        public static let all: [Section] = [.server, .account]
 
         static func register(in tableView: UITableView) {
             for section in Section.all {
@@ -33,8 +32,6 @@ open class SettingsForm: UITableViewController {
 
         public func register(in tableView: UITableView) {
             switch self {
-            case .data:
-                tableView.registerHeaderFooter(SettingsDataSectionFooter())
             case .server:
                 tableView.registerHeaderFooter(SettingsServerSectionFooter())
             default:
@@ -44,8 +41,6 @@ open class SettingsForm: UITableViewController {
 
         public func dequeueFooter(in tableView: UITableView) -> UITableViewHeaderFooterView? {
             switch self {
-            case .data:
-                return tableView.dequeueReusableHeaderFooterView(SettingsDataSectionFooter.self)
             case .server:
                 return tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
             default:

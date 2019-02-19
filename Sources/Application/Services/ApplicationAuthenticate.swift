@@ -338,7 +338,7 @@ class DataReloadManager {
 
             //center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
 
-            let reload = dataReload { [weak self] result in
+            let reload = dataSync(operation: .reload) { [weak self] result in
                 guard let this = self else {return}
 
                 center.removeObserver(this)
