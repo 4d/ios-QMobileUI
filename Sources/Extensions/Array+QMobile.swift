@@ -16,6 +16,7 @@ extension Array where Element: AnyObject {
     }
 }
 extension Array where Element: Any {
+    /// Return list of objects of specified `type`.
     func objects<T>(of type: T.Type) -> [T] {
         return compactMap { $0 as? T }
     }
