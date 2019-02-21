@@ -113,7 +113,11 @@ extension ListForm {
         case .success:
             SwiftMessages.info("Data has been reloaded")
         case .failure(let error):
-            SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+            if case .apiError(let apiError) = error, let statusText = apiError.restErrors?.statusText {
+                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+            } else {
+                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+            }
         }
     }
 
