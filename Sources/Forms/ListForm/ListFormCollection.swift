@@ -45,7 +45,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     /// The pull to refresh control
     public var refreshControl: UIRefreshControl?
     /// Cancel reload data
-    var dataReloadTask: Cancellable?
+    var dataSyncTask: Cancellable?
 
     /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
@@ -389,13 +389,15 @@ extension ListFormCollection {
     /// Action on pull to refresh
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.dataReloadTask = dataSync { result in
-                DispatchQueue.main.async { [weak self] in
-                    self?.refreshControl?.endRefreshing()
-                    self?.onRefreshEnd(result)
-                }
+
+        let endRefreshing: (DataSync.SyncResult) -> Void = { result in
+            DispatchQueue.main.async { [weak self] in
+                self?.refreshControl?.endRefreshing()
+                self?.onRefreshEnd(result)
             }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.dataSyncTask = self.doRefresh(sender, self, endRefreshing)
         }
     }
 

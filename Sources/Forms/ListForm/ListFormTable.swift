@@ -14,6 +14,7 @@ import QMobileDataSync
 
 import Moya
 import SwiftMessages
+import Prephirences
 
 @IBDesignable
 open class ListFormTable: UITableViewController, ListForm {
@@ -47,7 +48,7 @@ open class ListFormTable: UITableViewController, ListForm {
     /// Active or not a pull to refresh action on list form (default: true)
     @IBInspectable open var hasRefreshControl: Bool = true
     /// Cancel reload data
-    var dataReloadTask: Cancellable?
+    var dataSyncTask: Cancellable?
     /// In dev: a view to do not allow action?
     var loadingView: UIView?
 
@@ -391,13 +392,15 @@ extension ListFormTable {
     /// Action on pull to refresh
     @IBAction open func refresh(_ sender: Any?) {
         onRefreshBegin()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.dataReloadTask = dataSync { result in
-                DispatchQueue.main.async { [weak self] in
-                    self?.refreshControl?.endRefreshing()
-                    self?.onRefreshEnd(result)
-                }
+
+        let endRefreshing: (DataSync.SyncResult) -> Void = { result in
+            DispatchQueue.main.async { [weak self] in
+                self?.refreshControl?.endRefreshing()
+                self?.onRefreshEnd(result)
             }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.dataSyncTask = self.doRefresh(sender, self, endRefreshing)
         }
     }
 
