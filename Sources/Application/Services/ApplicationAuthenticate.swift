@@ -204,9 +204,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
     /// Configure login message error if any
     fileprivate func configureErrorDisplay() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
         return { (messageView, config) in
-            messageView.tapHandler = { _ in
-                SwiftMessages.hide()
-            }
+            messageView.tapHandler = SwiftMessages.defaultTapHandler
             var config = config
             config.presentationStyle = .center
             config.duration = .forever

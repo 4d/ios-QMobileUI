@@ -24,6 +24,7 @@ extension SwiftMessages {
     public static var errorForegroundColor = UIColor(named: "MessageErrorForegroundColor")
     public static var errorDuration: TimeInterval = Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 20.0
 
+    /// Hide message when tap.
     public static var defaultTapHandler: ((_ view: BaseView) -> Void) = { _ in SwiftMessages.hide() }
 
     public static func debug(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
@@ -99,11 +100,11 @@ extension SwiftMessages {
             view.tapHandler = defaultTapHandler
 
             var config = SwiftMessages.Config()
-            if case .statusLine = layout {
+           /* if case .statusLine = layout {
                 config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
-            } else {
+            } else {*/
                 config.presentationContext = .automatic
-            }
+           /* }*/
             config.presentationStyle = .top
             config.duration = .seconds(seconds: infoDuration)
 
@@ -141,11 +142,11 @@ extension SwiftMessages {
 
             var config = SwiftMessages.Config()
             config.duration = .seconds(seconds: warningDuration)
-            if case .statusLine = layout {
+           /* if case .statusLine = layout {
                 config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
-            } else {
+            } else {*/
                 config.presentationContext = .automatic
-            }
+           /* }*/
 
             config = configure?(view, config) ?? config
 
@@ -155,7 +156,15 @@ extension SwiftMessages {
 
     public static func error(title: String, message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         onForeground {
-            let view = MessageView.viewFromNib(layout: .cardView)
+            var layout: MessageView.Layout = .cardView
+            if title.isEmpty {
+                let lineDelimiterPos = message.index(of: "\n")
+                if lineDelimiterPos == nil {
+                    layout = .statusLine
+                }
+            }
+
+            let view = MessageView.viewFromNib(layout: layout)
             if let backgroundColor = errorColor, let foregroundColor = errorForegroundColor {
                 view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
             } else {

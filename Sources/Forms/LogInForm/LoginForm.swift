@@ -216,17 +216,17 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
             }
             self.loginTextField.shake()
         } else if let error = error.urlError {
-            let serverCertificateCodes: [URLError.Code] = [
-                .serverCertificateHasBadDate,
-                .serverCertificateHasUnknownRoot,
-                .serverCertificateNotYetValid,
-                .serverCertificateUntrusted
-            ]
-            if serverCertificateCodes.contains(error.code) {
+
+            if error.isServerCertificateError {
                 SwiftMessages.error(title: "Server certificate error. Please advice the server administrator.",
                                     message: error.localizedDescription)
             } else {
-                SwiftMessages.warning(error.localizedDescription)
+                SwiftMessages.warning(error.localizedDescription, configure: { _, config in
+                    /*view.tapHandler = { _ in
+                        // XXX maybe allow to configure server url
+                    }*/
+                    return config
+                })
             }
         } else if let error = error.afError {
             SwiftMessages.warning(error.localizedDescription)
@@ -320,4 +320,19 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         cancelLogIn()
     }
 
+}
+
+private let serverCertificateCodes: [URLError.Code] = [
+    .serverCertificateHasBadDate,
+    .serverCertificateHasUnknownRoot,
+    .serverCertificateNotYetValid,
+    .serverCertificateUntrusted
+]
+
+extension URLError {
+
+    /// Return true if this is an server certificate error.
+    var isServerCertificateError: Bool {
+        return serverCertificateCodes.contains(self.code)
+    }
 }

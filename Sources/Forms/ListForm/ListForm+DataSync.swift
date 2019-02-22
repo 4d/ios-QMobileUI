@@ -52,7 +52,7 @@ extension ListForm {
                     // Display error before logout
                     SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
                                         message: dataSyncError.mustRetryMessage,
-                                        configure: self.configurelogout(sender, source))
+                                        configure: self.configureLogoutMessage(sender, source))
 
                 } else {
                     let api = APIManager.instance
@@ -96,16 +96,19 @@ extension ListForm {
         case .success:
             SwiftMessages.info("Data has been reloaded")
         case .failure(let error):
+            let title = "Issue when reloading data"
             if case .apiError(let apiError) = error, let statusText = apiError.restErrors?.statusText {
-                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+                SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
+            } else if let failureReason = error.failureReason {
+                SwiftMessages.warning(failureReason)
             } else {
-                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+                SwiftMessages.error(title: error.errorDescription ?? title, message: "")
             }
         }
     }
 
     // Configure logout dialog and action
-    func configurelogout(_ sender: Any? = nil, _ source: UIViewController) -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+    fileprivate func configureLogoutMessage(_ sender: Any? = nil, _ source: UIViewController) -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
         return { (messageView, config) in
             messageView.tapHandler = { _ in
                 SwiftMessages.hide()
@@ -120,7 +123,8 @@ extension ListForm {
         }
     }
 
-    func logout(_ sender: Any? = nil, _ source: UIViewController) {
+    /// Transition to log in
+    fileprivate func logout(_ sender: Any? = nil, _ source: UIViewController) {
         foreground {
             /// XXX check that there is no issue with that, view controller cycle for instance
             if let destination = Main.instantiate() {
