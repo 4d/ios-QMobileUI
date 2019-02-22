@@ -43,7 +43,7 @@ extension ApplicationAuthenticate: ApplicationService {
         if Prephirences.Auth.Logout.atStart {
             _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { [weak self] _ in
                 Prephirences.Auth.Logout.token = nil
-                self?.autoLogin()
+                self?.login()
             }
         } else {
             autoLogin()
@@ -99,7 +99,8 @@ extension ApplicationAuthenticate: ApplicationService {
 // MARK: login
 extension ApplicationAuthenticate {
 
-   func autoLogin() {
+   /// If there is a valid token do nothinh, otherwise call login.
+   fileprivate func autoLogin() {
         if let authToken = apiManager.authToken, authToken.isValidToken {
             logger.info("Application already logged with session \(authToken.id)")
         } else {
@@ -107,14 +108,18 @@ extension ApplicationAuthenticate {
         }
     }
 
-    func login() {
+    /// Login.
+    /// If application without auth do guest login,
+    /// otherwise let transition to `LoginForm`
+    fileprivate func login() {
         if Prephirences.Auth.Login.Guest.enabled {
             self.guestLogin()
         }
         // else login form must be displayed, show flow controller or main view controller
     }
 
-    func guestLogin() {
+    /// Login as guest (ie. without mail).
+    fileprivate func guestLogin() {
         assert(Prephirences.Auth.Login.Guest.enabled)
         // login guest mode
         let guestLogin = ""
@@ -137,7 +142,8 @@ extension ApplicationAuthenticate {
         logger.info("Application is trying to authenticate with 4d server `\(url)` using guest mode.")
     }
 
-    func logout(completionHandler: @escaping () -> Void) {
+    /// Force a logout.
+    fileprivate func logout(completionHandler: @escaping () -> Void) {
         _ = APIManager.instance.logout { _ in
             completionHandler()
         }
@@ -148,19 +154,27 @@ extension ApplicationAuthenticate {
 // MARK: LoginFormDelegate
 extension ApplicationAuthenticate: LoginFormDelegate {
 
-    /// When login manage what to do.
+    /// What to after login.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool {
         // If reload data after login
-        guard result.isSuccess else { return false }
-        // If reload data after login
-        guard Prephirences.Auth.reloadData else { return false }
+        guard result.isSuccess else {
+            self.tryCount = 0
+            return false
+        }
 
-        SwiftMessages.loading("Reloading data")
+        let operation: DataSync.Operation = Prephirences.Auth.reloadData ? .reload: .sync
+        /// The user have custom data. What to do?
+        /// full reload?
+        /// reload embedded and sync?
+        /// reload only table with filter?
+
+        SwiftMessages.loading("\(operation.description.capitalized()) data")
+
         // Launch a background task to reload
-        _ = DataReloadManager.instance.reload { result in
+        _ = BackGroundDataSyncManager.instance.sync(operation: operation) { dataResult in
             SwiftMessages.hide()
 
-            switch result {
+            switch dataResult {
             case .success:
                 break
             case .failure(let error):
@@ -172,8 +186,8 @@ extension ApplicationAuthenticate: LoginFormDelegate {
                     self.tryCount += 1
                     let apiManager = self.apiManager
                     _ = apiManager.logout { _ in
-                        _ = apiManager.authentificate(login: "") { result in
-                            _ = self.didLogin(result: result)
+                        _ = apiManager.authentificate(login: "") { loginResult in
+                            _ = self.didLogin(result: loginResult)
                         }
                     }
                 } else {
@@ -183,9 +197,11 @@ extension ApplicationAuthenticate: LoginFormDelegate {
                 }
             }
         }
+
         return true
     }
 
+    /// Configure login message error if any
     fileprivate func configureErrorDisplay() -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
         return { (messageView, config) in
             messageView.tapHandler = { _ in
@@ -257,6 +273,8 @@ extension Prephirences {
 
 }
 
+// MARK: - Prephirencable
+
 /// some test about automatic proxy creation
 protocol Prephirencable {
     static var key: String {get}
@@ -280,9 +298,10 @@ extension Prephirencable {
     }
 }
 
-// MARK: Error
+// MARK: - Error
 extension DataSyncError {
 
+    /// Return true if the error need a retry after relogin
     var mustRetry: Bool {
         if case .apiError(let apiError) = self {
             if apiError.isHTTPResponseWith(code: .unauthorized) {
@@ -295,6 +314,7 @@ extension DataSyncError {
         return false
     }
 
+    /// The message to describe why we retry.
     var mustRetryMessage: String {
         if case .apiError(let apiError) = self {
             if apiError.isHTTPResponseWith(code: .unauthorized) {
@@ -308,42 +328,37 @@ extension DataSyncError {
     }
 }
 
-// MARK: reload manager
+// MARK: - sync manager
 
-/// Manager data reload action
-class DataReloadManager {
+/// Manager data sync action in background
+class BackGroundDataSyncManager {
 
-    static let instance = DataReloadManager()
+    static let instance = BackGroundDataSyncManager()
 
     //var listeners: [DataReloadListener] = []
     var cancellable = CancellableComposite()
 
-    fileprivate func log(_ result: DataSync.SyncResult) {
+    fileprivate func log(operation: DataSync.Operation, _ result: DataSync.SyncResult) {
         // Just log
         switch result {
         case .success:
-            logger.info("data reloaded")
+            logger.info("data \(operation.verb)")
         case .failure(let error):
-            logger.error("data reloading failed \(error)")
+            logger.error("data \(operation.description) failed \(error)")
         }
     }
 
-    func reload(delay: TimeInterval = 3, _ completionHandler: DataSync.SyncCompletionHandler? = nil) -> Cancellable {
+    func sync(operation: DataSync.Operation, delay: TimeInterval = 3, _ completionHandler: DataSync.SyncCompletionHandler? = nil) -> Cancellable {
         cancellable.cancel()
         cancellable = CancellableComposite()
 
-        let center = NotificationCenter.default
         background(delay) { [weak self] in
             guard let this = self else {return}
 
-            //center.addObserver(this, selector: #selector(this.application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
-
-            let reload = dataSync(operation: .reload) { [weak self] result in
+            let reload = dataSync(operation: operation) { [weak self] result in
                 guard let this = self else {return}
 
-                center.removeObserver(this)
-
-                this.log(result)
+                this.log(operation: operation, result)
                 //this.notify(result)
                 completionHandler?(result)
             }

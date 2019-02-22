@@ -13,12 +13,11 @@ import QMobileDataSync
 extension DetailsForm {
 
     public var table: Table? {
-        assert(!ApplicationDataSync.dataSync.tablesInfoByTable.isEmpty) // not loaded...
         guard let tableName = self.tableName else {
             return nil
         }
-
-        let dataSync = ApplicationDataSync.dataSync
+        let dataSync = ApplicationDataSync._instance.dataSync
+        assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
         return dataSync.tables.filter { $0.name == tableName }.first
     }
 

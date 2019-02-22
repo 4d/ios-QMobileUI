@@ -21,7 +21,7 @@ import QMobileDataSync
 class ApplicationDataSync: NSObject {
 
     // shared instance of data sync object for all QMoble application
-    static let dataSync: DataSync = DataSync.instance
+    let dataSync: DataSync = DataSync.instance
 
     let operationQueue = OperationQueue(underlyingQueue: .background)
     var dataStoreListeners: [NSObjectProtocol] = []
@@ -32,10 +32,13 @@ class ApplicationDataSync: NSObject {
 
 extension ApplicationDataSync: ApplicationService {
 
-    public static var instance: ApplicationService = ApplicationDataSync()
+    public static var instance: ApplicationService {
+        return _instance
+    }
+
+    static let _instance = ApplicationDataSync() // swiftlint:disable:this identifier_name
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        let dataSync = ApplicationDataSync.dataSync
         dataSync.delegate = self
 
         // Start sync after data store loading
@@ -52,16 +55,14 @@ extension ApplicationDataSync: ApplicationService {
         if Prephirences.Auth.reloadData {
              let apiManager = dataSync.apiManager
             apiManagerListeners += [apiManager.observe(.apiManagerLogout) { _ in
-                _ = dataSync.drop()
+                _ = self.dataSync.drop()
                 }]
         }
     }
 
     public func applicationWillTerminate(_ application: UIApplication) {
         applicationWillTerminate = true
-        let cancel = Prephirences.DataSync.Cancel.atTheEnd
-        let dataSync = ApplicationDataSync.dataSync
-        if cancel {
+        if Prephirences.DataSync.Cancel.atTheEnd {
             dataSync.cancel()
         }
         dataSync.delegate = nil
@@ -81,22 +82,24 @@ extension ApplicationDataSync: ApplicationService {
     public func applicationWillEnterForeground(_ application: UIApplication) {
         if Prephirences.DataSync.Sync.ifEnterForeground {
             // sync if enter foreground
-            let future: DataSync.SyncFuture = ApplicationDataSync.dataSync.sync()
+            let future: DataSync.SyncFuture = dataSync.sync()
             future.onSuccess {
                 logger.debug("data from data store synchronized")
                 SwiftMessages.info("Data updated")
             }
             future.onFailure { error in
+                /// XXX if not logued do not warn?
                 logger.warning("Failed to synchronize data - \(error)")
             }
+
         } else if Prephirences.DataSync.Cancel.ifEnterForeground {
-            ApplicationDataSync.dataSync.cancel()
+            dataSync.cancel()
         }
     }
 
     public func applicationDidEnterBackground(_ application: UIApplication) {
         if Prephirences.DataSync.Cancel.ifEnterBackground {
-            ApplicationDataSync.dataSync.cancel()
+           dataSync.cancel()
         }
     }
 
@@ -105,9 +108,9 @@ extension ApplicationDataSync: ApplicationService {
 extension ApplicationDataSync {
 
     func startSyncAtStart() {
+        // TODO  #105180, if not loggued do nothing?
         guard !syncAtStartDone else { return }
-        syncAtStartDone = true
-        let dataSync = ApplicationDataSync.dataSync
+        syncAtStartDone = true // do only one time
         let syncAtStart = Prephirences.DataSync.Sync.atStart
         let future: DataSync.SyncFuture = syncAtStart ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
@@ -128,14 +131,12 @@ extension ApplicationDataSync {
 }
 
 public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
-    return ApplicationDataSync.dataSync.sync(operation: operation, completionHandler)
+    return ApplicationDataSync._instance.dataSync.sync(operation: operation, completionHandler)
 }
 
 /// Get the last data sync date.
 public func dataLastSync() -> Foundation.Date? {
-    let dataStore = ApplicationDataSync.dataSync.dataStore
-    var metadata = dataStore.metadata
-    return metadata?.lastSync
+    return ApplicationDataSync._instance.dataSync.dataStore.metadata?.lastSync
 }
 
 // MARK: - DataSyncDelegate

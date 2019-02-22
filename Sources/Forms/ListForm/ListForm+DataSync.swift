@@ -7,6 +7,11 @@
 //
 
 import Foundation
+
+import Moya
+import Prephirences
+import SwiftMessages
+
 import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
@@ -15,7 +20,7 @@ extension ListForm {
 
     /// Return information about current table using 4D table and field naming
     public var table: Table? {
-        let dataSync = ApplicationDataSync.dataSync
+        let dataSync = ApplicationDataSync._instance.dataSync
         assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
 
         for (table, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
@@ -26,7 +31,7 @@ extension ListForm {
 
     /// Return information about current table using mobile database table and field naming
     public var tableInfo: DataStoreTableInfo? {
-        let dataSync = ApplicationDataSync.dataSync
+        let dataSync = ApplicationDataSync._instance.dataSync
         //assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
 
         for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
@@ -34,4 +39,100 @@ extension ListForm {
         }
         return nil
     }
+
+    // MARK: - data sync refresh
+
+    /// Do the data sync, manage error to retry if necessary.
+    func doRefresh(_ sender: Any? = nil, _ source: UIViewController, tryCount: Int = Prephirences.Auth.Login.Guest.maxRetry, _ complementionHandler: @escaping DataSync.SyncCompletionHandler) -> Cancellable? {
+        let cancellable = CancellableComposite()
+        let dataSyncTask = dataSync { result in
+            let title = "Issue when reloading data"
+            if case .failure(let dataSyncError) = result, dataSyncError.mustRetry {
+                if Prephirences.Auth.Login.form {
+                    // Display error before logout
+                    SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
+                                        message: dataSyncError.mustRetryMessage,
+                                        configure: self.configurelogout(sender, source))
+
+                } else {
+                    let api = APIManager.instance
+                    _ = api.logout { _ in
+                        _ = APIManager.instance.authentificate(login: "") { authResult in
+                            switch authResult {
+                            case .success:
+                                // retry XXX manage it elsewhere with a request retrier
+                                if tryCount > 0 {
+                                    if let dataSyncTask = self.doRefresh(sender, source, tryCount: tryCount - 1, complementionHandler) {
+                                        cancellable.append(dataSyncTask)
+                                    }
+                                } else {
+                                    complementionHandler(result)
+                                }
+                            case .failure(let authError):
+                                if authError.restErrors?.statusText != nil { // If a failure message is in guest login, it will be more useful than first error
+                                    complementionHandler(.failure(.apiError(authError)))
+                                } else {
+                                    complementionHandler(result)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                complementionHandler(result)
+            }
+        }
+        if let dataSyncTask = dataSyncTask {
+            cancellable.append(dataSyncTask)
+            return cancellable
+        }
+        return nil
+    }
+
+    /// Display a message when data refresh end.
+    /// Could be overriden to display or not the result..
+    func refreshMessage(_ result: DataSync.SyncResult) {
+        switch result {
+        case .success:
+            SwiftMessages.info("Data has been reloaded")
+        case .failure(let error):
+            if case .apiError(let apiError) = error, let statusText = apiError.restErrors?.statusText {
+                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: statusText)
+            } else {
+                SwiftMessages.error(title: error.errorDescription ?? "Issue when reloading data", message: error.failureReason ?? "")
+            }
+        }
+    }
+
+    // Configure logout dialog and action
+    func configurelogout(_ sender: Any? = nil, _ source: UIViewController) -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+        return { (messageView, config) in
+            messageView.tapHandler = { _ in
+                SwiftMessages.hide()
+                self.logout(sender, source)
+            }
+            var config = config
+            config.presentationStyle = .center
+            config.duration = .forever
+            // no interactive because there is no way yet to get background tap handler to make logout
+            config.dimMode = .gray(interactive: false)
+            return config
+        }
+    }
+
+    func logout(_ sender: Any? = nil, _ source: UIViewController) {
+        foreground {
+            /// XXX check that there is no issue with that, view controller cycle for instance
+            if let destination = Main.instantiate() {
+                let identifier = "logout"
+                // prepare destination like done with segue
+                source.prepare(for: UIStoryboardSegue(identifier: identifier, source: source, destination: destination), sender: sender)
+                // and present it
+                source.present(destination, animated: true) {
+                    logger.debug("\(destination) presented by \(source)")
+                }
+            }
+        }
+    }
+
 }

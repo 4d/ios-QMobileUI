@@ -21,6 +21,9 @@ class ApplicationXCallbackURL: NSObject {
 extension ApplicationXCallbackURL: ApplicationService {
 
     static var instance: ApplicationService = ApplicationXCallbackURL()
+    var dataSync: DataSync {
+        return ApplicationDataSync._instance.dataSync
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let scheme = preferences.string(forKey: "com.4d.qa.urlScheme"),
@@ -29,11 +32,11 @@ extension ApplicationXCallbackURL: ApplicationService {
         }
         Manager.shared.callbackURLScheme = scheme
 
-        Manager.shared["sync"] = { parameters, success, failure, cancel in
+        Manager.shared["sync"] = {  [weak self] parameters, success, failure, cancel in
             if let cancel = parameters["cancel"], cancel.boolValue {
-                ApplicationDataSync.dataSync.cancel()
+                self?.dataSync.cancel()
             } else {
-                /* let cancellable */ _ = dataSync { result in
+                /* let cancellable */ _ = self?.dataSync.sync { result in
                     switch result {
                     case .success:
                         success(nil)
@@ -47,11 +50,11 @@ extension ApplicationXCallbackURL: ApplicationService {
                 }
             }
         }
-        Manager.shared["reload"] = { parameters, success, failure, cancel in
+        Manager.shared["reload"] = { [weak self] parameters, success, failure, cancel in
             if let cancel = parameters["cancel"], cancel.boolValue {
-                ApplicationDataSync.dataSync.cancel()
+                self?.dataSync.cancel()
             } else {
-                _ = dataSync(operation: .reload) { result in
+                _ = self?.dataSync.sync(operation: .reload) { result in
                     switch result {
                     case .success:
                         success(nil)
@@ -72,7 +75,7 @@ extension ApplicationXCallbackURL: ApplicationService {
             } else {
                 path = .userTemporary
             }
-            _ =  ApplicationDataSync.dataSync.dump(to: path) {
+            _ =  ApplicationDataSync._instance.dataSync.dump(to: path) {
 
                 success(nil)
             }
@@ -113,6 +116,7 @@ extension ApplicationXCallbackURL: ApplicationService {
 
 }
 
+// Mark Error
 extension DataSyncError: FailureCallbackError {
     public var code: Int {
         switch self {

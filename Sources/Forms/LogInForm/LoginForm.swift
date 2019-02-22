@@ -18,7 +18,9 @@ import SwiftMessages
 import QMobileAPI
 import QMobileDataSync
 
+/// Delegate for login form
 protocol LoginFormDelegate: NSObjectProtocol {
+    /// Result of login operation.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool
 }
 
@@ -303,6 +305,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     // MARK: IBAction
 
+    /// Login action linked to the login button.
     @IBAction open func login(_ sender: Any!) {
         // if click but not available -> shake
         guard isLoginClickable else {
