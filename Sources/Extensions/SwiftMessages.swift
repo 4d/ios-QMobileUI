@@ -29,6 +29,8 @@ extension SwiftMessages {
 
     public static func debug(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         #if DEBUG
+        let enabled = Prephirences.sharedInstance["alert.debug.enabled"] as? Bool ?? true
+        guard enabled else { return }
         let debugId = "debug"
         SwiftMessages.hide(id: debugId)
         onForeground {

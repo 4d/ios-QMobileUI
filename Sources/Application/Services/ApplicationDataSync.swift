@@ -28,6 +28,9 @@ class ApplicationDataSync: NSObject {
     var apiManagerListeners: [NSObjectProtocol] = []
     var syncAtStartDone: Bool = false
     var applicationWillTerminate: Bool = false
+
+    var reachabilityTask: Cancellable?
+    var reachabilityStatus: NetworkReachabilityStatus = .unknown
 }
 
 extension ApplicationDataSync: ApplicationService {
@@ -40,6 +43,8 @@ extension ApplicationDataSync: ApplicationService {
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         dataSync.delegate = self
+
+        monitorReachability()
 
         // Start sync after data store loading
         let dataStore = dataSync.dataStore
@@ -77,6 +82,7 @@ extension ApplicationDataSync: ApplicationService {
             apiManager.unobserve(listener)
         }
         apiManagerListeners = []
+        stopMonitoringReachability()
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
@@ -85,7 +91,7 @@ extension ApplicationDataSync: ApplicationService {
             let future: DataSync.SyncFuture = dataSync.sync()
             future.onSuccess {
                 logger.debug("data from data store synchronized")
-                SwiftMessages.info("Data updated")
+                //SwiftMessages.info("Data updated")
             }
             future.onFailure { error in
                 /// XXX if not logued do not warn?
@@ -114,18 +120,39 @@ extension ApplicationDataSync {
         let syncAtStart = Prephirences.DataSync.Sync.atStart
         let future: DataSync.SyncFuture = syncAtStart ? dataSync.sync(): dataSync.initFuture()
         future.onSuccess {
-            logger.debug("data from data store initiliazed")
+            logger.debug("Data from data store initiliazed")
             if syncAtStart {
-                SwiftMessages.info("Data updated")
+                //SwiftMessages.info("Data updated")
+                logger.info("Data synchronized at start")
             }
         }
         future.onFailure { error in
             if syncAtStart {
+                self.monitorReachability() // XXX maybe according to error
                 logger.warning("Failed to initialize data from data store or synchronize data: \(error)")
             } else {
                 logger.warning("Failed to initialize data from data store \(error)")
             }
         }
+    }
+
+    fileprivate func monitorReachability() {
+        //self.reachability = APIManager.instance.reachability { status in
+        self.reachabilityTask = APIManager.reachability { status in
+            self.reachabilityStatus = status
+            switch status {
+            case .reachable(let type):
+                logger.debug("Server is reachable using \(type)")
+            case .notReachable, .unknown:
+                logger.debug("Server not reachable")
+            }
+        }
+    }
+
+    fileprivate func stopMonitoringReachability() {
+        reachabilityTask?.cancel()
+        reachabilityTask = nil
+        reachabilityStatus = .unknown
     }
 
 }
@@ -208,7 +235,7 @@ extension Prephirences {
         public struct Sync: Prephirencable { // swiftlint:disable:this nesting
             static let parent = DataSync.instance
 
-            public static let atStart: Bool = instance["atStart"] as? Bool ?? false
+            public static let atStart: Bool = instance["atStart"] as? Bool ?? true
             public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
 
         }

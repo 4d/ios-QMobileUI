@@ -168,17 +168,16 @@ extension ApplicationAuthenticate: LoginFormDelegate {
         /// reload embedded and sync?
         /// reload only table with filter?
 
-        SwiftMessages.loading("\(operation.description.capitalized()) data")
+        //SwiftMessages.loading("\(operation.description.capitalized()) data")
 
         // Launch a background task to reload
         _ = BackGroundDataSyncManager.instance.sync(operation: operation) { dataResult in
-            SwiftMessages.hide()
+            //SwiftMessages.hide()
 
             switch dataResult {
             case .success:
                 break
             case .failure(let error):
-
                 // XXX maybe manager this error management in DataReloadManager
                 let title = "Issue when reloading data"
                 if Prephirences.Auth.Login.Guest.enabled,
