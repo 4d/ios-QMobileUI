@@ -41,6 +41,7 @@
 		481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */; };
 		4826191620BFE05000226632 /* SwiftMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4826191520BFE05000226632 /* SwiftMessages.swift */; };
 		4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */; };
+		482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */; };
 		4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */; };
 		483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483A964A21B04465009F2330 /* LoginForm+Flow.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
@@ -213,6 +214,7 @@
 		48268C5B1E8136E9000F7719 /* Binder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binder.swift; sourceTree = "<group>"; };
 		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
 		4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationFeedBack.swift; sourceTree = "<group>"; };
+		482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationReachability.swift; sourceTree = "<group>"; };
 		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
 		483A964A21B04465009F2330 /* LoginForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginForm+Flow.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
@@ -740,6 +742,7 @@
 			children = (
 				48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */,
 				4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */,
+				482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
 				489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */,
 				FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */,
@@ -1111,6 +1114,7 @@
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */,
+				482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */,
 				480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */,
 				480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */,
 				48E49CEF1EB9CA70002B60AF /* ApplicationValueTransformers.swift in Sources */,

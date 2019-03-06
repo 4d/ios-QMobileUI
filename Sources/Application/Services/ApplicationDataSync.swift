@@ -20,17 +20,18 @@ import QMobileDataSync
 /// Load the mobile database
 class ApplicationDataSync: NSObject {
 
-    // shared instance of data sync object for all QMoble application
+    /// shared instance of data sync object for all QMoble application
     let dataSync: DataSync = DataSync.instance
 
     let operationQueue = OperationQueue(underlyingQueue: .background)
     var dataStoreListeners: [NSObjectProtocol] = []
     var apiManagerListeners: [NSObjectProtocol] = []
+
+    /// To prevent doing two times, keep info about sync at start
     var syncAtStartDone: Bool = false
+    /// keep terminate information
     var applicationWillTerminate: Bool = false
 
-    var reachabilityTask: Cancellable?
-    var reachabilityStatus: NetworkReachabilityStatus = .unknown
 }
 
 extension ApplicationDataSync: ApplicationService {
@@ -43,8 +44,6 @@ extension ApplicationDataSync: ApplicationService {
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         dataSync.delegate = self
-
-        monitorReachability()
 
         // Start sync after data store loading
         let dataStore = dataSync.dataStore
@@ -82,7 +81,6 @@ extension ApplicationDataSync: ApplicationService {
             apiManager.unobserve(listener)
         }
         apiManagerListeners = []
-        stopMonitoringReachability()
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
@@ -128,31 +126,11 @@ extension ApplicationDataSync {
         }
         future.onFailure { error in
             if syncAtStart {
-                self.monitorReachability() // XXX maybe according to error
                 logger.warning("Failed to initialize data from data store or synchronize data: \(error)")
             } else {
                 logger.warning("Failed to initialize data from data store \(error)")
             }
         }
-    }
-
-    fileprivate func monitorReachability() {
-        //self.reachability = APIManager.instance.reachability { status in
-        self.reachabilityTask = APIManager.reachability { status in
-            self.reachabilityStatus = status
-            switch status {
-            case .reachable(let type):
-                logger.debug("Server is reachable using \(type)")
-            case .notReachable, .unknown:
-                logger.debug("Server not reachable")
-            }
-        }
-    }
-
-    fileprivate func stopMonitoringReachability() {
-        reachabilityTask?.cancel()
-        reachabilityTask = nil
-        reachabilityStatus = .unknown
     }
 
 }

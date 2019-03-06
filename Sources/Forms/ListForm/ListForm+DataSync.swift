@@ -90,16 +90,27 @@ extension ListForm {
     }
 
     /// Display a message when data refresh end.
-    /// Could be overriden to display or not the result..
+    /// Could be overriden(not called) to display or not the result..
     func refreshMessage(_ result: DataSync.SyncResult) {
         switch result {
         case .success:
             SwiftMessages.info("Data has been reloaded")
         case .failure(let error):
             let title = "Issue when reloading data"
-            if case .apiError(let apiError) = error, let statusText = apiError.restErrors?.statusText {
-                SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
-            } else if let failureReason = error.failureReason {
+
+            if case .apiError(let apiError) = error {
+                if let statusText = apiError.restErrors?.statusText { // dev message
+                    SwiftMessages.error(title: error.errorDescription ?? title, message: statusText)
+                    return
+                } else /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
+                    if !ApplicationReachability.isReachable { // so check reachability status
+                        SwiftMessages.error(title: "", message: "Please check your network settings and data cover...")
+                        return
+                }
+                /*}*/
+            }
+            /// Localized error
+            if let failureReason = error.failureReason {
                 SwiftMessages.warning(failureReason)
             } else {
                 SwiftMessages.error(title: error.errorDescription ?? title, message: "")

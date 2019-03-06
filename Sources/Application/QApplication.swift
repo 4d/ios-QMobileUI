@@ -70,6 +70,9 @@ open class QApplication: UIApplication {
         // Log all logging step
         services.register(ApplicationStepLogging.instance)
 
+        // Check reachability of network
+        services.register(ApplicationReachability.instance)
+
         // Manage authentification
         services.register(ApplicationAuthenticate.instance)
 
