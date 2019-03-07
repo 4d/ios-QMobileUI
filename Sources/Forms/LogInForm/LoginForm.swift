@@ -266,7 +266,11 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     fileprivate func log(_ result: (Result<AuthToken, APIError>)) {
         switch result {
         case .success(let token):
-            logger.info("Application has been authenticated with \(String(describing: token.email)).")
+            if token.isValidToken {
+                logger.info("Application has been authenticated with \(String(describing: token.email)).")
+            } else {
+                logger.info("Application has been authenticated with \(String(describing: token.email)) but no valid token returned. Maybe session must be verified.")
+            }
         case .failure(let error):
             logger.warning("Failed to login: \(error)")
         }
@@ -294,8 +298,10 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
                 // If success, transition (otherway to do that, ask a delegate to do it)
                 switch result {
-                case .success:
-                    this.performTransition(sender)
+                case .success(let token):
+                    if token.isValidToken {
+                        this.performTransition(sender)
+                    }
                 case .failure:
                     break
                 }

@@ -157,7 +157,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
     /// What to after login.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool {
         // If reload data after login
-        guard result.isSuccess else {
+        guard result.isSuccess, result.value?.isValidToken ?? false else {
             self.tryCount = 0
             return false
         }
