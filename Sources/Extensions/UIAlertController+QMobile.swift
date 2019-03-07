@@ -24,6 +24,19 @@ public extension UIAlertController {
         }
     }
 
+    func cancelAction(title: String = "Cancel") -> UIAlertAction {
+        return UIAlertAction(title: title, style: .cancel) { _ in
+            self.dismiss(animated: true)
+        }
+    }
+
+}
+
+extension UIAlertController {
+
+    func show(_ viewController: UIViewController? = UIApplication.topViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
+        viewController?.present(self, animated: animated, completion: completion)
+    }
 }
 
 extension UIAlertAction {

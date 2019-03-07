@@ -103,6 +103,11 @@
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
 		48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
 		48AE2C631F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
+		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
+		48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */; };
+		48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */; };
+		48B23D072231154C00F6D94C /* UIAlertController+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23D002231154C00F6D94C /* UIAlertController+ActionUI.swift */; };
+		48B23D082231154C00F6D94C /* ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23D012231154C00F6D94C /* ActionUI.swift */; };
 		48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */; };
 		48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -274,6 +279,11 @@
 		48AE2C5F1F45754D0013FDEE /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		48AE2C601F4575590013FDEE /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		48AE2C611F4577A40013FDEE /* BrightFutures.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightFutures.framework; path = Carthage/Build/iOS/BrightFutures.framework; sourceTree = "<group>"; };
+		48B23CFA2231154C00F6D94C /* UIView+Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Action.swift"; sourceTree = "<group>"; };
+		48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+ActionUI.swift"; sourceTree = "<group>"; };
+		48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Floaty+ActionUI.swift"; sourceTree = "<group>"; };
+		48B23D002231154C00F6D94C /* UIAlertController+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ActionUI.swift"; sourceTree = "<group>"; };
+		48B23D012231154C00F6D94C /* ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionUI.swift; sourceTree = "<group>"; };
 		48B267241FB30D3F00C79323 /* BioAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioAuthenticator.swift; sourceTree = "<group>"; };
 		48B2F09F1EA8AC9100F67871 /* UITableView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+QMobile.swift"; sourceTree = "<group>"; };
 		48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DetailsForm+DataSync.swift"; sourceTree = "<group>"; };
@@ -640,6 +650,26 @@
 			name = Control;
 			sourceTree = "<group>";
 		};
+		48B23CF92231152A00F6D94C /* Action */ = {
+			isa = PBXGroup;
+			children = (
+				48B23D012231154C00F6D94C /* ActionUI.swift */,
+				48B23CFA2231154C00F6D94C /* UIView+Action.swift */,
+				48B23CFD2231154C00F6D94C /* Action+Impl */,
+			);
+			path = Action;
+			sourceTree = "<group>";
+		};
+		48B23CFD2231154C00F6D94C /* Action+Impl */ = {
+			isa = PBXGroup;
+			children = (
+				48B23D002231154C00F6D94C /* UIAlertController+ActionUI.swift */,
+				48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */,
+				48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */,
+			);
+			path = "Action+Impl";
+			sourceTree = "<group>";
+		};
 		48B267231FB30D1C00C79323 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -711,6 +741,7 @@
 				48EE07751E7ADEC000A8546E /* DataSource */,
 				48EE07791E7AE98900A8546E /* Forms */,
 				4846083920AF07BE00EE4696 /* Views */,
+				48B23CF92231152A00F6D94C /* Action */,
 				480392B41E929406008CF992 /* WIP */,
 			);
 			path = Sources;
@@ -1091,12 +1122,14 @@
 				4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */,
 				489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */,
 				48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */,
+				48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */,
 				48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */,
 				4846083620AF057A00EE4696 /* Timer+QMobile.swift in Sources */,
 				483FDA871E82836700FAF84B /* UITableViewController+QMobile.swift in Sources */,
 				48E71DC0212AA633003D10BD /* ApplicationOpenApp.swift in Sources */,
 				48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */,
 				487EC33E20AD83B500646B5B /* SettingLogOutCell.swift in Sources */,
+				48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */,
 				480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */,
 				483FDA891E8283DA00FAF84B /* DetailsForm.swift in Sources */,
 				480392BD1E929524008CF992 /* QApplication.swift in Sources */,
@@ -1120,6 +1153,7 @@
 				48E49CEF1EB9CA70002B60AF /* ApplicationValueTransformers.swift in Sources */,
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
 				483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */,
+				48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */,
 				4826191620BFE05000226632 /* SwiftMessages.swift in Sources */,
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */,
@@ -1141,6 +1175,7 @@
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
 				48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */,
 				4867450C20221BD20029924D /* WebAreaForm.swift in Sources */,
+				48B23D082231154C00F6D94C /* ActionUI.swift in Sources */,
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
@@ -1174,6 +1209,7 @@
 				48D584801E783447006F56B5 /* DataSource.swift in Sources */,
 				48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */,
 				48E4726B20333373002194C7 /* ApplicationImageCache.swift in Sources */,
+				48B23D072231154C00F6D94C /* UIAlertController+ActionUI.swift in Sources */,
 				4881205D20FDEF510041D774 /* LogForm.swift in Sources */,
 				4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */,
 				48F321DA20B3073900D39BAF /* ApplicationAuthenticate.swift in Sources */,
