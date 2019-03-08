@@ -123,7 +123,11 @@ extension UIView {
     /// Execute the action
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ view: ActionUI.View) {
         // TODO get parameters for network actions
-        let parameters: ActionParameters = ActionParameters()
+        var parameters: ActionParameters = ActionParameters()
+
+        if let provider = view.findActionContext(action, actionUI) {
+            parameters = provider.actionContext(action: action, actionUI: actionUI) ?? [:]
+        }
 
         // execute the network action
         _ = APIManager.instance.action(action, parameters: parameters) { (result) in
@@ -139,6 +143,27 @@ extension UIView {
                 alertController.addAction(alertController.dismissAction(title: "Done"))
             }
         }
+    }
+
+    func findActionContext(_ action: Action, _ actionUI: ActionUI) -> ActionParametersProvider? {
+        if let provider = self as? ActionParametersProvider {
+            return provider
+        }
+        // view hierarchy recursion
+        if let provider = self.superview?.findActionContext(action, actionUI) {
+            return provider
+        }
+
+        // specific case for table and collection view cell which break the view hierarchy
+        if let provider = self.parentCellView?.parentView?.findActionContext(action, actionUI) { /// XXX maybe do it only at first level to optimize
+            return provider
+        }
+
+        // in final resort, the current view controller
+        if let provider = self.viewController as? ActionParametersProvider {
+            return provider
+        }
+        return nil
     }
 
 }
@@ -158,4 +183,21 @@ extension UIBarItem {
 
     // cannot bind with action. UIBarButtonItem have "action: Selector" (or rename action)
 
+}
+
+// MARK: ActionParametersProvider
+
+/// Protocol to define class which could provide `ActionParameters`
+public protocol ActionParametersProvider {
+
+    /// Provide context information for the action.
+    func actionContext(action: Action, actionUI: ActionUI) -> ActionParameters?
+
+}
+
+/// Some well known key for ActionParameters (not public yet)
+struct ActionParametersProviderKey {
+    static let table = "dataClass"
+    static let record = "entity"
+    static let primaryKey = "primaryKey"
 }
