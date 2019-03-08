@@ -8,9 +8,11 @@
 
 import Foundation
 import UIKit
-import QMobileDataStore
 
-public protocol DetailsForm: class, Form {
+import QMobileDataStore
+import QMobileAPI
+
+public protocol DetailsForm: class, ActionParametersProvider, Form {
 
     // the root view of form
     var view: UIView! {get set}
@@ -30,23 +32,45 @@ extension DetailsForm {
     // MARK: model info from DataSource
 
     /// The source where to retrieve record information.
+    fileprivate var entry: DataSourceEntry? {
+        return view.table
+    }
+
+    /// The source where to retrieve record information.
     public var dataSource: DataSource? {
-        return self.view.table?.dataSource
-    }
-
-    /// Current index of the record in `dataSource`
-    public var indexPath: IndexPath? {
-        return self.view.table?.indexPath
-    }
-
-    /// The record in `dataSource` at the `indexPath`
-    public var record: AnyObject? {
-        return (self.view.table?.record as? Record)?.store
+        return entry?.dataSource
     }
 
     /// Table name of the data source. (same as `dataSource?.tableName`)
     public var tableName: String? {
-        return self.dataSource?.tableName
+        return dataSource?.tableName
+    }
+
+    /// Current index of the record in `dataSource`
+    public var indexPath: IndexPath? {
+        return entry?.indexPath
+    }
+
+    fileprivate var _record: Record? { // swiftlint:disable:this identifier_name
+        return entry?.record as? Record
+    }
+
+    /// The record in `dataSource` at the `indexPath`
+    public var record: AnyObject? {
+        return _record?.store // CLEAN, not really clean to use wrapper
+    }
+
+    /// Get the primary key value of record.
+    fileprivate var recordKey: Any? {
+        guard let record = self._record else {
+            return nil
+        }
+        let userInfoKey = "primaryKey" /* DataStoreTableInfoUserInfoKey.primaryKey.rawValue */
+        guard let primaryKey = record.tableInfo.userInfo?[userInfoKey] as? String else {
+            return nil
+        }
+
+        return record[primaryKey]
     }
 
     // MARK: standards actions
@@ -133,8 +157,8 @@ extension DetailsForm {
     }
 
 }
+// MARK: - transtion on self
 
-// MARK: transtion on self
 extension DetailsForm {
 
     public func transitionOnSelf(duration: TimeInterval, options: UIView.AnimationOptions = [], changeViewContent: () -> Void) {
@@ -180,4 +204,21 @@ class TransitionContainerView: UIView, TransitionContainerViewType {
     }
     func snapshotViewAdded(_ view: UIView) {
     }
+}
+
+// MARK: - ActionParametersProvider
+
+extension DetailsForm {
+
+    public func actionContext(action: Action, actionUI: ActionUI) -> ActionParameters? {
+        var parameters = ActionParameters()
+        if let tableName = tableName {
+            parameters[ActionParametersProviderKey.table] = tableName
+        }
+        if let recordKey = recordKey {
+            parameters[ActionParametersProviderKey.record] =  [ActionParametersProviderKey.primaryKey: recordKey]
+        }
+        return parameters
+    }
+
 }

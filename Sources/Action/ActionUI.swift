@@ -12,14 +12,15 @@ import UIKit
 import QMobileAPI
 
 public protocol ActionUI {
-    typealias Handler = (Action, ActionUI) -> Void
-    static func build(from action: Action, handler: @escaping Handler) -> ActionUI
+    typealias View = UIView
+    typealias Handler = (Action, ActionUI, View) -> Void
+    static func build(from action: Action, view: View, handler: @escaping Handler) -> ActionUI
 }
 
 /// Builder class to force cast
 struct ActionUIBuilder {
-    static func build<T>(_ type: T.Type, from action: Action, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
-        return type.build(from: action, handler: handler) as? T
+    static func build<T>(_ type: T.Type, from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
+        return type.build(from: action, view: view, handler: handler) as? T
     }
 
     /// Provide an image for the passed action.
@@ -40,22 +41,22 @@ public protocol ActionSheetUI {
     //associatedtype ActionUIItem: ActionUI // XXX swift generic do not work well with objc dynamic and storyboards
     func actionUIType() -> ActionUI.Type
 
-    func build(from actionSheet: ActionSheet, handler: @escaping ActionUI.Handler) -> [ActionUI]
-    func build(from action: Action, handler: @escaping ActionUI.Handler) -> ActionUI?
+    func build(from actionSheet: ActionSheet, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> [ActionUI]
+    func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI?
 
     func addActionUI(_ item: ActionUI?)
 }
 
 public extension ActionSheetUI {
 
-    func build(from actionSheet: ActionSheet, handler: @escaping ActionUI.Handler) -> [ActionUI] {
+    func build(from actionSheet: ActionSheet, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> [ActionUI] {
         return actionSheet.actions.compactMap {
-            actionUIType().build(from: $0, handler: handler)
+            actionUIType().build(from: $0, view: view, handler: handler)
         }
     }
 
-    func build(from action: Action, handler: @escaping ActionUI.Handler) -> ActionUI? {
-        return actionUIType().build(from: action, handler: handler)
+    func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI? {
+        return actionUIType().build(from: action, view: view, handler: handler)
     }
 
     func addActionUIs(_ items: [ActionUI]) {

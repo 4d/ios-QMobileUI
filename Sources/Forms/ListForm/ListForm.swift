@@ -12,7 +12,7 @@ import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
 
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, Form {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionParametersProvider, Form {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }
@@ -50,6 +50,16 @@ extension ListForm {
             return nil
         }
         return dataSource.record(at: index)
+    }
+
+}
+
+// MARK: - ActionParametersProvider
+
+extension ListForm {
+
+    public func actionContext(action: Action, actionUI: ActionUI) -> ActionParameters? {
+        return [ActionParametersProviderKey.table: tableName]
     }
 
 }

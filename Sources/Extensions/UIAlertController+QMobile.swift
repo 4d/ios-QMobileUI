@@ -24,7 +24,7 @@ public extension UIAlertController {
         }
     }
 
-    func cancelAction(title: String = "Cancel") -> UIAlertAction {
+    func dismissAction(title: String = "Cancel") -> UIAlertAction {
         return UIAlertAction(title: title, style: .cancel) { _ in
             self.dismiss(animated: true)
         }

@@ -49,9 +49,9 @@ extension UITableView: ActionSheetUI {
 // MARK: - UIContextualAction
 
 extension UIContextualAction: ActionUI {
-    public static func build(from action: Action, handler: @escaping ActionUI.Handler) -> ActionUI {
+    public static func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = UIContextualAction(style: UIContextualAction.Style.from(actionStyle: action.style), title: action.label) { (contextualAction, _, handle) in
-            handler(action, contextualAction)
+            handler(action, contextualAction, view)
             let success = false // if true and style = destructive, line will be removed...
             handle(success)
         }
@@ -61,6 +61,7 @@ extension UIContextualAction: ActionUI {
         }
         return actionUI
     }
+
 }
 
 extension UIContextualAction.Style {
@@ -78,9 +79,9 @@ extension UIContextualAction.Style {
 // MARK: - UITableViewRowAction
 
 extension UITableViewRowAction: ActionUI {
-    public static func build(from action: Action, handler: @escaping ActionUI.Handler) -> ActionUI {
+    public static func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = self.init(style: UITableViewRowAction.Style.from(actionStyle: action.style), title: action.label, handler: { (tableAction, _) in
-            handler(action, tableAction)
+            handler(action, tableAction, view)
         })
         if let backgroundColor = ActionUIBuilder.actionColor(for: action) {
             actionUI.backgroundColor = backgroundColor
@@ -144,9 +145,7 @@ extension UITableView {
                                         subtitle: nil,
                                         dismissLabel: "Done",
                                         actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            let alertController = UIAlertController.build(from: moreSheet/*, dismissHandler: { handle(false) }*/) { _, _ in
-                //handle(false)
-            }
+            let alertController = UIAlertController.build(from: moreSheet, view: self, handler: self.executeAction)
             alertController.show {
                 handle(false) // to dismiss immediatly or in completion handler of alertController
             }
