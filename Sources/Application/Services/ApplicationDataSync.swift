@@ -21,8 +21,9 @@ import QMobileDataSync
 class ApplicationDataSync: NSObject {
 
     /// shared instance of data sync object for all QMoble application
-    let dataSync: DataSync = DataSync.instance
-
+    var dataSync: DataSync {
+        return DataSync.instance // lazy loaded, to let qmobileURL be created from settings/preferences
+    }
     let operationQueue = OperationQueue(underlyingQueue: .background)
     var dataStoreListeners: [NSObjectProtocol] = []
     var apiManagerListeners: [NSObjectProtocol] = []
