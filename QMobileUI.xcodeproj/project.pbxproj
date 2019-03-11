@@ -81,6 +81,7 @@
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		487EC33E20AD83B500646B5B /* SettingLogOutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487EC33D20AD83B500646B5B /* SettingLogOutCell.swift */; };
 		4881205D20FDEF510041D774 /* LogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4881205C20FDEF510041D774 /* LogForm.swift */; };
+		488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		489A68AB21B526AA00A90DC6 /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A68AA21B526AA00A90DC6 /* Form.swift */; };
@@ -260,6 +261,7 @@
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		487EC33D20AD83B500646B5B /* SettingLogOutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingLogOutCell.swift; sourceTree = "<group>"; };
 		4881205C20FDEF510041D774 /* LogForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogForm.swift; sourceTree = "<group>"; };
+		488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Action.swift"; sourceTree = "<group>"; };
 		489A68AA21B526AA00A90DC6 /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
@@ -608,6 +610,15 @@
 			path = account;
 			sourceTree = "<group>";
 		};
+		488D40382236BF1500F0E0B2 /* Binding */ = {
+			isa = PBXGroup;
+			children = (
+				48B23CFA2231154C00F6D94C /* UIView+Action.swift */,
+				488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */,
+			);
+			path = Binding;
+			sourceTree = "<group>";
+		};
 		489C3F8621AEDD6B0018664B /* MainNavigation */ = {
 			isa = PBXGroup;
 			children = (
@@ -654,20 +665,20 @@
 			isa = PBXGroup;
 			children = (
 				48B23D012231154C00F6D94C /* ActionUI.swift */,
-				48B23CFA2231154C00F6D94C /* UIView+Action.swift */,
-				48B23CFD2231154C00F6D94C /* Action+Impl */,
+				48B23CFD2231154C00F6D94C /* ActionUI */,
+				488D40382236BF1500F0E0B2 /* Binding */,
 			);
 			path = Action;
 			sourceTree = "<group>";
 		};
-		48B23CFD2231154C00F6D94C /* Action+Impl */ = {
+		48B23CFD2231154C00F6D94C /* ActionUI */ = {
 			isa = PBXGroup;
 			children = (
 				48B23D002231154C00F6D94C /* UIAlertController+ActionUI.swift */,
 				48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */,
 				48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */,
 			);
-			path = "Action+Impl";
+			path = ActionUI;
 			sourceTree = "<group>";
 		};
 		48B267231FB30D1C00C79323 /* Auth */ = {
@@ -1160,6 +1171,7 @@
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
+				488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */,
 				484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,

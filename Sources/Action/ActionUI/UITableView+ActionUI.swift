@@ -44,6 +44,39 @@ extension UITableView: ActionSheetUI {
     }
 
     static let maxVisibleContextualActions = 3
+
+    func swipeActionsConfiguration(for record: Any) -> UISwipeActionsConfiguration? {
+        let tableView = self
+        var contextualActions = tableView.contextualActions
+        var configuration = UISwipeActionsConfiguration(actions: contextualActions)
+        guard !contextualActions.isEmpty else { return configuration }
+
+        configuration.performsFirstActionWithFullSwipe = false
+        guard contextualActions.count > UITableView.maxVisibleContextualActions else { return configuration }
+
+        // swipe action more "..."
+        contextualActions = contextualActions[0..<(UITableView.maxVisibleContextualActions-1)].array
+        let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, _, handle) in
+            // TODO pass record according to index... for a new handler
+
+            guard let actions = tableView._actionSheet?.actions else { return }
+
+            let moreSheet = ActionSheet(title: nil,
+                                        subtitle: nil,
+                                        dismissLabel: "Done",
+                                        actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
+            let alertController = UIAlertController.build(from: moreSheet, view: self, handler: self.executeAction)
+            alertController.show {
+                handle(false) // to dismiss immediatly or in completion handler of alertController
+            }
+        })
+        moreItem.image = UIImage(named: "tableMore")
+        contextualActions.append(moreItem)
+
+        configuration = UISwipeActionsConfiguration(actions: contextualActions)
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
 }
 
 // MARK: - UIContextualAction
@@ -77,7 +110,7 @@ extension UIContextualAction.Style {
 }
 
 // MARK: - UITableViewRowAction
-
+/*
 extension UITableViewRowAction: ActionUI {
     public static func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = self.init(style: UITableViewRowAction.Style.from(actionStyle: action.style), title: action.label, handler: { (tableAction, _) in
@@ -103,7 +136,7 @@ extension UITableViewRowAction.Style {
 }
 
 // MARK: - UISwipeActionsConfiguration
-/*
+
  extension UISwipeActionsConfiguration: ActionSheetUI {
 
  // public typealias ActionUIItem = UIContextualAction
@@ -122,43 +155,6 @@ extension UITableViewRowAction.Style {
  self.init(actions: actions.compactMap { $0 as? UIContextualAction })
  }
  }*/
-
-extension UITableView {
-
-    func swipeActionsConfiguration(at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let tableView = self
-        var contextualActions = tableView.contextualActions
-        var configuration = UISwipeActionsConfiguration(actions: contextualActions)
-        guard !contextualActions.isEmpty else { return configuration }
-
-        configuration.performsFirstActionWithFullSwipe = false
-        guard contextualActions.count > UITableView.maxVisibleContextualActions else { return configuration }
-
-        // swipe action more "..."
-        contextualActions = contextualActions[0..<(UITableView.maxVisibleContextualActions-1)].array
-        let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, _, handle) in
-            // TODO pass record according to index... for a new handler
-
-            guard let actions = tableView._actionSheet?.actions else { return }
-
-            let moreSheet = ActionSheet(title: nil,
-                                        subtitle: nil,
-                                        dismissLabel: "Done",
-                                        actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            let alertController = UIAlertController.build(from: moreSheet, view: self, handler: self.executeAction)
-            alertController.show {
-                handle(false) // to dismiss immediatly or in completion handler of alertController
-            }
-        })
-        moreItem.image = UIImage(named: "TableMore")
-        contextualActions.append(moreItem)
-
-        configuration = UISwipeActionsConfiguration(actions: contextualActions)
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
-    }
-
-}
 
 fileprivate extension ArraySlice {
     var array: [Element] {

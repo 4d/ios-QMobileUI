@@ -108,24 +108,33 @@ open class ListFormTable: UITableViewController, ListForm {
         super.willMove(toParent: parent)
     }
 
+    /*override open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }*/
+
     // MARK: - table view delegate
-    open override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+  override open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // super.tableView(tableView, didSelectRowAt: indexPath)
-        if let record = dataSource.record(at: indexPath) {
-            onClicked(record: record, at: indexPath)
-        }
+        guard let record = dataSource.record(at: indexPath) else { return }
+        onClicked(record: record, at: indexPath)
     }
 
-    open override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-       // super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
+    /*override open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
 
-       /* XXX Could load more data if pagination
+         XXX Could load more data if pagination
          if (self.dataSource.items.count - triggerTreshold) == indexPath.row
-            && indexPath.row > triggerTreshold {
-            onScrollDown(...)
-        }*/
+         && indexPath.row > triggerTreshold {
+         onScrollDown(...)
+         }
+    }*/
+
+    // MARK: - UITableViewUISwipeActionsConfigurationRowAction
+    // or leadingSwipeActionsConfigurationForRowAt?
+    override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let record = dataSource.record(at: indexPath) else { return nil }
+        return tableView.swipeActionsConfiguration(for: record)
     }
-    //var triggerTreshold = 10
 
     // MARK: - segue
 
