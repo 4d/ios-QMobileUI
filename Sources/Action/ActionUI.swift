@@ -113,9 +113,27 @@ class ActionUIManager {
                         SwiftMessages.info(statusText)
                     }
 
+                    if value.dataSynchro {
+                        logger.info("Data synchronisation is launch after action \(action.name)")
+                        _ = dataSync { result in
+                            switch result {
+                            case .failure(let error):
+                                logger.warning("Failed to do data synchro after action \(action.name): \(error)")
+                            case .success:
+                                logger.warning("Data synchro after action \(action.name) success")
+                            }
+                        }
+                    }
                     // TODO launch incremental sync? or other task
                 }
             }
         }
+    }
+}
+
+extension ActionResult {
+    /// Return: `true` if a data synchronisation must be done after the action.
+    fileprivate var dataSynchro: Bool {
+        return json["dataSynchro"].boolValue
     }
 }

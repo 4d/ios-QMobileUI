@@ -135,7 +135,7 @@ extension UIView {
         }
 
         // in final resort, the current view controller
-        if let provider = self.viewController as? ActionParametersProvider {
+        if let provider = self.owningViewController as? ActionParametersProvider {
             return provider
         }
         return nil

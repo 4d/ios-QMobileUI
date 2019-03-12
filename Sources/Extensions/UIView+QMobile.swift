@@ -34,23 +34,24 @@ public extension UIView {
         return nil
     }
 
-    // break MVC paradigm, use it only for debug
-    var viewController: UIViewController? {
-        var next = self.superview
-        while let safeNext = next {
-            if let nextResponder = safeNext.next {
-                if let responder = nextResponder as? UIViewController {
-                    return responder
-                }
+}
+
+extension UIResponder {
+    // break MVC paradigm, use it only for debug if possible
+    var owningViewController: UIViewController? {
+        var nextResponser = self
+        while let next = nextResponser.next {
+            nextResponser = next
+            if let viewController = nextResponser as? UIViewController {
+                return viewController
             }
-            next = safeNext.superview
         }
         return nil
     }
-
 }
 
 // MARK: - Frame
+/*
 public extension UIView {
 
     // swiftlint:disable:next identifier_name
@@ -74,7 +75,7 @@ public extension UIView {
         get { return frame.height }
         set { frame = frame.with(height: newValue) }
     }
-}
+}*/
 
 // MARK: animation delegate
 
