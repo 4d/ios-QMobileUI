@@ -156,6 +156,10 @@ extension SwiftMessages {
         }
     }
 
+    public static func error(error: LocalizedError, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+        SwiftMessages.error(title: error.errorDescription ?? "", message: error.failureReason ?? "", configure: configure)
+    }
+
     public static func error(title: String, message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         onForeground {
             var layout: MessageView.Layout = .cardView

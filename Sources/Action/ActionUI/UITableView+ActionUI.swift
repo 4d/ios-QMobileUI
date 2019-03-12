@@ -48,9 +48,9 @@ extension UITableView: ActionSheetUI {
     func swipeActionsConfiguration(for record: Any) -> UISwipeActionsConfiguration? {
         let tableView = self
         var contextualActions = tableView.contextualActions
-        var configuration = UISwipeActionsConfiguration(actions: contextualActions)
-        guard !contextualActions.isEmpty else { return configuration }
+        guard !contextualActions.isEmpty else { return nil /* no actions */}
 
+        var configuration = UISwipeActionsConfiguration(actions: contextualActions)
         configuration.performsFirstActionWithFullSwipe = false
         guard contextualActions.count > UITableView.maxVisibleContextualActions else { return configuration }
 
@@ -65,7 +65,7 @@ extension UITableView: ActionSheetUI {
                                         subtitle: nil,
                                         dismissLabel: "Done",
                                         actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            let alertController = UIAlertController.build(from: moreSheet, view: self, handler: self.executeAction)
+            let alertController = UIAlertController.build(from: moreSheet, view: self, handler: ActionUIManager.executeAction)
             alertController.show {
                 handle(false) // to dismiss immediatly or in completion handler of alertController
             }
@@ -83,10 +83,12 @@ extension UITableView: ActionSheetUI {
 
 extension UIContextualAction: ActionUI {
     public static func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI {
-        let actionUI = UIContextualAction(style: UIContextualAction.Style.from(actionStyle: action.style), title: action.label) { (contextualAction, _, handle) in
-            handler(action, contextualAction, view)
-            let success = false // if true and style = destructive, line will be removed...
-            handle(success)
+        let actionUI = UIContextualAction(
+            style: UIContextualAction.Style.from(actionStyle: action.style),
+            title: action.label) { (contextualAction, _ /* buttons view children of table view, not cell*/, handle) in
+                handler(action, contextualAction, view)
+                let success = false // if true and style = destructive, line will be removed...
+                handle(success)
         }
         actionUI.image = ActionUIBuilder.actionImage(for: action)
         if let backgroundColor = ActionUIBuilder.actionColor(for: action) {

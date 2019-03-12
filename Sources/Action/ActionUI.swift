@@ -65,3 +65,57 @@ public extension ActionSheetUI {
         }
     }
 }
+
+import SwiftMessages
+
+class ActionUIManager {
+
+    /// Execute the action
+    static func executeAction(_ action: Action, _ actionUI: ActionUI, _ view: ActionUI.View) {
+
+        // CLEAN: move this code to a specific controller
+
+        // TODO get parameters for network actions
+        var parameters: ActionParameters = ActionParameters()
+
+        if let provider = view.findActionContext(action, actionUI) {
+            parameters = provider.actionContext(action: action, actionUI: actionUI) ?? [:]
+        }
+
+        // execute the network action
+        let actionQueue: DispatchQueue = .background
+        actionQueue.async {
+            logger.info("Launch action \(action.name) on context: \(parameters)")
+            _ = APIManager.instance.action(action, parameters: parameters, callbackQueue: .main) { (result) in
+                // Display result or do some actions (incremental etc...)
+                switch result {
+                case .failure(let error):
+                    logger.warning("Action error: \(error)")
+                    /*   let alertController = UIAlertController(title: action.label, message: "\(error)", preferredStyle: .alert)
+                     alertController.addAction(alertController.dismissAction(title: "Done"))
+                     alertController.show()*/
+
+                    // Try to display the best error message...
+                    if let statusText = error.restErrors?.statusText { // dev message
+                        SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
+                    } else /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
+                        if !ApplicationReachability.isReachable { // so check reachability status
+                            SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
+                        } else if let failureReason = error.failureReason {
+                            SwiftMessages.warning(failureReason)
+                        } else {
+                            SwiftMessages.error(title: error.errorDescription ?? "", message: "")
+                    }
+                case .success(let value):
+                    logger.debug("\(value)")
+
+                    if let statusText = value.statusText {
+                        SwiftMessages.info(statusText)
+                    }
+
+                    // TODO launch incremental sync? or other task
+                }
+            }
+        }
+    }
+}

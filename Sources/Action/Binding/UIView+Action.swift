@@ -21,7 +21,7 @@ extension UIView {
     // MARK: - ActionSheet
 
     /// Binded action sheet string.
-    @objc dynamic var actionSheet: String {
+    @objc dynamic var actions: String {
         get {
             return self._actionSheet?.toJSON() ?? ""
         }
@@ -39,7 +39,7 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, view: self, handler: self.executeAction)
+                    let items = actionSheetUI.build(from: actionSheet, view: self, handler: ActionUIManager.executeAction)
                     actionSheetUI.addActionUIs(items)
 
                 } else {
@@ -55,7 +55,7 @@ extension UIView {
             return
         }
         if let actionSheet = self._actionSheet {
-            let alertController = UIAlertController.build(from: actionSheet, view: self, handler: self.executeAction)
+            let alertController = UIAlertController.build(from: actionSheet, view: self, handler: ActionUIManager.executeAction)
             alertController.show()
         } else {
             logger.debug("Action pressed but not actionSheet information")
@@ -81,7 +81,7 @@ extension UIView {
             objc_setAssociatedObject(self, &AssociatedKeys.actionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if let action = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
-                    if let actionUI = actionSheetUI.build(from: action, view: self, handler: self.executeAction) {
+                    if let actionUI = actionSheetUI.build(from: action, view: self, handler: ActionUIManager.executeAction) {
                         actionSheetUI.addActionUI(actionUI)
                     }
                 } else {
@@ -100,7 +100,7 @@ extension UIView {
             // XXX execute the action or ask confirmation if only one action? maybe according to action definition
 
             let alertController = UIAlertController(title: action.label, message: "Confirm", preferredStyle: .alert)
-            let item = alertController.build(from: action, view: self, handler: self.executeAction)
+            let item = alertController.build(from: action, view: self, handler: ActionUIManager.executeAction)
             alertController.addActionUI(item)
             alertController.addAction(alertController.dismissAction())
             alertController.show()
@@ -117,31 +117,6 @@ extension UIView {
             return UILongPressGestureRecognizer(target: self, action: action)
         } else {
             return UITapGestureRecognizer(target: self, action: action)
-        }
-    }
-
-    /// Execute the action
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ view: ActionUI.View) {
-        // TODO get parameters for network actions
-        var parameters: ActionParameters = ActionParameters()
-
-        if let provider = view.findActionContext(action, actionUI) {
-            parameters = provider.actionContext(action: action, actionUI: actionUI) ?? [:]
-        }
-
-        // execute the network action
-        _ = APIManager.instance.action(action, parameters: parameters) { (result) in
-            // Display result or do some actions (incremental etc...)
-            switch result {
-            case .failure(let error):
-                print("\(error)")
-                let alertController = UIAlertController(title: action.label, message: "\(error)", preferredStyle: .alert)
-                alertController.addAction(alertController.dismissAction(title: "Done"))
-            case .success(let value):
-                print("\(value)")
-                let alertController = UIAlertController(title: action.label, message: "\(value)", preferredStyle: .alert)
-                alertController.addAction(alertController.dismissAction(title: "Done"))
-            }
         }
     }
 
@@ -172,12 +147,12 @@ extension UIView {
 extension UIBarItem {
 
     // bind action on bar item if there is a view (button) used with it.
-    @objc dynamic var actionSheet: String {
+    @objc dynamic var actions: String {
         get {
-            return (self.value(forKey: "view") as? UIView)?.actionSheet ?? ""
+            return (self.value(forKey: "view") as? UIView)?.actions ?? ""
         }
         set {
-            (self.value(forKey: "view") as? UIView)?.actionSheet = newValue
+            (self.value(forKey: "view") as? UIView)?.actions = newValue
         }
     }
 
