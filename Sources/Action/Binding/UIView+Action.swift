@@ -39,7 +39,7 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, view: self, handler: ActionUIManager.executeAction)
+                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
                     actionSheetUI.addActionUIs(items)
 
                 } else {
@@ -55,7 +55,7 @@ extension UIView {
             return
         }
         if let actionSheet = self._actionSheet {
-            let alertController = UIAlertController.build(from: actionSheet, view: self, handler: ActionUIManager.executeAction)
+            let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
             alertController.show()
         } else {
             logger.debug("Action pressed but not actionSheet information")
@@ -81,7 +81,7 @@ extension UIView {
             objc_setAssociatedObject(self, &AssociatedKeys.actionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if let action = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
-                    if let actionUI = actionSheetUI.build(from: action, view: self, handler: ActionUIManager.executeAction) {
+                    if let actionUI = actionSheetUI.build(from: action, context: self, handler: ActionUIManager.executeAction) {
                         actionSheetUI.addActionUI(actionUI)
                     }
                 } else {
@@ -100,7 +100,7 @@ extension UIView {
             // XXX execute the action or ask confirmation if only one action? maybe according to action definition
 
             let alertController = UIAlertController(title: action.label, message: "Confirm", preferredStyle: .alert)
-            let item = alertController.build(from: action, view: self, handler: ActionUIManager.executeAction)
+            let item = alertController.build(from: action, context: self, handler: ActionUIManager.executeAction)
             alertController.addActionUI(item)
             alertController.addAction(alertController.dismissAction())
             alertController.show()
@@ -118,27 +118,6 @@ extension UIView {
         } else {
             return UITapGestureRecognizer(target: self, action: action)
         }
-    }
-
-    func findActionContext(_ action: Action, _ actionUI: ActionUI) -> ActionParametersProvider? {
-        if let provider = self as? ActionParametersProvider {
-            return provider
-        }
-        // view hierarchy recursion
-        if let provider = self.superview?.findActionContext(action, actionUI) {
-            return provider
-        }
-
-        // specific case for table and collection view cell which break the view hierarchy
-        if let provider = self.parentCellView?.parentView?.findActionContext(action, actionUI) { /// XXX maybe do it only at first level to optimize
-            return provider
-        }
-
-        // in final resort, the current view controller
-        if let provider = self.owningViewController as? ActionParametersProvider {
-            return provider
-        }
-        return nil
     }
 
 }
@@ -160,13 +139,10 @@ extension UIBarItem {
 
 }
 
-// MARK: ActionParametersProvider
+// MARK: - ActionParametersProvider
 
 /// Protocol to define class which could provide `ActionParameters`
-public protocol ActionParametersProvider {
-
-    /// Provide context information for the action.
-    func actionContext(action: Action, actionUI: ActionUI) -> ActionParameters?
+public protocol ActionContextUIContext: ActionContext {
 
 }
 
@@ -175,4 +151,40 @@ struct ActionParametersProviderKey {
     static let table = "dataClass"
     static let record = "entity"
     static let primaryKey = "primaryKey"
+}
+
+// MARK: - ActionUIContext
+
+extension UIView: ActionContext {
+
+    public func actionParameters(action: Action, actionUI: ActionUI) -> ActionParameters? {
+        var parameters: ActionParameters = ActionParameters()
+
+        if let provider = self.findActionUIContext(action, actionUI) {
+            parameters = provider.actionParameters(action: action, actionUI: actionUI) ?? [:]
+        }
+        return parameters
+    }
+
+    fileprivate func findActionUIContext(_ action: Action, _ actionUI: ActionUI) -> ActionContextUIContext? {
+        /// view hierarchical search if current view do not provide the context
+        if let provider = self as? ActionContextUIContext {
+            return provider
+        }
+        // view hierarchy recursion
+        if let provider = self.superview?.findActionUIContext(action, actionUI) {
+            return provider
+        }
+
+        // specific case for table and collection view cell which break the view hierarchy
+        if let provider = self.parentCellView?.parentView?.findActionUIContext(action, actionUI) { /// XXX maybe do it only at first level to optimize
+            return provider
+        }
+
+        // in final resort, the current view controller
+        if let provider = self.owningViewController as? ActionContextUIContext {
+            return provider
+        }
+        return nil
+    }
 }

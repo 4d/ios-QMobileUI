@@ -12,9 +12,9 @@ import UIKit
 import QMobileAPI
 
 extension UIAlertAction: ActionUI {
-    public static func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI {
+    public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = self.init(title: action.label, style: UIAlertAction.Style.from(actionStyle: action.style)) { alertAction in
-            handler(action, alertAction, view)
+            handler(action, alertAction, context)
         }
         if let image = ActionUIBuilder.actionImage(for: action) {
             actionUI.setValue(image, forKey: "image")
@@ -51,9 +51,9 @@ extension UIAlertController: ActionSheetUI {
 }
 
 extension UIAlertController {
-    static func build(from actionSheet: ActionSheet, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> UIAlertController {
+    static func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> UIAlertController {
         let alertController = UIAlertController(title: actionSheet.title, message: actionSheet.subtitle, preferredStyle: .actionSheet)
-        let items = alertController.build(from: actionSheet, view: view, handler: handler)
+        let items = alertController.build(from: actionSheet, context: context, handler: handler)
         alertController.addActionUIs(items)
         alertController.addAction(alertController.dismissAction(title: actionSheet.dismissLabel ?? "Cancel"))
         return alertController

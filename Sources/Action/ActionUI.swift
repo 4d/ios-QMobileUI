@@ -11,24 +11,45 @@ import UIKit
 
 import QMobileAPI
 
+/// An action ui element could be builded from action and context and on action launch the passed handler.
 public protocol ActionUI {
-    typealias View = UIView
-    typealias Handler = (Action, ActionUI, View) -> Void
-    static func build(from action: Action, view: View, handler: @escaping Handler) -> ActionUI
+
+    typealias Handler = (Action, ActionUI, ActionContext) -> Void
+
+    /// Build an action ui element.
+    static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI
+}
+
+/// An action context provide parameters for action.
+public protocol ActionContext {
+
+    /// Provide parameters for the action.
+    func actionParameters(action: Action, actionUI: ActionUI) -> ActionParameters?
+
+}
+
+/// Simplement implementation of `ActionContext`
+struct ActionParametersContext: ActionContext {
+
+    var actionParameters: ActionParameters?
+
+    func actionParameters(action: Action, actionUI: ActionUI) -> ActionParameters? {
+        return actionParameters
+    }
 }
 
 /// Builder class to force cast
 struct ActionUIBuilder {
-    static func build<T>(_ type: T.Type, from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
-        return type.build(from: action, view: view, handler: handler) as? T
+    static func build<T>(_ type: T.Type, from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
+        return type.build(from: action, context: context, handler: handler) as? T
     }
 
     /// Provide an image for the passed action.
-    static func actionImage(for action: Action) -> UIImage? {
+    static func actionImage(for action: Action, prefix: String = "action_") -> UIImage? {
         guard let icon = action.icon else {
             return nil
         }
-        return UIImage(named: icon) // XXX maybe add prefix
+        return UIImage(named: prefix + icon) // XXX maybe add prefix
     }
 
     /// Provide a color for the passed action.
@@ -41,22 +62,22 @@ public protocol ActionSheetUI {
     //associatedtype ActionUIItem: ActionUI // XXX swift generic do not work well with objc dynamic and storyboards
     func actionUIType() -> ActionUI.Type
 
-    func build(from actionSheet: ActionSheet, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> [ActionUI]
-    func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI?
+    func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI]
+    func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI?
 
     func addActionUI(_ item: ActionUI?)
 }
 
 public extension ActionSheetUI {
 
-    func build(from actionSheet: ActionSheet, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> [ActionUI] {
+    func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI] {
         return actionSheet.actions.compactMap {
-            actionUIType().build(from: $0, view: view, handler: handler)
+            actionUIType().build(from: $0, context: context, handler: handler)
         }
     }
 
-    func build(from action: Action, view: ActionUI.View, handler: @escaping ActionUI.Handler) -> ActionUI? {
-        return actionUIType().build(from: action, view: view, handler: handler)
+    func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI? {
+        return actionUIType().build(from: action, context: context, handler: handler)
     }
 
     func addActionUIs(_ items: [ActionUI]) {
@@ -71,16 +92,10 @@ import SwiftMessages
 class ActionUIManager {
 
     /// Execute the action
-    static func executeAction(_ action: Action, _ actionUI: ActionUI, _ view: ActionUI.View) {
+    static func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
 
-        // CLEAN: move this code to a specific controller
-
-        // TODO get parameters for network actions
-        var parameters: ActionParameters = ActionParameters()
-
-        if let provider = view.findActionContext(action, actionUI) {
-            parameters = provider.actionContext(action: action, actionUI: actionUI) ?? [:]
-        }
+        // Get parameters for network actions
+        let parameters: ActionParameters = context.actionParameters(action: action, actionUI: actionUI) ?? [:]
 
         // execute the network action
         let actionQueue: DispatchQueue = .background

@@ -133,7 +133,14 @@ open class ListFormTable: UITableViewController, ListForm {
     // or leadingSwipeActionsConfigurationForRowAt?
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let record = dataSource.record(at: indexPath) else { return nil }
-        return tableView.swipeActionsConfiguration(for: record)
+
+        var parameters = ActionParameters()
+        parameters[ActionParametersProviderKey.table] = tableName
+
+        if let recordKey = record.primaryKeyValue {
+            parameters[ActionParametersProviderKey.record] =  [ActionParametersProviderKey.primaryKey: recordKey]
+        }
+        return tableView.swipeActionsConfiguration(with: ActionParametersContext(actionParameters: parameters))
     }
 
     // MARK: - segue
