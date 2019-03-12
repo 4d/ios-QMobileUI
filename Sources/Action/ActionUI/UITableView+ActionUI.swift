@@ -29,6 +29,7 @@ extension UITableView: ActionSheetUI {
         static var contextualAction = "UITableView.UIContextualAction"
     }
 
+    /// A list of context actions created from "actions" json.
     open var contextualActions: [UIContextualAction] {
         get {
             var actions = objc_getAssociatedObject(self, &AssociatedKeys.contextualAction) as? [UIContextualAction]
@@ -43,9 +44,11 @@ extension UITableView: ActionSheetUI {
         }
     }
 
-    static let maxVisibleContextualActions = 3
+    public static let maxVisibleContextualActions = 3
 
-    func swipeActionsConfiguration(for record: Any) -> UISwipeActionsConfiguration? {
+    /// Create UISwipeActionsConfiguration from self 'contextualActions'
+    /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
+    public func swipeActionsConfiguration(for record: Any) -> UISwipeActionsConfiguration? {
         let tableView = self
         var contextualActions = tableView.contextualActions
         guard !contextualActions.isEmpty else { return nil /* no actions */}
