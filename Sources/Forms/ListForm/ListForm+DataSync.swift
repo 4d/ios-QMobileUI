@@ -94,7 +94,16 @@ extension ListForm {
     func refreshMessage(_ result: DataSync.SyncResult) {
         switch result {
         case .success:
-            SwiftMessages.info("Data has been reloaded")
+            SwiftMessages.info("Data has been reloaded", configure: { _, config in
+                var config = config
+                // More view controller do not support presentationContext = .automatic, so change it here
+                if let viewController = self as? UIViewController,
+                    let moreNavigationController = viewController.parent as? UINavigationController,
+                    moreNavigationController.isMoreNavigationController {
+                    config.presentationContext = .viewController(viewController)
+                }
+                return config
+            })
         case .failure(let error):
             let title = "Issue when reloading data"
 

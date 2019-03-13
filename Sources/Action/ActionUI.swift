@@ -150,17 +150,32 @@ class ActionUIManager {
                     }
 
                     if value.share {
-                        /*let shareText = "Hello, world!"
+                        // Remote could send from server
+                        // * some text
+                        // * some url
+                        // * data of image -> convert to image and share
+                        // * data of file -> write to tmp dir and share
+                        //
+                        // then could also specify local db data
+                        // * some text or number field to share as string
+                        // * some picture field to share (must be downloaded before)
+                        // * some text field to share as url
 
-                        if let image = UIImage(named: "tableMore") {
-                            let vc = UIActivityViewController(activityItems: [shareText, image], applicationActivities: [])
-                            UIApplication.topViewController?.present(vc, animated: true, completion: nil)
-                        }*/
+                        // URL (http url or file url), UIImage, String
+                        let activityItems: [Any] = ["Hello, world!"]
+                        // , UIImage(named: "tableMore") ?? nil
+                        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
+                        activityViewController.show()
                     }
-
                 }
             }
         }
+    }
+}
+
+extension UIActivityViewController {
+    func show(_ viewControllerToPresent: UIViewController? = UIApplication.topViewController, animated flag: Bool = true, completion: (() -> Swift.Void)? = nil) {
+        viewControllerToPresent?.present(self, animated: flag, completion: completion)
     }
 }
 
