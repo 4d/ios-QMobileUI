@@ -45,11 +45,11 @@ struct ActionUIBuilder {
     }
 
     /// Provide an image for the passed action.
-    static func actionImage(for action: Action, prefix: String = "action_") -> UIImage? {
+    static func actionImage(for action: Action) -> UIImage? {
         guard let icon = action.icon else {
             return nil
         }
-        return UIImage(named: prefix + icon) // XXX maybe add prefix
+        return UIImage(named: icon) // XXX maybe add prefix
     }
 
     /// Provide a color for the passed action.

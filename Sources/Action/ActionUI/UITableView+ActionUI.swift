@@ -63,8 +63,8 @@ extension UITableView: ActionSheetUI {
     /// Create UISwipeActionsConfiguration from self 'contextualActions'
     /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
     public func swipeActionsConfiguration(with context: ActionContext?) -> UISwipeActionsConfiguration? {
-        guard let actionSheet = self._actionSheet else { return nil }
-        guard !actionSheet.actions.isEmpty else { return nil /* no actions */}
+        guard let actionSheet = self._actionSheet else { return .empty }
+        guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
 
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
         var contextualActions = self.build(from: actionSheet, context: context ?? self, handler: ActionUIManager.executeAction).compactMap { $0 as? UIContextualAction }
@@ -95,7 +95,7 @@ extension UITableView: ActionSheetUI {
             return result || contextualAction.image != nil
         }
         if oneHasImage {
-            moreItem.image = UIImage(named: "tableMore")
+            moreItem.image = .moreImage
         }
         contextualActions.append(moreItem)
 
@@ -103,6 +103,16 @@ extension UITableView: ActionSheetUI {
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
     }
+}
+
+extension UIImage {
+    /// More image from resource or use system one
+    static let moreImage: UIImage? = UIImage(named: "tableMore") ?? UITabBarItem(tabBarSystemItem: UITabBarItem.SystemItem.more, tag: 3).image
+}
+
+extension UISwipeActionsConfiguration {
+
+    static let empty = UISwipeActionsConfiguration(actions: [])
 }
 
 extension UIColor {

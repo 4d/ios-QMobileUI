@@ -51,7 +51,7 @@ extension UIViewController {
                     if /*let navigationBar = */self.navigationController?.navigationBar != nil {
                         let button = UIButton(type: .custom)
                         button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32)) // XXX get correct size
-                        button.setImage(UIImage(named: "tableMore"), for: .normal) // TODO select good image
+                        button.setImage(.moreImage, for: .normal) // TODO select good image
 
                         button._actionSheet = actionSheet
 
