@@ -106,9 +106,6 @@ class ActionUIManager {
                 switch result {
                 case .failure(let error):
                     logger.warning("Action error: \(error)")
-                    /*   let alertController = UIAlertController(title: action.label, message: "\(error)", preferredStyle: .alert)
-                     alertController.addAction(alertController.dismissAction(title: "Done"))
-                     alertController.show()*/
 
                     // Try to display the best error message...
                     if let statusText = error.restErrors?.statusText { // dev message
@@ -128,6 +125,7 @@ class ActionUIManager {
                         SwiftMessages.info(statusText)
                     }
 
+                    // launch incremental sync? or other task
                     if value.dataSynchro {
                         logger.info("Data synchronisation is launch after action \(action.name)")
                         _ = dataSync { result in
@@ -139,7 +137,27 @@ class ActionUIManager {
                             }
                         }
                     }
-                    // TODO launch incremental sync? or other task
+
+                    if let urlString = value.openURL, let url = URL(string: urlString) {
+                        logger.info("Open url \(urlString)")
+                        UIApplication.shared.open(url, options: [:], completionHandler: { success in
+                            if success {
+                                logger.info("Open url \(urlString) done")
+                            } else {
+                                logger.warning("Failed to pen url \(urlString)")
+                            }
+                        })
+                    }
+
+                    if value.share {
+                        /*let shareText = "Hello, world!"
+
+                        if let image = UIImage(named: "tableMore") {
+                            let vc = UIActivityViewController(activityItems: [shareText, image], applicationActivities: [])
+                            UIApplication.topViewController?.present(vc, animated: true, completion: nil)
+                        }*/
+                    }
+
                 }
             }
         }
@@ -150,5 +168,11 @@ extension ActionResult {
     /// Return: `true` if a data synchronisation must be done after the action.
     fileprivate var dataSynchro: Bool {
         return json["dataSynchro"].boolValue
+    }
+    fileprivate var openURL: String? {
+        return json["openURL"].string
+    }
+    fileprivate var share: Bool {
+        return json["share"].boolValue
     }
 }
