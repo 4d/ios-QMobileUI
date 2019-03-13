@@ -31,7 +31,7 @@ extension UIAlertAction.Style {
         guard let actionStyle = actionStyle else { return .default }
         switch actionStyle {
         case .destructive: return .destructive
-        case .normal: return .default
+        default: return .default
         }
     }
 }

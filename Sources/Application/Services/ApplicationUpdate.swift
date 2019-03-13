@@ -356,7 +356,7 @@ public protocol ApplicationUpdateDelegate: NSObjectProtocol {
 // MARK: Alert controller
 
 extension UIAlertController {
-    func show() {
+    func showUpdate() {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = AppUpdateViewController() // keep style
         window.windowLevel = UIWindow.Level.alert + 1 // on top

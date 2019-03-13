@@ -55,8 +55,10 @@ extension UIView {
             return
         }
         if let actionSheet = self._actionSheet {
-            let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
-            alertController.show()
+            foreground {
+                let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
+                alertController.show()
+            }
         } else {
             logger.debug("Action pressed but not actionSheet information")
         }
@@ -113,7 +115,7 @@ extension UIView {
 
     /// Create a gesture recognizer with specified action.
     func createActionGestureRecognizer(_ action: Selector?) -> UIGestureRecognizer {
-        if self is UITableViewCell { // bad practice! to cast in lower class, but cannot override in extension, maybe add a protocol to defined type of gesture
+        if self is UITableViewCell || self is UICollectionViewCell { // bad practice! to cast in lower class, but cannot override in extension, maybe add a protocol to defined type of gesture
             return UILongPressGestureRecognizer(target: self, action: action)
         } else {
             return UITapGestureRecognizer(target: self, action: action)

@@ -49,11 +49,20 @@ struct ActionUIBuilder {
         guard let icon = action.icon else {
             return nil
         }
-        return UIImage(named: icon) // XXX maybe add prefix
+        return UIImage(named: icon)
     }
 
     /// Provide a color for the passed action.
     static func actionColor(for action: Action) -> UIColor? {
+        guard let style = action.style else {
+            return nil
+        }
+        switch style {
+        case .color(let named):
+            return UIColor(named: named)
+        default:
+            break
+        }
         return nil
     }
 }
@@ -101,7 +110,7 @@ class ActionUIManager {
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(action.name) on context: \(parameters)")
-            _ = APIManager.instance.action(action, parameters: parameters, callbackQueue: .main) { (result) in
+            _ = APIManager.instance.action(action, parameters: parameters, callbackQueue: .background) { (result) in
                 // Display result or do some actions (incremental etc...)
                 switch result {
                 case .failure(let error):

@@ -24,6 +24,8 @@
 		480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */; };
 		4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */; };
 		4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */; };
+		480A602022392A3E002BE3E7 /* UINavigationItem+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480A601F22392A3E002BE3E7 /* UINavigationItem+QMobile.swift */; };
+		480A602222392A75002BE3E7 /* UIColor+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480A602122392A75002BE3E7 /* UIColor+QMobile.swift */; };
 		480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */; };
 		480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B434E1E842198007C90DD /* UIScreen+QMobile.swift */; };
 		480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B43501E84225C007C90DD /* UISwitch+QMobile.swift */; };
@@ -150,7 +152,6 @@
 		48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8DF282057F35E0087066F /* PasscodeField.swift */; };
 		48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C11F7D0B23000080FB /* ServerStatus.swift */; };
 		48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */; };
-		48F8E2C61F7D0F00000080FB /* UIColor+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */; };
 		48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C81F7D0F3E000080FB /* ServerStatus+Color.swift */; };
 		48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2CA1F7D0FA2000080FB /* UITextInput+QMobile.swift */; };
 		48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2CC1F7D0FB6000080FB /* UINibable.swift */; };
@@ -200,6 +201,8 @@
 		480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+QMobile.swift"; sourceTree = "<group>"; };
 		4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationXCallbackURL.swift; sourceTree = "<group>"; };
 		4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallbackURLKit.framework; path = Carthage/Build/iOS/CallbackURLKit.framework; sourceTree = "<group>"; };
+		480A601F22392A3E002BE3E7 /* UINavigationItem+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+QMobile.swift"; sourceTree = "<group>"; };
+		480A602122392A75002BE3E7 /* UIColor+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+QMobile.swift"; sourceTree = "<group>"; };
 		480B434A1E8403C7007C90DD /* UIButton+BackgroundColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+BackgroundColors.swift"; sourceTree = "<group>"; };
 		480B434E1E842198007C90DD /* UIScreen+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+QMobile.swift"; sourceTree = "<group>"; };
 		480B43501E84225C007C90DD /* UISwitch+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISwitch+QMobile.swift"; sourceTree = "<group>"; };
@@ -325,7 +328,6 @@
 		48F8DF282057F35E0087066F /* PasscodeField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeField.swift; sourceTree = "<group>"; };
 		48F8E2C11F7D0B23000080FB /* ServerStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerStatus.swift; sourceTree = "<group>"; };
 		48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RawRepresentable+IndexSet.swift"; sourceTree = "<group>"; };
-		48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Result.swift"; sourceTree = "<group>"; };
 		48F8E2C81F7D0F3E000080FB /* ServerStatus+Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServerStatus+Color.swift"; sourceTree = "<group>"; };
 		48F8E2CA1F7D0FA2000080FB /* UITextInput+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextInput+QMobile.swift"; sourceTree = "<group>"; };
 		48F8E2CC1F7D0FB6000080FB /* UINibable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UINibable.swift; path = ../UINibable.swift; sourceTree = "<group>"; };
@@ -465,8 +467,9 @@
 				480B43521E842289007C90DD /* UIDevice+QMobile.swift */,
 				48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */,
 				48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */,
-				48F8E2C51F7D0F00000080FB /* UIColor+Result.swift */,
 				48E71DBD212AA475003D10BD /* UIStackVIew+QMobile.swift */,
+				480A601F22392A3E002BE3E7 /* UINavigationItem+QMobile.swift */,
+				480A602122392A75002BE3E7 /* UIColor+QMobile.swift */,
 			);
 			name = UIKit;
 			sourceTree = "<group>";
@@ -1134,6 +1137,7 @@
 				489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */,
 				48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */,
 				48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */,
+				480A602022392A3E002BE3E7 /* UINavigationItem+QMobile.swift in Sources */,
 				48EE077E1E7AED4200A8546E /* ListFormTable.swift in Sources */,
 				4846083620AF057A00EE4696 /* Timer+QMobile.swift in Sources */,
 				483FDA871E82836700FAF84B /* UITableViewController+QMobile.swift in Sources */,
@@ -1152,7 +1156,6 @@
 				4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */,
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
-				48F8E2C61F7D0F00000080FB /* UIColor+Result.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
 				FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
@@ -1193,6 +1196,7 @@
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
 				489A68AB21B526AA00A90DC6 /* Form.swift in Sources */,
 				4846083D20AF07DD00EE4696 /* FloatingLabelTextField.swift in Sources */,
+				480A602222392A75002BE3E7 /* UIColor+QMobile.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
 				489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */,
 				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,

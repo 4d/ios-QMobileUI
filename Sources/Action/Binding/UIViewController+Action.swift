@@ -44,25 +44,16 @@ extension UIViewController {
                     }
 
                 } else {
-                    // TODO do real code, not only add a touch on root view: create a button?
-
-                    // XXX toremove = default behaviour: if clicked create a ui alert controller
-
-                    if /*let navigationBar = */self.navigationController?.navigationBar != nil {
+                    // default behaviour: if clicked create a ui alert controller on button
+                    if self.navigationController?.navigationBar != nil {
                         let button = UIButton(type: .custom)
                         button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32)) // XXX get correct size
-                        button.setImage(.moreImage, for: .normal) // TODO select good image
+                        button.setImage(.moreImage, for: .normal)
 
                         button._actionSheet = actionSheet
 
-                        let barButton = UIBarButtonItem()
-                        barButton.customView = button
-                        if self.navigationItem.rightBarButtonItem == nil {
-                            self.navigationItem.rightBarButtonItem = barButton
-                        } else {
-                            // XXX find other way to add, or make more items etc... (or floatting button)
-                            logger.warning("Could not install automatically actions into \(self) because there is already a right bar buttons")
-                        }
+                        let barButton = UIBarButtonItem(customView: button)
+                        self.navigationItem.add(where: .right, item: barButton, at: 0)
                     } else {
                         logger.warning("Could not install automatically actions into \(self) because there is no navigation bar")
                     }
@@ -83,5 +74,13 @@ extension UIViewController {
         } else {
             logger.debug("Action pressed but not actionSheet information")
         }
+    }
+}
+
+extension UIBarButtonItem {
+
+    convenience init(customView: UIButton) {
+        self.init()
+        self.customView = customView
     }
 }

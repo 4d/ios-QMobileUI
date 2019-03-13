@@ -143,14 +143,6 @@ open class PlaceholderTextView: UITextView {
 
 }
 
-extension UIColor {
-
-    class var greyPlaceholder: UIColor {
-        return UIColor(red: 0.78, green: 0.78, blue: 0.80, alpha: 1.0)
-    }
-
-}
-
 extension FeedbackForm: IdentifiableProtocol { // XXX could be generic ?
 
     public var storyboardIdentifier: String? {
