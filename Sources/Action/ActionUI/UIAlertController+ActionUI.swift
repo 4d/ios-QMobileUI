@@ -13,7 +13,7 @@ import QMobileAPI
 
 extension UIAlertAction: ActionUI {
     public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
-        let actionUI = self.init(title: action.label, style: UIAlertAction.Style.from(actionStyle: action.style)) { alertAction in
+        let actionUI = self.init(title: action.label ?? action.name, style: UIAlertAction.Style.from(actionStyle: action.style)) { alertAction in
             handler(action, alertAction, context)
         }
         if let image = ActionUIBuilder.actionImage(for: action) {

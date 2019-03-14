@@ -101,7 +101,7 @@ extension UIView {
         if let action = self._action {
             // XXX execute the action or ask confirmation if only one action? maybe according to action definition
 
-            let alertController = UIAlertController(title: action.label, message: "Confirm", preferredStyle: .alert)
+            let alertController = UIAlertController(title: action.label ?? action.name, message: "Confirm", preferredStyle: .alert)
             let item = alertController.build(from: action, context: self, handler: ActionUIManager.executeAction)
             alertController.addActionUI(item)
             alertController.addAction(alertController.dismissAction())
