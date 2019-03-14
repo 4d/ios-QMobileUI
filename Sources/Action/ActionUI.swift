@@ -58,8 +58,10 @@ struct ActionUIBuilder {
             return nil
         }
         switch style {
-        case .color(let named):
-            return UIColor(named: named)
+        case .custom(let properties):
+            if let color = properties["color"] as? String {
+                return UIColor(named: color)
+            }
         default:
             break
         }
