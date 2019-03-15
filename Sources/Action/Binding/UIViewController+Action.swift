@@ -39,7 +39,7 @@ extension UIViewController {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
                     if let view = self.view {
-                        let items = actionSheetUI.build(from: actionSheet, context: view, handler: ActionUIManager.executeAction)
+                        let items = actionSheetUI.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
                         actionSheetUI.addActionUIs(items)
                     }
 
@@ -68,7 +68,7 @@ extension UIViewController {
         }
         if let actionSheet = self._actionSheet {
             if let view = self.view {
-                let alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionUIManager.executeAction)
+                let alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
                 alertController.show()
             }
         } else {

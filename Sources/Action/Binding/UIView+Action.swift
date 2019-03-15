@@ -42,7 +42,7 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
+                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
                     actionSheetUI.addActionUIs(items)
                 } else {
                     // default behaviour: if clicked create a ui alert controller
@@ -59,7 +59,7 @@ extension UIView {
         }
         if let actionSheet = self._actionSheet {
             foreground {
-                let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionUIManager.executeAction)
+                let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
                 alertController.show()
             }
         } else {
@@ -89,7 +89,7 @@ extension UIView {
             objc_setAssociatedObject(self, &AssociatedKeys.actionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if let action = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
-                    if let actionUI = actionSheetUI.build(from: action, context: self, handler: ActionUIManager.executeAction) {
+                    if let actionUI = actionSheetUI.build(from: action, context: self, handler: ActionManager.instance.executeAction) {
                         actionSheetUI.addActionUI(actionUI)
                     }
                 } else {
@@ -109,7 +109,7 @@ extension UIView {
             // XXX execute the action or ask confirmation if only one action? maybe according to action definition
 
             let alertController = UIAlertController(title: action.label ?? action.name, message: "Confirm", preferredStyle: .alert)
-            let item = alertController.build(from: action, context: self, handler: ActionUIManager.executeAction)
+            let item = alertController.build(from: action, context: self, handler: ActionManager.instance.executeAction)
             alertController.addActionUI(item)
             alertController.addAction(alertController.dismissAction())
             alertController.show()
