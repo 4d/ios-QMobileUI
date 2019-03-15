@@ -132,15 +132,9 @@ open class ListFormTable: UITableViewController, ListForm {
     // MARK: - UITableViewUISwipeActionsConfigurationRowAction
     // or leadingSwipeActionsConfigurationForRowAt?
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let record = dataSource.record(at: indexPath) else { return nil }
-
-        var parameters = ActionParameters()
-        parameters[ActionParametersProviderKey.table] = tableName
-
-        if let recordKey = record.primaryKeyValue {
-            parameters[ActionParametersProviderKey.record] =  [ActionParametersProviderKey.primaryKey: recordKey]
-        }
-        return tableView.swipeActionsConfiguration(with: ActionParametersContext(actionParameters: parameters))
+        let context = dataSource.entry()
+        context.indexPath = indexPath
+        return tableView.swipeActionsConfiguration(with: context)
     }
 
     // MARK: - segue
@@ -150,7 +144,7 @@ open class ListFormTable: UITableViewController, ListForm {
         // get current index
         guard let indexPath = self.indexPath(for: sender) else { return }
         // create a new entry to bind
-        let entry = self.dataSource.entry
+        let entry = self.dataSource.entry()
         entry.indexPath = indexPath
 
         // pass to view controllers and views
@@ -219,7 +213,7 @@ open class ListFormTable: UITableViewController, ListForm {
 
     // MARK: - init
 
-    fileprivate func initDataSource() {
+    private func initDataSource() {
         let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(
             tableName: self.tableName,
@@ -239,10 +233,10 @@ open class ListFormTable: UITableViewController, ListForm {
         dataSource.delegate = self
 
         // self.tableView.delegate = self
-        self.view.table = self.dataSource.entry
+        self.view.table = self.dataSource.entry()
     }
 
-    fileprivate func initComponents() {
+    private func initComponents() {
         self.fixNavigationBarColorFromAsset()
         self.installRefreshControll()
         self.installDataEmptyView()
@@ -251,7 +245,7 @@ open class ListFormTable: UITableViewController, ListForm {
         //self.installObservers()
     }
 
-    fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
+    private func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
         if parent == nil {
             self.originalParent = self.parent
         } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {

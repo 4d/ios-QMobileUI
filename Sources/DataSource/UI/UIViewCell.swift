@@ -11,6 +11,8 @@ import Foundation
 public protocol UIViewCell {
     var parentView: UIView? { get }
     var parentViewSource: NSObjectProtocol? { get }
+
+    var indexPath: IndexPath? { get }
 }
 
 private var xoAssociationKey: UInt8 = 0
@@ -34,6 +36,10 @@ extension UITableViewCell: UIViewCell {
         }
     }
 
+    public var indexPath: IndexPath? {
+        return self.tableView?.indexPath(for: self)
+    }
+
 }
 
 extension UICollectionViewCell: UIViewCell {
@@ -55,6 +61,10 @@ extension UICollectionViewCell: UIViewCell {
             self.parentView = newValue
         }
 
+    }
+
+    public var indexPath: IndexPath? {
+        return collectionView?.indexPath(for: self)
     }
 
 }

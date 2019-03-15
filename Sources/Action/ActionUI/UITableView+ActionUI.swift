@@ -119,11 +119,11 @@ extension UISwipeActionsConfiguration {
 
 extension UIContextualAction: ActionUI {
 
-    public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
+    public static func build(from action: Action, parameters: ActionParameters?, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = UIContextualAction(
             style: UIContextualAction.Style.from(actionStyle: action.style),
             title: action.shortLabel ?? action.label ?? action.name) { (contextualAction, _ /* buttons view children of table view, not cell*/, handle) in
-                handler(action, contextualAction, context)
+                handler(action, contextualAction, parameters)
                 let success = false // if true and style = destructive, line will be removed...
                 handle(success)
         }

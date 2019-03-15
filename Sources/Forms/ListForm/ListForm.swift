@@ -12,7 +12,7 @@ import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
 
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextUIContext, Form {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form {
 
     var tableName: String { get }
     var dataSource: DataSource! { get }
@@ -23,7 +23,7 @@ extension ListForm {
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
         // Give view information about records, let binding fill the UI components
-        let entry = self.dataSource.entry
+        let entry = self.dataSource.entry()
         entry.indexPath = indexPath
         view.table = entry
         // view.record = record
@@ -54,12 +54,12 @@ extension ListForm {
 
 }
 
-// MARK: - ActionParametersProvider
+// MARK: - ActionContextProvider
 
 extension ListForm {
 
-    public func actionParameters(action: Action, actionUI: ActionUI) -> ActionParameters? {
-        return [ActionParametersProviderKey.table: tableName]
+    public func actionContext() -> ActionContext? {
+        return self.dataSource
     }
 
 }

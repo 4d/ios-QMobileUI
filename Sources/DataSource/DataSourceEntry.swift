@@ -147,7 +147,7 @@ public class DataSourceEntry: NSObject {
 }
 
 extension DataSource {
-    var entry: DataSourceEntry {
+    func entry() -> DataSourceEntry {
         return DataSourceEntry(dataSource: self)
     }
 }

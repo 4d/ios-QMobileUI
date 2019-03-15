@@ -12,7 +12,7 @@ import UIKit
 import QMobileDataStore
 import QMobileAPI
 
-public protocol DetailsForm: class, ActionContextUIContext, Form {
+public protocol DetailsForm: class, ActionContextProvider, Form {
 
     // the root view of form
     var view: UIView! {get set}
@@ -205,15 +205,8 @@ class TransitionContainerView: UIView, TransitionContainerViewType {
 
 extension DetailsForm {
 
-    public func actionParameters(action: Action, actionUI: ActionUI) -> ActionParameters? {
-        var parameters = ActionParameters()
-        if let tableName = tableName {
-            parameters[ActionParametersProviderKey.table] = tableName
-        }
-        if let recordKey = recordKey {
-            parameters[ActionParametersProviderKey.record] =  [ActionParametersProviderKey.primaryKey: recordKey]
-        }
-        return parameters
+    public func actionContext() -> ActionContext? {
+        return self.view.table
     }
 
 }

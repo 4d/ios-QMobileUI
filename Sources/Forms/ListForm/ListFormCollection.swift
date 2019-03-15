@@ -117,7 +117,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             return
         }
         // create a new entry to bind
-        let entry = self.dataSource.entry
+        let entry = self.dataSource.entry()
         entry.indexPath = indexPath
 
         // pass to view controllers and views
@@ -217,7 +217,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
             self.configureListFormView(cell, record, index)
         }
 
-        self.view.table = self.dataSource.entry
+        self.view.table = self.dataSource.entry()
 
         dataSource.delegate = self
     }
