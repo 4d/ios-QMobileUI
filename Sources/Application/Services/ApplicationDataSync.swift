@@ -187,6 +187,13 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end")
+
+        // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
+        if let detailForm = UIApplication.topViewController as? DetailsForm {
+            onForeground {
+                detailForm.updateViews()
+            }
+        }
     }
 
     public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {
