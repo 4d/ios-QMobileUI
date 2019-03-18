@@ -22,14 +22,19 @@ extension UIViewController {
     /// Binded action sheet string.
     @objc dynamic var actions: String {
         get {
-            return self._actionSheet?.toJSON() ?? ""
+            return self.actionSheet?.toJSON() ?? ""
         }
         set {
-            _actionSheet = ActionSheet.self.decode(fromJSON: newValue)
+            actionSheet = ActionSheet.self.decode(fromJSON: newValue)
         }
     }
-
-    open var _actionSheet: ActionSheet? { // swiftlint:disable:this identifier_name // use as internal like IBAnimtable
+    #if TARGET_INTERFACE_BUILDER
+    open var actionSheet: ActionSheet? {
+        get { return nil }
+        set {}
+    }
+    #else
+    open var actionSheet: ActionSheet? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? ActionSheet
         }
@@ -50,7 +55,7 @@ extension UIViewController {
                         button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32)) // XXX get correct size
                         button.setImage(.moreImage, for: .normal)
 
-                        button._actionSheet = actionSheet
+                        button.actionSheet = actionSheet // XXX button will be used as context by massing it. Maybe pass current controller as context...
 
                         let barButton = UIBarButtonItem(customView: button)
                         self.navigationItem.add(where: .right, item: barButton, at: 0)
@@ -61,12 +66,13 @@ extension UIViewController {
             }
         }
     }
+    #endif
 
     @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
         guard case recognizer.state = UIGestureRecognizer.State.ended else {
             return
         }
-        if let actionSheet = self._actionSheet {
+        if let actionSheet = self.actionSheet {
             if let view = self.view {
                 let alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
                 alertController.show()

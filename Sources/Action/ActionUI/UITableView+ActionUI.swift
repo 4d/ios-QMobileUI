@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+import DeviceKit
 import QMobileAPI
 
 // MARK: - UITableView
@@ -42,9 +43,20 @@ extension UITableView: ActionSheetUI {
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.contextualAction, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-    }*/
+     }*/
 
-    public static let maxVisibleContextualActions = 3
+    public static var maxVisibleContextualActions: Int {
+        let device: Device = .current
+        if device.isPad {
+            return 6
+        }
+        /*
+         if case .landscape = device.orientation {
+         return 4 // not working if the orientation change is not allowed on app
+         }
+         */
+        return 3
+    }
 
     fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = UIColor(named: "BackgroundColor")) {
         if var color = color {
@@ -63,7 +75,7 @@ extension UITableView: ActionSheetUI {
     /// Create UISwipeActionsConfiguration from self 'contextualActions'
     /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
     public func swipeActionsConfiguration(with context: ActionContext?) -> UISwipeActionsConfiguration? {
-        guard let actionSheet = self._actionSheet else { return .empty }
+        guard let actionSheet = self.actionSheet else { return .empty }
         guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
 
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler

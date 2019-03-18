@@ -23,17 +23,20 @@ extension UIView {
     /// Binded action sheet string.
     @objc dynamic var actions: String {
         get {
-            return self._actionSheet?.toJSON() ?? ""
+            return self.actionSheet?.toJSON() ?? ""
         }
         set {
-            _actionSheet = ActionSheet.self.decode(fromJSON: newValue)
+            actionSheet = ActionSheet.self.decode(fromJSON: newValue)
         }
     }
 
     #if TARGET_INTERFACE_BUILDER
-    open var _actionSheet: ActionSheet? // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
+    open var actionSheet: ActionSheet? {
+        get { return nil }
+        set {}
+    }
     #else
-    open var _actionSheet: ActionSheet? { // swiftlint:disable:this identifier_name // use as internal like IBAnimtable
+    open var actionSheet: ActionSheet? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? ActionSheet
         }
@@ -57,7 +60,7 @@ extension UIView {
         guard case recognizer.state = UIGestureRecognizer.State.ended else {
             return
         }
-        if let actionSheet = self._actionSheet {
+        if let actionSheet = self.actionSheet {
             foreground {
                 let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
                 alertController.show()
@@ -79,7 +82,10 @@ extension UIView {
     }
 
     #if TARGET_INTERFACE_BUILDER
-    open var _action: Action? // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
+    open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
+        get { return nil }
+        set {}
+    }
     #else
     open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
         get {
