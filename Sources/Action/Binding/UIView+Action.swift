@@ -10,9 +10,12 @@ import Foundation
 import UIKit
 
 import QMobileAPI
+import Prephirences
 
 /// Extends `UIView` to add actionSheet and action "user runtimes defined attributes" through storyboards.
 extension UIView {
+
+    static let actionLongPressDurationBeforeFired: TimeInterval = Prephirences.sharedInstance["action.cell.minimumPressDuration"] as? Double ?? 1
 
     private struct AssociatedKeys {
         static var actionSheetKey = "UIView.ActionSheet"
@@ -57,7 +60,8 @@ extension UIView {
     #endif
 
     @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
-        guard case recognizer.state = UIGestureRecognizer.State.ended else {
+        let expectedState: UIGestureRecognizer.State = (recognizer is UILongPressGestureRecognizer) ? .began : .ended
+        guard case recognizer.state = expectedState else {
             return
         }
         if let actionSheet = self.actionSheet {
@@ -129,7 +133,9 @@ extension UIView {
     /// Create a gesture recognizer with specified action.
     func createActionGestureRecognizer(_ action: Selector?) -> UIGestureRecognizer {
         if self is UIViewCell {
-            return UILongPressGestureRecognizer(target: self, action: action)
+            let recognizer = UILongPressGestureRecognizer(target: self, action: action)
+            recognizer.minimumPressDuration = UIView.actionLongPressDurationBeforeFired
+            return recognizer
         } else {
             return UITapGestureRecognizer(target: self, action: action)
         }
