@@ -106,9 +106,13 @@ public class DataSource: NSObject {
             clearSectionNamesCache()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
+
+            let oldPredicate = fetchRequest.predicate
             fetchRequest.predicate = newValue
 
-            self.refresh()
+            if oldPredicate != newValue {
+                self.refresh()
+            }
         }
     }
 
