@@ -15,11 +15,19 @@ import Prephirences
 /// Extends `UIView` to add actionSheet and action "user runtimes defined attributes" through storyboards.
 extension UIView {
 
-    static let actionLongPressDurationBeforeFired: TimeInterval = Prephirences.sharedInstance["action.cell.minimumPressDuration"] as? Double ?? 1
+    /// miminim press duration
+    static let actionMinimumLongPressDuration: TimeInterval = Prephirences.sharedInstance["action.cell.minimumPressDuration"] as? Double ?? 1
+
+    /// Zoom scale on cell view when doing long press. (Default: 1 , deactivated)
+    static let actionLongPressZoomScale: CGFloat = Prephirences.sharedInstance["action.cell.zoomScale"] as? CGFloat ?? 1
+
+    /// impact
+    static let actionImpact: Bool = Prephirences.sharedInstance["action.cell.impact"] as? Bool ?? true
 
     private struct AssociatedKeys {
         static var actionSheetKey = "UIView.ActionSheet"
         static var actionKey = "UIView.Action"
+        static var actionTimerKey = "UIView.ActionTimer"
     }
     // MARK: - ActionSheet
 
@@ -59,18 +67,58 @@ extension UIView {
     }
     #endif
 
-    @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
-        let expectedState: UIGestureRecognizer.State = (recognizer is UILongPressGestureRecognizer) ? .began : .ended
-        guard case recognizer.state = expectedState else {
-            return
-        }
+    fileprivate func showActionSheet() {
         if let actionSheet = self.actionSheet {
+
             foreground {
-                let alertController = UIAlertController.build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
+                let alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
                 alertController.show()
             }
         } else {
             logger.debug("Action pressed on \(self) but not actionSheet information")
+        }
+    }
+
+    @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
+        let isLongPress = recognizer is UILongPressGestureRecognizer
+
+        if isLongPress && (UIView.actionLongPressZoomScale != 1) {
+            switch recognizer.state {
+            case .began:
+                UIView.animate(withDuration: UIView.actionMinimumLongPressDuration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
+                     self.transform = .scaledBy(x: UIView.actionLongPressZoomScale, y: UIView.actionLongPressZoomScale)
+                }, completion: nil)
+
+                self.actionTimer = Timer.schedule(delay: UIView.actionMinimumLongPressDuration) { [weak self] timer in
+                    guard let timer = timer, timer.isValid else { return }
+
+                    if UIView.actionImpact {
+                        UIImpactFeedbackGenerator().impactOccurred()
+                    }
+                    self?.showActionSheet()
+                }
+            case .cancelled, .ended, .failed:
+                UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+                    self.transform = .identity
+                }, completion: nil)
+                self.actionTimer?.invalidate()
+            case .possible, .changed:
+                break
+            }
+        } else {
+            // For long press recognizer we treat `.began` state as "active"
+            let expectedState: UIGestureRecognizer.State = isLongPress ? .began : .ended
+            guard case recognizer.state = expectedState else { return }
+            showActionSheet()
+        }
+    }
+
+    open var actionTimer: Timer? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.actionTimerKey) as? Timer
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.actionTimerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 
@@ -134,7 +182,11 @@ extension UIView {
     func createActionGestureRecognizer(_ action: Selector?) -> UIGestureRecognizer {
         if self is UIViewCell {
             let recognizer = UILongPressGestureRecognizer(target: self, action: action)
-            recognizer.minimumPressDuration = UIView.actionLongPressDurationBeforeFired
+            if UIView.actionLongPressZoomScale != 1 {
+                recognizer.minimumPressDuration = 0
+            } else {
+                recognizer.minimumPressDuration = UIView.actionMinimumLongPressDuration
+            }
             return recognizer
         } else {
             return UITapGestureRecognizer(target: self, action: action)
@@ -158,4 +210,25 @@ extension UIBarItem {
 
     // cannot bind with action. UIBarButtonItem have "action: Selector" (or rename action)
 
+}
+
+extension CGAffineTransform {
+
+    public static func scaledBy(x sx: CGFloat, y sy: CGFloat) -> CGAffineTransform { // swiftlint:disable:this identifier_name
+        return identity.scaledBy(x: sx, y: sy)
+    }
+}
+
+extension UIGestureRecognizer.State: CustomStringConvertible {
+
+    public var description: String {
+        switch self {
+        case .possible: return "possible"
+        case .began: return "began"
+        case .ended: return "ended"
+        case .failed: return "failed"
+        case .changed: return "changed"
+        case .cancelled: return "cancelled"
+        }
+    }
 }
