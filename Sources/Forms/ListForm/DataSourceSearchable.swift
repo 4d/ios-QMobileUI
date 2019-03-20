@@ -89,7 +89,7 @@ extension DataSourceSearchable {
         return searchableField.split(separator: ",").map { String($0) }
     }
 
-    var isSearchBarMustBeHidden: Bool {
+    public var isSearchBarMustBeHidden: Bool {
         // Hide if search field name is empty
         return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
