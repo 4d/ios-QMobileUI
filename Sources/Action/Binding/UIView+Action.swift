@@ -9,25 +9,18 @@
 import Foundation
 import UIKit
 
-import QMobileAPI
 import Prephirences
+import IBAnimatable
+
+import QMobileAPI
 
 /// Extends `UIView` to add actionSheet and action "user runtimes defined attributes" through storyboards.
 extension UIView {
 
-    /// miminim press duration
-    static let actionMinimumLongPressDuration: TimeInterval = Prephirences.sharedInstance["action.cell.minimumPressDuration"] as? Double ?? 1
-
-    /// Zoom scale on cell view when doing long press. (Default: 1 , deactivated)
-    static let actionLongPressZoomScale: CGFloat = Prephirences.sharedInstance["action.cell.zoomScale"] as? CGFloat ?? 1
-
-    /// impact
-    static let actionImpact: Bool = Prephirences.sharedInstance["action.cell.impact"] as? Bool ?? true
-
     private struct AssociatedKeys {
         static var actionSheetKey = "UIView.ActionSheet"
         static var actionKey = "UIView.Action"
-        static var actionTimerKey = "UIView.ActionTimer"
+        static var actionTouchKey = "UIView.ActionTouch"
     }
     // MARK: - ActionSheet
 
@@ -69,7 +62,6 @@ extension UIView {
 
     fileprivate func showActionSheet() {
         if let actionSheet = self.actionSheet {
-
             foreground {
                 let alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
                 alertController.show()
@@ -82,17 +74,22 @@ extension UIView {
     @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
         let isLongPress = recognizer is UILongPressGestureRecognizer
 
-        if isLongPress && (UIView.actionLongPressZoomScale != 1) {
+        if isLongPress && (touch.zoomScale != 1) {
             switch recognizer.state {
             case .began:
-                UIView.animate(withDuration: UIView.actionMinimumLongPressDuration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
-                     self.transform = .scaledBy(x: UIView.actionLongPressZoomScale, y: UIView.actionLongPressZoomScale)
+                UIView.animate(withDuration: touch.duration,
+                               delay: touch.delay,
+                               usingSpringWithDamping: touch.damping,
+                               initialSpringVelocity: touch.velocity,
+                               options: .curveEaseInOut,
+                               animations: {
+                                self.transform = .scaledBy(x: self.touch.zoomScale, y: self.touch.zoomScale)
                 }, completion: nil)
 
-                self.actionTimer = Timer.schedule(delay: UIView.actionMinimumLongPressDuration) { [weak self] timer in
+                self.touch.timer = Timer.schedule(delay: touch.duration) { [weak self] timer in
                     guard let timer = timer, timer.isValid else { return }
 
-                    if UIView.actionImpact {
+                    if self?.touch.impact ?? false {
                         UIImpactFeedbackGenerator().impactOccurred()
                     }
                     self?.showActionSheet()
@@ -101,7 +98,7 @@ extension UIView {
                 UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
                     self.transform = .identity
                 }, completion: nil)
-                self.actionTimer?.invalidate()
+                self.touch.timer?.invalidate()
             case .possible, .changed:
                 break
             }
@@ -113,18 +110,26 @@ extension UIView {
         }
     }
 
-    open var actionTimer: Timer? {
+    @objc dynamic open var touch: ActionTouchConfiguration {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.actionTimerKey) as? Timer
+            if let configuration = objc_getAssociatedObject(self, &AssociatedKeys.actionTouchKey) as? ActionTouchConfiguration {
+                return configuration
+            }
+            let configuration = ActionTouchConfiguration()
+            if self is UIViewCell {
+                configuration.gestureKind = .long
+            }
+            objc_setAssociatedObject(self, &AssociatedKeys.actionTouchKey, configuration, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return configuration
         }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.actionTimerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        set(configuration) {
+            objc_setAssociatedObject(self, &AssociatedKeys.actionTouchKey, configuration, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 
     // MARK: - Action
     /// Binded action string.
-    @objc dynamic var action: String {
+  /*  @objc dynamic var action: String {
         get {
             return self._action?.toJSON() ?? ""
         }
@@ -174,23 +179,40 @@ extension UIView {
         } else {
             logger.debug("Action pressed but not action information")
         }
-    }
+    }*/
 
     // MARK: - Common
 
     /// Create a gesture recognizer with specified action.
     func createActionGestureRecognizer(_ action: Selector?) -> UIGestureRecognizer {
-        if self is UIViewCell {
-            let recognizer = UILongPressGestureRecognizer(target: self, action: action)
-            if UIView.actionLongPressZoomScale != 1 {
-                recognizer.minimumPressDuration = 0
+        let recognizer = touch.gestureKind.gestureRecognizer(target: self, action: action)
+        if let recognizer = recognizer as? UILongPressGestureRecognizer {
+            if touch.zoomScale != 1 {
+                recognizer.minimumPressDuration = 0 // immediate to launch animation
+                recognizer.delaysTouchesBegan = false
             } else {
-                recognizer.minimumPressDuration = UIView.actionMinimumLongPressDuration
+                recognizer.minimumPressDuration = touch.duration
             }
-            return recognizer
-        } else {
-            return UITapGestureRecognizer(target: self, action: action)
-        }
+            if Int.max != touch.numberOfTapsRequired { // cannot use optional for objc and binding
+                recognizer.numberOfTapsRequired = touch.numberOfTapsRequired
+            }
+            if Int.max != touch.numberOfTouchesRequired {
+                recognizer.numberOfTouchesRequired = touch.numberOfTouchesRequired
+            }
+        } else if let recognizer = recognizer as? UITapGestureRecognizer {
+            if Int.max != touch.numberOfTapsRequired {
+                recognizer.numberOfTapsRequired = touch.numberOfTapsRequired
+            }
+            if Int.max != touch.numberOfTouchesRequired {
+                recognizer.numberOfTouchesRequired = touch.numberOfTouchesRequired
+            }
+        } else if let recognizer = recognizer as? UISwipeGestureRecognizer {
+            if Int.max != touch.numberOfTouchesRequired {
+                recognizer.numberOfTouchesRequired = touch.numberOfTouchesRequired
+            }
+            recognizer.direction = touch._direction.swipeDirection
+        } // else ...
+        return recognizer
     }
 
 }
@@ -219,6 +241,8 @@ extension CGAffineTransform {
     }
 }
 
+// MARK: - UIGestureRecognizer
+
 extension UIGestureRecognizer.State: CustomStringConvertible {
 
     public var description: String {
@@ -229,6 +253,95 @@ extension UIGestureRecognizer.State: CustomStringConvertible {
         case .failed: return "failed"
         case .changed: return "changed"
         case .cancelled: return "cancelled"
+        }
+    }
+}
+
+extension UIGestureRecognizer {
+
+    public enum Kind: String {
+        case long, tap, swipe, pan, pinch, screenEdgePan, rotation
+        static let `default`: Kind = .tap
+    }
+
+}
+
+extension UIGestureRecognizer.Kind {
+
+    func gestureRecognizer(target: Any? = nil, action: Selector? = nil) -> UIGestureRecognizer {
+        switch self {
+        case .long:
+            return UILongPressGestureRecognizer(target: target, action: action)
+        case .tap:
+            return UITapGestureRecognizer(target: target, action: action)
+        case .pan:
+            return UIPanGestureRecognizer(target: target, action: action)
+        case .swipe:
+            return UISwipeGestureRecognizer(target: target, action: action)
+        case .pinch:
+            return UIPinchGestureRecognizer(target: target, action: action)
+        case .screenEdgePan:
+            return UIScreenEdgePanGestureRecognizer(target: target, action: action)
+        case .rotation:
+            return UIRotationGestureRecognizer(target: target, action: action)
+        }
+    }
+
+}
+
+// MARK: - configuration of action
+
+/// Configure using user defined runtimes attributes touch gesture and animations.
+public class ActionTouchConfiguration: NSObject {
+
+    /// timer that could be used to launch the action
+    public var timer: Timer?
+
+    // MARK: gesture
+    @objc public var gesture: String = "" {
+        didSet {
+            guard let kind = UIGestureRecognizer.Kind(rawValue: gesture) else { return }
+            gestureKind = kind
+        }
+    }
+    public var gestureKind: UIGestureRecognizer.Kind = .default
+    @objc public var numberOfTapsRequired: Int = Int.max
+    @objc public var numberOfTouchesRequired: Int = Int.max
+    @objc public var direction: String = "" {
+        didSet {
+            guard let direction = AnimationType.Direction(rawValue: direction) else { return }
+            _direction = direction
+        }
+    }
+    public var _direction: AnimationType.Direction = .up // swiftlint:disable:this identifier_name
+    /// impact
+    @objc public var impact: Bool = Prephirences.sharedInstance["action.cell.impact"] as? Bool ?? true
+
+    // MARK: animation
+    /// Zoom scale on cell view when doing long press. (Default: 1 , deactivated)
+    @objc public var zoomScale: CGFloat = Prephirences.sharedInstance["action.cell.zoomScale"] as? CGFloat ?? 1
+    @objc public var damping: CGFloat = 0.5
+    @objc public var velocity: CGFloat = 5
+    /// miminim press duration
+    @objc public var duration: TimeInterval = Prephirences.sharedInstance["action.cell.minimumPressDuration"] as? Double ?? 1
+    @objc public var delay: TimeInterval = 0
+    @objc public var timingFunction: String = "" {
+        didSet {
+            _timingFunction =  TimingFunctionType(string: timingFunction)
+        }
+    }
+    public var _timingFunction: TimingFunctionType = .default // swiftlint:disable:this identifier_name
+
+}
+
+extension AnimationType.Direction {
+
+    var swipeDirection: UISwipeGestureRecognizer.Direction {
+        switch self {
+        case .down: return .down
+        case .up: return .up
+        case .left: return .left
+        case .right: return .right
         }
     }
 }
