@@ -132,7 +132,7 @@ extension ListForm {
         return { (messageView, config) in
             messageView.tapHandler = { _ in
                 SwiftMessages.hide()
-                self.logout(sender, source)
+                (ApplicationAuthenticate.instance as? ApplicationAuthenticate)?.logoutUI(sender, source)
             }
             var config = config
             config.presentationStyle = .center
@@ -140,22 +140,6 @@ extension ListForm {
             // no interactive because there is no way yet to get background tap handler to make logout
             config.dimMode = .gray(interactive: false)
             return config
-        }
-    }
-
-    /// Transition to log in
-    fileprivate func logout(_ sender: Any? = nil, _ source: UIViewController) {
-        foreground {
-            /// XXX check that there is no issue with that, view controller cycle for instance
-            if let destination = Main.instantiate() {
-                let identifier = "logout"
-                // prepare destination like done with segue
-                source.prepare(for: UIStoryboardSegue(identifier: identifier, source: source, destination: destination), sender: sender)
-                // and present it
-                source.present(destination, animated: true) {
-                    logger.debug("\(destination) presented by \(source)")
-                }
-            }
         }
     }
 

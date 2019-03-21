@@ -51,7 +51,22 @@ extension ApplicationAuthenticate: ApplicationService {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-
+        // add in queue to let other service reset the token if necessary? other way do it also here
+        if Prephirences.Reset.appData {
+            ApplicationPreferences.resetSettings()
+        }
+        foreground {
+            if let token = APIManager.instance.authToken, token.isValidToken {
+                logger.debug("Enter in foreground and already logged")
+            } else {
+                logger.debug("Enter in foreground and delogged")
+                self.logout {
+                    if let viewController = UIApplication.topViewController {
+                        self.logoutUI(nil, viewController)
+                    }
+                }
+            }
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -137,6 +152,20 @@ extension ApplicationAuthenticate {
         }
     }
 
+    func logoutUI(_ sender: Any? = nil, _ source: UIViewController) {
+        foreground {
+            /// XXX check that there is no issue with that, view controller cycle for instance
+            if let destination = Main.instantiate() {
+                let identifier = "logout"
+                // prepare destination like done with segue
+                source.prepare(for: UIStoryboardSegue(identifier: identifier, source: source, destination: destination), sender: sender)
+                // and present it
+                source.present(destination, animated: true) {
+                    logger.debug("\(destination) presented by \(source)")
+                }
+            }
+        }
+    }
 }
 
 // MARK: LoginFormDelegate
