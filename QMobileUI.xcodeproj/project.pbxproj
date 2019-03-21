@@ -417,6 +417,7 @@
 				480392BC1E929524008CF992 /* QApplication.swift */,
 				48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */,
 				480392A81E92916E008CF992 /* ApplicationServices.swift */,
+				48F8C66022414C2B00F12922 /* Crash */,
 				48E49CE31EB9CA15002B60AF /* Services */,
 			);
 			path = Application;
@@ -810,7 +811,6 @@
 				482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
 				489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */,
-				FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */,
 				48E4726A20333373002194C7 /* ApplicationImageCache.swift */,
 				48E49CE51EB9CA70002B60AF /* ApplicationDataStore.swift */,
 				48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */,
@@ -881,6 +881,14 @@
 				480392C81E92A03F008CF992 /* DataSourceSearchable.swift */,
 			);
 			path = ListForm;
+			sourceTree = "<group>";
+		};
+		48F8C66022414C2B00F12922 /* Crash */ = {
+			isa = PBXGroup;
+			children = (
+				FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */,
+			);
+			path = Crash;
 			sourceTree = "<group>";
 		};
 		48F8E2C01F7D0B07000080FB /* SettingsForm */ = {

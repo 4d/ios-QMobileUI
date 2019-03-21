@@ -24,14 +24,14 @@ class ApplicationDataSync: NSObject {
     var dataSync: DataSync {
         return DataSync.instance // lazy loaded, to let qmobileURL be created from settings/preferences
     }
-    let operationQueue = OperationQueue(underlyingQueue: .background)
-    var dataStoreListeners: [NSObjectProtocol] = []
-    var apiManagerListeners: [NSObjectProtocol] = []
+    fileprivate let operationQueue = OperationQueue(underlyingQueue: .background)
+    fileprivate var dataStoreListeners: [NSObjectProtocol] = []
+    fileprivate var apiManagerListeners: [NSObjectProtocol] = []
 
     /// To prevent doing two times, keep info about sync at start
-    var syncAtStartDone: Bool = false
+    fileprivate var syncAtStartDone: Bool = false
     /// keep terminate information
-    var applicationWillTerminate: Bool = false
+    fileprivate var applicationWillTerminate: Bool = false
 
 }
 
@@ -47,21 +47,29 @@ extension ApplicationDataSync: ApplicationService {
         dataSync.delegate = self
 
         // Start sync after data store loading
-        let dataStore = dataSync.dataStore
-        dataStoreListeners += [dataStore.onLoad(queue: operationQueue) { [weak self] _ in
-            guard let this = self else { return }
-            this.startSyncAtStart()
+        dataStoreListeners += [dataSync.dataStore.onLoad(queue: operationQueue) { [weak self] _ in
+            self?.startSyncAtStart()
             }]
         if dataSync.dataStore.isLoaded {
             startSyncAtStart()
+            assertionFailure("must not be loaded")
         }
 
-        // Register to some event to log
         if Prephirences.Auth.reloadData {
-             let apiManager = dataSync.apiManager
-            apiManagerListeners += [apiManager.observe(.apiManagerLogout) { _ in
+            // When logout, drop the data...
+            apiManagerListeners += [dataSync.apiManager.observe(.apiManagerLogout) { _ in
                 _ = self.dataSync.drop()
                 }]
+        }
+    }
+
+    public func applicationWillEnterForeground(_ application: UIApplication) {
+        startSyncIfEnterForeground()
+    }
+
+    public func applicationDidEnterBackground(_ application: UIApplication) {
+        if Prephirences.DataSync.Cancel.ifEnterBackground {
+            dataSync.cancel()
         }
     }
 
@@ -70,66 +78,103 @@ extension ApplicationDataSync: ApplicationService {
         if Prephirences.DataSync.Cancel.atTheEnd {
             dataSync.cancel()
         }
-        dataSync.delegate = nil
-
-        let dataStore = dataSync.dataStore
-        for listener in dataStoreListeners {
-            dataStore.unobserve(listener)
-        }
-        dataStoreListeners = []
-        let apiManager = dataSync.apiManager
-        for listener in apiManagerListeners {
-            apiManager.unobserve(listener)
-        }
-        apiManagerListeners = []
-    }
-
-    public func applicationWillEnterForeground(_ application: UIApplication) {
-        if Prephirences.DataSync.Sync.ifEnterForeground {
-            // sync if enter foreground
-            let future: DataSync.SyncFuture = dataSync.sync()
-            future.onSuccess {
-                logger.debug("data from data store synchronized")
-                //SwiftMessages.info("Data updated")
-            }
-            future.onFailure { error in
-                /// XXX if not logued do not warn?
-                logger.warning("Failed to synchronize data - \(error)")
-            }
-
-        } else if Prephirences.DataSync.Cancel.ifEnterForeground {
-            dataSync.cancel()
-        }
-    }
-
-    public func applicationDidEnterBackground(_ application: UIApplication) {
-        if Prephirences.DataSync.Cancel.ifEnterBackground {
-           dataSync.cancel()
-        }
+        unobserve()
     }
 
 }
 
 extension ApplicationDataSync {
 
+    fileprivate func unobserve() {
+        dataSync.delegate = nil
+        dataSync.dataStore.unobserve(dataStoreListeners)
+        dataStoreListeners = []
+        dataSync.apiManager.unobserve(apiManagerListeners)
+        apiManagerListeners = []
+    }
+
+    fileprivate func startSyncIfEnterForeground() {
+        // XXX factorize, by creating sequence of future according to work to do... (sync must be init after drop)
+        let dataSync = self.dataSync
+        if Prephirences.Reset.appData {
+            Prephirences.Reset.appData = false // consumed
+            ApplicationPreferences.resetSettings()
+            let future: DataSync.SyncFuture = dataSync.drop()
+
+            if Prephirences.DataSync.Sync.ifEnterForeground {
+                future.onSuccess { _ in
+                    logger.info("Data resetted after  entering in foreground")
+                    let future = dataSync.sync()
+                    future.onSuccess { _ in
+                        logger.info("Data synchronized after resetting and entering in foreground")
+                    }
+                    future.onFailure { error in
+                        logger.warning("Failed to synchronize data after resetting and entering in foreground - \(error)")
+                    }
+                }
+                future.onFailure { error in
+                    logger.warning("Failed to synchronize data after resetting and entering in foreground - \(error)")
+                }
+            } else {
+                future.onSuccess { _ in
+                    logger.info("Data resetted after entering in foreground")
+                }
+                future.onFailure { error in
+                    logger.warning("Failed to reset data after entering in foreground - \(error)")
+                }
+            }
+        } else {
+            if Prephirences.DataSync.Sync.ifEnterForeground {
+                let future: DataSync.SyncFuture = dataSync.sync()
+                future.onSuccess {
+                    logger.info("Data synchronized after entering in foreground")
+                }
+                future.onFailure { error in
+                    logger.warning("Failed to synchronize data after entering in foreground - \(error)")
+                }
+
+            }
+        }
+    }
+
     func startSyncAtStart() {
         // TODO  #105180, if not loggued do nothing?
         guard !syncAtStartDone else { return }
         syncAtStartDone = true // do only one time
-        let syncAtStart = Prephirences.DataSync.Sync.atStart
-        let future: DataSync.SyncFuture = syncAtStart ? dataSync.sync(): dataSync.initFuture()
-        future.onSuccess {
-            logger.debug("Data from data store initiliazed")
-            if syncAtStart {
-                //SwiftMessages.info("Data updated")
-                logger.info("Data synchronized at start")
+
+        let dataSync = self.dataSync
+
+        if Prephirences.Reset.appData {
+            Prephirences.Reset.appData = false // consumed
+            ApplicationPreferences.resetSettings()
+
+            let future: DataSync.SyncFuture = dataSync.drop()
+            future.onSuccess {
+                logger.info("Data initiliazed and resetted after launching the app")
+
+                if Prephirences.DataSync.Sync.atStart {
+                    let future: DataSync.SyncFuture = dataSync.sync()
+                    future.onSuccess {
+                        logger.info("Data synchronized after launching the app and resetting")
+                    }
+                    future.onFailure { error in
+                        logger.warning("Failed to synchronized data after launching the app and resetting: \(error)")
+                    }
+                }
             }
-        }
-        future.onFailure { error in
-            if syncAtStart {
-                logger.warning("Failed to initialize data from data store or synchronize data: \(error)")
-            } else {
-                logger.warning("Failed to initialize data from data store \(error)")
+            future.onFailure { error in
+                logger.warning("Failed to reset data after launching the app \(error)")
+                // XXX recreate the db?
+            }
+        } else {
+            if Prephirences.DataSync.Sync.atStart {
+                let future: DataSync.SyncFuture = dataSync.sync()
+                future.onSuccess {
+                    logger.info("Data synchronized after launching the app")
+                }
+                future.onFailure { error in
+                    logger.warning("Failed to synchronized data after launching the app: \(error)")
+                }
             }
         }
     }
@@ -157,7 +202,6 @@ extension ApplicationDataSync: DataSyncDelegate {
     }
 
     public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Cancellable) {
-
         SwiftMessages.debug("Data \(operation) will begin")
     }
     public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
@@ -189,8 +233,8 @@ extension ApplicationDataSync: DataSyncDelegate {
         SwiftMessages.debug("Data \(operation) did end")
 
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
-        if let detailForm = UIApplication.topViewController as? DetailsForm {
-            onForeground {
+        onForeground {
+            if let detailForm = UIApplication.topViewController as? DetailsForm {
                 detailForm.updateViews()
             }
         }
@@ -212,10 +256,8 @@ extension Prephirences {
         public struct Cancel: Prephirencable { // swiftlint:disable:this nesting
             static let parent = DataSync.instance
 
-            public static let atTheEnd: Bool = instance["atEnd"] as? Bool ?? false
-            public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
+            public static let atTheEnd: Bool = instance["atEnd"] as? Bool ?? true
             public static let ifEnterBackground: Bool = instance["ifEnterBackground"] as? Bool ?? false
-
         }
 
         public struct Sync: Prephirencable { // swiftlint:disable:this nesting
@@ -223,8 +265,20 @@ extension Prephirences {
 
             public static let atStart: Bool = instance["atStart"] as? Bool ?? true
             public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
-
         }
+
     }
 
+    public struct Reset { // swiftlint:disable:this nesting
+        static var instance: MutablePreferencesType? { return Prephirences.sharedMutableInstance }
+
+        public static var appData: Bool { // dynamic value, could be changed from setting, do not setore it
+            get {
+                return instance?["kFactoryReset"] as? Bool ?? false
+            }
+            set {
+                instance?.set(false, forKey: "kFactoryReset")
+            }
+        }
+    }
 }

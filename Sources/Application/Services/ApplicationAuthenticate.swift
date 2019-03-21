@@ -48,18 +48,6 @@ extension ApplicationAuthenticate: ApplicationService {
         } else {
             autoLogin()
         }
-
-        /*let center = NotificationCenter.default
-        let observer = center.addObserver(forName: .dataSyncFailed, object: nil, queue: .main) { [weak self] notification in
-            if let syncError = notification.error as? DataSyncError, let error = syncError.error as? APIError,
-                let restErrors = error.restErrors, restErrors.match(.query_placeholder_is_missing_or_null) {
-                // authentificaton information are invalid, logout
-                self?.logout {
-                    self?.login()
-                }
-            }
-        }
-        observers.append(observer)*/
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

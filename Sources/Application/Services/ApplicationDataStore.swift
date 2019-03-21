@@ -11,9 +11,6 @@ import UIKit
 import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
-import Prephirences
-
-import Moya // Cancellable
 
 /// Load the mobile database
 class ApplicationDataStore: NSObject {
@@ -23,9 +20,6 @@ class ApplicationDataStore: NSObject {
 extension ApplicationDataStore: ApplicationService {
 
     public static var instance: ApplicationService = ApplicationDataStore()
-    public var servicePreferences: MutablePreferencesType {
-        return MutableProxyPreferences(preferences: preferences, key: "dataStore.")
-    }
 
     var dataStore: DataStore {
         return DataStoreFactory.dataStore  // must use same in dataSync
@@ -35,32 +29,17 @@ extension ApplicationDataStore: ApplicationService {
         var dataStore = self.dataStore
         dataStore.delegate = self
 
-        if !checkIfMustDropBySetting() {
-            if let mustDrop = servicePreferences["drop.atStart"] as? Bool, mustDrop {
-                // drop before loadingb
-                drop { [weak self] in
-                    self?.load()
-                }
-
-            } else {
-                self.load()
-            }
-        }
-
         registerEvent(dataStore)
+        self.load()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         logger.debug("Mobile database will be saved")
 
-        // XXX wait?
+        // XXX wait if operation not terminated?
 
-        if let mustDrop = servicePreferences["drop.atEnd"] as? Bool, mustDrop {
-            // drop data when application will terminate
-            drop()
-        } else {
-            save()
-        }
+        save()
+
         var dataStore = self.dataStore
         dataStore.delegate =  nil
         unregisterEvent(dataStore)
@@ -72,7 +51,6 @@ extension ApplicationDataStore: ApplicationService {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        _ = checkIfMustDropBySetting()
     }
 
 }
@@ -113,6 +91,11 @@ extension ApplicationDataStore {
         }
     }
 
+}
+
+// MARK: - event
+extension ApplicationDataStore {
+
     fileprivate func registerEvent(_ dataStore: DataStore) {
         // Register to some event to log (XXX could be done by delegate some remove it and move the code)
         //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
@@ -127,28 +110,13 @@ extension ApplicationDataStore {
     }
 
     fileprivate func unregisterEvent(_ dataStore: DataStore) {
-        for listener in listeners {
-            dataStore.unobserve(listener)
-        }
+        dataStore.unobserve(listeners)
         listeners = []
-    }
-
-    fileprivate func checkIfMustDropBySetting() -> Bool {
-        if let mustDrop = servicePreferences["drop.bySetting"] as? Bool, mustDrop {
-            // drop other information like loggin information
-            ApplicationPreferences.resetSettings()
-            // servicePreferences.set(false, forKey: "drop.bySetting") // useless if all pref reseted
-
-            drop { [weak self] in
-                self?.load()
-            }
-            return true
-        }
-        return false
     }
 
 }
 
+// MARK: - DataStoreDelegate
 extension ApplicationDataStore: DataStoreDelegate {
 
     func dataStoreWillSave(_ dataStore: DataStore, context: DataStoreContext) {

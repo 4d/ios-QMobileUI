@@ -30,7 +30,7 @@ public class ActionManager {
                 case .failure(let error):
                     logger.warning("Failed to do data synchro after action \(action.name): \(error)")
                 case .success:
-                    logger.warning("Data synchro after action \(action.name) success")
+                    logger.info("Data synchro after action \(action.name) success")
                 }
             }
             return true
