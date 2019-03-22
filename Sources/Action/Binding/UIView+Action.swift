@@ -77,6 +77,7 @@ extension UIView {
         if isLongPress && (touch.zoomScale != 1) {
             switch recognizer.state {
             case .began:
+                self.touch.transform = self.transform
                 UIView.animate(withDuration: touch.duration,
                                delay: touch.delay,
                                usingSpringWithDamping: touch.damping,
@@ -96,7 +97,7 @@ extension UIView {
                 }
             case .cancelled, .ended, .failed:
                 UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-                    self.transform = .identity
+                    self.transform = self.touch.transform
                 }, completion: nil)
                 self.touch.timer?.invalidate()
             case .possible, .changed:
@@ -188,7 +189,7 @@ extension UIView {
         let recognizer = touch.gestureKind.gestureRecognizer(target: self, action: action)
         if let recognizer = recognizer as? UILongPressGestureRecognizer {
             if touch.zoomScale != 1 {
-                recognizer.minimumPressDuration = 0 // immediate to launch animation
+                recognizer.minimumPressDuration = 0.10 // immediate to launch animation
                 recognizer.delaysTouchesBegan = false
             } else {
                 recognizer.minimumPressDuration = touch.duration
@@ -296,6 +297,7 @@ public class ActionTouchConfiguration: NSObject {
 
     /// timer that could be used to launch the action
     public var timer: Timer?
+    public var transform: CGAffineTransform = .identity
 
     // MARK: gesture
     @objc public var gesture: String = "" {
