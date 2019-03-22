@@ -296,7 +296,7 @@ protocol Prephirencable {
 }
 extension Prephirencable {
     static var key: String {
-        return "\(self)".lowercased()+"."
+        return "\(self)".lowercasingFirst+"."
     }
     static var parent: PreferencesType {
         return Prephirences.sharedInstance
@@ -309,6 +309,13 @@ extension Prephirencable {
             return nil
         }
         return MutableProxyPreferences(preferences: parent, key: key)
+    }
+}
+
+extension String {
+
+    fileprivate var lowercasingFirst: String {
+        return prefix(1).lowercased() + dropFirst()
     }
 }
 
