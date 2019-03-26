@@ -201,7 +201,7 @@ class TransitionContainerView: UIView, TransitionContainerViewType {
     }
 }
 
-// MARK: - ActionParametersProvider
+// MARK: - ActionContextProvider
 
 extension DetailsForm {
 

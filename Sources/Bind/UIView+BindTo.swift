@@ -11,8 +11,9 @@ import Prephirences
 
 private var xoAssociationKey: UInt8 = 0
 public typealias BindedRecord = AnyObject // XXX replace by Record?
-extension UIView {
+extension UIView: Binded  {
 
+	// MARK: - Binded
     #if TARGET_INTERFACE_BUILDER
     @objc dynamic open var bindTo: Binder {
         return Binder(view: self)
@@ -34,8 +35,46 @@ extension UIView {
         let bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         return bindTo != nil
     }
+	
+	public func setProperty(name: String, value: Any?) {
+		self.setValue(value, forKey: name)
+	}
+	
+	public func getPropertyValue(name: String) -> Any? {
+		// add some mapping
+		switch name {
+		case "root": return rootView
+		case "cell": return parentCellView
+		default: return value(forKey: name)
+		}
+	}
+	
+	public var bindedRoot: Binded {
+		// what we want : if dynamic table, the cellview must be selected, otherwise the root view. And root view must not be a cell..
+		
+		// CLEAN here a tricky way to select cellview or rootview, very very dirty code
+		// maybe we could check table type, or add a protocol or a boolean(at creation, not runtime) to a view to select it
+		if let cellView = self.parentCellView {
+			if cellView.parentViewSource is DataSource { // List form, keep cell data
+				if let binded = cellView as? Binded {
+					return binded
+				}
+			}
+			if let rootView = self.rootView {
+				return rootView
+			}
+			if let binded = cellView as? Binded {
+				return binded
+			}
+		}
+		
+		if let rootView = self.rootView {
+			return rootView
+		}
+		return self
+	}
 
-    // MARK: data
+    // MARK: - data
 
     open var settings: PreferencesType? {
         get {
@@ -54,15 +93,15 @@ extension UIView {
         }
         return bindTo.record != nil
     }
-
-    open var table: DataSourceEntry? {
-        get {
-            return self.bindTo.table
-        }
-        set {
-            self.bindTo.table = newValue
-        }
-    }
+	
+	open var table: DataSourceEntry? {
+		get {
+			return self.bindTo.table
+		}
+		set {
+			self.bindTo.table = newValue
+		}
+	}
 
 }
 

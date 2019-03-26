@@ -11,7 +11,7 @@ import Foundation
 // An UIBarButtonItem is not a view, so binding information must be look in attached view
 
 private var xoAssociationKey: UInt8 = 0
-extension UIBarItem {
+extension UIBarItem: Binded {
 
     #if TARGET_INTERFACE_BUILDER
     open var bindTo: Binder {
@@ -25,8 +25,7 @@ extension UIBarItem {
             objc_setAssociatedObject(self, &xoAssociationKey, bindTo, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
         bindTo?.resetKeyPath()
-        //swiftlint:disable:next force_cast
-        return bindTo!
+        return bindTo! //swiftlint:disable:this force_cast
     }
     #endif
 
@@ -34,4 +33,13 @@ extension UIBarItem {
         return bindTo
     }
 
+	public func setProperty(name: String, value: Any?) {
+		self.setValue(value, forKey: name)
+	}
+	public func getPropertyValue(name: String) -> Any? {
+		return value(forKey: name)
+	}
+	public var bindedRoot: Binded {
+		return self // XXX must find navigation bar from hierarchy but not authorized...
+	}
 }

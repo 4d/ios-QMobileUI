@@ -9,24 +9,6 @@
 import Foundation
 import Prephirences
 
-public protocol Binded: NSObjectProtocol {
-    /// A Binded object must have a Binder.
-    var bindTo: Binder { get }
-
-    /// Return the real element which contain all information. A root one.
-    var bindedRoot: Binded { get }
-
-    // MARK: properties
-    /// `true` if a property exist
-    func hasProperty(name: String) -> Bool
-    /// list of properties
-    var propertyNames: [String] { get }
-    /// set value for a property using its name
-    func setProperty(name: String, value: Any?)
-    /// get property value
-    func getPropertyValue(name: String) -> Any?
-}
-
 /// Object to remap KVC binding
 open class Binder: NSObject {
 
@@ -159,7 +141,7 @@ open class Binder: NSObject {
 
             // Add the entry to the view
             if let currentRecordView = currentRecordView {
-                // Just to check if there is some issue, log inforamtion
+                // Just to check if there is some issue, log information
                 for entry in entries {
                     if entry.keyPath == newEntry.keyPath {
                         logger.warning("Redundant binding with key \(newEntry.keyPath) on view \(currentRecordView). Please remove it from storyboard.")
@@ -429,69 +411,6 @@ private class KeyPathParser {
 
 private extension Array {
     var second: Element? { return self.count > 1 ? self[1] : nil }
-}
-
-extension Binded {
-   public func hasProperty(name: String) -> Bool {
-        for child in Mirror(reflecting: self).children where child.label == name {
-            return true
-        }
-        return false
-    }
-    public var propertyNames: [String] {
-        return Mirror(reflecting: self).children.compactMap { $0.label }
-    }
-}
-
-extension UIView: Binded {
-    public func setProperty(name: String, value: Any?) {
-        self.setValue(value, forKey: name)
-    }
-
-    public func getPropertyValue(name: String) -> Any? {
-        // add some mapping
-        switch name {
-        case "root": return rootView
-        case "cell": return parentCellView
-        default: return value(forKey: name)
-        }
-    }
-
-    public var bindedRoot: Binded {
-        // what we want : if dynamic table, the cellview must be selected, otherwise the root view. And root view must not be a cell..
-
-        // CLEAN here a tricky way to select cellview or rootview, very very dirty code
-        // maybe we could check table type, or add a protocol or a boolean(at creation, not runtime) to a view to select it
-        if let cellView = self.parentCellView {
-            if cellView.parentViewSource is DataSource { // List form, keep cell data
-                if let binded = cellView as? Binded {
-                    return binded
-                }
-            }
-            if let rootView = self.rootView {
-                return rootView
-            }
-            if let binded = cellView as? Binded {
-                return binded
-            }
-        }
-
-        if let rootView = self.rootView {
-            return rootView
-        }
-        return self
-    }
-}
-extension UIBarItem: Binded {
-    public func setProperty(name: String, value: Any?) {
-        self.setValue(value, forKey: name)
-    }
-    public func getPropertyValue(name: String) -> Any? {
-        return value(forKey: name)
-    }
-    public var bindedRoot: Binded {
-        return self
-    }
 }
 
 // MARK: observer change on table
