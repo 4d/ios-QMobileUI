@@ -74,7 +74,8 @@ extension UIViewController {
         }
         if let actionSheet = self.actionSheet {
             if let view = self.view {
-                let alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
+                var alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
+				alertController = alertController.checkPopUp(recognizer)
                 alertController.show()
             }
         } else {

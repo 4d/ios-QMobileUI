@@ -60,10 +60,11 @@ extension UIView {
     }
     #endif
 
-    fileprivate func showActionSheet() {
+    fileprivate func showActionSheet(_ recognizer: UIGestureRecognizer) {
         if let actionSheet = self.actionSheet {
             foreground {
-                let alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
+                var alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
+				alertController = alertController.checkPopUp(recognizer)
                 alertController.show()
             }
         } else {
@@ -93,7 +94,7 @@ extension UIView {
                     if self?.touch.impact ?? false {
                         UIImpactFeedbackGenerator().impactOccurred()
                     }
-                    self?.showActionSheet()
+                    self?.showActionSheet(recognizer)
                 }
             case .cancelled, .ended, .failed:
                 UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
@@ -107,7 +108,7 @@ extension UIView {
             // For long press recognizer we treat `.began` state as "active"
             let expectedState: UIGestureRecognizer.State = isLongPress ? .began : .ended
             guard case recognizer.state = expectedState else { return }
-            showActionSheet()
+            showActionSheet(recognizer)
         }
     }
 

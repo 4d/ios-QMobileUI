@@ -166,34 +166,12 @@ extension ApplicationOpenAppBeta {
 }
 
 extension ApplicationOpenAppBeta {
+	fileprivate static func controller(_ title: String, _ message: String, _ actions: [UIAlertAction], _ sender: Any) -> UIAlertController {
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet).checkPopUp(sender)
 
-    fileprivate static func controller(_ title: String, _ message: String, _ actions: [UIAlertAction], _ sender: Any) -> UIAlertController {
-        var alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
-
-        if var popoverController = alertController.popoverPresentationController {
-            // iPad use popover and need a source
-            // we take the middle of the passed view
-            if let gesture = sender as? UIGestureRecognizer, let view = gesture.view {
-                popoverController.sourceView = view
-                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-            } else if let view = sender as? UIView {
-                popoverController.sourceView = view
-                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-            } else if let viewController = sender as? UIViewController, let view = viewController.view {
-                popoverController.sourceView = view
-                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-            } else {
-                // change style to avoid bug
-                logger.warning("Unknown type for alert controller sender: \(sender)(Need a view or gesture)")
-                alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                popoverController = alertController.popoverPresentationController ?? popoverController
-            }
-            popoverController.permittedArrowDirections = []
-        }
-
-        // Add the action
-        for action in actions {
-            alertController.addAction(action)
+		// Add the action
+		for action in actions {
+			alertController.addAction(action)
         }
 
         // custom header view

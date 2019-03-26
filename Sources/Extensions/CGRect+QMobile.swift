@@ -46,6 +46,9 @@ public extension CGRect {
         return CGRect(origin: origin, size: size)
     }
 
+	public var mid: CGPoint {
+		return CGPoint(x: midX, y: midY)
+	}
 }
 
 public extension CGSize {

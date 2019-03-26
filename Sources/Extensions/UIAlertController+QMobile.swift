@@ -30,6 +30,33 @@ public extension UIAlertController {
         }
     }
 
+	/// Configure alert controller for iPad, by setting source view and rect
+	func checkPopUp(_ sender: Any) -> UIAlertController {
+		var alertController: UIAlertController = self
+		if var popoverController = alertController.popoverPresentationController {
+			// iPad use popover and need a source
+			// we take the middle of the passed view
+			if let gesture = sender as? UIGestureRecognizer, let view = gesture.view {
+				popoverController.sourceView = view
+				// let location = gesture.location(in: view)
+				popoverController.sourceRect = CGRect(origin: view.bounds.mid, size: .zero)
+			} else if let view = sender as? UIView {
+				popoverController.sourceView = view
+				popoverController.sourceRect = CGRect(origin: view.bounds.mid, size: .zero)
+			} else if let viewController = sender as? UIViewController, let view = viewController.view {
+				popoverController.sourceView = view
+				popoverController.sourceRect = CGRect(origin: view.bounds.mid, size: .zero)
+			} else {
+				// change style to avoid bug
+				logger.warning("Unknown type for alert controller sender: \(sender) (Need a view or gesture)")
+				alertController = UIAlertController(title: alertController.title, message: alertController.message, preferredStyle: .alert)
+				popoverController = alertController.popoverPresentationController ?? popoverController
+			}
+			popoverController.permittedArrowDirections = []
+		}
+		return alertController
+	}
+
 }
 
 extension UIAlertController {

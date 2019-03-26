@@ -38,7 +38,7 @@ public class ActionManager {
 
         // openURL
         append { result, _ in
-            guard let urlString = result.openURL, let url = URL(string: urlString)else { return false }
+            guard let urlString = result.openURL, let url = URL(string: urlString) else { return false }
             logger.info("Open url \(urlString)")
             onForeground {
                 UIApplication.shared.open(url, options: [:], completionHandler: { success in
@@ -166,11 +166,11 @@ extension ActionManager: ActionResultHandler {
     }
 }
 
-extension UIActivityViewController {
+/*extension UIActivityViewController {
     func show(_ viewControllerToPresent: UIViewController? = UIApplication.topViewController, animated flag: Bool = true, completion: (() -> Swift.Void)? = nil) {
         viewControllerToPresent?.present(self, animated: flag, completion: completion)
     }
-}
+}*/
 
 /// Handle an action results.
 public protocol ActionResultHandler {

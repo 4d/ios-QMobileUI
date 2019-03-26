@@ -74,7 +74,7 @@ extension UITableView: ActionSheetUI {
 
     /// Create UISwipeActionsConfiguration from self 'contextualActions'
     /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
-    public func swipeActionsConfiguration(with context: ActionContext?) -> UISwipeActionsConfiguration? {
+    public func swipeActionsConfiguration(with context: ActionContext?, at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let actionSheet = self.actionSheet else { return .empty }
         guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
 
@@ -87,18 +87,18 @@ extension UITableView: ActionSheetUI {
             configuration.performsFirstActionWithFullSwipe = false
             return configuration
         }
-
         // swipe action more "..."
         contextualActions = contextualActions[0..<(UITableView.maxVisibleContextualActions-1)].array
         gradientBackgroundColor(contextualActions) // more not recolorized if here
 
-        let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, _, handle) in
+        let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, contextualView, handle) in
             let actions = actionSheet.actions
             let moreSheet = ActionSheet(title: nil,
                                         subtitle: nil,
                                         dismissLabel: "Done",
                                         actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            let alertController = UIAlertController.build(from: moreSheet, context: context ?? self, handler: ActionManager.instance.executeAction)
+            var alertController = UIAlertController.build(from: moreSheet, context: context ?? self, handler: ActionManager.instance.executeAction)
+            alertController = alertController.checkPopUp(contextualView)
             alertController.show {
                 handle(false) // to dismiss immediatly or in completion handler of alertController
             }

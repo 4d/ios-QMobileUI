@@ -134,7 +134,7 @@ open class ListFormTable: UITableViewController, ListForm {
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let context = dataSource.entry()
         context.indexPath = indexPath
-        return tableView.swipeActionsConfiguration(with: context)
+        return tableView.swipeActionsConfiguration(with: context, at: indexPath)
     }
 
     // MARK: - segue
