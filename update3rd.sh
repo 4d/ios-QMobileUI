@@ -59,6 +59,48 @@ sed -i '' '/Rx/d' Carthage/Checkouts/Moya/Cartfile.resolved
 sed -i '' '/Reactive/d' Carthage/Checkouts/Moya/Cartfile
 sed -i '' '/Rx/d' Carthage/Checkouts/Moya/Cartfile
 
+# Remove Reactivate extension from Moya
+echo "Remove Reactivate extension from Moya"
+
+## Sources
+rm -Rf Carthage/Checkouts/Reactive*
+rm -Rf Carthage/Checkouts/Rx*
+
+## Build artifact
+rm -Rf Carthage/Build/Reactive*
+rm -Rf Carthage/Build/Rx*
+
+## Build scheme
+rm -Rf Carthage/Checkouts/Moya/Moya.xcodeproj/xcshareddata/xcschemes/Reactive*
+rm -Rf Carthage/Checkouts/Moya/Moya.xcodeproj/xcshareddata/xcschemes/Rx*
+
+## In Cartfile (mandatory or carthage will try to compile or resolve dependencies)
+sed -i '' '/Reactive/d' Cartfile.resolved
+sed -i '' '/Rx/d' Cartfile.resolved
+
+sed -i '' '/Reactive/d' Carthage/Checkouts/Moya/Cartfile.resolved
+sed -i '' '/Rx/d' Carthage/Checkouts/Moya/Cartfile.resolved
+
+sed -i '' '/Reactive/d' Carthage/Checkouts/Moya/Cartfile
+sed -i '' '/Rx/d' Carthage/Checkouts/Moya/Cartfile
+
+# use last version of alamofire if 4.7.3
+sed -i.bak 's/4.7.3/4.8.0/' Carthage/Checkouts/Moya/Cartfile.resolved
+
+# remove workspace if project exist (avoid compile dependencies and have some umbrella issues)
+cd Carthage/Checkouts
+for f in *; do
+    if [[ -d $f ]]; then
+      if [[ $f == QMobile* ]]; then
+        echo "$f: "
+        if [[ -d $f/$f.xcworkspace ]]; then
+          echo "- remove xcworkspace"
+          rm -Rf $f/$f.xcworkspace
+        fi
+      fi
+    fi
+done
+
 # build
 mkdir -p "build"
 carthage build --no-use-binaries --platform iOS --cache-builds --log-path "build/log"
