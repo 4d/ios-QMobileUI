@@ -1019,7 +1019,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Eric Marchand";
 				TargetAttributes = {
 					489C15C41F39AEAB004844F3 = {
@@ -1050,10 +1050,11 @@
 			};
 			buildConfigurationList = 48D584581E7830E1006F56B5 /* Build configuration list for PBXProject "QMobileUI" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 48D584541E7830E1006F56B5;
 			productRefGroup = 48D5845F1E7830E1006F56B5 /* Products */;
@@ -1101,7 +1102,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		48A62CC71E9E30AE002A76C2 /* carthage */ = {
 			isa = PBXShellScriptBuildPhase;
