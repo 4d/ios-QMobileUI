@@ -15,7 +15,6 @@ open class DialogForm: IBAnimatable.AnimatableModalViewController {
     @IBOutlet weak public var message: UILabel!
     @IBOutlet weak public var okButton: UIButton!
     @IBOutlet weak public var cancelButton: UIButton!
-    @IBOutlet public var dummyCompileIssues: AnimatableModalViewController!
 
     @IBInspectable open var okMessage: String?
     @IBInspectable open var cancelMessage: String?
