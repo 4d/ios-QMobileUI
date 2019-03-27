@@ -10,55 +10,51 @@ import CoreGraphics
 
 public extension CGRect {
 
-    // swiftlint:disable:next identifier_name
-    public var x: CGFloat {
+    var x: CGFloat { // swiftlint:disable:this identifier_name
         return origin.x
     }
 
-    // swiftlint:disable:next identifier_name
-    public var y: CGFloat {
+    var y: CGFloat { // swiftlint:disable:this identifier_name
         return origin.y
     }
 
-    // swiftlint:disable:next identifier_name
-    public func with(x: CGFloat) -> CGRect {
+    func with(x: CGFloat) -> CGRect { // swiftlint:disable:this identifier_name
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
-    // swiftlint:disable:next identifier_name
-    public func with(y: CGFloat) -> CGRect {
+    func with(y: CGFloat) -> CGRect { // swiftlint:disable:this identifier_name
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
-    public func with(width: CGFloat) -> CGRect {
+    func with(width: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
-    public func with(height: CGFloat) -> CGRect {
+    func with(height: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
-    public func with(origin: CGPoint) -> CGRect {
+    func with(origin: CGPoint) -> CGRect {
         return CGRect(origin: origin, size: size)
     }
 
-    public func with(size: CGSize) -> CGRect {
+    func with(size: CGSize) -> CGRect {
         return CGRect(origin: origin, size: size)
     }
 
-	public var mid: CGPoint {
+    var mid: CGPoint {
 		return CGPoint(x: midX, y: midY)
 	}
 }
 
 public extension CGSize {
-    public func with(height: CGFloat) -> CGSize {
+    func with(height: CGFloat) -> CGSize {
         return CGSize(width: self.width, height: height)
     }
-    public func with(width: CGFloat) -> CGSize {
+    func with(width: CGFloat) -> CGSize {
         return CGSize(width: width, height: self.height)
     }
-    public func divide(by divider: CGFloat) -> CGSize {
+    func divide(by divider: CGFloat) -> CGSize {
         return CGSize(width: self.width / divider, height: self.height / divider)
     }
 }

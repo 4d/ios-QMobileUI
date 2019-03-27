@@ -11,10 +11,10 @@ import Foundation
 public protocol Binded: NSObjectProtocol {
 	/// A Binded object must have a Binder.
 	var bindTo: Binder { get }
-	
+
 	/// Return the real element which contain all information. A root one.
 	var bindedRoot: Binded { get }
-	
+
 	// MARK: properties
 	/// `true` if a property exist
 	func hasProperty(name: String) -> Bool

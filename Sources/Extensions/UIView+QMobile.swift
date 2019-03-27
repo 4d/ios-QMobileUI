@@ -11,7 +11,7 @@ import UIKit
 // MARK: - View hierarcgy
 public extension UIView {
 
-    public var rootView: UIView? {
+    var rootView: UIView? {
         var currentView: UIView? = self
         while currentView?.superview != nil {
             currentView = currentView?.superview
@@ -22,7 +22,7 @@ public extension UIView {
         return currentView
     }
 
-    public var parentCellView: UIViewCell? {
+    var parentCellView: UIViewCell? {
         var currentView: UIView? = self
         while currentView?.superview != nil {
             let parent = currentView?.superview

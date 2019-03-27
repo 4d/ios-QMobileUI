@@ -31,12 +31,12 @@ public class ApplicationServices {
 private let applicationServices = ApplicationServices().setup()
 fileprivate extension ApplicationServices {
 
-    fileprivate func setup() -> Self {
+    func setup() -> Self {
         addObservers()
         return self
     }
 
-    fileprivate func addObservers() {
+    func addObservers() {
         center.addObserver(self, selector: #selector(application(didFinishLaunching:)), name: UIApplication.didFinishLaunchingNotification, object: nil)
         center.addObserver(self, selector: #selector(application(didEnterBackground:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
         center.addObserver(self, selector: #selector(application(willEnterForeground:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -104,7 +104,7 @@ extension UIApplication {
 // create missing notifications
 public extension UIApplicationDelegate {
 
-    public static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         ApplicationServices.instance.center.post(name: UIApplication.didRegisterForRemoteWithDeviceTokenNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.deviceToken: deviceToken])
     }
@@ -113,7 +113,7 @@ public extension UIApplicationDelegate {
         type(of: self).application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }*/ // not working anymore, code is put in generated project instead
 
-    public static func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    static func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         ApplicationServices.instance.center.post(name: UIApplication.openUrlWithOptionsNotification, object: app,
                                                  userInfo: [ApplicationServiceUserInfoKey.openUrl: url, ApplicationServiceUserInfoKey.openUrlOptions: options])
         return true
@@ -123,24 +123,24 @@ public extension UIApplicationDelegate {
         return type(of: self).application(app, open: url, options: options)
      }*/
 
-    public static func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    static func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         ApplicationServices.instance.center.post(name: UIApplication.continueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity, ApplicationServiceUserInfoKey.restorationHandler: restorationHandler])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
-    public static func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
+    static func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
         ApplicationServices.instance.center.post(name: UIApplication.willContinueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType])
         return true // no good answer here, or we must wait respond from all listeners
     }
 
-    public static func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {
+    static func application(_ application: UIApplication, didFailToContinueUserActivityWithType userActivityType: String, error: Error) {
         ApplicationServices.instance.center.post(name: UIApplication.didFailToContinueUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivityType, ApplicationServiceUserInfoKey.error: error])
     }
 
-    public static func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {
+    static func application(_ application: UIApplication, didUpdate userActivity: NSUserActivity) {
         ApplicationServices.instance.center.post(name: UIApplication.didUpdateUserActivityNotification, object: application,
                                                  userInfo: [ApplicationServiceUserInfoKey.userActivity: userActivity])
     }

@@ -11,19 +11,19 @@ import UIKit
 // MARK: - Current
 public extension UIDevice {
 
-    public class var idForVendor: String? {
+    class var idForVendor: String? {
         return UIDevice.current.identifierForVendor?.uuidString
     }
 
-    public class var systemFloatVersion: Float {
+    class var systemFloatVersion: Float {
         return (UIDevice.current.systemVersion as NSString).floatValue
     }
 
-    public class var isPhone: Bool {
+    class var isPhone: Bool {
         return UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.phone
     }
 
-    public class var isPad: Bool {
+    class var isPad: Bool {
         return UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad
     }
 }
@@ -31,7 +31,7 @@ public extension UIDevice {
 // MARK: - Language
 public extension UIDevice {
 
-    public class var deviceLanguage: String {
+    class var deviceLanguage: String {
         return Bundle.main.preferredLocalizations[0]
     }
 
@@ -40,15 +40,15 @@ public extension UIDevice {
 // MARK: - Version
 public extension UIDevice {
 
-    public class func isVersion(_ version: Float) -> Bool {
+    class func isVersion(_ version: Float) -> Bool {
         return systemFloatVersion >= version && systemFloatVersion < (version + 1.0)
     }
 
-    public class func isVersionOrLater(_ version: Float) -> Bool {
+    class func isVersionOrLater(_ version: Float) -> Bool {
         return systemFloatVersion >= version
     }
 
-    public class func isVersionOrEarlier(_ version: Float) -> Bool {
+    class func isVersionOrEarlier(_ version: Float) -> Bool {
         return systemFloatVersion < (version + 1.0)
     }
 
@@ -56,11 +56,11 @@ public extension UIDevice {
 
 public extension UIDevice {
 
-    public func forceRotation(_ orientation: UIInterfaceOrientation) {
+    func forceRotation(_ orientation: UIInterfaceOrientation) {
         setValue(orientation.rawValue, forKey: "orientation")
     }
 
-    public class func forceRotation(_ orientation: UIInterfaceOrientation) {
+    class func forceRotation(_ orientation: UIInterfaceOrientation) {
         UIDevice.current.forceRotation(orientation)
     }
 

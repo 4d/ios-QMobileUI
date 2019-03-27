@@ -19,7 +19,7 @@ extension UILabel: UITextOwner {}*/
 
 // Use some Formatter to bind label
 public extension UILabel {
-    @objc dynamic public var systemToPosixPath: String? {
+    @objc dynamic var systemToPosixPath: String? {
         get {
             // Return the original
             return text?.replacingOccurrences(of: "/", with: ":")
@@ -32,7 +32,7 @@ public extension UILabel {
     // MARK: - string
 
     /// Display a localized text found in Formatters.strings
-    @objc dynamic public var localizedText: String? {
+    @objc dynamic var localizedText: String? {
         get {
             guard let localized = self.text else {
                 return nil
@@ -49,7 +49,7 @@ public extension UILabel {
     }
 
     /// Display an image from asset.
-    @objc dynamic public var imageNamed: String? {
+    @objc dynamic var imageNamed: String? {
         get {
             return self.text // Cannot undo it without storing...
         }
@@ -69,7 +69,7 @@ public extension UILabel {
     // MARK: - date
 
     /// Display a date with RFC 822 format
-    @objc dynamic public var date: Date? {
+    @objc dynamic var date: Date? {
         get {
             guard let text = self.text else {
                 return nil
@@ -86,7 +86,7 @@ public extension UILabel {
     }
 
     /// Display a date with a short style, typically numeric only, such as “11/23/37”.
-    @objc dynamic public var shortDate: Date? {
+    @objc dynamic var shortDate: Date? {
         get {
             guard let text = self.text else {
                 return nil
@@ -103,7 +103,7 @@ public extension UILabel {
     }
 
     /// Display a date with a medium style, typically with abbreviated text, such as “Nov 23, 1937”.
-    @objc dynamic public var mediumDate: Date? {
+    @objc dynamic var mediumDate: Date? {
         get {
             guard let text = self.text else {
                 return nil
@@ -120,7 +120,7 @@ public extension UILabel {
     }
 
     /// Display a date with a long style, typically with full text, such as “November 23, 1937”.
-    @objc dynamic public var longDate: Date? {
+    @objc dynamic var longDate: Date? {
         get {
             guard let text = self.text else {
                 return nil
@@ -137,7 +137,7 @@ public extension UILabel {
     }
 
     /// Display a date with a full style with complete details, such as “Tuesday, April 12, 1952 AD”.
-    @objc dynamic public var fullDate: Date? {
+    @objc dynamic var fullDate: Date? {
         get {
             guard let text = self.text else {
                 return nil
@@ -156,7 +156,7 @@ public extension UILabel {
     // MARK: - time (duration)
 
     /// Display a time with a short style, typically numeric only, such as “3:30 PM”.
-    @objc dynamic public var shortTime: NSNumber? {
+    @objc dynamic var shortTime: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -173,7 +173,7 @@ public extension UILabel {
     }
 
     /// Display a time with a medium style, typically with abbreviated text, such as “3:30:32 PM”.
-    @objc dynamic public var mediumTime: NSNumber? {
+    @objc dynamic var mediumTime: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -190,7 +190,7 @@ public extension UILabel {
     }
 
     /// Display a time with a long style, typically with full text, such as “3:30:32 PM PST”.
-    @objc dynamic public var longTime: NSNumber? {
+    @objc dynamic var longTime: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -207,7 +207,7 @@ public extension UILabel {
     }
 
     /// Display a time with a full style with complete details, such as “3:30:42 PM Pacific Standard Time”.
-    @objc dynamic public var fullTime: NSNumber? {
+    @objc dynamic var fullTime: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -224,7 +224,7 @@ public extension UILabel {
     }
 
     /// Display a time with a short style, typically numeric only, such as “3:30”.
-    @objc dynamic public var duration: NSNumber? {
+    @objc dynamic var duration: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -243,7 +243,7 @@ public extension UILabel {
     // MARK: - bool
 
     /// Display 1 or 0 for boolean value
-    @objc dynamic public var bool: Bool {
+    @objc dynamic var bool: Bool {
         get {
             return integer == 1
         }
@@ -252,7 +252,7 @@ public extension UILabel {
         }
     }
 
-    @objc dynamic public var boolean: NSNumber? {
+    @objc dynamic var boolean: NSNumber? {
         get {
             return integer
         }
@@ -262,7 +262,7 @@ public extension UILabel {
     }
 
     /// Display yes or no for boolean value
-    @objc dynamic public var noOrYes: Bool {
+    @objc dynamic var noOrYes: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -275,7 +275,7 @@ public extension UILabel {
     }
 
     /// Display true or false for boolean value
-    @objc dynamic public var falseOrTrue: Bool {
+    @objc dynamic var falseOrTrue: Bool {
         get {
             guard let text = self.text else {
                 return false
@@ -290,7 +290,7 @@ public extension UILabel {
     // MARK: - number
 
     /// Display a number with a decimal style format; for example, 1234.5678 is represented as “1234.5678”.
-    @objc dynamic public var decimal: NSNumber? {
+    @objc dynamic var decimal: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -308,7 +308,7 @@ public extension UILabel {
     }
 
     /// Display a number with a currency style format; for example, 1234.5678 is represented as “$ 1234.57”.
-    @objc dynamic public var currencyDollar: NSNumber? {
+    @objc dynamic var currencyDollar: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -326,7 +326,7 @@ public extension UILabel {
     }
 
     /// Display a number with a currency style format; for example,  1234.5678 is represented as “1234,57 €”.
-    @objc dynamic public var currencyEuro: NSNumber? {
+    @objc dynamic var currencyEuro: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -344,7 +344,7 @@ public extension UILabel {
     }
 
     /// Display a number with a currency style format; for example, 1234.5678 is represented as “£ 1234.57”.
-    @objc dynamic public var currencyLivreSterling: NSNumber? {
+    @objc dynamic var currencyLivreSterling: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -362,7 +362,7 @@ public extension UILabel {
     }
 
     /// Display a number with a currency style format; for example, 1234.5678 is represented as “¥ 1234”.
-    @objc dynamic public var currencyYen: NSNumber? {
+    @objc dynamic var currencyYen: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -380,7 +380,7 @@ public extension UILabel {
     }
 
     /// Display a number with a percent style format; for example, 1234.5678 is represented as “123457%”.
-    @objc dynamic public var percent: NSNumber? {
+    @objc dynamic var percent: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -398,7 +398,7 @@ public extension UILabel {
     }
 
     /// Display a number with no style, such that an integer representation is used; for example, 105.12345679111 is represented as “105.12345679”.
-    @objc dynamic public var real: NSNumber? {
+    @objc dynamic var real: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -415,7 +415,7 @@ public extension UILabel {
     }
 
     /// Display a number with no style, such that an integer representation is used; for example, 1234.5678 is represented as “1235”.
-    @objc dynamic public var integer: NSNumber? {
+    @objc dynamic var integer: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -433,7 +433,7 @@ public extension UILabel {
     }
 
     /// Display a number with a spell-out format; for example, 1234.5678 is represented as “one thousand two hundred thirty-four point five six seven eight”.
-    @objc dynamic public var spellOut: NSNumber? {
+    @objc dynamic var spellOut: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -451,7 +451,7 @@ public extension UILabel {
     }
 
     /// Display a number with an ordinal format; for example, in the en_US_POSIX locale, 1234.5678 is represented as “1,235th”
-    @objc dynamic public var ordinal: NSNumber? {
+    @objc dynamic var ordinal: NSNumber? {
         get {
             guard let text = self.text else {
                 return nil
@@ -470,7 +470,7 @@ public extension UILabel {
 
     // MARK: simple string transforamtion
 
-    @objc dynamic public var capitalised: String? {
+    @objc dynamic var capitalised: String? {
         get {
             return self.text // N.B. no reverse transformation
         }
@@ -480,7 +480,7 @@ public extension UILabel {
         }
     }
 
-    @objc dynamic public var lowercased: String? {
+    @objc dynamic var lowercased: String? {
         get {
             return self.text // N.B. no reverse transformation
         }
@@ -490,7 +490,7 @@ public extension UILabel {
         }
     }
 
-    @objc dynamic public var uppercased: String? {
+    @objc dynamic var uppercased: String? {
         get {
             return self.text // N.B. no reverse transformation
         }

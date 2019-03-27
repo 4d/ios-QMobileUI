@@ -87,7 +87,7 @@ public protocol ReusableView {
 }
 
 public extension ReusableView {
-    public static var reuseIdentifier: String {
+    static var reuseIdentifier: String {
         let className = String(describing: self)
         return "\(className)"
     }

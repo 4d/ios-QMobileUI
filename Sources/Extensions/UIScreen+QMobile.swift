@@ -10,27 +10,27 @@ import UIKit
 
 public extension UIScreen {
 
-    public static var orientation: UIInterfaceOrientation {
+    static var orientation: UIInterfaceOrientation {
         return UIApplication.shared.statusBarOrientation
     }
 
-    public static var size: CGSize {
+    static var size: CGSize {
         return UIScreen.main.bounds.size
     }
 
-    public static var width: CGFloat {
+    static var width: CGFloat {
         return UIScreen.main.bounds.size.width
     }
 
-    public static var height: CGFloat {
+    static var height: CGFloat {
         return UIScreen.main.bounds.size.height
     }
 
-    public static var screenStatusBarHeight: CGFloat {
+    static var screenStatusBarHeight: CGFloat {
         return UIApplication.shared.statusBarFrame.height
     }
 
-    public static var screenHeightWithoutStatusBar: CGFloat {
+    static var screenHeightWithoutStatusBar: CGFloat {
         return orientation.isPortrait ? UIScreen.main.bounds.size.height - screenStatusBarHeight :
             UIScreen.main.bounds.size.width - screenStatusBarHeight
     }

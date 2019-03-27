@@ -11,7 +11,7 @@ import Prephirences
 
 private var xoAssociationKey: UInt8 = 0
 public typealias BindedRecord = AnyObject // XXX replace by Record?
-extension UIView: Binded  {
+extension UIView: Binded {
 
 	// MARK: - Binded
     #if TARGET_INTERFACE_BUILDER
@@ -35,11 +35,11 @@ extension UIView: Binded  {
         let bindTo = objc_getAssociatedObject(self, &xoAssociationKey) as? Binder
         return bindTo != nil
     }
-	
+
 	public func setProperty(name: String, value: Any?) {
 		self.setValue(value, forKey: name)
 	}
-	
+
 	public func getPropertyValue(name: String) -> Any? {
 		// add some mapping
 		switch name {
@@ -48,10 +48,10 @@ extension UIView: Binded  {
 		default: return value(forKey: name)
 		}
 	}
-	
+
 	public var bindedRoot: Binded {
 		// what we want : if dynamic table, the cellview must be selected, otherwise the root view. And root view must not be a cell..
-		
+
 		// CLEAN here a tricky way to select cellview or rootview, very very dirty code
 		// maybe we could check table type, or add a protocol or a boolean(at creation, not runtime) to a view to select it
 		if let cellView = self.parentCellView {
@@ -67,7 +67,7 @@ extension UIView: Binded  {
 				return binded
 			}
 		}
-		
+
 		if let rootView = self.rootView {
 			return rootView
 		}
@@ -93,7 +93,7 @@ extension UIView: Binded  {
         }
         return bindTo.record != nil
     }
-	
+
 	open var table: DataSourceEntry? {
 		get {
 			return self.bindTo.table
@@ -122,7 +122,7 @@ extension UIView {
 // MARK: view hierarchy
 public extension UIView {
 
-    public var recordView: UIView? {
+    var recordView: UIView? {
         var currentView: UIView? = self
         while currentView?.superview != nil {
             currentView = currentView?.superview
