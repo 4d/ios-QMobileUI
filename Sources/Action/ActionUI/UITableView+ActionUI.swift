@@ -95,7 +95,7 @@ extension UITableView: ActionSheetUI {
             let actions = actionSheet.actions
             let moreSheet = ActionSheet(title: nil,
                                         subtitle: nil,
-                                        dismissLabel: "Done",
+                                        dismissLabel: "Cancel",
                                         actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
             var alertController = UIAlertController.build(from: moreSheet, context: context ?? self, handler: ActionManager.instance.executeAction)
             alertController = alertController.checkPopUp(contextualView)
