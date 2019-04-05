@@ -60,9 +60,9 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         }
     }
 
-    /// On click execute transition to show record details.
+    /// On click execute transition to show record details by code if there is no segue in storyboard.
     /// Set to false, to not execute transition and manage your own code in onClicked()
-    @IBInspectable open var onClickShowDetails: Bool = true
+    @IBInspectable open var onClickShowDetails: Bool = false
 
     public var originalParent: UIViewController?
 
@@ -151,7 +151,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
         // For a selection default behaviour is to show detail...
 
         if onClickShowDetails {
-            self.performSegue(withIdentifier: selectedSegueIdentifier, sender: collectionView)
+            self.performSegue(withIdentifier: selectedSegueIdentifier, sender: self.collectionView(collectionView, cellForItemAt: indexPath))
         }
         if let record = dataSource.record(at: indexPath) {
             onClicked(record: record, at: indexPath)
