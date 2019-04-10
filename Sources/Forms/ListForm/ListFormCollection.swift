@@ -84,6 +84,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.installBackButton()
+        self.initRefreshControll()
         onWillAppear(animated)
     }
 
@@ -94,6 +95,7 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.unitRefreshControll()
         onWillDisappear(animated)
     }
 
@@ -256,20 +258,50 @@ open class ListFormCollection: UICollectionViewController, ListForm {
 
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
-        if hasRefreshControl {
-            self.collectionView?.alwaysBounceVertical = true
+        guard hasRefreshControl else { return }
+        self.collectionView?.alwaysBounceVertical = true
 
-            self.refreshControl = UIRefreshControl()
-            refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-            if let refreshControl = refreshControl {
-                self.collectionView?.addSubview(refreshControl)
+        self.refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        if let refreshControl = refreshControl {
+            self.collectionView?.addSubview(refreshControl)
+        }
+    }
+
+    fileprivate func initRefreshControll() {
+        guard hasRefreshControl else { return }
+        endRefreshing(Notification(name: .init(rawValue: "init")))
+        let center: NotificationCenter = .default
+        center.addObserver(self,
+                           selector: #selector(endRefreshing),
+                           name: UIApplication.willEnterForegroundNotification,
+                           object: nil)
+    }
+
+    @objc public func endRefreshing(_ notification: Notification) {
+        guard hasRefreshControl else { return }
+        DispatchQueue.main.after(0.2) { [weak self] in
+            guard let refreshControl = self?.refreshControl else { return }
+            if refreshControl.isRefreshing {
+                refreshControl.endRefreshing()
+            } else if !refreshControl.isHidden {
+                refreshControl.beginRefreshing()
+                refreshControl.endRefreshing()
             }
         }
     }
 
+    fileprivate func unitRefreshControll() {
+        guard hasRefreshControl else { return }
+        let center: NotificationCenter = .default
+        center.removeObserver(self,
+                              name: UIApplication.willEnterForegroundNotification,
+                              object: nil)
+    }
+
     open func installDataEmptyView() {
         //self.collectionView?.emptyDataSetSource = self
-       // self.collectionView?.emptyDataSetDelegate = self
+        // self.collectionView?.emptyDataSetDelegate = self
     }
 
     open func installSearchBar() {
