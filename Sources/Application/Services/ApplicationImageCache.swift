@@ -76,11 +76,13 @@ class ApplicationImageCache: NSObject {
 }
 
 extension ApplicationImageCache {
+
     // MARK: function
     private func fill(from bundle: Bundle = .main) {
         guard let urls = bundle.urls(forResourcesWithExtension: self.extension, subdirectory: subdirectory) else {
             return
         }
+        // Deprecated, no more image in bundle, use asset instead
         for url in urls {
             let cacheKey = url.deletingPathExtension().lastPathComponent
             if !imageCache.imageCachedType(forKey: cacheKey).cached {
@@ -100,7 +102,10 @@ extension ApplicationImageCache {
         return RestImageResource(restDictionary: restDictionary)
     }
 
-    private static func imageInBundle(for resource: RestImageResource) -> UIImage? {
+    static func imageInBundle(for resource: RestImageResource) -> UIImage? {
+        if let image = UIImage(named: resource.cacheKey) {
+            return image
+        }
         if let url = Bundle.main.url(forResource: resource.cacheKey,
                                      withExtension: resource.extension ?? instanceCached.extension,
                                      subdirectory: instanceCached.subdirectory) {

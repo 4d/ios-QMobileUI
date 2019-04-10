@@ -537,7 +537,7 @@ extension UILabel {
             let completionHandler: CompletionHandler = { [weak self] image, error, cacheType, imageURL in
                 if let error = error {
                     ApplicationImageCache.log(error: error, for: imageURL)
-                } else if let image = image {
+                } else if let image = image ?? ApplicationImageCache.imageInBundle(for: imageResource) {
                     self?.setImage(image)
                 }
             }

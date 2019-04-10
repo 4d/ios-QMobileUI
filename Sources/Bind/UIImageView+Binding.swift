@@ -111,6 +111,11 @@ extension UIImageView {
                 } else {
                     //self.setNeedsDisplay() // force refresh ??
                 }
+                if image == nil {
+                    if let image = ApplicationImageCache.imageInBundle(for: imageResource) {
+                        self.image = image
+                    }
+                }
             }
             let imageDownloader = self.kf
             imageDownloader.cancelDownloadTask()
