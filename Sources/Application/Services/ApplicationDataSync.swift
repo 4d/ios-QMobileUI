@@ -57,7 +57,7 @@ extension ApplicationDataSync: ApplicationService {
 
         if Prephirences.Auth.reloadData {
             // When logout, drop the data...
-            apiManagerListeners += [dataSync.apiManager.observe(.apiManagerLogout) { _ in
+            apiManagerListeners += [dataSync.apiManager.observe(APIManager.logout) { _ in
                 _ = self.dataSync.drop()
                 }]
         }
