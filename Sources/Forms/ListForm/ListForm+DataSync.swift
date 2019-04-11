@@ -121,6 +121,11 @@ extension ListForm {
             /// Localized error
             if let failureReason = error.failureReason {
                 SwiftMessages.warning(failureReason)
+            } else if let recoverySuggestion = error.recoverySuggestion {
+                SwiftMessages.warning(error.errorDescription ?? title) { view, config in
+                    view.configureContent(title: title, body: recoverySuggestion)
+                    return config
+                }
             } else {
                 SwiftMessages.error(title: error.errorDescription ?? title, message: "")
             }
