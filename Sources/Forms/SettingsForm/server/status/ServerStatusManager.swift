@@ -77,7 +77,7 @@ open class ServerStatusManager {
 
         // Start checking in a new task
 
-        let checkingUUID = UUID().uuid
+        let checkingUUID = UUID()
         self.queue.addOperation {
             //logger.verbose("Checking status \(checkingUUID). sleep start")
             //Thread.sleep(forTimeInterval: delay)
@@ -85,18 +85,16 @@ open class ServerStatusManager {
         }
         self.queue.addOperation {
             self.serverStatus(.checking)
-            logger.verbose("Checking status \(checkingUUID). load status start")
+            logger.debug("Checking server status \(url) \(checkingUUID) start")
             let apiManager = APIManager(url: url)
 
             let checkstatus = apiManager.status()
             let context = self.queue.context
-            checkstatus.onSuccess(context) { _ in
-                APIManager.instance = apiManager
-                DataSync.instance.apiManager = apiManager
-            }
             checkstatus.onComplete(context) { [weak self] result in
                 self?.serverStatus(.done(result))
-                logger.verbose("Checking status \(checkingUUID). load status end")
+                logger.debug("Checking status \(url) \(checkingUUID) end: \(result)")
+                APIManager.instance = apiManager
+                DataSync.instance.apiManager = apiManager
             }
         }
     }
