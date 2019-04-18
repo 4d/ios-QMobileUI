@@ -6,12 +6,29 @@
 //  Copyright © 2018 Eric Marchand. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
-extension UINavigationBar {
+/// Protocol to easily copy attribute from one view to another.
+protocol UIAppearanceCopyable: UIAppearance {
 
-    open func copyStyle(from bar: UINavigationBar, image: Bool = true) {
+    func copyAppearance(from: Self, image: Bool)
+
+}
+
+extension UIAppearanceCopyable {
+    /// Set to this object the share one from `Self.appearance()`
+    func setAsDefaultStyle() {
+        copyAppearance(from: Self.appearance(), image: true)
+    }
+    /// Take the current object appareance and set it to share one `Self.appearance()`
+    func setDefaultStyle() {
+        Self.appearance().copyAppearance(from: self, image: true)
+    }
+}
+
+extension UINavigationBar: UIAppearanceCopyable {
+
+    func copyAppearance(from bar: UINavigationBar, image: Bool = true) {
         self.barStyle = bar.barStyle
         self.barTintColor = bar.barTintColor
         self.tintColor = bar.tintColor
@@ -22,19 +39,11 @@ extension UINavigationBar {
         }
     }
 
-    open func setAsDefaultStyle() {
-        copyStyle(from: UINavigationBar.appearance())
-    }
-
-    open func setDefaultStyle() {
-        UINavigationBar.appearance().copyStyle(from: self)
-    }
-
 }
 
-extension UITabBar {
+extension UITabBar: UIAppearanceCopyable {
 
-    func copyStyle(from bar: UITabBar, image: Bool = true) {
+    func copyAppearance(from bar: UITabBar, image: Bool = true) {
         self.barStyle = bar.barStyle
         self.barTintColor = bar.barTintColor
         self.tintColor = bar.tintColor
@@ -45,12 +54,19 @@ extension UITabBar {
         }
     }
 
-    open func setAsDefaultStyle() {
-        copyStyle(from: UITabBar.appearance())
-    }
+}
 
-    open func setDefaultStyle() {
-        UITabBar.appearance().copyStyle(from: self)
+extension UISearchBar: UIAppearanceCopyable {
+
+    func copyAppearance(from bar: UISearchBar, image: Bool = true) {
+        self.barStyle = bar.barStyle
+        self.barTintColor = bar.barTintColor
+        self.tintColor = bar.tintColor
+        self.isTranslucent = bar.isTranslucent
+        self.searchBarStyle = bar.searchBarStyle
+        if image {
+            self.backgroundImage = bar.backgroundImage
+        }
     }
 
 }

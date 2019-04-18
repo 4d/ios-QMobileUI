@@ -252,7 +252,7 @@ open class ListFormTable: UITableViewController, ListForm {
             self.originalParent = self.parent
         } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
             if let navigationController = self.originalParent as? UINavigationController {
-                moreNavigationController.navigationBar.copyStyle(from: navigationController.navigationBar)
+                moreNavigationController.navigationBar.copyAppearance(from: navigationController.navigationBar)
             }
         }
     }
@@ -327,6 +327,7 @@ open class ListFormTable: UITableViewController, ListForm {
                     searchController.delegate = self
                     self.navigationItem.searchController = searchController
                     self.definesPresentationContext = true
+                    searchController.searchBar.copyAppearance(from: self.searchBar)
 
                     self.searchBar = searchController.searchBar // continue to manage search using listener
                 }
