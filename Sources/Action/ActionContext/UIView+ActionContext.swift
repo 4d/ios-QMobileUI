@@ -12,6 +12,22 @@ import QMobileAPI
 
 // MARK: - ActionUIContext
 
+extension UICollectionViewCell: ActionContextProvider {
+
+    public func actionContext() -> ActionContext? {
+        return self.bindTo.table
+    }
+
+}
+
+extension UITableViewCell: ActionContextProvider {
+
+    public func actionContext() -> ActionContext? {
+        return self.bindTo.table
+    }
+
+}
+
 extension UIView: ActionContext {
 
     public func actionParameters(action: Action) -> ActionParameters? {
@@ -19,7 +35,9 @@ extension UIView: ActionContext {
 
         if let context = self.bindTo.table {
             parameters = context.actionParameters(action: action)
-        } else if let provider = self.findActionContextProvider(action), let context = provider.actionContext() {
+        } /*else if let parentCellView = self.parentCellView as? UIView, let context = parentCellView.bindTo.table {
+            parameters = context.actionParameters(action: action)
+        }*/ else if let provider = self.findActionContextProvider(action), let context = provider.actionContext() {
             parameters = context.actionParameters(action: action)
         }
         return parameters
@@ -42,7 +60,7 @@ extension UIView: ActionContext {
         }
 
         // in final ressort, the current view controller
-        if let viewController =  self.owningViewController {
+        if let viewController = self.owningViewController {
             if let provider = viewController as? ActionContextProvider {
                 return provider
             } else if let navigationController = viewController as? UINavigationController {
