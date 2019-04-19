@@ -37,8 +37,9 @@ struct ActionUIBuilder {
 
     /// Provide a color for the passed action.
     static func actionColor(for action: Action) -> UIColor? {
+        let defaultColor: UIColor? = .background
         guard let style = action.style else {
-            return nil
+            return defaultColor
         }
         switch style {
         case .custom(let properties):
@@ -48,7 +49,7 @@ struct ActionUIBuilder {
         default:
             break
         }
-        return nil
+        return defaultColor
     }
 }
 

@@ -22,7 +22,7 @@ public class ActionManager {
         // default handlers
 
         // dataSynchro
-        append { result, action in
+        append { result, action, _ in
             guard result.dataSynchro else { return false }
             logger.info("Data synchronisation is launch after action \(action.name)")
             _ = dataSync { result in
@@ -37,7 +37,7 @@ public class ActionManager {
         }
 
         // openURL
-        append { result, _ in
+        append { result, _, _ in
             guard let urlString = result.openURL, let url = URL(string: urlString) else { return false }
             logger.info("Open url \(urlString)")
             onForeground {
@@ -52,12 +52,12 @@ public class ActionManager {
             return true
         }
         // Copy test to pasteboard
-        append { result, _ in
+        append { result, _, _ in
             guard let pasteboard = result.pasteboard else { return false }
             UIPasteboard.general.string = pasteboard
             return true
         }
-        append { result, _ in
+        append { result, _, _ in
             guard result.goBack else { return false }
             UIApplication.topViewController?.dismiss(animated: true, completion: {
 
@@ -67,23 +67,24 @@ public class ActionManager {
         }
         #if DEBUG
 
-        append { result, _ in
+        append { result, _, actionUI in
             guard let actionSheet = result.actionSheet else { return false }
             let alertController = UIAlertController.build(from: actionSheet, context: self, handler: self.executeAction)
+            _ = alertController.checkPopUp(actionUI)
             alertController.show {
 
             }
             return true
         }
 
-        append { _, _ in
+        append { _, _, _ in
             /*if _ = result.goTo {
              // Open internal
              }*/
              return false
         }
 
-        append { result, _ in
+        append { result, _, _ in
             guard result.share else { return false }
             // Remote could send from server
             // * some text
@@ -111,7 +112,29 @@ public class ActionManager {
     }
 
     /// Execute the action
+
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
+        if action.parameters.isEmpty {
+            executeActionRequest(action, actionUI, parameters)
+        } else {
+            // TODO #106847 Create UI according to action parameters
+
+            let alertController = UIAlertController(title: "ask", message: "for", preferredStyle: .actionSheet)
+
+            for parameter in action.parameters ?? [] {
+                alertController.addAction(UIAlertAction(title: parameter.label ?? parameter.name, style: .default, handler: { _ in
+
+                    // TODO then with user computed parameters call the action
+                    self.executeActionRequest(action, actionUI, parameters)
+                }))
+            }
+            _ = alertController.checkPopUp(actionUI)
+            alertController.addAction(alertController.dismissAction())
+
+        }
+    }
+
+    func executeActionRequest(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
         // execute the network action
         let parameters = parameters ?? [:]
         let actionQueue: DispatchQueue = .background
@@ -141,7 +164,7 @@ public class ActionManager {
                         SwiftMessages.info(statusText)
                     }
 
-                    _ = self.handle(result: value, for: action)
+                    _ = self.handle(result: value, for: action, from: actionUI)
                 }
             }
         }
@@ -157,10 +180,10 @@ extension ActionManager: ActionContext {
 
 extension ActionManager: ActionResultHandler {
 
-    public func handle(result: ActionResult, for action: Action) -> Bool {
+    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI) -> Bool {
         var handled = false
         for handler in handlers {
-            handled = handler.handle(result: result, for: action) || handled
+            handled = handler.handle(result: result, for: action, from: actionUI) || handled
         }
         return handled
     }
@@ -174,8 +197,8 @@ extension ActionManager: ActionResultHandler {
 
 /// Handle an action results.
 public protocol ActionResultHandler {
-    typealias Block = (ActionResult, Action) -> Bool
-    func handle(result: ActionResult, for action: Action) -> Bool
+    typealias Block = (ActionResult, Action, ActionUI) -> Bool
+    func handle(result: ActionResult, for action: Action, from: ActionUI) -> Bool
 }
 
 /// Handle action result with a block
@@ -184,8 +207,8 @@ public struct ActionResultHandlerBlock: ActionResultHandler {
     public init(_ block: @escaping ActionResultHandler.Block) {
         self.block = block
     }
-    public func handle(result: ActionResult, for action: Action) -> Bool {
-        return block(result, action)
+    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI) -> Bool {
+        return block(result, action, actionUI)
     }
 }
 

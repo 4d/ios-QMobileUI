@@ -16,6 +16,7 @@ open class Main: UIViewController, Form {
     // MARK: event
     final public override func viewDidLoad() {
         super.viewDidLoad()
+        setupAppareance()
         onLoad()
     }
 
@@ -71,12 +72,80 @@ open class Main: UIViewController, Form {
         performTransition()
     }
 
+    func setupAppareance() {
+        updateStyle()
+        switch _style {
+        case .light:
+            UITabBar.appearance().barStyle = .default
+            UINavigationBar.appearance().barStyle = .default
+            UISearchBar.appearance().barStyle = .default
+        case .dark:
+            UITabBar.appearance().barStyle = .black
+            UINavigationBar.appearance().barStyle = .blackTranslucent
+            UISearchBar.appearance().barStyle = .blackTranslucent
+
+            // UIView.appearance().backgroundColor = UIColor.darkBackground
+            // UIColor.darkText
+        default:
+            break
+        }
+    }
+
+    @IBInspectable var style: String = "" {
+        didSet {
+            updateStyle()
+        }
+    }
+
+    var _style: UserInterfaceStyle = .unspecified //swiftlint:disable:this identifier_name
+
+    func updateStyle() {
+        self._style = UserInterfaceStyle(string: style)
+    }
+}
+
+public extension UIColor {
+    // static let darkBackground = UIColor(red: 0.184313725, green: 0.184313725, blue: 0.184313725, alpha: 1.0)
+
+    static let background = UIColor(named: "BackgroundColor")
+    static let foreground = UIColor(named: "ForegroundColor")
+}
+
+// TODO Use UIUserInterfaceStyle when iOS12
+enum UserInterfaceStyle: Int {
+
+    case unspecified
+
+    case light
+
+    case dark
+
+}
+
+extension UserInterfaceStyle {
+
+    init(string: String) {
+        switch string {
+        case "light": self = .light
+        case "dark": self = .dark
+        default: self = .unspecified
+        }
+    }
+
+    var string: String {
+        switch self {
+        case .light: return "light"
+        case .dark: return "dark"
+        case .unspecified: return "unspecified"
+        }
+    }
+
 }
 
 #if DEBUG
 extension UIViewController {
     // /!\ This method use private information
-    func canPerformSegue(withIdentifier identifier: String) -> Bool {
+    fileprivate func canPerformSegue(withIdentifier identifier: String) -> Bool {
         guard let segues = self.value(forKey: "storyboardSegueTemplates") as? [NSObject] else { return false }
         return segues.first { $0.value(forKey: "identifier") as? String == identifier } != nil
     }

@@ -58,7 +58,7 @@ extension UITableView: ActionSheetUI {
         return 3
     }
 
-    fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = UIColor(named: "BackgroundColor")) {
+    fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = .background) {
         if var color = color {
             for _ in contextualActions {
                 color = color.lighter() ?? color
