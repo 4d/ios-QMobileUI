@@ -97,10 +97,13 @@ extension ListForm {
             SwiftMessages.info("Data has been reloaded", configure: { _, config in
                 var config = config
                 // More view controller do not support presentationContext = .automatic, so change it here
-                if let viewController = self as? UIViewController,
-                    let moreNavigationController = viewController.parent as? UINavigationController,
-                    moreNavigationController.isMoreNavigationController {
-                    config.presentationContext = .viewController(viewController)
+                if let viewController = self as? UIViewController {
+                    if let moreNavigationController = viewController.parent as? UINavigationController,
+                        moreNavigationController.isMoreNavigationController {
+                        config.presentationContext = .viewController(viewController)
+                    } else if viewController.navigationItem.searchController != nil { // or check searchableAsTitle?
+                        config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                    }
                 }
                 return config
             })
