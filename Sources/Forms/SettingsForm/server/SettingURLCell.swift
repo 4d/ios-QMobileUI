@@ -22,9 +22,7 @@ open class SettingURLCell: UITableViewCell {
     }
 
     private func initFormData() {
-        let urlString = URL.qmobile.absoluteString
-        serverURLLabel.text = urlString
-
+        serverURLLabel.text =  URL.qmobile.absoluteString
         listener = Prephirences.serverURLChanged { serverURL in
             self.serverURLLabel.text = serverURL
         }

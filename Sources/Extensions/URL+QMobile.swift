@@ -24,6 +24,16 @@ extension URL {
         }
         return queryItems.filter({$0.name == name}).first?.value
     }
+
+}
+
+let validIpAddressRegex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+extension URL {
+    var isIpAddress: Bool {
+        guard let host = self.host else { return false }
+        guard !host.isEmpty else { return false }
+        return host.range(of: validIpAddressRegex, options: .regularExpression) != nil
+    }
 }
 
 extension URLComponents {
