@@ -188,6 +188,11 @@ extension UIViewController {
         alertWindow.rootViewController?.present(self, animated: animated, completion: completion)
     }
 
+    func show(_ viewController: UIViewController? = UIApplication.topViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
+        viewController?.present(self, animated: animated, completion: completion)
+        /// XXX assert or log viewController != nil
+    }
+
 }
 
 extension NSObject {

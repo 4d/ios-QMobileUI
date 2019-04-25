@@ -61,14 +61,6 @@ public extension UIAlertController {
 	}
 
 }
-
-extension UIAlertController {
-
-    func show(_ viewController: UIViewController? = UIApplication.topViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
-        viewController?.present(self, animated: animated, completion: completion)
-    }
-}
-
 extension UIAlertAction {
 
     public var leftImage: UIImage? {

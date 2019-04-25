@@ -179,11 +179,11 @@ public class ActionManager {
                 alertController.show()
 
             } else {
-                let alertController = UIAlertController(title: "Not implemented", message: "Multiple parameters", preferredStyle: .alert)
 
-                alertController.addAction(alertController.dismissAction())
-                _ = alertController.checkPopUp(actionUI)
-                alertController.show()
+                let viewController = ActionParametersController(action, actionUI, parameters)
+
+                let navigationController = UINavigationController(rootViewController: viewController)
+                navigationController.show()
             }
 
         } else {
@@ -226,6 +226,116 @@ public class ActionManager {
                 }
             }
         }
+    }
+
+}
+
+extension Action {
+    static let dummy =  Action(name: "")
+}
+
+class ActionParametersController: UIViewController {
+
+    var actionParametersValue: [String: Any] = [:]
+
+    var action: Action = .dummy
+    var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
+    var parameters: ActionParameters?
+
+    required  init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    convenience init(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
+        self.init(nibName: nil, bundle: nil)
+        self.action = action
+        self.actionUI = actionUI
+        self.parameters = parameters
+    }
+
+    func configureNAv() {
+        let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 44)) // Offset by 20 pixels vertically to take the status bar into account
+
+        navigationBar.backgroundColor = UIColor.white
+
+        // Create a navigation item with a title
+        let navigationItem = UINavigationItem()
+        navigationItem.title = "Title"
+
+        // Create left and right button for navigation item
+        let leftButton =  UIBarButtonItem(title: "Save", style: .plain, target: self, action: nil) // #selector(ViewController.btn_clicked(_:))
+
+        let rightButton = UIBarButtonItem(title: "Right", style: .plain, target: self, action: nil)
+
+        // Create two buttons for the navigation item
+        navigationItem.leftBarButtonItem = leftButton
+        navigationItem.rightBarButtonItem = rightButton
+
+        // Assign the navigation item to the navigation bar
+        navigationBar.items = [navigationItem]
+
+        // Make the navigation bar a subview of the current view controller
+        self.view.addSubview(navigationBar)
+
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+       // configureNAv()
+
+        view.backgroundColor = .white
+
+        let container = UIStackView()
+        container.axis = .vertical
+        container.distribution = .fillEqually
+        container.alignment = .fill
+        container.spacing = 5
+        container.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(container)
+        guard let parameters = action.parameters else { return }
+
+        let frame = CGRect(origin: .zero, size: CGSize(width: UIScreen.width, height: 48))
+
+        for parameter in parameters {
+
+            let label = UILabel(frame: frame)
+            label.text = parameter.label ?? parameter.shortLabel ?? parameter.name
+            container.addArrangedSubview(label)
+
+            let textField = AlertTextField(frame: frame)
+            textField.placeholder = parameter.placeholder
+            textField.layer.borderWidth = 1
+            textField.layer.cornerRadius = 8
+            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.backgroundColor = nil
+            textField.action { _ in
+                self.actionParametersValue[parameter.name] = textField.text
+            }
+            container.addArrangedSubview(textField)
+        }
+
+        let button = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 50))
+        button.setTitle("validate", for: .normal)
+        button.backgroundColor = .green
+        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        container.addArrangedSubview(button)
+
+        // XXX dismiss button
+
+    }
+
+    @objc func buttonAction(sender: UIButton!) {
+        var parameters: ActionParameters = self.parameters ?? [:]
+
+        // For the moment merge all parameters...
+        parameters.merge(actionParametersValue, uniquingKeysWith: { $1 })
+
+        ActionManager.instance.executeActionRequest(action, actionUI, parameters)
     }
 
 }
