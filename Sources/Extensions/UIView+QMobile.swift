@@ -8,6 +8,63 @@
 
 import UIKit
 
+extension UIView {
+
+    // MARK: frame
+    var size: CGSize {
+        get {
+            return self.frame.size
+        }
+        set {
+            self.width = newValue.width
+            self.height = newValue.height
+        }
+    }
+
+    var width: CGFloat {
+        get { return self.frame.size.width
+        }
+        set { self.frame.size.width = newValue }
+    }
+
+    var height: CGFloat {
+        get { return self.frame.size.height }
+        set { self.frame.size.height = newValue }
+    }
+
+    var x: CGFloat { // swiftlint:disable:this identifier_name
+        get { return frame.x }
+        set { frame = frame.with(x: newValue) }
+    }
+
+    var y: CGFloat { // swiftlint:disable:this identifier_name
+        get { return frame.y }
+        set { frame = frame.with(y: newValue) }
+    }
+
+    // MARK: layer
+    var borderColor: UIColor? {
+        get {
+            guard let color = layer.borderColor else {
+                return nil
+            }
+            return UIColor(cgColor: color)
+        }
+        set {
+            guard let color = newValue else {
+                layer.borderColor = nil
+                return
+            }
+            layer.borderColor = color.cgColor
+        }
+    }
+
+    var borderWidth: CGFloat {
+        get { return layer.borderWidth }
+        set { layer.borderWidth = newValue }
+    }
+}
+
 // MARK: - View hierarcgy
 public extension UIView {
 
@@ -66,15 +123,6 @@ public extension UIView {
         set { frame = frame.with(y: newValue) }
     }
 
-    public var width: CGFloat {
-        get { return frame.width }
-        set { frame = frame.with(width: newValue) }
-    }
-
-    public var height: CGFloat {
-        get { return frame.height }
-        set { frame = frame.with(height: newValue) }
-    }
 }*/
 
 // MARK: animation delegate

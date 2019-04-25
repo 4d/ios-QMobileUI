@@ -114,23 +114,81 @@ public class ActionManager {
     /// Execute the action
 
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
-        if action.parameters.isEmpty {
-            executeActionRequest(action, actionUI, parameters)
-        } else {
+        if let actionParameters = action.parameters, let firstParameter = actionParameters.first {
             // TODO #106847 Create UI according to action parameters
 
-            let alertController = UIAlertController(title: "ask", message: "for", preferredStyle: .actionSheet)
+            if actionParameters.count == 1 {
+                let alertController = UIAlertController(title: firstParameter.label ?? firstParameter.name, message: nil, preferredStyle: .actionSheet)
 
-            for parameter in action.parameters ?? [] {
-                alertController.addAction(UIAlertAction(title: parameter.label ?? parameter.name, style: .default, handler: { _ in
+                var actionParametersValue: [String: Any] = [:]
 
-                    // TODO then with user computed parameters call the action
+                switch firstParameter.type {
+                case .string, .text:
+                    alertController.addOneTextField { textField in
+                        textField.left(image: UIImage(named: "next"), color: .black)
+                        textField.leftViewPadding = 12
+                        textField.becomeFirstResponder()
+                        textField.layer.borderWidth = 1
+                        textField.layer.cornerRadius = 8
+                        textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                        textField.backgroundColor = nil
+                        textField.textColor = .black
+                        textField.placeholder = firstParameter.placeholder
+                        textField.keyboardAppearance = .default
+                        textField.keyboardType = .default
+                        // textField.isSecureTextEntry = true
+                        textField.returnKeyType = .done
+                        textField.action { textField in
+                            logger.debug("textField: \(String(describing: textField.text))")
+
+                            actionParametersValue[firstParameter.name] = textField.text
+                        }
+                    }
+                case .date:
+                    alertController.message = "Select a date"
+                    alertController.addDatePicker(mode: .date, date: Date()) { date in
+                        actionParametersValue[firstParameter.name] = date
+                    }
+                case .duration, .time:
+                    alertController.addDatePicker(mode: .time, date: Date()) { date in
+                        actionParametersValue[firstParameter.name] = date
+                    }
+                case .picture, .image:
+                    alertController.addImagePicker(flow: .vertical, paging: true, images: [])
+                case .integer, .number, .real:
+                    let numberValues: [Int] = (1...100).map { $0 }
+                    let pickerViewValues: [[String]] = [numberValues.map { $0.description }]
+                    alertController.addPickerView(values: pickerViewValues) { (_, _, index, _) in
+                        actionParametersValue[firstParameter.name] = numberValues[index.row]
+                    }
+                default:
+                    break // XXX show notingg
+                }
+
+                let validateAction = UIAlertAction(title: "Validate", style: .default) { _ in // XXX
+                    var parameters: ActionParameters = parameters ?? [:]
+
+                    // For the moment merge all parameters...
+                    parameters.merge(actionParametersValue, uniquingKeysWith: { $1 })
+
                     self.executeActionRequest(action, actionUI, parameters)
-                }))
-            }
-            _ = alertController.checkPopUp(actionUI)
-            alertController.addAction(alertController.dismissAction())
+                }
+                alertController.addAction(validateAction)
 
+                _ = alertController.checkPopUp(actionUI)
+                alertController.show()
+
+            } else {
+                let alertController = UIAlertController(title: "Not implemented", message: "Multiple parameters", preferredStyle: .alert)
+
+                alertController.addAction(alertController.dismissAction())
+                _ = alertController.checkPopUp(actionUI)
+                alertController.show()
+            }
+
+        } else {
+            // Execute action without any parameters
+            executeActionRequest(action, actionUI, parameters)
         }
     }
 
