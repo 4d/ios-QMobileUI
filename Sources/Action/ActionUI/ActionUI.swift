@@ -14,17 +14,16 @@ import QMobileAPI
 /// An action ui element could be builded from action and context and on action launch the passed handler.
 public protocol ActionUI {
 
-    typealias Handler = (Action, ActionUI, ActionParameters?) -> Void
+    typealias Handler = (Action, ActionUI, ActionContext) -> Void
 
     /// Build an action ui element.
-    static func build(from action: Action, parameters: ActionParameters?, handler: @escaping Handler) -> ActionUI
+    static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI
 }
 
 /// Builder class to force cast
 struct ActionUIBuilder {
     static func build<T>(_ type: T.Type, from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
-        let parameters = context.actionParameters(action: action)
-        return type.build(from: action, parameters: parameters, handler: handler) as? T
+        return type.build(from: action, context: context, handler: handler) as? T
     }
 
     /// Provide an image for the passed action.

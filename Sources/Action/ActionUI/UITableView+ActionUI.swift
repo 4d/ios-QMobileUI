@@ -74,12 +74,12 @@ extension UITableView: ActionSheetUI {
 
     /// Create UISwipeActionsConfiguration from self 'contextualActions'
     /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
-    public func swipeActionsConfiguration(with context: ActionContext?, at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    public func swipeActionsConfiguration(with context: ActionContext, at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let actionSheet = self.actionSheet else { return .empty }
         guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
 
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
-        var contextualActions = self.build(from: actionSheet, context: context ?? self, handler: ActionManager.instance.executeAction).compactMap { $0 as? UIContextualAction }
+        var contextualActions = self.build(from: actionSheet, context: context, handler: ActionManager.instance.executeAction).compactMap { $0 as? UIContextualAction }
 
         guard contextualActions.count > UITableView.maxVisibleContextualActions else {
             gradientBackgroundColor(contextualActions)
@@ -97,7 +97,7 @@ extension UITableView: ActionSheetUI {
                                         subtitle: nil,
                                         dismissLabel: "Cancel",
                                         actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            var alertController = UIAlertController.build(from: moreSheet, context: context ?? self, handler: ActionManager.instance.executeAction)
+            var alertController = UIAlertController.build(from: moreSheet, context: context, handler: ActionManager.instance.executeAction)
             alertController = alertController.checkPopUp(contextualView)
             alertController.show {
                 handle(false) // to dismiss immediatly or in completion handler of alertController
@@ -131,11 +131,11 @@ extension UISwipeActionsConfiguration {
 
 extension UIContextualAction: ActionUI {
 
-    public static func build(from action: Action, parameters: ActionParameters?, handler: @escaping ActionUI.Handler) -> ActionUI {
+    public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = UIContextualAction(
             style: UIContextualAction.Style.from(actionStyle: action.style),
             title: action.shortLabel ?? action.label ?? action.name) { (contextualAction, _ /* buttons view children of table view, not cell*/, handle) in
-                handler(action, contextualAction, parameters)
+                handler(action, contextualAction, context)
                 let success = false // if true and style = destructive, line will be removed...
                 handle(success)
         }

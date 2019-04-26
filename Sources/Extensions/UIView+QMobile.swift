@@ -91,6 +91,43 @@ public extension UIView {
         return nil
     }
 
+    func findFirstResponder() -> UIView? {
+        if isFirstResponder { return self }
+        for subView in subviews {
+            if let firstResponder = subView.findFirstResponder() {
+                return firstResponder
+            }
+        }
+        return nil
+    }
+}
+
+protocol LayoutGuide {
+    var leadingAnchor: NSLayoutXAxisAnchor { get }
+    var trailingAnchor: NSLayoutXAxisAnchor { get }
+    var leftAnchor: NSLayoutXAxisAnchor { get }
+    var rightAnchor: NSLayoutXAxisAnchor { get }
+    var topAnchor: NSLayoutYAxisAnchor { get }
+    var bottomAnchor: NSLayoutYAxisAnchor { get }
+    var widthAnchor: NSLayoutDimension { get }
+    var heightAnchor: NSLayoutDimension { get }
+    var centerXAnchor: NSLayoutXAxisAnchor { get }
+    var centerYAnchor: NSLayoutYAxisAnchor { get }
+}
+extension UILayoutGuide: LayoutGuide {}
+extension UIView: LayoutGuide {}
+
+extension UIView {
+
+    func snap(to guide: LayoutGuide) {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+            self.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+            self.topAnchor.constraint(equalTo: guide.topAnchor),
+            self.bottomAnchor.constraint(equalTo: guide.bottomAnchor)
+            ])
+    }
 }
 
 extension UIResponder {

@@ -16,6 +16,16 @@ public protocol ActionContext {
     /// Provide parameters for the action.
     func actionParameters(action: Action) -> ActionParameters?
 
+    /// Provide value for a field.
+    func actionParameterValue(for field: String) -> Any?
+
+}
+
+public extension ActionContext {
+
+    func actionParameterValue(for field: String) -> Any? {
+        return nil
+    }
 }
 
 /// Protocol to define class which could provide `ActionContext`
@@ -29,4 +39,17 @@ struct ActionParametersKey {
     static let table = "dataClass"
     static let record = "entity"
     static let primaryKey = "primaryKey"
+}
+
+extension ActionParameter {
+
+    public func defaultValue(with context: ActionContext) -> Any? {
+        if let value = self.default {
+            return value
+        }
+        if let field = self.defaultField {
+            return context.actionParameterValue(for: field)
+        }
+        return nil // TODO compute default value according to a defined properties and context
+    }
 }

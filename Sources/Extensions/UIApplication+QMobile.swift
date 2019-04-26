@@ -108,7 +108,7 @@ extension UIApplication {
 
 // MARK: Controller
 extension UIApplication {
-    // Do not call in app extension, UIApplication.shared not exist
+    /// Do not call in app extension, UIApplication.shared not exist
     public static var topViewController: UIViewController? {
             return UIApplication.shared.topViewController
     }
@@ -118,5 +118,16 @@ extension UIApplication {
             return nil
         }
         return UIViewController.topViewController(rootController)
+    }
+
+    /// Return the top navigation controller.
+    static var topNavigationController: UINavigationController? {
+        guard let topViewController = UIApplication.shared.topViewController else {
+            return nil
+        }
+        if let navigationController = topViewController as? UINavigationController {
+            return navigationController
+        }
+        return topViewController.navigationController
     }
 }

@@ -25,14 +25,12 @@ public extension ActionSheetUI {
 
     func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI] {
         return actionSheet.actions.compactMap {
-            let parameters = context.actionParameters(action: $0) // OPTI, if we remove unused action for build parameters, we could build only one time parameters
-            return actionUIType().build(from: $0, parameters: parameters, handler: handler)
+            return actionUIType().build(from: $0, context: context, handler: handler)
         }
     }
 
     func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI? {
-        let parameters = context.actionParameters(action: action)
-        return actionUIType().build(from: action, parameters: parameters, handler: handler)
+        return actionUIType().build(from: action, context: context, handler: handler)
     }
 
     func addActionUIs(_ items: [ActionUI]) {

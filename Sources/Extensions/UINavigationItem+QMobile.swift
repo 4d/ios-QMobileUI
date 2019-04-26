@@ -14,7 +14,7 @@ extension UINavigationItem {
         case left, right
     }
 
-    func add(where location: Where = .right, item: UIBarButtonItem, at position: Int?) {
+    func add(where location: Where = .right, item: UIBarButtonItem, at position: Int? = nil) {
         var items: [UIBarButtonItem]? = self.items(from: location)
         if items == nil {
             items = []

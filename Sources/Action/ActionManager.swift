@@ -16,6 +16,8 @@ public class ActionManager {
 
     public static let instance = ActionManager()
 
+    var lastContext: ActionContext?
+
     public var handlers: [ActionResultHandler] = []
 
     init() {
@@ -112,92 +114,38 @@ public class ActionManager {
     }
 
     /// Execute the action
-
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if let actionParameters = action.parameters, let firstParameter = actionParameters.first {
             // TODO #106847 Create UI according to action parameters
 
             if actionParameters.count == 1 {
-                let alertController = UIAlertController(title: firstParameter.label ?? firstParameter.name, message: nil, preferredStyle: .actionSheet)
-
-                var actionParametersValue: [String: Any] = [:]
-
-                switch firstParameter.type {
-                case .string, .text:
-                    alertController.addOneTextField { textField in
-                        textField.left(image: UIImage(named: "next"), color: .black)
-                        textField.leftViewPadding = 12
-                        textField.becomeFirstResponder()
-                        textField.layer.borderWidth = 1
-                        textField.layer.cornerRadius = 8
-                        textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
-                        textField.backgroundColor = nil
-                        textField.textColor = .black
-                        textField.placeholder = firstParameter.placeholder
-                        textField.keyboardAppearance = .default
-                        textField.keyboardType = .default
-                        // textField.isSecureTextEntry = true
-                        textField.returnKeyType = .done
-                        textField.action { textField in
-                            logger.debug("textField: \(String(describing: textField.text))")
-
-                            actionParametersValue[firstParameter.name] = textField.text
-                        }
-                    }
-                case .date:
-                    alertController.message = "Select a date"
-                    alertController.addDatePicker(mode: .date, date: Date()) { date in
-                        actionParametersValue[firstParameter.name] = date
-                    }
-                case .duration, .time:
-                    alertController.addDatePicker(mode: .time, date: Date()) { date in
-                        actionParametersValue[firstParameter.name] = date
-                    }
-                case .picture, .image:
-                    alertController.addImagePicker(flow: .vertical, paging: true, images: [])
-                case .integer, .number, .real:
-                    let numberValues: [Int] = (1...100).map { $0 }
-                    let pickerViewValues: [[String]] = [numberValues.map { $0.description }]
-                    alertController.addPickerView(values: pickerViewValues) { (_, _, index, _) in
-                        actionParametersValue[firstParameter.name] = numberValues[index.row]
-                    }
-                default:
-                    break // XXX show notingg
-                }
-
-                let validateAction = UIAlertAction(title: "Validate", style: .default) { _ in // XXX
-                    var parameters: ActionParameters = parameters ?? [:]
-
-                    // For the moment merge all parameters...
-                    parameters.merge(actionParametersValue, uniquingKeysWith: { $1 })
-
-                    self.executeActionRequest(action, actionUI, parameters)
-                }
-                alertController.addAction(validateAction)
-
-                _ = alertController.checkPopUp(actionUI)
-                alertController.show()
+                alertAction(firstParameter, action, actionUI, context)
 
             } else {
-
-                let viewController = ActionParametersController(action, actionUI, parameters)
-
-                let navigationController = UINavigationController(rootViewController: viewController)
+                let viewController = ActionParametersController(action, actionUI, context)
+                let navigationController = viewController.embedIntoNavigationController()
+                navigationController.navigationBar.prefersLargeTitles = false
                 navigationController.show()
             }
 
         } else {
             // Execute action without any parameters
-            executeActionRequest(action, actionUI, parameters)
+            executeActionRequest(action, actionUI, context, nil /*without parameters*/)
         }
     }
 
-    func executeActionRequest(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
+    func executeActionRequest(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ parameters: ActionParameters?) {
+        self.lastContext = context // keep as last context
         // execute the network action
-        let parameters = parameters ?? [:]
+
+        // For the moment merge all parameters...
+        var parameters = parameters ?? [:]
+        if let contextParameters = context.actionParameters(action: action) {
+            parameters.merge(contextParameters, uniquingKeysWith: { $1 })
+        }
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
-            logger.info("Launch action \(action.name) on context: \(parameters)")
+            logger.info("Launch action \(action.name) with context and parameters: \(parameters)")
             _ = APIManager.instance.action(action, parameters: parameters, callbackQueue: .background) { (result) in
                 // Display result or do some actions (incremental etc...)
                 switch result {
@@ -228,6 +176,95 @@ public class ActionManager {
         }
     }
 
+    fileprivate func alertAction(_ parameter: ActionParameter, _ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
+        let alertController = UIAlertController(title: parameter.label ?? parameter.name, message: nil, preferredStyle: .actionSheet)
+
+        var actionParametersValue: [String: Any] = [:]
+
+        switch parameter.type {
+        case .string, .text, .email:
+            alertController.addOneTextField { textField in
+                textField.left(image: UIImage(named: "next"), color: .black)
+                textField.leftViewPadding = 12
+
+                textField.becomeFirstResponder()
+
+                textField.borderWidth = 1
+                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.layer.cornerRadius = 8
+                textField.backgroundColor = nil
+                textField.textColor = .black
+
+                textField.keyboardAppearance = .default
+                textField.returnKeyType = .done
+
+                textField.from(actionParameter: parameter, context: context)
+
+                // textField.isSecureTextEntry = true
+                textField.action { textField in
+                    logger.debug("textField: \(String(describing: textField.text))")
+                    actionParametersValue[parameter.name] = textField.text
+                }
+            }
+        case .date:
+            alertController.message = "Select a date"
+            alertController.addDatePicker(mode: .date, date: Date()) { date in
+                actionParametersValue[parameter.name] = date
+            }
+        case .duration, .time:
+            alertController.addDatePicker(mode: .time, date: Date()) { date in
+                actionParametersValue[parameter.name] = date
+            }
+        case .picture, .image:
+            // XXX list of images from library?
+            alertController.addImagePicker(flow: .vertical, paging: true, images: [])
+        case .integer, .number, .real:
+            let numberValues: [Int] = (1...100).map { $0 }
+            let pickerViewValues: [[String]] = [numberValues.map { $0.description }]
+            alertController.addPickerView(values: pickerViewValues) { (_, _, index, _) in
+                actionParametersValue[parameter.name] = numberValues[index.row]
+            }
+        default:
+            break // XXX show notingg
+        }
+
+        let validateAction = UIAlertAction(title: "Done", style: .default) { _ in // XXX
+            self.executeActionRequest(action, actionUI, context, actionParametersValue)
+        }
+        alertController.addAction(validateAction)
+
+        _ = alertController.checkPopUp(actionUI)
+        alertController.show()
+    }
+
+}
+
+extension UITextField {
+
+    func from(actionParameter: ActionParameter, context: ActionContext) {
+        self.placeholder = actionParameter.placeholder
+        if let defaultValue = actionParameter.defaultValue(with: context) {
+            self.text = "\(defaultValue)"
+        }
+
+        switch actionParameter.type {
+        case .string, .text:
+            self.keyboardType = .default
+        case .real, .number:
+            self.keyboardType = .decimalPad
+        case .integer:
+            self.keyboardType = .numberPad // XXX test it numbersAndPunctuation
+        case .email, .emailAddress:
+            self.keyboardType = .emailAddress
+        case .url:
+            self.keyboardType = .URL
+        case .phone:
+            self.keyboardType = .phonePad
+        default:
+            self.keyboardType = .default
+        }
+    }
+
 }
 
 extension Action {
@@ -240,9 +277,9 @@ class ActionParametersController: UIViewController {
 
     var action: Action = .dummy
     var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
-    var parameters: ActionParameters?
+    var context: ActionContext = ActionManager.instance
 
-    required  init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
@@ -250,57 +287,44 @@ class ActionParametersController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    convenience init(_ action: Action, _ actionUI: ActionUI, _ parameters: ActionParameters?) {
+    convenience init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         self.init(nibName: nil, bundle: nil)
         self.action = action
         self.actionUI = actionUI
-        self.parameters = parameters
-    }
+        self.context = context
 
-    func configureNAv() {
-        let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 44)) // Offset by 20 pixels vertically to take the status bar into account
-
-        navigationBar.backgroundColor = UIColor.white
-
-        // Create a navigation item with a title
-        let navigationItem = UINavigationItem()
-        navigationItem.title = "Title"
-
-        // Create left and right button for navigation item
-        let leftButton =  UIBarButtonItem(title: "Save", style: .plain, target: self, action: nil) // #selector(ViewController.btn_clicked(_:))
-
-        let rightButton = UIBarButtonItem(title: "Right", style: .plain, target: self, action: nil)
-
-        // Create two buttons for the navigation item
-        navigationItem.leftBarButtonItem = leftButton
-        navigationItem.rightBarButtonItem = rightButton
-
-        // Assign the navigation item to the navigation bar
-        navigationBar.items = [navigationItem]
-
-        // Make the navigation bar a subview of the current view controller
-        self.view.addSubview(navigationBar)
-
+        self.title = action.label ?? action.shortLabel ?? action.name
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-       // configureNAv()
+        let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(dismissAction))
+        self.navigationItem.add(where: .left, item: backItem)
 
-        view.backgroundColor = .white
+        view.backgroundColor = .white // XXX THEME action parameters depending of the theme
 
-        let container = UIStackView()
-        container.axis = .vertical
-        container.distribution = .fillEqually
-        container.alignment = .fill
-        container.spacing = 5
-        container.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(container)
+        // Create the scroll view
+        let scrollView = UIScrollView()
+        let inset: CGFloat = 20 // inset for text field etc...
+        scrollView.contentInset.left = inset
+        scrollView.contentInset.right = inset
+        view.addSubview(scrollView)
+        scrollView.snap(to: self.view.safeAreaLayoutGuide) // if issue, use heightAnchor instead of bottom one
+
+        // Create the container stack view
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        scrollView.addSubview(stackView)
+        stackView.snap(to: scrollView)
+        stackView.widthAnchor.constraint(greaterThanOrEqualTo: scrollView.widthAnchor, constant: -inset*2).isActive = true
+
         guard let parameters = action.parameters else { return }
-
         let frame = CGRect(origin: .zero, size: CGSize(width: UIScreen.width, height: 48))
-
+        let container = stackView
         for parameter in parameters {
 
             let label = UILabel(frame: frame)
@@ -308,7 +332,6 @@ class ActionParametersController: UIViewController {
             container.addArrangedSubview(label)
 
             let textField = AlertTextField(frame: frame)
-            textField.placeholder = parameter.placeholder
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
             textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
@@ -316,33 +339,36 @@ class ActionParametersController: UIViewController {
             textField.action { _ in
                 self.actionParametersValue[parameter.name] = textField.text
             }
+            textField.from(actionParameter: parameter, context: context)
             container.addArrangedSubview(textField)
         }
 
-        let button = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 50))
+        let button = UIButton(frame: frame)
         button.setTitle("validate", for: .normal)
-        button.backgroundColor = .green
+        button.backgroundColor = .background
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         container.addArrangedSubview(button)
-
-        // XXX dismiss button
 
     }
 
     @objc func buttonAction(sender: UIButton!) {
-        var parameters: ActionParameters = self.parameters ?? [:]
+        ActionManager.instance.executeActionRequest(action, actionUI, context, actionParametersValue)
+        self.dismiss(animated: true, completion: nil)
+    }
 
-        // For the moment merge all parameters...
-        parameters.merge(actionParametersValue, uniquingKeysWith: { $1 })
-
-        ActionManager.instance.executeActionRequest(action, actionUI, parameters)
+    @objc func dismissAction(sender: Any!) {
+        self.dismiss(animated: true, completion: nil)
     }
 
 }
 
 extension ActionManager: ActionContext {
     public func actionParameters(action: Action) -> ActionParameters? {
-        return nil // JUST for test purpose make it implement it, maybe return last action parameters
+        return lastContext?.actionParameters(action: action) // JUST for test purpose make it implement it, maybe return last action parameters
+    }
+
+    public func actionParameterValue(for field: String) -> Any? {
+        return lastContext?.actionParameterValue(for: field)
     }
 }
 

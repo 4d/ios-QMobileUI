@@ -193,6 +193,14 @@ extension UIViewController {
         /// XXX assert or log viewController != nil
     }
 
+    func embedIntoNavigationController() -> UINavigationController {
+        let navigationController = UINavigationController(rootViewController: self)
+        if let topBar = UIApplication.topNavigationController?.navigationBar {
+            navigationController.navigationBar.copyAppearance(from: topBar)
+        }
+        return navigationController
+    }
+
 }
 
 extension NSObject {

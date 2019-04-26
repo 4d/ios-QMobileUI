@@ -30,32 +30,39 @@ extension UITableViewCell: ActionContextProvider {
 
 extension UIView: ActionContext {
 
-    public func actionParameters(action: Action) -> ActionParameters? {
-        var parameters: ActionParameters?
-
+    private var innerContext: ActionContext? {
         if let context = self.bindTo.table {
-            parameters = context.actionParameters(action: action)
+            return context
         } /*else if let parentCellView = self.parentCellView as? UIView, let context = parentCellView.bindTo.table {
-            parameters = context.actionParameters(action: action)
-        }*/ else if let provider = self.findActionContextProvider(action), let context = provider.actionContext() {
-            parameters = context.actionParameters(action: action)
+             parameters = context.actionParameters(action: action)
+         }*/ else if let provider = self.findActionContextProvider(), let context = provider.actionContext() {
+            return context
         }
-        return parameters
+        return nil
     }
 
-    fileprivate func findActionContextProvider(_ action: Action) -> ActionContextProvider? {
+    // A view try to find action context according to the view hierarchy
+    public func actionParameters(action: Action) -> ActionParameters? {
+        return self.innerContext?.actionParameters(action: action)
+    }
+
+    public func actionParameterValue(for field: String) -> Any? {
+        return self.innerContext?.actionParameterValue(for: field)
+    }
+
+    fileprivate func findActionContextProvider() -> ActionContextProvider? {
         // view hierarchical search if current view do not provide the context
         if let provider = self as? ActionContextProvider {
             return provider
         }
 
         // view hierarchy recursion
-        if let provider = self.superview?.findActionContextProvider(action) {
+        if let provider = self.superview?.findActionContextProvider() {
             return provider
         }
 
         // specific case for table and collection view cell which break the view hierarchy
-        if let provider = self.parentCellView?.parentView?.findActionContextProvider(action) { /// XXX maybe do it only at first level to optimize
+        if let provider = self.parentCellView?.parentView?.findActionContextProvider() { /// XXX maybe do it only at first level to optimize
             return provider
         }
 
