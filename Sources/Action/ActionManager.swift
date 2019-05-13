@@ -10,11 +10,15 @@ import Foundation
 import SwiftMessages
 
 import QMobileAPI
+import Prephirences
 
 /// Class to execute actions.
 public class ActionManager {
 
     public static let instance = ActionManager()
+
+    // XXX to remove
+    private let oldWayParametersNotIndexed = Prephirences.sharedInstance["action.context.merged"] as? Bool ?? false
 
     var lastContext: ActionContext?
 
@@ -134,14 +138,24 @@ public class ActionManager {
         }
     }
 
-    func executeActionRequest(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ parameters: ActionParameters?) {
+    func executeActionRequest(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?) {
         self.lastContext = context // keep as last context
         // execute the network action
-
         // For the moment merge all parameters...
-        var parameters = parameters ?? [:]
+        var parameters: ActionParameters = [:]
+        if let actionParameters = actionParameters {
+            if oldWayParametersNotIndexed {
+                parameters = actionParameters // old way
+            } else {
+                parameters["parameters"] = actionParameters // new way #107204
+            }
+        }
         if let contextParameters = context.actionParameters(action: action) {
-            parameters.merge(contextParameters, uniquingKeysWith: { $1 })
+            if oldWayParametersNotIndexed {
+                parameters.merge(contextParameters, uniquingKeysWith: { $1 })
+            } else {
+                parameters["context"] = contextParameters
+            }
         }
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
