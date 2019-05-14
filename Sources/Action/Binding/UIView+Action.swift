@@ -31,6 +31,9 @@ extension UIView {
         }
         set {
             actionSheet = ActionSheet.self.decode(fromJSON: newValue)
+            if self is UIControl {
+                self.isHidden = actionSheet == nil // if no action,
+            }
         }
     }
 
