@@ -119,8 +119,8 @@ open class QApplication: UIApplication {
 
         // Device
         let device = Device.current
-        let underlying = device.real
-        information["device.description"] = underlying.description
+        let realDevice = device.realDevice
+        information["device.description"] = realDevice.description
         if device.isSimulator {
             information["device.simulator"] = "YES"
         }

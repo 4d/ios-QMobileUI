@@ -354,6 +354,7 @@ class ActionParametersController: UIViewController {
                 self.actionParametersValue[parameter.name] = textField.text
             }
             textField.from(actionParameter: parameter, context: context)
+            self.actionParametersValue[parameter.name] = textField.text // send default value?
             container.addArrangedSubview(textField)
         }
 
