@@ -17,7 +17,7 @@ import SwiftMessages
 import Prephirences
 
 @IBDesignable
-open class ListFormTable: UITableViewController, ListForm {
+open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource! = nil
 

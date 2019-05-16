@@ -7,10 +7,12 @@
 //
 
 import Foundation
-
 import UIKit
+
 import Kingfisher
 import Prephirences
+import FileKit
+
 import QMobileDataSync
 import QMobileAPI
 
@@ -19,24 +21,25 @@ class ApplicationImageCache: NSObject {
 
     static var instance: ApplicationService = ApplicationImageCache()
 
-    private static var instanceCached: ApplicationImageCache {
+    fileprivate static var instanceCached: ApplicationImageCache {
         //swiftlint:disable:next force_cast
         return instance as! ApplicationImageCache
     }
 
-    private lazy var imageCache: ImageCache = { ImageCache(name: "imageCache") { (_, _) -> String in
-        let dstPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
-        return (dstPath as NSString).appendingPathComponent("imageCache")
+    private lazy var imageCache: ImageCache = {
+        return try! ImageCache(name: "imageCache", cacheDirectoryURL: nil) { (_, _) -> URL in //swiftlint:disable:this force_try
+            let path: Path = (Path.userCaches + "imageCache")
+            return path.url
         }}()
 
     private lazy var pref: MutablePreferencesType = {
         return MutableProxyPreferences(preferences: preferences, key: "imageCache.", separator: "")
     }()
 
-    private lazy var subdirectory: String = {
+    fileprivate lazy var subdirectory: String = {
         return pref["subdirectory"] as? String ?? "Pictures"
     }()
-    private lazy var `extension`: String = {
+    fileprivate lazy var `extension`: String = {
         return pref["extension"] as? String ?? "png"
     }()
 
@@ -74,7 +77,10 @@ class ApplicationImageCache: NSObject {
     }
 
 }
-
+enum ImageCacheError: Error {
+    case cannotRead
+    case notFound
+}
 extension ApplicationImageCache {
 
     // MARK: function
@@ -102,7 +108,7 @@ extension ApplicationImageCache {
         return RestImageResource(restDictionary: restDictionary)
     }
 
-    static func imageInBundle(for resource: RestImageResource) -> UIImage? {
+    fileprivate static func imageInBundle(for resource: RestImageResource) -> UIImage? {
         if let image = UIImage(named: resource.cacheKey) {
             return image
         }
@@ -145,19 +151,28 @@ extension ApplicationImageCache {
         instanceCached.imageCache.store(image, forKey: resource.cacheKey, toDisk: !instanceCached.cacheMemoryOnly)
     }
 
-    static func log(error: NSError, for imageURL: URL?) {
-        if let kfError = KingfisherError.from(error) {
-            switch kfError {
-            case .downloadCancelledBeforeStarting:
-                logger.warning("Task for \(String(describing: imageURL)) cancelled")
-            case .invalidStatusCode:
-                logger.warning("Failed to download image \(String(describing: imageURL)) with invalid status code: \(String(describing: error.userInfo[KingfisherErrorStatusCodeKey]))")
+    static func log(error kfError: KingfisherError, for imageURL: URL?) {
+        switch kfError {
+        case .responseError(reason: let reason):
+            switch reason {
+            case .invalidHTTPStatusCode(response: let response):
+                logger.warning("Failed to download image \(String(describing: imageURL)) with invalid status code: \(response.statusCode)")
+                return
             default:
-                logger.warning("Failed to download image \(String(describing: imageURL)): \(kfError)")
+                break
             }
-        } else {
-            logger.warning("Failed to download image \(String(describing: imageURL)): \(error)")
+        case .requestError(reason: let reason):
+            switch reason {
+            case .taskCancelled:
+                logger.warning("Task for \(String(describing: imageURL)) cancelled")
+                return
+            default:
+                break
+            }
+        default:
+            break
         }
+        logger.warning("Failed to download image \(String(describing: imageURL)): \(kfError)")
     }
 
     static func checkCached(_ imageResource: RestImageResource) {
@@ -247,6 +262,31 @@ struct RestImageResource: Resource {
         return nil // could return according to restDictionary maybe nil if "best"
     }
 
+    var bundleProvider: ImageDataProvider {
+        return RestImageBundle(resource: self)
+    }
+}
+
+struct RestImageBundle: ImageDataProvider {
+    var cacheKey: String {
+        return resource.cacheKey
+    }
+    var resource: RestImageResource
+
+    func data(handler: @escaping (Result<Data, Error>) -> Void) {
+        if let url = Bundle.main.url(forResource: resource.cacheKey,
+                                     withExtension: resource.extension ?? ApplicationImageCache.instanceCached.extension,
+                                     subdirectory: ApplicationImageCache.instanceCached.subdirectory) {
+            do {
+                let data = try Data(contentsOf: url)
+                handler(.success(data))
+            } catch {
+                handler(.failure(ImageCacheError.cannotRead))
+            }
+        } else {
+            handler(.failure(ImageCacheError.notFound))
+        }
+    }
 }
 
 // MARK: Processor
@@ -257,7 +297,7 @@ struct PDFProcessor: ImageProcessor {
     let identifier = "com.4d.image"
 
     // Convert input data/image to target image and return it.
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image
@@ -268,12 +308,13 @@ struct PDFProcessor: ImageProcessor {
             case .PNG:
                 return Image(data: data, scale: options.scaleFactor)
             case .GIF:
-                return Kingfisher<Image>.animated(
-                    with: data,
-                    scale: options.scaleFactor,
-                    duration: 0.0,
-                    preloadAll: options.preloadAllAnimationData,
-                    onlyFirstFrame: options.onlyLoadFirstFrame)
+                return KingfisherWrapper.animatedImage(
+                    data: data,
+                    options: ImageCreatingOptions(
+                        scale: options.scaleFactor,
+                        duration: 0.0,
+                        preloadAll: options.preloadAllAnimationData,
+                        onlyFirstFrame: options.onlyLoadFirstFrame))
             case .unknown:
                 if let image = Image(data: data, scale: options.scaleFactor) {
                     return image
@@ -298,18 +339,6 @@ struct PDFProcessor: ImageProcessor {
             }
         }
     }
-}
-
-// MARK: error
-extension KingfisherError: Error {
-
-    static func from(_ nsError: NSError) -> KingfisherError? {
-        guard nsError.domain == KingfisherErrorDomain else {
-            return nil
-        }
-        return KingfisherError(rawValue: nsError.code)
-    }
-
 }
 
 /// Protocol allowing to customize rest image download using Kingfisher option api.

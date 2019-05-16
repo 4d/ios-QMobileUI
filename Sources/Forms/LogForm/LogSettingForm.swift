@@ -14,7 +14,7 @@ open class LogSettingForm: UITableViewController {
 
     @IBOutlet weak var levelPicker: UIPickerView!
 
-    var levels = XCGLogger.Level.all
+    var levels = XCGLogger.Level.allCases
 
     var logFormatter: ApplicationLogger.LogFormatter = .emoticon
 

@@ -534,11 +534,12 @@ extension UILabel {
             ApplicationImageCache.checkCached(imageResource)
 
             // Do the request
-            let completionHandler: CompletionHandler = { [weak self] image, error, cacheType, imageURL in
-                if let error = error {
-                    ApplicationImageCache.log(error: error, for: imageURL)
-                } else if let image = image ?? ApplicationImageCache.imageInBundle(for: imageResource) {
-                    self?.setImage(image)
+            let completionHandler: UIImageView.ImageCompletionHandler = { result in
+                switch result {
+                case .success(let value):
+                    self.setImage(value.image)
+                case .failure(let error):
+                    ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
                 }
             }
             cancelDownloadTask()
@@ -565,11 +566,11 @@ extension UILabel {
         imageTask?.cancel()
     }
 
-    fileprivate var imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+    fileprivate var imageTask: DownloadTask? {
+        return objc_getAssociatedObject(self, &imageTaskKey) as? DownloadTask
     }
 
-    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func setImageTask(_ task: DownloadTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

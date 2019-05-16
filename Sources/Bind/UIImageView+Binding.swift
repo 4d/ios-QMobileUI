@@ -51,7 +51,7 @@ extension UIImageView {
 
     public var webURL: URL? {
         get {
-            return self.kf.webURL
+            return self.kf.taskIdentifier as? URL
         }
         set {
             if newValue != nil {
@@ -65,7 +65,7 @@ extension UIImageView {
 
 extension UIImageView {
 
-    public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
+    public typealias ImageCompletionHandler = ((Result<RetrieveImageResult, KingfisherError>) -> Void)
 
     // Remove image
     fileprivate func unsetImage() {
@@ -105,26 +105,28 @@ extension UIImageView {
             ApplicationImageCache.checkCached(imageResource)
 
             // Do the request
-            let completionHandler: CompletionHandler = { image, error, cacheType, imageURL in
-                if let error = error {
-                    ApplicationImageCache.log(error: error, for: imageURL)
-                } else {
+            let completionHandler: ImageCompletionHandler = { result in
+                switch result {
+                case .success:
                     //self.setNeedsDisplay() // force refresh ??
-                }
-                if image == nil {
-                    if let image = ApplicationImageCache.imageInBundle(for: imageResource) {
-                        self.image = image
-                    }
+                    break
+                case .failure(let error):
+                    ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
+                    _ = self.kf.setImage(with: imageResource.bundleProvider,
+                                         placeholder: placeHolderImage,
+                                         options: options,
+                                         progressBlock: nil,
+                                         completionHandler: nil)
                 }
             }
-            let imageDownloader = self.kf
-            imageDownloader.cancelDownloadTask()
-            imageDownloader.indicatorType = indicatorType
-            _ = imageDownloader.setImage(with: imageResource,
-                            placeholder: placeHolderImage,
-                                 options: options,
-                                 progressBlock: nil,
-                                 completionHandler: completionHandler)
+            self.kf.cancelDownloadTask()
+            self.kf.indicatorType = indicatorType
+            _ = self.kf.setImage(
+                with: imageResource,
+                placeholder: placeHolderImage,
+                options: options,
+                progressBlock: nil,
+                completionHandler: completionHandler)
         }
     }
 

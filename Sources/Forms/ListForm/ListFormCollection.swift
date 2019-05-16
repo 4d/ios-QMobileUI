@@ -16,7 +16,7 @@ import Moya
 import SwiftMessages
 
 @IBDesignable
-open class ListFormCollection: UICollectionViewController, ListForm {
+open class ListFormCollection: UICollectionViewController, ListForm { //swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource! = nil
 
