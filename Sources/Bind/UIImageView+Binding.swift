@@ -51,7 +51,7 @@ extension UIImageView {
 
     public var webURL: URL? {
         get {
-            return self.kf.taskIdentifier as? URL
+            return self.kf.webURL
         }
         set {
             if newValue != nil {

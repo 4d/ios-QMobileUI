@@ -149,6 +149,8 @@ open class IconLabel: UILabel {
             return .alwaysTemplate
         case .automatic:
             return imageContextTemplate ? .alwaysTemplate : .alwaysOriginal
+        @unknown default:
+            return .alwaysOriginal
         }
     }
 

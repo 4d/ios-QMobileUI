@@ -100,7 +100,7 @@ extension DataSource {
             }
         case .update:
             if let indexPath = indexPath {
-                if tableView.indexPathsForVisibleRows?.index(of: indexPath) != nil {
+                if tableView.indexPathsForVisibleRows?.firstIndex(of: indexPath) != nil {
                     if let cell = tableView.cellForRow(at: indexPath) {
                         self.configure(cell, tableView, indexPath)
                     }

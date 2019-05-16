@@ -106,6 +106,8 @@ extension UIView {
                 self.touch.timer?.invalidate()
             case .possible, .changed:
                 break
+            @unknown default:
+                 break
             }
         } else {
             // For long press recognizer we treat `.began` state as "active"
@@ -258,6 +260,7 @@ extension UIGestureRecognizer.State: CustomStringConvertible {
         case .failed: return "failed"
         case .changed: return "changed"
         case .cancelled: return "cancelled"
+        @unknown default: return "unknown"
         }
     }
 }

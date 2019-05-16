@@ -35,7 +35,7 @@ extension SwiftMessages {
         SwiftMessages.hide(id: debugId)
         onForeground {
             var layout: MessageView.Layout = .statusLine
-            let lineDelimiterPos = message.index(of: "\n")
+            let lineDelimiterPos = message.firstIndex(of: "\n")
             if lineDelimiterPos != nil {
                 layout = .messageView
             }
@@ -80,7 +80,7 @@ extension SwiftMessages {
     public static func info(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         onForeground {
             var layout: MessageView.Layout = .statusLine
-            let lineDelimiterPos = message.index(of: "\n")
+            let lineDelimiterPos = message.firstIndex(of: "\n")
             if lineDelimiterPos != nil {
                 layout = .messageView
             }
@@ -119,7 +119,7 @@ extension SwiftMessages {
     public static func warning(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
         onForeground {
             var layout: MessageView.Layout = .statusLine
-            let lineDelimiterPos = message.index(of: "\n")
+            let lineDelimiterPos = message.firstIndex(of: "\n")
             if lineDelimiterPos != nil {
                 layout = .messageView
             }
@@ -164,7 +164,7 @@ extension SwiftMessages {
         onForeground {
             var layout: MessageView.Layout = .cardView
             if title.isEmpty {
-                let lineDelimiterPos = message.index(of: "\n")
+                let lineDelimiterPos = message.firstIndex(of: "\n")
                 if lineDelimiterPos == nil {
                     layout = .statusLine
                 }

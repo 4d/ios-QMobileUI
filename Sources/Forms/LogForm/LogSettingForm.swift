@@ -25,7 +25,7 @@ open class LogSettingForm: UITableViewController {
 
     open override func viewDidAppear(_ animated: Bool) {
         let currentLevel = logger.outputLevel
-        if let index = levels.index(of: currentLevel) {
+        if let index = levels.firstIndex(of: currentLevel) {
             levelPicker.selectRow(index, inComponent: 0, animated: animated)
         }
     }
