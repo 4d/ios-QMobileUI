@@ -23,7 +23,7 @@ extension UIAlertController: ActionParametersUI {
         var actionParametersValue: [String: Any] = [:]
 
         switch parameter.type {
-        case .string, .text, .email:
+        case .string, .text:
             alertController.addOneTextField { textField in
                 textField.left(image: UIImage(named: "next"), color: .black)
                 textField.leftViewPadding = 12

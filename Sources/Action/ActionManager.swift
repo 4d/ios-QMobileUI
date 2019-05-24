@@ -207,7 +207,21 @@ extension UITextField {
         if let defaultValue = actionParameter.defaultValue(with: context) {
             self.text = "\(defaultValue)"
         }
-
+        if let format = actionParameter.format {
+            switch format {
+            case .email/* .emailAddress*/:
+                self.keyboardType = .emailAddress
+                return
+            case .url:
+                self.keyboardType = .URL
+                return
+            case .phone:
+                self.keyboardType = .phonePad
+                return
+            default:
+                break
+            }
+        }
         switch actionParameter.type {
         case .string, .text:
             self.keyboardType = .default
@@ -215,12 +229,6 @@ extension UITextField {
             self.keyboardType = .decimalPad
         case .integer:
             self.keyboardType = .numberPad // XXX test it numbersAndPunctuation
-        case .email, .emailAddress:
-            self.keyboardType = .emailAddress
-        case .url:
-            self.keyboardType = .URL
-        case .phone:
-            self.keyboardType = .phonePad
         default:
             self.keyboardType = .default
         }

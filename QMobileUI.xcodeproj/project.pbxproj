@@ -46,6 +46,9 @@
 		482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */; };
 		483190E92297E2250041B41A /* ActionParametersUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483190E82297E2250041B41A /* ActionParametersUI.swift */; };
 		483190EB2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483190EA2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift */; };
+		483190EE2297F4D40041B41A /* Eureka+ActionParametersUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483190ED2297F4D40041B41A /* Eureka+ActionParametersUI.swift */; };
+		483192552297F8EE0041B41A /* ImageRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483192542297F8000041B41A /* ImageRow.swift */; };
+		483192562297F8F10041B41A /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483192532297F8000041B41A /* ImagePickerController.swift */; };
 		4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */; };
 		483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483A964A21B04465009F2330 /* LoginForm+Flow.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
@@ -238,6 +241,9 @@
 		482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationReachability.swift; sourceTree = "<group>"; };
 		483190E82297E2250041B41A /* ActionParametersUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionParametersUI.swift; sourceTree = "<group>"; };
 		483190EA2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ActionParametersUI.swift"; sourceTree = "<group>"; };
+		483190ED2297F4D40041B41A /* Eureka+ActionParametersUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+ActionParametersUI.swift"; sourceTree = "<group>"; };
+		483192532297F8000041B41A /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
+		483192542297F8000041B41A /* ImageRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRow.swift; sourceTree = "<group>"; };
 		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
 		483A964A21B04465009F2330 /* LoginForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginForm+Flow.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
@@ -551,6 +557,32 @@
 			path = Bind;
 			sourceTree = "<group>";
 		};
+		483190F22297F7960041B41A /* Eureka */ = {
+			isa = PBXGroup;
+			children = (
+				483192512297F8000041B41A /* CustomRows */,
+				483190ED2297F4D40041B41A /* Eureka+ActionParametersUI.swift */,
+			);
+			path = Eureka;
+			sourceTree = "<group>";
+		};
+		483192512297F8000041B41A /* CustomRows */ = {
+			isa = PBXGroup;
+			children = (
+				483192522297F8000041B41A /* ImageRow */,
+			);
+			path = CustomRows;
+			sourceTree = "<group>";
+		};
+		483192522297F8000041B41A /* ImageRow */ = {
+			isa = PBXGroup;
+			children = (
+				483192532297F8000041B41A /* ImagePickerController.swift */,
+				483192542297F8000041B41A /* ImageRow.swift */,
+			);
+			path = ImageRow;
+			sourceTree = "<group>";
+		};
 		4832A7CB21A6E0FE000AC181 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -721,6 +753,7 @@
 				48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */,
 				48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */,
 				483190E82297E2250041B41A /* ActionParametersUI.swift */,
+				483190F22297F7960041B41A /* Eureka */,
 			);
 			path = ActionUI;
 			sourceTree = "<group>";
@@ -1194,6 +1227,7 @@
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
+				483192552297F8EE0041B41A /* ImageRow.swift in Sources */,
 				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
 				4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */,
 				489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */,
@@ -1231,6 +1265,7 @@
 				483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */,
 				48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */,
 				4826191620BFE05000226632 /* SwiftMessages.swift in Sources */,
+				483190EE2297F4D40041B41A /* Eureka+ActionParametersUI.swift in Sources */,
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */,
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
@@ -1302,6 +1337,7 @@
 				4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */,
 				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,
 				48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */,
+				483192562297F8F10041B41A /* ImagePickerController.swift in Sources */,
 				4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
