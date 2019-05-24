@@ -52,7 +52,7 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
+                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
                     actionSheetUI.addActionUIs(items)
                 } else {
                     // default behaviour: if clicked create a ui alert controller
@@ -66,7 +66,7 @@ extension UIView {
     fileprivate func showActionSheet(_ recognizer: UIGestureRecognizer) {
         if let actionSheet = self.actionSheet {
             foreground {
-                var alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.executeAction)
+                var alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
 				alertController = alertController.checkPopUp(recognizer)
                 alertController.show()
             }

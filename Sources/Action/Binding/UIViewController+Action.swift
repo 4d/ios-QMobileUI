@@ -44,7 +44,7 @@ extension UIViewController {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
                     if let view = self.view {
-                        let items = actionSheetUI.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
+                        let items = actionSheetUI.build(from: actionSheet, context: view, handler: ActionManager.instance.prepareAndExecuteAction)
                         actionSheetUI.addActionUIs(items)
                     }
 
@@ -74,7 +74,7 @@ extension UIViewController {
         }
         if let actionSheet = self.actionSheet {
             if let view = self.view {
-                var alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.executeAction)
+                var alertController = UIAlertController.build(from: actionSheet, context: view, handler: ActionManager.instance.prepareAndExecuteAction)
 				alertController = alertController.checkPopUp(recognizer)
                 alertController.show()
             }
