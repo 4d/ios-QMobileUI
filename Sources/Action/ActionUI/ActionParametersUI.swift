@@ -56,7 +56,7 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
         self.completionHandler = completionHandler
 
-        self.title = action.label ?? action.shortLabel ?? action.name
+        self.title = action.preferredLongLabel
     }
 
     override func viewDidLoad() {

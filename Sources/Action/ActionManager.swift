@@ -7,10 +7,12 @@
 //
 
 import Foundation
+
 import SwiftMessages
+import Prephirences
+import Eureka
 
 import QMobileAPI
-import Prephirences
 
 /// Class to execute actions.
 public class ActionManager {
@@ -127,7 +129,8 @@ public class ActionManager {
                 UIAlertController.build(action, actionUI, context, self.handleActiont)
 
             } else {
-                ActionParametersController.build(action, actionUI, context, self.handleActiont)
+                let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
+                type.build(action, actionUI, context, self.handleActiont)
             }
 
         } else {
