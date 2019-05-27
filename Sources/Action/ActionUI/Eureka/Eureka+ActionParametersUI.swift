@@ -27,7 +27,6 @@ class ActionFormViewController: FormViewController {
         self.context = context
         self.parameters = parameters
         self.completionHandler = completionHandler
-
     }
 
     override init(style: UITableView.Style) {
@@ -50,10 +49,13 @@ class ActionFormViewController: FormViewController {
         self.form.setValues(values)
 
         let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(dismissAction))
+        // let backItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(dismissAction)) // LOCALIZE
         self.navigationItem.add(where: .left, item: backItem)
 
-        let doneItem = UIBarButtonItem(title: self.action.preferredShortLabel, style: .plain, target: self, action: #selector(buttonAction))
+        let doneItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonAction)) // LOCALIZE
         self.navigationItem.add(where: .right, item: doneItem)
+
+        self.navigationItem.title = self.action.preferredShortLabel
     }
 
     @objc func buttonAction(sender: UIButton!) {
@@ -197,6 +199,42 @@ extension ActionParameter {
         return self.type.formRow(key)
     }
 
+}
+
+extension RowOf where T: Equatable {
+    func setRequired(_ value: Bool = true) {
+        self.remove(ruleWithIdentifier: "actionParameterRequired")
+        if value {
+            self.add(rule: RuleRequired(id: "actionParameterRequired"))
+        }
+    }
+}
+
+extension RowOf where T: Comparable {
+    func setGreater(than value: T?) { // , orEqual: Bool = false
+        self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
+        if let value = value {
+            self.add(rule: RuleGreaterThan(min: value, id: "actionParameterGreaterThan"))
+        }
+    }
+    func setGreaterOrEqual(than value: T?) {
+        self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
+        if let value = value {
+            self.add(rule: RuleGreaterOrEqualThan(min: value, id: "actionParameterGreaterThan"))
+        }
+    }
+    func setSmaller(than value: T?) {
+        self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
+        if let value = value {
+            self.add(rule: RuleSmallerThan(max: value, id: "actionParameterSmallerThan"))
+        }
+    }
+    func setSmallerOrEqual(than value: T?) {
+        self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
+        if let value = value {
+            self.add(rule: RuleSmallerOrEqualThan(max: value, id: "actionParameterSmallerThan"))
+        }
+    }
 }
 
 extension ActionParameterType {
