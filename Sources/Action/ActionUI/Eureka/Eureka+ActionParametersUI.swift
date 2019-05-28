@@ -9,6 +9,7 @@
 import Foundation
 
 import Eureka
+import SwiftMessages
 
 import QMobileAPI
 
@@ -16,7 +17,7 @@ class ActionFormViewController: FormViewController {
 
     var action: Action = .dummy
     var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
-    var context: ActionContext = ActionManager.instance
+    var context: ActionContext = UIView()
     var completionHandler: CompletionHandler = { result in }
     var parameters: [ActionParameter] = []
 
@@ -60,7 +61,10 @@ class ActionFormViewController: FormViewController {
 
     @objc func buttonAction(sender: UIButton!) {
         let errors = self.form.validate()
-        if errors.isEmpty {
+        if let error = errors.first {
+            SwiftMessages.error(error: error)
+            // show on field him self
+        } else {
             let values = self.form.values()
 
             // XXX maybe dismiss only after receive information
@@ -75,6 +79,41 @@ class ActionFormViewController: FormViewController {
             self.completionHandler(.failure(.userCancel))
         }
     }
+}
+/*
+extension Eureka.Form {
+
+    @discardableResult
+    public func validate(includeHidden: Bool = false, includeDisabled: Bool = true) -> [ValidationError] {
+        let rowsWithHiddenFilter = includeHidden ? self.allRows : self.rows
+        let rowsWithDisabledFilter = includeDisabled ? rowsWithHiddenFilter : rowsWithHiddenFilter.filter { $0.isDisabled != true }
+
+        return rowsWithDisabledFilter.reduce([ValidationError]()) { res, row in
+            var res = res
+            let errors = row.validate()
+            res.append(contentsOf: errors)
+            let cell = row.baseCell
+            /* cell?.detailTextLabel?.text = errors.map { $0.msg }.joined(separator: ",")
+             cell?.detailTextLabel?.isHidden = false
+             cell?.detailTextLabel?.textAlignment = .left
+             cell?.detailTextLabel?.textColor = .red*/
+
+            if !row.isValid {
+                cell?.textLabel?.textColor = .red
+            }
+            return res
+        }
+    }
+}*/
+
+extension ValidationError: LocalizedError {
+    public var errorDescription: String? { return msg }
+
+    public var failureReason: String? { return nil }
+
+    public var recoverySuggestion: String? { return nil }
+
+    public var helpAnchor: String? { return nil }
 }
 
 extension ActionFormViewController: ActionParametersUI {
@@ -100,7 +139,7 @@ extension ActionParameter {
     }
 
     func formRow() -> BaseRow {
-        let row = self.baseRow()
+        let row: BaseRow = self.baseRow()
         if let field = row as? FieldRowConformance {
             if let placeholder = self.placeholder {
                 field.placeholder = placeholder
@@ -110,14 +149,9 @@ extension ActionParameter {
         row.title = self.label ?? self.shortLabel ?? self.name
 
         if self.mandatory {
-            /*if let rowOf = row as? RowOf<Equatable> { // not generic?
-             rowOf.add(rule: RuleRequired())
-             }*/
-
-            /*if let rowOf = row as? RowOf<String> {
-             row.add(rule: RuleRequired())
-             }*/
-
+            if let rowOf = row as? RowOfEquatable {
+                rowOf.setRequired()
+            }
             row.validationOptions = .validatesOnChange
 
             if let format = format {
@@ -129,6 +163,22 @@ extension ActionParameter {
                 }
             }
         }
+        if let min = self.min {
+            if let rowOf = row as? RowOfComparable {
+                rowOf.setGreaterOrEqual(than: min)
+            }
+        }
+        if let max = self.max {
+            if let rowOf = row as? RowOfComparable {
+                rowOf.setSmallerOrEqual(than: max)
+            }
+        }
+
+        /*row.cellUpdate({ cell, row in
+            if !row.isValid {
+                cell.titleLabel?.textColor = .red
+            }
+        })*/
 
         return row
     }
@@ -138,7 +188,11 @@ extension ActionParameter {
             // XXX multiple interface to choose between list
             let choiceRow = SegmentedRow<String>(key)
             // var choiceRow = PushRow<String>(key)
-            choiceRow.options = choiceList.map { "\($0)" }
+            if let choiceArray = choiceList.value as? [AnyCodable] {
+                choiceRow.options = choiceArray.map { "\($0)" }
+            } else if let choiceDictionary = choiceList.value as? [String: AnyCodable] {
+                choiceRow.options = choiceDictionary.values.map { "\($0)" }
+            }
 
             /*let actionSheet = ActionSheetRow<String>() {
                 $0.title = "ActionSheetRow"
@@ -179,6 +233,8 @@ extension ActionParameter {
                 return NameRow(key)
             case .countDown:
                 return CountDownRow(key)
+            case .rating:
+                return RatingRow(key)
             case .account:
                 return AccountRow(key)
             case .spellOut:
@@ -201,8 +257,18 @@ extension ActionParameter {
 
 }
 
-extension RowOf where T: Equatable {
-    func setRequired(_ value: Bool = true) {
+protocol RowOfEquatable: BaseRowType {
+    func setRequired(_ value: Bool)
+}
+extension RowOfEquatable {
+
+    func setRequired() {
+        setRequired(true)
+    }
+}
+
+extension RowOf: RowOfEquatable where T: Equatable {
+    func setRequired(_ value: Bool) {
         self.remove(ruleWithIdentifier: "actionParameterRequired")
         if value {
             self.add(rule: RuleRequired(id: "actionParameterRequired"))
@@ -210,28 +276,35 @@ extension RowOf where T: Equatable {
     }
 }
 
-extension RowOf where T: Comparable {
-    func setGreater(than value: T?) { // , orEqual: Bool = false
+protocol RowOfComparable: BaseRowType {
+    func setGreater(than value: Any?)
+    func setGreaterOrEqual(than value: Any?)
+    func setSmaller(than value: Any?)
+    func setSmallerOrEqual(than value: Any?)
+}
+
+extension RowOf: RowOfComparable where T: Comparable {
+    func setGreater(than value: Any?) { // , orEqual: Bool = false
         self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
-        if let value = value {
+        if let value = value as? T {
             self.add(rule: RuleGreaterThan(min: value, id: "actionParameterGreaterThan"))
         }
     }
-    func setGreaterOrEqual(than value: T?) {
+    func setGreaterOrEqual(than value: Any?) {
         self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
-        if let value = value {
+        if let value = value as? T {
             self.add(rule: RuleGreaterOrEqualThan(min: value, id: "actionParameterGreaterThan"))
         }
     }
-    func setSmaller(than value: T?) {
+    func setSmaller(than value: Any?) {
         self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
-        if let value = value {
+        if let value = value as? T {
             self.add(rule: RuleSmallerThan(max: value, id: "actionParameterSmallerThan"))
         }
     }
-    func setSmallerOrEqual(than value: T?) {
+    func setSmallerOrEqual(than value: Any?) {
         self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
-        if let value = value {
+        if let value = value as? T {
             self.add(rule: RuleSmallerOrEqualThan(max: value, id: "actionParameterSmallerThan"))
         }
     }

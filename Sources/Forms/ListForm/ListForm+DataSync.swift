@@ -55,25 +55,22 @@ extension ListForm {
                                         configure: self.configureLogoutMessage(sender, source))
 
                 } else {
-                    let api = APIManager.instance
-                    _ = api.logout { _ in
-                        _ = APIManager.instance.authentificate(login: "") { authResult in
-                            switch authResult {
-                            case .success:
-                                // retry XXX manage it elsewhere with a request retrier
-                                if tryCount > 0 {
-                                    if let dataSyncTask = self.doRefresh(sender, source, tryCount: tryCount - 1, complementionHandler) {
-                                        cancellable.append(dataSyncTask)
-                                    }
-                                } else {
-                                    complementionHandler(result)
+                    ApplicationAuthenticate.retryGuestLogin { authResult in
+                        switch authResult {
+                        case .success:
+                            // retry XXX manage it elsewhere with a request retrier
+                            if tryCount > 0 {
+                                if let dataSyncTask = self.doRefresh(sender, source, tryCount: tryCount - 1, complementionHandler) {
+                                    cancellable.append(dataSyncTask)
                                 }
-                            case .failure(let authError):
-                                if authError.restErrors?.statusText != nil { // If a failure message is in guest login, it will be more useful than first error
-                                    complementionHandler(.failure(.apiError(authError)))
-                                } else {
-                                    complementionHandler(result)
-                                }
+                            } else {
+                                complementionHandler(result)
+                            }
+                        case .failure(let authError):
+                            if authError.restErrors?.statusText != nil { // If a failure message is in guest login, it will be more useful than first error
+                                complementionHandler(.failure(.apiError(authError)))
+                            } else {
+                                complementionHandler(result)
                             }
                         }
                     }

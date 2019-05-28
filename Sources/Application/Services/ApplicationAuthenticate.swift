@@ -166,6 +166,15 @@ extension ApplicationAuthenticate {
             }
         }
     }
+
+    static func retryGuestLogin( _ complementionHandler: @escaping APIManager.CompletionAuthTokenHandler) {
+        let api = APIManager.instance
+        _ = api.logout { _ in
+            _ = api.authentificate(login: "") { authResult in
+                complementionHandler(authResult)
+            }
+        }
+    }
 }
 
 // MARK: LoginFormDelegate
@@ -320,6 +329,7 @@ extension String {
 }
 
 // MARK: - Error
+
 extension DataSyncError {
 
     /// Return true if the error need a retry after relogin

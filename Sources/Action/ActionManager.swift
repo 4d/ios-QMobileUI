@@ -22,8 +22,6 @@ public class ActionManager {
     // XXX to remove
     private let oldWayParametersNotIndexed = Prephirences.sharedInstance["action.context.merged"] as? Bool ?? false
 
-    var lastContext: ActionContext?
-
     public var handlers: [ActionResultHandler] = []
 
     init() {
@@ -75,9 +73,9 @@ public class ActionManager {
         }
         #if DEBUG
 
-        append { result, _, actionUI, _ in
+        append { result, _, actionUI, context in
             guard let actionSheet = result.actionSheet else { return false }
-            let alertController = UIAlertController.build(from: actionSheet, context: self, handler: self.prepareAndExecuteAction)
+            let alertController = UIAlertController.build(from: actionSheet, context: context, handler: self.prepareAndExecuteAction)
             _ = alertController.checkPopUp(actionUI)
             alertController.show {
 
@@ -156,7 +154,7 @@ public class ActionManager {
     }
 
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?) {
-        self.lastContext = context // keep as last context
+       // self.lastContext = context // keep as last context
         // execute the network action
         // For the moment merge all parameters...
         var parameters: ActionParameters = [:]
@@ -183,17 +181,18 @@ public class ActionManager {
                 case .failure(let error):
                     logger.warning("Action error: \(error)")
 
-                    // Try to display the best error message...
-                    if let statusText = error.restErrors?.statusText { // dev message
-                        SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
-                    } else /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
-                        if !ApplicationReachability.isReachable { // so check reachability status
-                            SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
-                        } else if let failureReason = error.failureReason {
-                            SwiftMessages.warning(failureReason)
-                        } else {
-                            SwiftMessages.error(title: error.errorDescription ?? "", message: "")
+                    if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
+                        ApplicationAuthenticate.retryGuestLogin { authResult in
+                            switch authResult {
+                            case .success:
+                                // XXX do not do infinite retry
+                                self.executeAction(action, actionUI, context, actionParameters)
+                            case .failure(let authError):
+                                self.showError(authError)
+                            }
+                        }
                     }
+                    self.showError(error)
                 case .success(let value):
                     logger.debug("\(value)")
 
@@ -204,6 +203,20 @@ public class ActionManager {
                     _ = self.handle(result: value, for: action, from: actionUI, in: context)
                 }
             }
+        }
+    }
+
+    func showError(_ error: APIError) {
+        // Try to display the best error message...
+        if let statusText = error.restErrors?.statusText { // dev message
+            SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
+        } else /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
+            if !ApplicationReachability.isReachable { // so check reachability status
+                SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
+            } else if let failureReason = error.failureReason {
+                SwiftMessages.warning(failureReason)
+            } else {
+                SwiftMessages.error(title: error.errorDescription ?? "", message: "")
         }
     }
 
@@ -249,7 +262,7 @@ extension Action {
     static let dummy =  Action(name: "")
 }
 
-extension ActionManager: ActionContext {
+/*extension ActionManager: ActionContext {
     public func actionParameters(action: Action) -> ActionParameters? {
         return lastContext?.actionParameters(action: action) // JUST for test purpose make it implement it, maybe return last action parameters
     }
@@ -257,7 +270,7 @@ extension ActionManager: ActionContext {
     public func actionParameterValue(for field: String) -> Any? {
         return lastContext?.actionParameterValue(for: field)
     }
-}
+}*/
 
 extension ActionManager: ActionResultHandler {
 
@@ -324,7 +337,7 @@ extension ActionResult {
     }
 
     fileprivate var action: Action? {
-        if json["action"].isEmpty {
+        if json["parameters"].isEmpty {
             return nil
         }
         guard let jsonString = json.rawString(options: []) else {

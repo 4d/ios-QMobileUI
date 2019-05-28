@@ -43,6 +43,8 @@
 		481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 481AF5F62029E70900D034C1 /* UITabBarController+QMobile.swift */; };
 		4826191620BFE05000226632 /* SwiftMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4826191520BFE05000226632 /* SwiftMessages.swift */; };
 		4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */; };
+		482C6543229D1AC70045E1CE /* RatingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C6542229D1AC70045E1CE /* RatingRow.swift */; };
+		482C6546229D1BCF0045E1CE /* CosmosDistrib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C6545229D1BCF0045E1CE /* CosmosDistrib.swift */; };
 		482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */; };
 		483190E92297E2250041B41A /* ActionParametersUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483190E82297E2250041B41A /* ActionParametersUI.swift */; };
 		483190EB2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483190EA2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift */; };
@@ -238,6 +240,8 @@
 		48268C5B1E8136E9000F7719 /* Binder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Binder.swift; sourceTree = "<group>"; };
 		48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+BindTo.swift"; sourceTree = "<group>"; };
 		4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationFeedBack.swift; sourceTree = "<group>"; };
+		482C6542229D1AC70045E1CE /* RatingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingRow.swift; sourceTree = "<group>"; };
+		482C6545229D1BCF0045E1CE /* CosmosDistrib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmosDistrib.swift; sourceTree = "<group>"; };
 		482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationReachability.swift; sourceTree = "<group>"; };
 		483190E82297E2250041B41A /* ActionParametersUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionParametersUI.swift; sourceTree = "<group>"; };
 		483190EA2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ActionParametersUI.swift"; sourceTree = "<group>"; };
@@ -557,6 +561,15 @@
 			path = Bind;
 			sourceTree = "<group>";
 		};
+		482C6544229D1BB10045E1CE /* RatingRow */ = {
+			isa = PBXGroup;
+			children = (
+				482C6542229D1AC70045E1CE /* RatingRow.swift */,
+				482C6545229D1BCF0045E1CE /* CosmosDistrib.swift */,
+			);
+			path = RatingRow;
+			sourceTree = "<group>";
+		};
 		483190F22297F7960041B41A /* Eureka */ = {
 			isa = PBXGroup;
 			children = (
@@ -569,6 +582,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				482C6544229D1BB10045E1CE /* RatingRow */,
 				483192522297F8000041B41A /* ImageRow */,
 			);
 			path = CustomRows;
@@ -1305,6 +1319,7 @@
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,
 				4848E0EF21B181E800DB65A2 /* LoadingView.swift in Sources */,
 				48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */,
+				482C6546229D1BCF0045E1CE /* CosmosDistrib.swift in Sources */,
 				4872590A20528C23000D416B /* LoginForm.swift in Sources */,
 				4853BD662105ACDC004B2467 /* FeedbackForm.swift in Sources */,
 				480B434F1E842198007C90DD /* UIScreen+QMobile.swift in Sources */,
@@ -1345,6 +1360,7 @@
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
 				489C3F8321AECE990018664B /* Main+Flow.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
+				482C6543229D1AC70045E1CE /* RatingRow.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				48E71DBE212AA475003D10BD /* UIStackVIew+QMobile.swift in Sources */,
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,

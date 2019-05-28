@@ -37,7 +37,7 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     var action: Action = .dummy
     var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
-    var context: ActionContext = ActionManager.instance
+    var context: ActionContext = UIView()
     var completionHandler: CompletionHandler = { result in }
 
     required init?(coder aDecoder: NSCoder) {
