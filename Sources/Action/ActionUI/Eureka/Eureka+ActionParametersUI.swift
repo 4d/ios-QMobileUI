@@ -13,16 +13,44 @@ import SwiftMessages
 
 import QMobileAPI
 
-class ActionFormViewController: FormViewController {
+// a table delegate to notify tap outside cell
+protocol TapOutsideTableViewDelegate: UITableViewDelegate {
+    func tableViewDidTapBelowCells(in tableView: UITableView)
+}
 
+// a table to notify tap outside cell
+class TapOutsideTableView: UITableView {
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if self.indexPathForRow(at: point) == nil {
+            if let delegate = self.delegate as? TapOutsideTableViewDelegate {
+                delegate.tableViewDidTapBelowCells(in: self)
+            }
+        }
+        return super.hitTest(point, with: event)
+    }
+}
+
+struct ActionFormSettings { // XXX use settings
+    static let oneSection = false
+    static let sectionForTextArea = true
+    static let errorAsDetail = false
+    static let alertIfOneField = true
+}
+
+class ActionFormViewController: FormViewController {
     var action: Action = .dummy
     var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
     var context: ActionContext = UIView()
     var completionHandler: CompletionHandler = { result in }
     var parameters: [ActionParameter] = []
 
-    convenience init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ parameters: [ActionParameter], _ completionHandler: @escaping CompletionHandler) {
-        self.init(style: .grouped)
+    private var tableViewStyle: UITableView.Style = .grouped
+
+    // MARK: Init
+
+    convenience init(style: UITableView.Style, _ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ parameters: [ActionParameter], _ completionHandler: @escaping CompletionHandler) {
+        self.init(style: style)
         self.action = action
         self.actionUI = actionUI
         self.context = context
@@ -32,79 +60,238 @@ class ActionFormViewController: FormViewController {
 
     override init(style: UITableView.Style) {
         super.init(style: style)
+        tableViewStyle = style
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let section = self.form +++ Section()
-        var values: [String: Any?] = [:]
-        for parameter in parameters {
-            section +++ parameter.formRow()
-            values[parameter.key] = parameter.defaultValue(with: context)
-        }
-        values = values.mapValues { ($0 as? AnyCodable)?.value ?? $0 }
-        self.form.setValues(values)
+    fileprivate func initNavigationBar() {
+        // let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(cancelAction))
+        // let backItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelAction)) // LOCALIZE
+        let cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
+        self.navigationItem.add(where: .left, item: cancelItem)
 
-        let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(dismissAction))
-        // let backItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(dismissAction)) // LOCALIZE
-        self.navigationItem.add(where: .left, item: backItem)
-
-        let doneItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonAction)) // LOCALIZE
+        // let doneItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction)) // LOCALIZE
+        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneAction))
         self.navigationItem.add(where: .right, item: doneItem)
 
         self.navigationItem.title = self.action.preferredShortLabel
+        self.navigationController?.navigationBar.tintColor = .white
     }
 
-    @objc func buttonAction(sender: UIButton!) {
-        let errors = self.form.validate()
-        if let error = errors.first {
-            SwiftMessages.error(error: error)
-            // show on field him self
-        } else {
-            let values = self.form.values()
+    fileprivate func initDefaultValues() {
+        var values: [String: Any?] = [:]
+        for parameter in parameters {
+            values[parameter.name] = parameter.defaultValue(with: context)
+        }
+        values = values.mapValues { ($0 as? AnyCodable)?.value ?? $0 }
+        self.form.setValues(values)
+    }
 
-            // XXX maybe dismiss only after receive information
-            self.dismiss(animated: true) {
-                self.completionHandler(.success((self.action, self.actionUI, self.context, values as ActionParameters)))
+    /*override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+     return super.tableView(tableView, heightForHeaderInSection: section)
+     }*/
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+    fileprivate func initRows() {
+        if ActionFormSettings.oneSection {
+            let section = self.form +++ Section()
+            for parameter in parameters {
+                let row = parameter.formRow()
+                if ActionFormSettings.sectionForTextArea && row is TextAreaRow {
+                    form +++ Section(parameter.preferredLongLabelMandatory) <<< row
+                } else {
+                    section +++ row
+                }
+            }
+        } else {
+            for parameter in parameters {
+                let section = self.form +++ Section(parameter.preferredLongLabelMandatory) /*{ section in
+                    var header = HeaderFooterView(stringLiteral: parameter.preferredLongLabelMandatory)
+                    section.header = header
+                    header.height = { 25 }
+                }*/
+                let row = parameter.formRow()
+                row.title = nil
+                section +++ row
             }
         }
     }
 
-    @objc func dismissAction(sender: Any!) {
+    // MARK: Life
+
+    override func viewDidLoad() {
+        tableView = TapOutsideTableView(frame: view.bounds, style: tableViewStyle)
+        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableView.cellLayoutMarginsFollowReadableWidth = false
+
+        super.viewDidLoad()
+
+        if case .plain = tableViewStyle {
+            tableView.tableFooterView = UIView()
+        }
+
+        initRows()
+        initDefaultValues()
+        initNavigationBar()
+
+        navigationOptions = [.Enabled, .StopDisabledRow]
+        animateScroll = true
+        rowKeyboardSpacing = 20 // Leaves 20pt of space between the keyboard and the highlighted row after scrolling to an off screen row
+    }
+
+    // MARK: Actions
+
+    @objc func doneAction(sender: UIButton!) {
+
+        let errors = self.form.validateRows()
+        if errors.isEmpty {
+            for row in self.form.rows {
+                row.removeValidationErrorRows()
+            }
+            let values = self.form.values()
+
+            self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
+                self.completionHandler(.success((self.action, self.actionUI, self.context, values as ActionParameters)))
+            }
+        } else {
+            // remove if no more errors
+            for row in self.form.rows where row.validationErrors.isEmpty {
+                row.removeValidationErrorRows()
+            }
+            // display errors
+            for (row, rowErrors) in errors {
+                row.display(errors: rowErrors)
+            }
+            // scroll to first row with errors
+            let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
+            if let row = rows.first {
+                row.selectScrolling(animated: false)
+            }
+        }
+    }
+
+    @objc func cancelAction(sender: Any!) {
         self.dismiss(animated: true) {
             self.completionHandler(.failure(.userCancel))
         }
     }
 }
+
+extension Eureka.BaseRow {
+
+    // Reset rows validation
+    func display(errors: [ValidationError]) {
+        if let error = errors.first {
+            if let cell = self.baseCell {
+                if ActionFormSettings.oneSection {
+                    cell.textLabel?.backgroundColor = .red
+                } else {
+                    cell.borderColor = .red
+                }
+                if ActionFormSettings.errorAsDetail {
+                    cell.detailTextLabel?.text = error.msg
+                    cell.detailTextLabel?.textColor = .red
+                } else {
+                    addValidationErrorRows()
+                }
+            }
+        }
+        // XXX multiple errors?
+    }
+
+}
+
 /*
+ extension Form {
+
+ static func installDefaultValidationHandlers() {
+ TextRow.defaultCellUpdate = highlightCellLabelIfValidationFailed
+ TextRow.defaultOnRowValidationChanged = showValidationErrors
+ }
+
+ private static func highlightCellLabelIfValidationFailed(cell: BaseCell, row: BaseRow) {
+ if !row.isValid {
+ cell.textLabel?.textColor = .red
+ }
+ }
+
+ private static func showValidationErrors(cell: BaseCell, row: BaseRow) {
+ row.removeValidationErrorRows()
+ row.addValidationErrorRows()
+ }
+ }
+
+ */
+extension BaseRow {
+
+    fileprivate func removeValidationErrorRows() {
+        guard let rowIndex = indexPath?.row else { return }
+        while section!.count > rowIndex + 1 && section?[rowIndex  + 1] is LabelRow {
+            _ = section?.remove(at: rowIndex + 1)
+        }
+    }
+
+    fileprivate func addValidationErrorRows() {
+        removeValidationErrorRows() // XXX maybe recycle label to remove animation
+
+        for (index, validationMsg) in validationErrors.map({ $0.msg }).enumerated() {
+            let labelRow = LabelRow {
+                $0.title = validationMsg
+                $0.cell.height = { 30 }
+                $0.cellStyle = .subtitle
+                $0.cell.textLabel?.textColor = .red
+                $0.cell.detailTextLabel?.textColor = .red
+            }
+            if let currentRowIndex = self.indexPath?.row {
+                section?.insert(labelRow, at: currentRowIndex + index + 1)
+            }
+        }
+    }
+}
+
+extension BaseRow {
+    func selectScrolling(animated: Bool = false) {
+        guard let indexPath = indexPath, let tableView = baseCell?.formViewController()?.tableView ?? (section?.form?.delegate as? FormViewController)?.tableView  else { return }
+        tableView.selectRow(at: indexPath, animated: animated, scrollPosition: .top)
+    }
+}
+
 extension Eureka.Form {
 
-    @discardableResult
-    public func validate(includeHidden: Bool = false, includeDisabled: Bool = true) -> [ValidationError] {
+    public func validateRows(includeHidden: Bool = false, includeDisabled: Bool = true) -> [BaseRow: [ValidationError]] {
         let rowsWithHiddenFilter = includeHidden ? self.allRows : self.rows
         let rowsWithDisabledFilter = includeDisabled ? rowsWithHiddenFilter : rowsWithHiddenFilter.filter { $0.isDisabled != true }
 
-        return rowsWithDisabledFilter.reduce([ValidationError]()) { res, row in
+        return rowsWithDisabledFilter.reduce([BaseRow: [ValidationError]]()) { res, row in
             var res = res
             let errors = row.validate()
-            res.append(contentsOf: errors)
-            let cell = row.baseCell
-            /* cell?.detailTextLabel?.text = errors.map { $0.msg }.joined(separator: ",")
-             cell?.detailTextLabel?.isHidden = false
-             cell?.detailTextLabel?.textAlignment = .left
-             cell?.detailTextLabel?.textColor = .red*/
-
-            if !row.isValid {
-                cell?.textLabel?.textColor = .red
+            if !errors.isEmpty {
+                res[row] = errors
             }
             return res
         }
     }
-}*/
+
+}
+
+extension ActionFormViewController: TapOutsideTableViewDelegate {
+    func tableViewDidTapBelowCells(in tableView: UITableView) {
+        tableView.endEditing(true)
+    }
+}
+
+extension BaseRow: Hashable {
+
+    public func hash(into hasher: inout Hasher) {
+        guard let tag = self.tag else { return }
+        hasher.combine(tag)
+    }
+}
 
 extension ValidationError: LocalizedError {
     public var errorDescription: String? { return msg }
@@ -116,6 +303,8 @@ extension ValidationError: LocalizedError {
     public var helpAnchor: String? { return nil }
 }
 
+// MARK: ActionParametersUI
+
 extension ActionFormViewController: ActionParametersUI {
 
     static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
@@ -123,276 +312,11 @@ extension ActionFormViewController: ActionParametersUI {
             completionHandler(.failure(.noParameters))
             return
         }
-        let viewController: ActionFormViewController = ActionFormViewController(action, actionUI, context, parameters, completionHandler)
+        let viewController: ActionFormViewController = ActionFormViewController(style: .grouped, action, actionUI, context, parameters, completionHandler)
 
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
 
         navigationController.show()
-    }
-}
-
-extension ActionParameter {
-
-    fileprivate var key: String {
-        return self.name
-    }
-
-    func formRow() -> BaseRow {
-        let row: BaseRow = self.baseRow()
-        if let field = row as? FieldRowConformance {
-            if let placeholder = self.placeholder {
-                field.placeholder = placeholder
-            }
-        }
-        row.baseValue = self.default
-        row.title = self.label ?? self.shortLabel ?? self.name
-
-        if self.mandatory {
-            if let rowOf = row as? RowOfEquatable {
-                rowOf.setRequired()
-            }
-            row.validationOptions = .validatesOnChange
-
-            if let format = format {
-                switch format {
-                case .email:
-                    row.validationOptions = .validatesOnChangeAfterBlurred
-                default:
-                    break
-                }
-            }
-        }
-        if let min = self.min {
-            if let rowOf = row as? RowOfComparable {
-                rowOf.setGreaterOrEqual(than: min)
-            }
-        }
-        if let max = self.max {
-            if let rowOf = row as? RowOfComparable {
-                rowOf.setSmallerOrEqual(than: max)
-            }
-        }
-
-        /*row.cellUpdate({ cell, row in
-            if !row.isValid {
-                cell.titleLabel?.textColor = .red
-            }
-        })*/
-
-        return row
-    }
-
-    private func baseRow() -> BaseRow {
-        if let choiceList = choiceList {
-            // XXX multiple interface to choose between list
-            let choiceRow = SegmentedRow<String>(key)
-            // var choiceRow = PushRow<String>(key)
-            if let choiceArray = choiceList.value as? [AnyCodable] {
-                choiceRow.options = choiceArray.map { "\($0)" }
-            } else if let choiceDictionary = choiceList.value as? [String: AnyCodable] {
-                choiceRow.options = choiceDictionary.values.map { "\($0)" }
-            }
-
-            /*let actionSheet = ActionSheetRow<String>() {
-                $0.title = "ActionSheetRow"
-                $0.selectorTitle = "Pick a number"
-                $0.options = ["One","Two","Three"]
-                $0.value = "Two"    // initially selected
-            }*/
-
-            /*let row = PushRow<Emoji>() {
-             $0.title = "PushRow"
-             $0.options = [💁🏻, 🍐, 👦🏼, 🐗, 🐼, 🐻]
-             $0.value = 👦🏼
-             $0.selectorTitle = "Choose an Emoji!"
-             }*/
-
-            return choiceRow
-        }
-
-        if let format = format {
-            switch format {
-            case .url:
-                return URLRow(key) {
-                    $0.add(rule: RuleURL())
-                }
-            case .email:
-                return EmailRow(key) {
-                    $0.add(rule: RuleEmail())
-                }
-            case .textArea, .comment:
-                return TextAreaRow(key)
-            case .password:
-                return PasswordRow(key)
-            case .phone:
-                return PhoneRow(key)
-            case .zipCode:
-                return ZipCodeRow(key)
-            case .name:
-                return NameRow(key)
-            case .countDown:
-                return CountDownRow(key)
-            case .rating:
-                return RatingRow(key)
-            case .account:
-                return AccountRow(key)
-            case .spellOut:
-                return IntRow(key) {
-                    $0.formatter = format.formatter
-                }
-            case .scientific, .percent, .energy, .mass:
-                return DecimalRow {
-                    $0.formatter = format.formatter
-                }
-            case .dateLong, .dateShort, .dateMedium:
-                return DateRow {
-                    $0.dateFormatter = format.dateFormatter
-                }
-            }
-        }
-        // If no format return basic one from type
-        return self.type.formRow(key)
-    }
-
-}
-
-protocol RowOfEquatable: BaseRowType {
-    func setRequired(_ value: Bool)
-}
-extension RowOfEquatable {
-
-    func setRequired() {
-        setRequired(true)
-    }
-}
-
-extension RowOf: RowOfEquatable where T: Equatable {
-    func setRequired(_ value: Bool) {
-        self.remove(ruleWithIdentifier: "actionParameterRequired")
-        if value {
-            self.add(rule: RuleRequired(id: "actionParameterRequired"))
-        }
-    }
-}
-
-protocol RowOfComparable: BaseRowType {
-    func setGreater(than value: Any?)
-    func setGreaterOrEqual(than value: Any?)
-    func setSmaller(than value: Any?)
-    func setSmallerOrEqual(than value: Any?)
-}
-
-extension RowOf: RowOfComparable where T: Comparable {
-    func setGreater(than value: Any?) { // , orEqual: Bool = false
-        self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
-        if let value = value as? T {
-            self.add(rule: RuleGreaterThan(min: value, id: "actionParameterGreaterThan"))
-        }
-    }
-    func setGreaterOrEqual(than value: Any?) {
-        self.remove(ruleWithIdentifier: "actionParameterGreaterThan")
-        if let value = value as? T {
-            self.add(rule: RuleGreaterOrEqualThan(min: value, id: "actionParameterGreaterThan"))
-        }
-    }
-    func setSmaller(than value: Any?) {
-        self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
-        if let value = value as? T {
-            self.add(rule: RuleSmallerThan(max: value, id: "actionParameterSmallerThan"))
-        }
-    }
-    func setSmallerOrEqual(than value: Any?) {
-        self.remove(ruleWithIdentifier: "actionParameterSmallerThan")
-        if let value = value as? T {
-            self.add(rule: RuleSmallerOrEqualThan(max: value, id: "actionParameterSmallerThan"))
-        }
-    }
-}
-
-extension ActionParameterType {
-    func formRow(_ key: String) -> BaseRow {
-        switch self {
-        case .bool, .boolean:
-            return SwitchRow(key)
-        case .integer:
-            return IntRow(key)
-        case .date:
-            return DateRow(key)
-        case .string, .text:
-            return TextRow(key)
-        case .number, .real:
-            return DecimalRow(key)
-        case .duration:
-            return TimeRow(key)
-        case .time:
-            return TimeRow(key)
-        case .picture, .image:
-            return ImageRow(key)
-        case .file, .blob:
-            return TextRow(key)
-        }
-    }
-}
-
-extension ActionParameterFormat {
-
-    var formatter: Formatter? {
-        switch self {
-        case .percent, .spellOut, .scientific:
-            let formatter = NumberFormatter()
-            formatter.locale = .current
-            if let numberStyle =  self.numberStyle {
-                formatter.numberStyle = numberStyle
-            }
-            return formatter
-        case .energy:
-            return EnergyFormatter()
-        case .mass:
-            return MassFormatter()
-        case .dateLong, .dateShort, .dateMedium:
-            return dateFormatter
-        default:
-            return nil
-        }
-    }
-
-    var numberStyle: NumberFormatter.Style? {
-        switch self {
-        case .spellOut:
-            return .spellOut
-        case .scientific:
-            return .scientific
-        case .percent:
-            return .percent
-        default:
-            return nil
-        }
-    }
-
-    var dateFormatter: DateFormatter? {
-        switch self {
-        case .dateLong, .dateShort, .dateMedium:
-            let formatter = DateFormatter()
-            formatter.locale = .current
-            if let dateStyle =  self.dateStyle {
-                formatter.dateStyle = dateStyle
-            }
-            return formatter
-        default:
-            return nil
-        }
-    }
-    var dateStyle: DateFormatter.Style? {
-        switch self {
-        case .dateLong:
-            return .long
-        case .dateShort:
-            return .short
-        case .dateMedium:
-            return .medium
-        default:
-            return nil
-        }
     }
 }

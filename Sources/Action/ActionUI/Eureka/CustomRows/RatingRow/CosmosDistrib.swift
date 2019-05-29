@@ -423,9 +423,7 @@ struct CosmosDefaultSettings {
 
     /// Calculates the size of the default text font. It is used for making the text size configurable from the storyboard.
     static var textSize: Double {
-        get {
-            return Double(textFont.pointSize)
-        }
+        return Double(textFont.pointSize)
     }
 
     // MARK: - Touch settings

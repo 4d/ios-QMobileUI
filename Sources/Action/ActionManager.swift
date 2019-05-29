@@ -127,11 +127,9 @@ public class ActionManager {
     func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if let actionParameters = action.parameters {
 
-            // TODO #106847 Create UI according to action parameters
-
-            if actionParameters.count == 1 {
+            // Create UI according to action parameters
+            if actionParameters.count == 1 && ActionFormSettings.alertIfOneField {
                 UIAlertController.build(action, actionUI, context, self.handleAction)
-
             } else {
                 let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
                 type.build(action, actionUI, context, self.handleAction)
@@ -351,4 +349,23 @@ extension ActionResult {
         }
         return Action.decode(fromJSON: jsonString)
     }*/
+
+    typealias Validation = (String?, ValidationError)
+
+    fileprivate var validationErrors: [Validation]? {
+        guard let errors = json["validationErrors"].arrayObject else {
+            return nil
+        }
+
+        return errors.compactMap { (object: Any) -> Validation? in
+            if let message = object as? String {
+                return (nil, ValidationError(msg: message))
+            } else if let dictionary = object as? [String: String],
+                let message = dictionary["message"],
+                let field = dictionary["field"] {
+                return (field, ValidationError(msg: message))
+            }
+            return nil
+        }
+    }
 }

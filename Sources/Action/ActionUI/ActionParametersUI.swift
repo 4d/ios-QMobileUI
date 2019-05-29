@@ -62,8 +62,8 @@ class ActionParametersController: UIViewController, ActionParametersUI {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(dismissAction))
-        self.navigationItem.add(where: .left, item: backItem)
+        let cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
+        self.navigationItem.add(where: .left, item: cancelItem)
 
         view.backgroundColor = .white // XXX THEME action parameters depending of the theme
 
@@ -110,18 +110,18 @@ class ActionParametersController: UIViewController, ActionParametersUI {
         let button = UIButton(frame: frame)
         button.setTitle("validate", for: .normal)
         button.backgroundColor = .background
-        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        button.addTarget(self, action: #selector(doneAction), for: .touchUpInside)
         container.addArrangedSubview(button)
 
     }
 
-    @objc func buttonAction(sender: UIButton!) {
+    @objc func doneAction(sender: UIButton!) {
         self.dismiss(animated: true) {
             self.completionHandler(.success((self.action, self.actionUI, self.context, self.actionParametersValue)))
         }
     }
 
-    @objc func dismissAction(sender: Any!) {
+    @objc func cancelAction(sender: Any!) {
         self.dismiss(animated: true) {
             self.completionHandler(.failure(.userCancel))
         }

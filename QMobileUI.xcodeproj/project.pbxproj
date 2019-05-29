@@ -157,6 +157,10 @@
 		48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */; };
 		48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
 		48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
+		48E655E0229EA6770060568B /* Eureka+RowRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655DF229EA6770060568B /* Eureka+RowRules.swift */; };
+		48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */; };
+		48E655E5229EB2D40060568B /* LocationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E4229EB2D40060568B /* LocationRow.swift */; };
+		48E655E7229EB2ED0060568B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E6229EB2ED0060568B /* MapViewController.swift */; };
 		48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */; };
 		48E71DBE212AA475003D10BD /* UIStackVIew+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E71DBD212AA475003D10BD /* UIStackVIew+QMobile.swift */; };
 		48E71DC0212AA633003D10BD /* ApplicationOpenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */; };
@@ -350,6 +354,10 @@
 		48E49CF71EB9DC33002B60AF /* Moya.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Moya.framework; path = Carthage/Build/iOS/Moya.framework; sourceTree = "<group>"; };
 		48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ValueTransformerKit.framework; path = Carthage/Build/iOS/ValueTransformerKit.framework; sourceTree = "<group>"; };
+		48E655DF229EA6770060568B /* Eureka+RowRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+RowRules.swift"; sourceTree = "<group>"; };
+		48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+ActionParameter.swift"; sourceTree = "<group>"; };
+		48E655E4229EB2D40060568B /* LocationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRow.swift; sourceTree = "<group>"; };
+		48E655E6229EB2ED0060568B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLaunchOptions.swift; sourceTree = "<group>"; };
 		48E71DBD212AA475003D10BD /* UIStackVIew+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackVIew+QMobile.swift"; sourceTree = "<group>"; };
 		48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationOpenApp.swift; sourceTree = "<group>"; };
@@ -575,6 +583,8 @@
 			children = (
 				483192512297F8000041B41A /* CustomRows */,
 				483190ED2297F4D40041B41A /* Eureka+ActionParametersUI.swift */,
+				48E655DF229EA6770060568B /* Eureka+RowRules.swift */,
+				48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -582,6 +592,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				48E655E3229EB2CC0060568B /* LocationRow */,
 				482C6544229D1BB10045E1CE /* RatingRow */,
 				483192522297F8000041B41A /* ImageRow */,
 			);
@@ -902,6 +913,15 @@
 				48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		48E655E3229EB2CC0060568B /* LocationRow */ = {
+			isa = PBXGroup;
+			children = (
+				48E655E4229EB2D40060568B /* LocationRow.swift */,
+				48E655E6229EB2ED0060568B /* MapViewController.swift */,
+			);
+			path = LocationRow;
 			sourceTree = "<group>";
 		};
 		48EE07751E7ADEC000A8546E /* DataSource */ = {
@@ -1241,6 +1261,7 @@
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
+				48E655E5229EB2D40060568B /* LocationRow.swift in Sources */,
 				483192552297F8EE0041B41A /* ImageRow.swift in Sources */,
 				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
 				4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */,
@@ -1274,6 +1295,7 @@
 				482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */,
 				480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */,
 				480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */,
+				48E655E7229EB2ED0060568B /* MapViewController.swift in Sources */,
 				48E49CEF1EB9CA70002B60AF /* ApplicationValueTransformers.swift in Sources */,
 				480B43571E842448007C90DD /* Platform.swift in Sources */,
 				483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */,
@@ -1310,6 +1332,7 @@
 				489A68AB21B526AA00A90DC6 /* Form.swift in Sources */,
 				4846083D20AF07DD00EE4696 /* FloatingLabelTextField.swift in Sources */,
 				480A602222392A75002BE3E7 /* UIColor+QMobile.swift in Sources */,
+				48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
 				4869D608223BA4110042379F /* ActionContext.swift in Sources */,
 				489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */,
@@ -1328,6 +1351,7 @@
 				FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */,
 				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
 				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
+				48E655E0229EA6770060568B /* Eureka+RowRules.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,
 				480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */,
