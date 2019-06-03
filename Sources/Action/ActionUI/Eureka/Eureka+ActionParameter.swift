@@ -60,12 +60,22 @@ extension ActionParameter {
             case .min(let min):
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setGreaterOrEqual(than: min)
+                } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
+                    rowOf.setGreaterOrEqual(than: min)
+                } else if let rowOf = row as? DecimalRow {
+                    rowOf.setGreaterOrEqual(than: min)
                 } else {
                     logger.warning("Rule min(\(min) applyed to non comparable data \(row)")
                 }
             case .max(let max):
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setSmallerOrEqual(than: max)
+                } else if let rowOf = row as? IntRow {
+                    rowOf.setSmallerOrEqual(than: max)
+                } else if let rowOf = row as? DecimalRow {
+                    rowOf.setSmallerOrEqual(than: max)
+                } else if let rowOf = row as? RatingRow {
+                    rowOf.cosmosSettings.totalStars = Int(max)
                 } else {
                     logger.warning("Rule max(\(max) applyed to non comparable data \(row)")
                 }
@@ -100,7 +110,7 @@ extension ActionParameter {
     }
 
     // Create a row according to format and type
-    private func baseRow() -> BaseRow {
+    private func baseRow() -> BaseRow { //swiftlint:disable:this function_body_length
         if let choiceList = choiceList {
             // XXX multiple interface to choose between list
             let choiceRow = SegmentedRow<String>(name)
@@ -140,7 +150,25 @@ extension ActionParameter {
                 }
             case .textArea, .comment:
                 return TextAreaRow(name) {
-                    $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
+                    if ActionFormSettings.textAreaExpand {
+                        $0.textAreaHeight = .fixed(cellHeight: 110) // try to minimize at start
+                    } else {
+                        $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
+                    }
+                    }.onCellHighlightChanged { cell, row in
+                        if ActionFormSettings.textAreaExpand {
+                            if case .fixed(_) = row.textAreaHeight {
+                                row.textAreaHeight = .dynamic(initialTextViewHeight: 110)
+                                cell.setup()
+                                cell.layoutIfNeeded()
+                                guard let tableView = cell.formViewController()?.tableView else { return }
+                                tableView.setNeedsUpdateConstraints()
+                                tableView.setNeedsDisplay()
+                                tableView.reloadData()
+                                tableView.layoutIfNeeded()
+                                tableView.layoutSubviews()
+                            }
+                        }
                 }
             case .password:
                 return PasswordRow(name)
@@ -153,7 +181,9 @@ extension ActionParameter {
             case .countDown:
                 return CountDownRow(name)
             case .rating:
-                return RatingRow(name)
+                return RatingRow(name) {
+                    $0.text = ""
+                }
             case .stepper:
                 return StepperRow(name)
             case .slider:

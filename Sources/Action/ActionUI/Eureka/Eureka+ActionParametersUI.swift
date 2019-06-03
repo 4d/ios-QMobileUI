@@ -32,19 +32,32 @@ class TapOutsideTableView: UITableView {
 }
 
 struct ActionFormSettings { // XXX use settings
-    static let oneSection = false
+    // forms
+    static let alertIfOneField = true // use an alert if one field
+
+    // ui
+    static let oneSection = false // Use one section (if false one section by fields)
+    static let tableViewStyle: UITableView.Style = .grouped
+
+    // text area
     static let sectionForTextArea = true
-    static let errorAsDetail = true
-    static let alertIfOneField = true
+    static let textAreaExpand = true // when focus
+
+    // errors
+    static let errorColor: UIColor = UIColor(named: "error") ?? .red
+    static let errorColorInLabel = true
+    static let errorAsDetail = true // use detail label, else add a new row
 }
 
 class ActionFormViewController: FormViewController {
+
     var action: Action = .dummy
     var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
     var context: ActionContext = UIView()
     var completionHandler: CompletionHandler = { result in }
     var parameters: [ActionParameter] = []
 
+    // ui
     private var tableViewStyle: UITableView.Style = .grouped
 
     // MARK: Init
@@ -90,13 +103,6 @@ class ActionFormViewController: FormViewController {
         self.form.setValues(values)
     }
 
-    /*override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-     return super.tableView(tableView, heightForHeaderInSection: section)
-     }*/
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
-    }
-
     fileprivate func initRows() {
         if ActionFormSettings.oneSection {
             let section = self.form +++ Section()
@@ -122,6 +128,43 @@ class ActionFormViewController: FormViewController {
         }
     }
 
+    // MARK: table
+
+    /*override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+     return super.tableView(tableView, heightForHeaderInSection: section)
+     }*/
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+    open func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        // colorize header if errors
+        if !ActionFormSettings.oneSection && ActionFormSettings.errorColorInLabel && hasValidate {
+
+            if let view = view as? UITableViewHeaderFooterView {
+                let rowIndex = section / 2
+                guard let row = self.form.allRows[safe: rowIndex] else { return }
+                if !row.validationErrors.isEmpty {
+                    view.textLabel?.textColor = ActionFormSettings.errorColor
+                    if ActionFormSettings.errorAsDetail {
+                        view.detailTextLabel?.textColor = ActionFormSettings.errorColor
+                    }
+                } else {
+                    // print("\(rowIndex)-\(String(describing: view.textLabel?.text)): ok")
+                    if let noErrorSectionColor = noErrorSectionColor {
+                        view.textLabel?.textColor = noErrorSectionColor
+                    } else {
+                        noErrorSectionColor = view.textLabel?.textColor
+                    }
+                }
+                //view.detailTextLabel?.text = row.validationErrors.first?.msg
+            }
+        }
+    }
+
+    var hasValidate: Bool = false // has validate one time
+    var noErrorSectionColor: UIColor? // cache default color of header to reset it
+
     // MARK: Life
 
     override func viewDidLoad() {
@@ -131,6 +174,7 @@ class ActionFormViewController: FormViewController {
 
         super.viewDidLoad()
 
+        // if plain style remove useless row
         if case .plain = tableViewStyle {
             tableView.tableFooterView = UIView()
         }
@@ -147,7 +191,7 @@ class ActionFormViewController: FormViewController {
     // MARK: Actions
 
     @objc func doneAction(sender: UIButton!) {
-
+        hasValidate = true
         let errors = self.form.validateRows()
         if errors.isEmpty {
             for row in self.form.rows {
@@ -170,11 +214,15 @@ class ActionFormViewController: FormViewController {
             // scroll to first row with errors
             let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
             if let row = rows.first {
+                let animated = true
                 if ActionFormSettings.oneSection {
-                    row.selectScrolling(animated: false)
+                    row.selectScrolling(animated: animated)
+                    row.baseCell.cellBecomeFirstResponder(withDirection: .down)
                 } else {
                     // one section by field, scroll to section
-                    row.section?.selectScrolling(animated: false)
+                    //row.selectScrolling(animated: animated)
+                    row.section?.selectScrolling(animated: animated)
+                    row.baseCell.cellBecomeFirstResponder(withDirection: .down)
                 }
             }
         }
@@ -185,6 +233,7 @@ class ActionFormViewController: FormViewController {
             self.completionHandler(.failure(.userCancel))
         }
     }
+
 }
 
 extension Eureka.BaseRow {
@@ -194,15 +243,22 @@ extension Eureka.BaseRow {
         if let error = errors.first {
             if let cell = self.baseCell {
                 if ActionFormSettings.oneSection {
-                    cell.textLabel?.backgroundColor = .red
+                    cell.textLabel?.textColor = ActionFormSettings.errorColor
+                    cell.borderColor = ActionFormSettings.errorColor
                 } else {
-                    cell.borderColor = .red
+                    cell.borderColor = ActionFormSettings.errorColor
                 }
                 if ActionFormSettings.errorAsDetail {
-                    cell.detailTextLabel?.text = error.msg
-                    cell.detailTextLabel?.textColor = .red
+                    if ActionFormSettings.oneSection { // deactivate for the moment, try to display in section
+                        cell.detailTextLabel?.text = error.msg
+                        cell.detailTextLabel?.textColor = ActionFormSettings.errorColor
+                    }
                 } else {
                     addValidationErrorRows()
+                }
+
+                if ActionFormSettings.errorColorInLabel && !ActionFormSettings.oneSection {
+                   self.baseCell?.formViewController()?.tableView?.reloadData()
                 }
             }
         }
@@ -332,7 +388,7 @@ extension ActionFormViewController: ActionParametersUI {
             completionHandler(.failure(.noParameters))
             return
         }
-        let viewController: ActionFormViewController = ActionFormViewController(style: .grouped, action, actionUI, context, parameters, completionHandler)
+        let viewController: ActionFormViewController = ActionFormViewController(style: ActionFormSettings.tableViewStyle, action, actionUI, context, parameters, completionHandler)
 
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
