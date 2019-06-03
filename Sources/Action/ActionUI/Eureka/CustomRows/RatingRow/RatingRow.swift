@@ -10,7 +10,7 @@ import Foundation
 
 import Eureka
 
-public class RatingCell: Cell<Double>, CellType {
+public class RatingCell: Cell<Int>, CellType {
 
     lazy private var cosmosRating: CosmosView = {
         return CosmosView()
@@ -33,40 +33,15 @@ public class RatingCell: Cell<Double>, CellType {
         let leadingConstraint = NSLayoutConstraint(item: cosmosRating, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1.0, constant: -10.0)
 
         contentView.addConstraints([topConstraint, leadingConstraint])
-        cosmosRating.rating = ratingRow.value ?? 0
+        cosmosRating.rating = Double(ratingRow.value ?? 0)
 
-        if let text = ratingRow.text {
-            cosmosRating.text = text
-        }
-
-        if let fillMode = ratingRow.fillMode {
-            cosmosRating.cosmosSettings.fillMode = fillMode
-        }
-
-        if let starSize = ratingRow.starSize {
-            cosmosRating.cosmosSettings.starSize = starSize
-        }
-
-        if let starMargin = ratingRow.starMargin {
-            cosmosRating.cosmosSettings.starMargin = starMargin
-        }
-
-        if let filledColor = ratingRow.filledColor {
-            cosmosRating.cosmosSettings.filledColor = filledColor
-        }
-
-        if let emptyBorderColor = ratingRow.emptyBorderColor {
-            cosmosRating.cosmosSettings.emptyBorderColor = emptyBorderColor
-        }
-
-        if let filledBorderColor = ratingRow.filledBorderColor {
-            cosmosRating.cosmosSettings.filledBorderColor = filledBorderColor
-        }
+        cosmosRating.text = ratingRow.text
+        cosmosRating.cosmosSettings = ratingRow.cosmosSettings
 
         // set rating to base value for eureka
         cosmosRating.didFinishTouchingCosmos = {[weak self] rating in
-            self?.row.value = rating
-            self?.ratingRow.value = rating
+            self?.row.value = Int(rating)
+            self?.ratingRow.value = Int(rating)
         }
     }
 
@@ -74,19 +49,15 @@ public class RatingCell: Cell<Double>, CellType {
         super.update()
 
         cosmosRating.text = ratingRow.text
-        cosmosRating.rating = ratingRow.value ?? 0
+        cosmosRating.rating = Double(ratingRow.value ?? 0)
     }
 }
 
 // The custom Row also has the cell: CustomCell and its correspond value
 public final class RatingRow: Row<RatingCell>, RowType {
 
-    public var fillMode: StarFillMode?
-    public var starSize: Double?
-    public var starMargin: Double?
-    public var filledColor: UIColor?
-    public var emptyBorderColor: UIColor?
-    public var filledBorderColor: UIColor?
+    public var cosmosSettings: CosmosSettings = .default
+
     public var text: String?
 
     required public init(tag: String?) {

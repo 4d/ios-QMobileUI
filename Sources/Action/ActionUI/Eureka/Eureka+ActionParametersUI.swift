@@ -34,7 +34,7 @@ class TapOutsideTableView: UITableView {
 struct ActionFormSettings { // XXX use settings
     static let oneSection = false
     static let sectionForTextArea = true
-    static let errorAsDetail = false
+    static let errorAsDetail = true
     static let alertIfOneField = true
 }
 
@@ -170,7 +170,12 @@ class ActionFormViewController: FormViewController {
             // scroll to first row with errors
             let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
             if let row = rows.first {
-                row.selectScrolling(animated: false)
+                if ActionFormSettings.oneSection {
+                    row.selectScrolling(animated: false)
+                } else {
+                    // one section by field, scroll to section
+                    row.section?.selectScrolling(animated: false)
+                }
             }
         }
     }
@@ -242,10 +247,13 @@ extension BaseRow {
         for (index, validationMsg) in validationErrors.map({ $0.msg }).enumerated() {
             let labelRow = LabelRow {
                 $0.title = validationMsg
-                $0.cell.height = { 30 }
+                $0.cell.height = { 15 }
                 $0.cellStyle = .subtitle
-                $0.cell.textLabel?.textColor = .red
-                $0.cell.detailTextLabel?.textColor = .red
+            }.cellUpdate { cell, _ in
+                cell.textLabel?.textColor = .red
+                cell.detailTextLabel?.textColor = .red
+                cell.backgroundColor = .clear
+                cell.borderColor = .clear
             }
             if let currentRowIndex = self.indexPath?.row {
                 section?.insert(labelRow, at: currentRowIndex + index + 1)
@@ -258,6 +266,18 @@ extension BaseRow {
     func selectScrolling(animated: Bool = false) {
         guard let indexPath = indexPath, let tableView = baseCell?.formViewController()?.tableView ?? (section?.form?.delegate as? FormViewController)?.tableView  else { return }
         tableView.selectRow(at: indexPath, animated: animated, scrollPosition: .top)
+    }
+}
+
+extension Section {
+    func selectScrolling(animated: Bool = false) {
+        guard let index = index, let tableView = (self.form?.delegate as? FormViewController)?.tableView  else { return }
+        //tableView.scrollToRow(at: IndexPath(row: 0/*NSNotFound*/, section: index), at: .top, animated: animated)
+
+        // implement to scroll if not visible only
+        let sectionRect: CGRect = tableView.rect(forSection: index)
+        //sectionRect.size.height = tableView.frame.size.height
+        tableView.scrollRectToVisible(sectionRect, animated: animated)
     }
 }
 
