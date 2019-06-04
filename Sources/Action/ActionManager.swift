@@ -71,7 +71,6 @@ public class ActionManager {
 
             return true
         }
-        #if DEBUG
 
         append { result, _, actionUI, context in
             guard let actionSheet = result.actionSheet else { return false }
@@ -89,6 +88,7 @@ public class ActionManager {
             return true
         }
 
+        #if DEBUG
         append { _, _, _, _ in
             /*if _ = result.goTo {
              // Open internal

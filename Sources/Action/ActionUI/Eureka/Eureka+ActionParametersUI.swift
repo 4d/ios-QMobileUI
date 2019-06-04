@@ -92,7 +92,7 @@ class ActionFormViewController: FormViewController {
     // MARK: configure rows
 
     func onRowEvent(baseRow: BaseRow, event: RowEvent) {
-        if case RowEvent.onCellHighlightChanged = event {
+        if case .onCellHighlightChanged = event {
             if !baseRow.isHighlighted, let indexPath = baseRow.indexPath {
                 let rowIndex = settings.useSection ? indexPath.section: indexPath.row
                 self.rowHasBeenEdited.insert(rowIndex)
