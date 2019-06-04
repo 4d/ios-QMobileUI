@@ -150,25 +150,7 @@ extension ActionParameter {
                 }
             case .textArea, .comment:
                 return TextAreaRow(name) {
-                    if ActionFormSettings.textAreaExpand {
-                        $0.textAreaHeight = .fixed(cellHeight: 110) // try to minimize at start
-                    } else {
-                        $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
-                    }
-                    }.onCellHighlightChanged { cell, row in
-                        if ActionFormSettings.textAreaExpand {
-                            if case .fixed(_) = row.textAreaHeight {
-                                row.textAreaHeight = .dynamic(initialTextViewHeight: 110)
-                                cell.setup()
-                                cell.layoutIfNeeded()
-                                guard let tableView = cell.formViewController()?.tableView else { return }
-                                tableView.setNeedsUpdateConstraints()
-                                tableView.setNeedsDisplay()
-                                tableView.reloadData()
-                                tableView.layoutIfNeeded()
-                                tableView.layoutSubviews()
-                            }
-                        }
+                    $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
                 }
             case .password:
                 return PasswordRow(name)

@@ -15,6 +15,28 @@ protocol ActionParametersUI {
     static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler)
 }
 
+struct ActionParametersUIBuilder {
+    var action: Action
+    var actionUI: ActionUI
+    var context: ActionContext
+    var completionHandler: ActionParametersUI.CompletionHandler
+
+    init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping ActionParametersUI.CompletionHandler) {
+        self.action = action
+        self.actionUI = actionUI
+        self.context = context
+        self.completionHandler = completionHandler
+    }
+
+    func build<T: ActionParametersUI>(of type: T.Type) {
+        type.build(action, actionUI, context, completionHandler)
+    }
+
+    func success(with parameters: ActionParameters?) {
+        self.completionHandler(.success((self.action, self.actionUI, self.context, parameters)))
+    }
+}
+
 /// All errors if action parameters cannot be computed
 enum ActionParametersUIError: Error {
     case noParameters
@@ -27,7 +49,7 @@ enum ActionParametersUIError: Error {
 class ActionParametersController: UIViewController, ActionParametersUI {
 
     static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
-        let viewController = ActionParametersController(action, actionUI, context, completionHandler)
+        let viewController = ActionParametersController(builder: ActionParametersUIBuilder(action, actionUI, context, completionHandler))
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
         navigationController.show()
@@ -35,10 +57,7 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     var actionParametersValue: [String: Any] = [:]
 
-    var action: Action = .dummy
-    var actionUI: ActionUI = UIAlertAction(title: "", style: .default, handler: nil)
-    var context: ActionContext = UIView()
-    var completionHandler: CompletionHandler = { result in }
+    var builder: ActionParametersUIBuilder?
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -48,15 +67,10 @@ class ActionParametersController: UIViewController, ActionParametersUI {
         super.init(nibName: nil, bundle: nil)
     }
 
-    convenience init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
+    convenience init(builder: ActionParametersUIBuilder) {
         self.init(nibName: nil, bundle: nil)
-        self.action = action
-        self.actionUI = actionUI
-        self.context = context
-
-        self.completionHandler = completionHandler
-
-        self.title = action.preferredLongLabel
+        self.builder = builder
+        self.title = builder.action.preferredLongLabel
     }
 
     override func viewDidLoad() {
@@ -85,7 +99,8 @@ class ActionParametersController: UIViewController, ActionParametersUI {
         stackView.snap(to: scrollView)
         stackView.widthAnchor.constraint(greaterThanOrEqualTo: scrollView.widthAnchor, constant: -inset*2).isActive = true
 
-        guard let parameters = action.parameters else { return }
+        guard let parameters = builder?.action.parameters else { return }
+        guard let context = builder?.context else { return }
         let frame = CGRect(origin: .zero, size: CGSize(width: UIScreen.width, height: 48))
         let container = stackView
         for parameter in parameters {
@@ -117,13 +132,13 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     @objc func doneAction(sender: UIButton!) {
         self.dismiss(animated: true) {
-            self.completionHandler(.success((self.action, self.actionUI, self.context, self.actionParametersValue)))
+             self.builder?.success(with: self.actionParametersValue)
         }
     }
 
     @objc func cancelAction(sender: Any!) {
         self.dismiss(animated: true) {
-            self.completionHandler(.failure(.userCancel))
+            self.builder?.completionHandler(.failure(.userCancel))
         }
     }
 
