@@ -24,8 +24,8 @@ extension ActionParameter {
     }
 
     // Create a row, fill value, add rules
-    func formRow() -> BaseRow {
-        let row: BaseRow = self.baseRow()
+    func formRow(onChange: @escaping (BaseRow) -> Void) -> BaseRow {
+        let row: BaseRow = self.baseRow(onChange: onChange)
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
 
@@ -47,16 +47,14 @@ extension ActionParameter {
                 if let rowOf = row as? RowOfEquatable {
                     rowOf.setRequired()
                 }
-                row.validationOptions = .validatesOnChange
-
-                if let format = format {
+               /* if let format = format {
                     switch format {
                     case .email:
                         row.validationOptions = .validatesOnChangeAfterBlurred
                     default:
                         break
                     }
-                }
+                }*/
             case .min(let min):
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setGreaterOrEqual(than: min)
@@ -110,7 +108,8 @@ extension ActionParameter {
     }
 
     // Create a row according to format and type
-    private func baseRow() -> BaseRow { //swiftlint:disable:this function_body_length
+    // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
+    private func baseRow(onChange: @escaping (BaseRow) -> Void) -> BaseRow { //swiftlint:disable:this function_body_length
         if let choiceList = choiceList {
             // XXX multiple interface to choose between list
             let choiceRow = SegmentedRow<String>(name)
@@ -135,7 +134,7 @@ extension ActionParameter {
              $0.selectorTitle = "Choose an Emoji!"
              }*/
 
-            return choiceRow
+            return choiceRow.onCellHighlightChanged { onChange($1 as BaseRow) }
         }
 
         if let format = format {
@@ -143,79 +142,77 @@ extension ActionParameter {
             case .url:
                 return URLRow(name) {
                     $0.add(rule: RuleURL())
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             case .email:
                 return EmailRow(name) {
                     $0.add(rule: RuleEmail())
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             case .textArea, .comment:
-                return TextAreaRow(name) {
-                    $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
-                }
+                return TextAreaRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .password:
-                return PasswordRow(name)
+                return PasswordRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .phone:
-                return PhoneRow(name)
+                return PhoneRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .zipCode:
-                return ZipCodeRow(name)
+                return ZipCodeRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .name:
-                return NameRow(name)
+                return NameRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .countDown:
-                return CountDownRow(name)
+                return CountDownRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .rating:
                 return RatingRow(name) {
                     $0.text = ""
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             case .stepper:
-                return StepperRow(name)
+                return StepperRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .slider:
-                return SliderRow(name)
+                return SliderRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .check:
-                return CheckRow(name)
+                return CheckRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .account:
-                return AccountRow(name)
+                return AccountRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
             case .spellOut:
                 return IntRow(name) {
                     $0.formatter = format.formatter
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             case .scientific, .percent, .energy, .mass:
                 return DecimalRow {
                     $0.formatter = format.formatter
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             case .dateLong, .dateShort, .dateMedium:
                 return DateRow {
                     $0.dateFormatter = format.dateFormatter
-                }
+                }.onCellHighlightChanged { onChange($1 as BaseRow) }
             }
         }
         // If no format return basic one from type
-        return self.type.formRow(name)
+        return self.type.formRow(name, onChange: onChange)
     }
 
 }
 
 // MARK: ActionParameterType
 extension ActionParameterType {
-    func formRow(_ key: String) -> BaseRow {
+    func formRow(_ key: String, onChange: @escaping (BaseRow) -> Void) -> BaseRow {
         switch self {
         case .bool, .boolean:
-            return SwitchRow(key)
+            return SwitchRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .integer:
-            return IntRow(key)
+            return IntRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .date:
-            return DateRow(key)
+            return DateRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .string, .text:
-            return TextRow(key)
+            return TextRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .number, .real:
-            return DecimalRow(key)
+            return DecimalRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .duration:
-            return TimeRow(key)
+            return TimeRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .time:
-            return TimeRow(key)
+            return TimeRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .picture, .image:
-            return ImageRow(key)
+            return ImageRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         case .file, .blob:
-            return TextRow(key)
+            return TextRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
         }
     }
 }
