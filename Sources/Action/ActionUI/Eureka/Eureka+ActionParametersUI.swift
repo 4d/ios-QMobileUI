@@ -114,7 +114,7 @@ class ActionFormViewController: FormViewController {
             var section = Section()
             self.form.append(section)
             for parameter in parameters {
-                let row = parameter.formRow { _ in
+                let row = parameter.formRow { _, _ in
                     self.hasValidate = true
                     self.tableView?.reloadData()
                 }
@@ -131,11 +131,13 @@ class ActionFormViewController: FormViewController {
         } else {
             for parameter in parameters {
                 let section = Section(parameter.preferredLongLabelMandatory)
-                let row = parameter.formRow { baseRow in
-                    if !baseRow.isHighlighted {
-                        self.hasValidate = true
-                        if let rowIndex = baseRow.indexPath?.row {
-                            self.tableView?.reloadSections(IndexSet(integer: rowIndex), with: .none)
+                let row = parameter.formRow { baseRow, event in
+                    if case RowEvent.onCellHighlightChanged = event {
+                        if !baseRow.isHighlighted {
+                            self.hasValidate = true
+                            if let rowIndex = baseRow.indexPath?.row {
+                                self.tableView?.reloadSections(IndexSet(integer: rowIndex), with: .none)
+                            }
                         }
                     }
                 }

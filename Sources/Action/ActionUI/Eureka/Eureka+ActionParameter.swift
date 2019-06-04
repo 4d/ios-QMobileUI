@@ -24,8 +24,8 @@ extension ActionParameter {
     }
 
     // Create a row, fill value, add rules
-    func formRow(onChange: @escaping (BaseRow) -> Void) -> BaseRow {
-        let row: BaseRow = self.baseRow(onChange: onChange)
+    func formRow(onRowEvent: @escaping (BaseRow, RowEvent) -> Void) -> BaseRow {
+        let row: BaseRow = self.baseRow(onRowEvent: onRowEvent)
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
 
@@ -109,7 +109,7 @@ extension ActionParameter {
 
     // Create a row according to format and type
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
-    private func baseRow(onChange: @escaping (BaseRow) -> Void) -> BaseRow { //swiftlint:disable:this function_body_length
+    private func baseRow(onRowEvent: @escaping (BaseRow, RowEvent) -> Void) -> BaseRow { //swiftlint:disable:this function_body_length
         if let choiceList = choiceList {
             // XXX multiple interface to choose between list
             let choiceRow = SegmentedRow<String>(name)
@@ -134,7 +134,11 @@ extension ActionParameter {
              $0.selectorTitle = "Choose an Emoji!"
              }*/
 
-            return choiceRow.onCellHighlightChanged { onChange($1 as BaseRow) }
+            return choiceRow
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         }
 
         if let format = format {
@@ -142,77 +146,184 @@ extension ActionParameter {
             case .url:
                 return URLRow(name) {
                     $0.add(rule: RuleURL())
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .email:
                 return EmailRow(name) {
                     $0.add(rule: RuleEmail())
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .textArea, .comment:
-                return TextAreaRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return TextAreaRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .password:
-                return PasswordRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return PasswordRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .phone:
-                return PhoneRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return PhoneRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .zipCode:
-                return ZipCodeRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return ZipCodeRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .name:
-                return NameRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return NameRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .countDown:
-                return CountDownRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return CountDownRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .rating:
                 return RatingRow(name) {
                     $0.text = ""
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .stepper:
-                return StepperRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return StepperRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .slider:
-                return SliderRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return SliderRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .check:
-                return CheckRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return CheckRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .account:
-                return AccountRow(name).onCellHighlightChanged { onChange($1 as BaseRow) }
+                return AccountRow(name)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .spellOut:
                 return IntRow(name) {
                     $0.formatter = format.formatter
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .scientific, .percent, .energy, .mass:
                 return DecimalRow {
                     $0.formatter = format.formatter
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             case .dateLong, .dateShort, .dateMedium:
                 return DateRow {
                     $0.dateFormatter = format.dateFormatter
-                }.onCellHighlightChanged { onChange($1 as BaseRow) }
+                }
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
             }
         }
         // If no format return basic one from type
-        return self.type.formRow(name, onChange: onChange)
+        return self.type.formRow(name, onRowEvent: onRowEvent)
     }
 
+}
+enum RowEvent {
+    case onChange
+    //case cellUpdate, cellSetup
+    case onCellSelection
+    case onCellHighlightChanged
+    case onRowValidationChanged
 }
 
 // MARK: ActionParameterType
 extension ActionParameterType {
-    func formRow(_ key: String, onChange: @escaping (BaseRow) -> Void) -> BaseRow {
+    func formRow(_ key: String, onRowEvent: @escaping (BaseRow, RowEvent) -> Void) -> BaseRow {
         switch self {
         case .bool, .boolean:
-            return SwitchRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return SwitchRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .integer:
-            return IntRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return IntRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .date:
-            return DateRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return DateRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .string, .text:
-            return TextRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return TextRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .number, .real:
-            return DecimalRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return DecimalRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .duration:
-            return TimeRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return TimeRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .time:
-            return TimeRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return TimeRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .picture, .image:
-            return ImageRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return ImageRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .file, .blob:
-            return TextRow(key).onCellHighlightChanged { onChange($1 as BaseRow) }
+            return TextRow(key)
+                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         }
     }
 }
