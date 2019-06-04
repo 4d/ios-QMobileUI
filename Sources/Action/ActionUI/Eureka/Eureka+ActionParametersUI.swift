@@ -13,54 +13,6 @@ import SwiftMessages
 
 import QMobileAPI
 
-// a table delegate to notify tap outside cell
-protocol TapOutsideTableViewDelegate: UITableViewDelegate {
-    func tableViewDidTapBelowCells(in tableView: UITableView)
-}
-
-// a table to notify tap outside cell
-class TapOutsideTableView: UITableView {
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if self.indexPathForRow(at: point) == nil {
-            if let delegate = self.delegate as? TapOutsideTableViewDelegate {
-                delegate.tableViewDidTapBelowCells(in: self)
-            }
-        }
-        return super.hitTest(point, with: event)
-    }
-}
-
-struct ActionFormSettings { // XXX use settings
-    // forms
-    static let alertIfOneField = true // use an alert if one field
-
-    // ui
-    var useSection = true // Use one section (if false one section by fields)
-    var tableViewStyle: UITableView.Style = .grouped
-
-    // text area
-    var sectionForTextArea = true
-    var textAreaExpand = true // when focus
-
-    // errors
-    var errorColor: UIColor = UIColor(named: "error") ?? .red
-    var errorColorInLabel = true
-    var errorAsDetail = true // use detail label, else add a new row
-}
-
-extension ActionFormSettings: JSONDecodable {
-
-    init?(json: JSON) {
-        self.useSection = json["useSection"].bool ?? true
-        self.tableViewStyle = (json["useSection"].stringValue == "plain") ? UITableView.Style.plain: UITableView.Style.grouped
-        self.sectionForTextArea = json["sectionForTextArea"].bool ?? true
-        self.textAreaExpand = json["sectionForTextArea"].bool ?? true
-        self.errorAsDetail = json["errorAsDetail"].bool ?? true
-        self.errorColorInLabel = json["errorColorInLabel"].bool ?? true
-    }
-}
-
 class ActionFormViewController: FormViewController {
 
     var builder: ActionParametersUIBuilder?
@@ -114,10 +66,7 @@ class ActionFormViewController: FormViewController {
             var section = Section()
             self.form.append(section)
             for parameter in parameters {
-                let row = parameter.formRow { _, _ in
-                    self.hasValidate = true
-                    self.tableView?.reloadData()
-                }
+                let row = parameter.formRow(onRowEvent: self.onRowEvent(baseRow:event:))
                 decorate(row: row)
                 if settings.sectionForTextArea && row is TextAreaRow {
                     // add section to have title for text area (alternatively find a way to display title)
@@ -131,20 +80,24 @@ class ActionFormViewController: FormViewController {
         } else {
             for parameter in parameters {
                 let section = Section(parameter.preferredLongLabelMandatory)
-                let row = parameter.formRow { baseRow, event in
-                    if case RowEvent.onCellHighlightChanged = event {
-                        if !baseRow.isHighlighted {
-                            self.hasValidate = true
-                            if let rowIndex = baseRow.indexPath?.row {
-                                self.tableView?.reloadSections(IndexSet(integer: rowIndex), with: .none)
-                            }
-                        }
-                    }
-                }
+                let row = parameter.formRow(onRowEvent: self.onRowEvent(baseRow:event:))
                 decorate(row: row)
                 row.title = nil
                 section.append(row)
                 self.form.append(section)
+            }
+        }
+    }
+
+    // MARK: configure rows
+
+    func onRowEvent(baseRow: BaseRow, event: RowEvent) {
+        if case RowEvent.onCellHighlightChanged = event {
+            if !baseRow.isHighlighted, let indexPath = baseRow.indexPath {
+                let rowIndex = settings.useSection ? indexPath.section: indexPath.row
+                self.rowHasBeenEdited.insert(rowIndex)
+                self.tableView?.reloadSections([rowIndex], with: .none)
+                //self.tableView?.reloadData()
             }
         }
     }
@@ -154,8 +107,8 @@ class ActionFormViewController: FormViewController {
             textAreaRow.cellSetup { (_, _) in
                // row.textAreaHeight = .fixed(cellHeight: 110) // try to minimize at start, not working, too late
                 }.onCellHighlightChanged { (cell, row) in
-                    if case .fixed(_) = row.textAreaHeight {
-                        row.textAreaHeight = .dynamic(initialTextViewHeight: 110)
+                    if case .fixed(let height) = row.textAreaHeight {
+                        row.textAreaHeight = .dynamic(initialTextViewHeight: height)
                         cell.setup()
                         cell.layoutIfNeeded()
                         guard let tableView = cell.formViewController()?.tableView else { return }
@@ -171,13 +124,13 @@ class ActionFormViewController: FormViewController {
         row.validationOptions = .validatesOnChange
     }
 
+    // MARK: table view
+
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         // colorize header if errors
-        if settings.useSection && settings.errorColorInLabel && hasValidate {
-
-            let rowIndex = section
+        let rowIndex = section
+        if settings.useSection && settings.errorColorInLabel && (hasValidateForm || rowHasBeenEdited.contains(rowIndex)) {
             guard let row = self.form.allRows[safe: rowIndex] else { return nil }
-
             return row.validationErrors.first?.msg
         }
         return nil
@@ -191,59 +144,45 @@ class ActionFormViewController: FormViewController {
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         let rowIndex = section
         guard let row = self.form.allRows[safe: rowIndex], !row.validationErrors.isEmpty else { return 0 }
-        return  48
+        return 28
     }
 
     open func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        // colorize header if errors
-        if settings.useSection && settings.errorColorInLabel && hasValidate {
-
-            if let view = view as? UITableViewHeaderFooterView {
-                let rowIndex = section
-                guard let row = self.form.allRows[safe: rowIndex] else { return }
-                if !row.validationErrors.isEmpty {
-                    view.textLabel?.textColor = settings.errorColor
-                    if settings.errorAsDetail {
-                        //view.detailTextLabel?.textColor = settings.errorColor
-                    }
-                } else {
-                    if let noErrorSectionColor = noErrorSectionColor {
-                        view.textLabel?.textColor = noErrorSectionColor
-                    } else {
-                        noErrorSectionColor = view.textLabel?.textColor
-                    }
-                }
-            }
-        }
+        guard let view = view as? UITableViewHeaderFooterView else { return }
+        manageErrorOnSectionHeaderFooterView(view, forSection: section)
     }
 
     open func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        // colorize footer and add message if errors
-        if settings.useSection && settings.errorColorInLabel && hasValidate {
+        guard let view = view as? UITableViewHeaderFooterView else { return }
+        manageErrorOnSectionHeaderFooterView(view, forSection: section)
+    }
 
-            if let view = view as? UITableViewHeaderFooterView {
-                let rowIndex = section
-                guard let row = self.form.allRows[safe: rowIndex] else { return }
-                if !row.validationErrors.isEmpty {
-                    view.textLabel?.textColor = settings.errorColor
-                    if settings.errorAsDetail {
-                        view.detailTextLabel?.textColor = settings.errorColor
-                    }
-                } else {
-                    if let noErrorSectionColor = noErrorSectionColor {
-                        view.textLabel?.textColor = noErrorSectionColor
-                    } else {
-                        noErrorSectionColor = view.textLabel?.textColor
-                    }
+    private func manageErrorOnSectionHeaderFooterView(_ view: UITableViewHeaderFooterView, forSection section: Int) {
+        let rowIndex = section // XXX mode section
+        // colorize footer and add message if errors
+        if settings.useSection && settings.errorColorInLabel && (hasValidateForm || rowHasBeenEdited.contains(rowIndex)) {
+
+            guard let row = self.form.allRows[safe: rowIndex] else { return }
+            if !row.validationErrors.isEmpty {
+                view.textLabel?.textColor = settings.errorColor
+                if settings.errorAsDetail {
+                    view.detailTextLabel?.textColor = settings.errorColor
                 }
-                view.textLabel?.text = row.validationErrors.first?.msg
-               // view.detailTextLabel?.text = row.validationErrors.first?.msg
+            } else {
+                if let noErrorSectionColor = noErrorSectionColor {
+                    view.textLabel?.textColor = noErrorSectionColor
+                } else {
+                    noErrorSectionColor = view.textLabel?.textColor
+                }
             }
+            // view.textLabel?.text = row.validationErrors.first?.msg
+            // view.detailTextLabel?.text = row.validationErrors.first?.msg
         }
     }
 
-    var hasValidate: Bool = false // has validate one time
+    var hasValidateForm: Bool = false // has validate one time
     var noErrorSectionColor: UIColor? // cache default color of header to reset it
+    var rowHasBeenEdited: Set<Int> = [] // has validate one time
 
     // MARK: Life
 
@@ -275,14 +214,13 @@ class ActionFormViewController: FormViewController {
     // MARK: Actions
 
     @objc func doneAction(sender: UIButton!) {
-        hasValidate = true
+        hasValidateForm = true
         let errors = self.form.validateRows()
         if errors.isEmpty {
-            for row in self.form.rows {
+            /*for row in self.form.rows {
                 row.removeValidationErrorRows()
-            }
+            }*/
             let values = self.form.values()
-
             self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
                 self.builder?.success(with: values as ActionParameters)
             }
@@ -326,6 +264,7 @@ class ActionFormViewController: FormViewController {
 
 }
 
+// MARK: extension eureka
 extension Eureka.BaseRow {
 
     // Reset rows validation
@@ -444,12 +383,6 @@ extension Eureka.Form {
 
 }
 
-extension ActionFormViewController: TapOutsideTableViewDelegate {
-    func tableViewDidTapBelowCells(in tableView: UITableView) {
-        tableView.endEditing(true)
-    }
-}
-
 extension BaseRow: Hashable {
 
     public func hash(into hasher: inout Hasher) {
@@ -468,6 +401,32 @@ extension ValidationError: LocalizedError {
     public var helpAnchor: String? { return nil }
 }
 
+// MARK: listen to click outside
+
+// a table delegate to notify tap outside cell
+protocol TapOutsideTableViewDelegate: UITableViewDelegate {
+    func tableViewDidTapBelowCells(in tableView: UITableView)
+}
+
+// a table to notify tap outside cell
+class TapOutsideTableView: UITableView {
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if self.indexPathForRow(at: point) == nil {
+            if let delegate = self.delegate as? TapOutsideTableViewDelegate {
+                delegate.tableViewDidTapBelowCells(in: self)
+            }
+        }
+        return super.hitTest(point, with: event)
+    }
+}
+
+extension ActionFormViewController: TapOutsideTableViewDelegate {
+    func tableViewDidTapBelowCells(in tableView: UITableView) {
+        tableView.endEditing(true)
+    }
+}
+
 // MARK: ActionParametersUI
 
 extension ActionFormViewController: ActionParametersUI {
@@ -483,5 +442,37 @@ extension ActionFormViewController: ActionParametersUI {
         navigationController.navigationBar.prefersLargeTitles = false
 
         navigationController.show()
+    }
+}
+
+// MARK: settings
+
+struct ActionFormSettings { // XXX use settings
+    // forms
+    static let alertIfOneField = true // use an alert if one field
+
+    // ui
+    var useSection = true // Use one section (if false one section by fields)
+    var tableViewStyle: UITableView.Style = .grouped
+
+    // text area
+    var sectionForTextArea = true
+    var textAreaExpand = true // when focus
+
+    // errors
+    var errorColor: UIColor = UIColor(named: "error") ?? .red
+    var errorColorInLabel = true
+    var errorAsDetail = true // use detail label, else add a new row
+}
+
+extension ActionFormSettings: JSONDecodable {
+
+    init?(json: JSON) {
+        self.useSection = json["useSection"].bool ?? true
+        self.tableViewStyle = (json["useSection"].stringValue == "plain") ? UITableView.Style.plain: UITableView.Style.grouped
+        self.sectionForTextArea = json["sectionForTextArea"].bool ?? true
+        self.textAreaExpand = json["sectionForTextArea"].bool ?? true
+        self.errorAsDetail = json["errorAsDetail"].bool ?? true
+        self.errorColorInLabel = json["errorColorInLabel"].bool ?? true
     }
 }
