@@ -12,7 +12,22 @@ import QMobileAPI
 /// UI to fill action parameters.
 protocol ActionParametersUI {
     typealias CompletionHandler = (Result<ActionManager.ActionExecutionContext, ActionParametersUIError>) -> Void
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler)
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl?
+}
+
+protocol ActionParametersUIControl {
+    func showActionParameters()
+    func dismissActionParameters()
+}
+
+extension UIViewController: ActionParametersUIControl {
+    func showActionParameters() {
+        self.show()
+    }
+
+    func dismissActionParameters() {
+        self.dismiss(animated: true, completion: nil)
+    }
 }
 
 struct ActionParametersUIBuilder {
@@ -29,12 +44,12 @@ struct ActionParametersUIBuilder {
         self.completionHandler = completionHandler
     }
 
-    func build<T: ActionParametersUI>(of type: T.Type) {
-        type.build(action, actionUI, context, completionHandler)
+    func build<T: ActionParametersUI>(of type: T.Type) -> ActionParametersUIControl? {
+        return type.build(action, actionUI, context, completionHandler)
     }
 
-    func success(with parameters: ActionParameters?) {
-        self.completionHandler(.success((self.action, self.actionUI, self.context, parameters)))
+    func success(with parameters: ActionParameters?, _ actionCompletionHandler: APIManager.CompletionActionHandler?) {
+        self.completionHandler(.success((self.action, self.actionUI, self.context, parameters, actionCompletionHandler)))
     }
 }
 
@@ -46,14 +61,14 @@ enum ActionParametersUIError: Error {
 }
 
 /// Custom implementation
-
 class ActionParametersController: UIViewController, ActionParametersUI {
 
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
         let viewController = ActionParametersController(builder: ActionParametersUIBuilder(action, actionUI, context, completionHandler))
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
-        navigationController.show()
+
+        return navigationController
     }
 
     var actionParametersValue: [String: Any] = [:]
@@ -132,8 +147,16 @@ class ActionParametersController: UIViewController, ActionParametersUI {
     }
 
     @objc func doneAction(sender: UIButton!) {
-        self.dismiss(animated: true) {
-             self.builder?.success(with: self.actionParametersValue)
+        self.builder?.success(with: self.actionParametersValue) { result in
+            switch result {
+            case .success:
+                onForeground {
+                    self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
+                    }
+                }
+            case .failure:
+                break
+            }
         }
     }
 

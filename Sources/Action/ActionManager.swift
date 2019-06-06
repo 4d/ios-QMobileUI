@@ -128,30 +128,31 @@ public class ActionManager {
         if let actionParameters = action.parameters {
 
             // Create UI according to action parameters
+            var control: ActionParametersUIControl?
             if actionParameters.count == 1 && ActionFormSettings.alertIfOneField {
-                UIAlertController.build(action, actionUI, context, self.handleAction)
+                control = UIAlertController.build(action, actionUI, context, self.handleAction)
             } else {
                 let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-                type.build(action, actionUI, context, self.handleAction)
+                control = type.build(action, actionUI, context, self.handleAction)
             }
-
+            control?.showActionParameters()
         } else {
             // Execute action without any parameters
-            executeAction(action, actionUI, context, nil /*without parameters*/)
+            executeAction(action, actionUI, context, nil /*without parameters*/, nil)
         }
     }
 
-    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?)
+    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, APIManager.CompletionActionHandler?)
     func handleAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
         switch result {
         case .success(let context):
-            executeAction(context.0, context.1, context.2, context.3)
+            executeAction(context.0, context.1, context.2, context.3, context.4)
         case .failure(let error):
-            logger.warning("Action not perfrmed: \(error)")
+            logger.warning("Action not performed: \(error)")
         }
     }
 
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?) {
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: APIManager.CompletionActionHandler?) {
        // self.lastContext = context // keep as last context
         // execute the network action
         // For the moment merge all parameters...
@@ -184,16 +185,21 @@ public class ActionManager {
                             switch authResult {
                             case .success:
                                 // XXX do not do infinite retry
-                                self.executeAction(action, actionUI, context, actionParameters)
+                                self.executeAction(action, actionUI, context, actionParameters, completionHandler)
                             case .failure(let authError):
                                 self.showError(authError)
+                                completionHandler?(.failure(error))
                             }
                         }
+                        return
                     }
                     self.showError(error)
+                    completionHandler?(.failure(error))
                 case .success(let value):
                     logger.debug("\(value)")
 
+                    completionHandler?(.success(value))
+                    // XXX maybe if completion handler manage value
                     if let statusText = value.statusText {
                         SwiftMessages.info(statusText)
                     }

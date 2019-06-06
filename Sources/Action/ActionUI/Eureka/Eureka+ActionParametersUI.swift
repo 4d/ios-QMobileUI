@@ -94,6 +94,7 @@ class ActionFormViewController: FormViewController {
     func onRowEvent(baseRow: BaseRow, event: RowEvent) {
         if case .onCellHighlightChanged = event {
             if !baseRow.isHighlighted, let indexPath = baseRow.indexPath {
+                baseRow.remoteErrorsString = []
                 let rowIndex = settings.useSection ? indexPath.section: indexPath.row
                 self.rowHasBeenEdited.insert(rowIndex)
                 self.tableView?.reloadSections([rowIndex], with: .none)
@@ -131,7 +132,7 @@ class ActionFormViewController: FormViewController {
         let rowIndex = section
         if settings.useSection && settings.errorColorInLabel && (hasValidateForm || rowHasBeenEdited.contains(rowIndex)) {
             guard let row = self.form.allRows[safe: rowIndex] else { return nil }
-            return row.validationErrors.first?.msg
+            return row.validationErrors.first?.msg ?? row.remoteErrorsString.first
         }
         return nil
     }
@@ -143,7 +144,7 @@ class ActionFormViewController: FormViewController {
      }*/
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         let rowIndex = section
-        guard let row = self.form.allRows[safe: rowIndex], !row.validationErrors.isEmpty else { return 0 }
+        guard let row = self.form.allRows[safe: rowIndex], settings.useSection && row.hasError else { return 0 }
         return 28
     }
 
@@ -163,7 +164,7 @@ class ActionFormViewController: FormViewController {
         if settings.useSection && settings.errorColorInLabel && (hasValidateForm || rowHasBeenEdited.contains(rowIndex)) {
 
             guard let row = self.form.allRows[safe: rowIndex] else { return }
-            if !row.validationErrors.isEmpty {
+            if !row.validationErrors.isEmpty || !row.remoteErrorsString.isEmpty {
                 view.textLabel?.textColor = settings.errorColor
                 if settings.errorAsDetail {
                     view.detailTextLabel?.textColor = settings.errorColor
@@ -215,20 +216,72 @@ class ActionFormViewController: FormViewController {
 
     @objc func doneAction(sender: UIButton!) {
         hasValidateForm = true
+        remoteRemoteErrors()
         let errors = self.form.validateRows()
         if errors.isEmpty {
             /*for row in self.form.rows {
                 row.removeValidationErrorRows()
             }*/
+
             let values = self.form.values()
-            self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
-                self.builder?.success(with: values as ActionParameters)
+            self.builder?.success(with: values as ActionParameters) { result in
+                switch result {
+                case .success(let actionResult):
+                    if actionResult.success || actionResult.close {
+                        onForeground {
+                            self.dismiss(animated: true) {
+                                logger.debug("Action parameters form dismissed")
+                            }
+                        }
+                    } else {
+                        if let errors = actionResult.errors {
+                            var errorsByComponents: [String: [String]] = [:]
+                            for error in errors {
+                                if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
+                                    if errorsByComponents[tag] == nil {
+                                        errorsByComponents[tag] = []
+                                    }
+                                    errorsByComponents[tag]?.append(message)
+                                }
+                            }
+
+                            for (key, restErrors) in errorsByComponents {
+                                if let row = self.form.rowBy(tag: key) {
+                                    row.remoteErrorsString = restErrors
+                                } else {
+                                    logger.warning("Unknown field returned \(key) to display associated errors")
+                                }
+                            }
+                            self.refreshToDisplayErrors()
+                        }
+                    }
+                case .failure(let error):
+                    logger.debug("Errors from 4d server")
+                    if let restErrors = error.restErrors {
+                        /*if let statusText = restErrors.statusText {
+
+                         }*/
+
+                        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+                            return [error.componentSignature: error.message]
+                        })
+
+                        for (key, restErrors) in errorsByComponents {
+                            if let row = self.form.rowBy(tag: key) {
+                                row.remoteErrorsString = restErrors
+                            } else {
+                                logger.warning("Unknown field returned \(key) to display associated errors")
+                            }
+                        }
+                        self.refreshToDisplayErrors()
+                    }
+                }
             }
         } else {
 
             // display errors
             if settings.errorColorInLabel && settings.useSection {
-                self.tableView?.reloadData()
+                self.refreshToDisplayErrors()
             } else {
                 // remove if no more errors
                 for row in self.form.rows where row.validationErrors.isEmpty {
@@ -256,6 +309,17 @@ class ActionFormViewController: FormViewController {
         }
     }
 
+    private func refreshToDisplayErrors() {
+        onForeground {
+            self.tableView?.reloadData()
+        }
+    }
+    private func remoteRemoteErrors() {
+        for row in self.form.allRows {
+            row.remoteErrorsString = []
+        }
+    }
+
     @objc func cancelAction(sender: Any!) {
         self.dismiss(animated: true) {
             self.builder?.completionHandler(.failure(.userCancel))
@@ -264,6 +328,7 @@ class ActionFormViewController: FormViewController {
 
 }
 
+private var xoAssociationKey: UInt8 = 0
 // MARK: extension eureka
 extension Eureka.BaseRow {
 
@@ -291,6 +356,21 @@ extension Eureka.BaseRow {
         // XXX multiple errors?
     }
 
+    @objc dynamic open var remoteErrorsString: [String] {
+        get {
+            return objc_getAssociatedObject(self, &xoAssociationKey) as? [String] ?? []
+        } set {
+            objc_setAssociatedObject(self, &xoAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+
+    open var remoteErrors: [ValidationError] {
+        return remoteErrorsString.map { ValidationError(msg: $0) }
+    }
+
+    fileprivate var hasError: Bool {
+        return !self.validationErrors.isEmpty || !self.remoteErrorsString.isEmpty
+    }
 }
 
 /*
@@ -431,17 +511,17 @@ extension ActionFormViewController: TapOutsideTableViewDelegate {
 
 extension ActionFormViewController: ActionParametersUI {
 
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
         if action.parameters == nil {
             completionHandler(.failure(.noParameters))
-            return
+            return nil
         }
         let viewController: ActionFormViewController = ActionFormViewController(builder: ActionParametersUIBuilder(action, actionUI, context, completionHandler))
 
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
 
-        navigationController.show()
+        return navigationController
     }
 }
 

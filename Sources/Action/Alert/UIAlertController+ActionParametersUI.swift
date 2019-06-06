@@ -12,10 +12,10 @@ import QMobileAPI
 extension UIAlertController: ActionParametersUI {
 
     /// Build an action controller for one field
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) {
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
         guard  let parameters = action.parameters, let parameter = parameters.first else {
             completionHandler(.failure(.noParameters))
-            return
+            return nil
         }
 
         let alertController = UIAlertController(title: parameter.label ?? parameter.name, message: nil, preferredStyle: .actionSheet)
@@ -70,12 +70,15 @@ extension UIAlertController: ActionParametersUI {
         }
 
         let validateAction = UIAlertAction(title: "Done", style: .default) { _ in
-            completionHandler(.success((action, actionUI, context, actionParametersValue)))
+            let builder = ActionParametersUIBuilder(action, actionUI, context, completionHandler)
+            builder.success(with: actionParametersValue) { _ in
+                // let general done
+            }
         }
         alertController.addAction(validateAction)
 
         _ = alertController.checkPopUp(actionUI)
-        alertController.show()
+        return alertController
     }
 
 }

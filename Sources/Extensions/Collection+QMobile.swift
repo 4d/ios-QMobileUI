@@ -21,6 +21,19 @@ extension Collection {
         }
         return dictionary
     }
+
+    func asDictionaryOfArray<K, V>(transform:(_ element: Iterator.Element) -> [K: V]) -> [K: [V]] {
+        var dictionary = [K: [V]]()
+        self.forEach { element in
+            for (key, value) in transform(element) {
+                if dictionary[key] == nil {
+                    dictionary[key] = []
+                }
+                dictionary[key]?.append(value)
+            }
+        }
+        return dictionary
+    }
 }
 
 extension Collection {
