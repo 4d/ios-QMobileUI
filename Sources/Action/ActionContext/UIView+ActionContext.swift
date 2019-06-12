@@ -38,6 +38,7 @@ extension UIView: ActionContext {
          }*/ else if let provider = self.findActionContextProvider(), let context = provider.actionContext() {
             return context
         }
+        logger.verbose("inner context not found for view \(self)")
         return nil
     }
 
@@ -71,7 +72,9 @@ extension UIView: ActionContext {
             if let provider = viewController as? ActionContextProvider {
                 return provider
             } else if let navigationController = viewController as? UINavigationController {
-                if let provider = navigationController.visibleViewController  as? ActionContextProvider {
+                if let provider = navigationController.visibleViewController  as? ActionContextProvider { // XXX sometime form becore the visible one
+                    return provider
+                } else if let provider = navigationController.children.first as? ActionContextProvider {
                     return provider
                 }
             }
