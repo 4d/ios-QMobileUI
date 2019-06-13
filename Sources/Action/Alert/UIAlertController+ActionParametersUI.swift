@@ -18,7 +18,7 @@ extension UIAlertController: ActionParametersUI {
             return nil
         }
 
-        let alertController = UIAlertController(title: parameter.label ?? parameter.name, message: nil, preferredStyle: .actionSheet)
+        let alertController = UIAlertController(title: parameter.preferredLongLabelMandatory, message: nil, preferredStyle: .actionSheet)
 
         var actionParametersValue: [String: Any] = [:]
 

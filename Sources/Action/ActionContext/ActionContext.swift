@@ -44,12 +44,13 @@ struct ActionParametersKey {
 extension ActionParameter {
 
     public func defaultValue(with context: ActionContext) -> Any? {
-        if let value = self.default {
+        if let value = self.default?.value {
             return value
         }
         if let field = self.defaultField {
+             // compute default value according to a defined properties and context
             return context.actionParameterValue(for: field)
         }
-        return nil // TODO compute default value according to a defined properties and context
+        return nil
     }
 }
