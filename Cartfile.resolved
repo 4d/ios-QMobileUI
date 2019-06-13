@@ -1,7 +1,7 @@
 github "Alamofire/Alamofire" "4.8.2"
 github "ArtSabintsev/Guitar" "1.0.1"
 github "DaveWoodCom/XCGLogger" "7.0.0"
-github "IBAnimatable/IBAnimatable" "5.2.0"
+github "IBAnimatable/IBAnimatable" "6.0.0"
 github "Moya/Moya" "13.0.1"
 github "SwiftKickMobile/SwiftMessages" "7.0.0"
 github "SwiftyJSON/SwiftyJSON" "5.0.0"
