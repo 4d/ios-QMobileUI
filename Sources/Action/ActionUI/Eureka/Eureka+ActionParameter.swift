@@ -38,7 +38,7 @@ extension ActionParameter {
 
         /*onRowValidationTests(row: row) { (_, _) in
 
-        }*/
+         }*/
 
         // Rules
         for rule in rules ?? [] {
@@ -47,14 +47,14 @@ extension ActionParameter {
                 if let rowOf = row as? RowOfEquatable {
                     rowOf.setRequired()
                 }
-               /* if let format = format {
-                    switch format {
-                    case .email:
-                        row.validationOptions = .validatesOnChangeAfterBlurred
-                    default:
-                        break
-                    }
-                }*/
+                /* if let format = format {
+                 switch format {
+                 case .email:
+                 row.validationOptions = .validatesOnChangeAfterBlurred
+                 default:
+                 break
+                 }
+                 }*/
             case .min(let min):
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setGreaterOrEqual(than: min)
@@ -135,10 +135,10 @@ extension ActionParameter {
              }*/
 
             return choiceRow
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         }
 
         if let format = format {
@@ -146,7 +146,7 @@ extension ActionParameter {
             case .url:
                 return URLRow(name) {
                     $0.add(rule: RuleURL())
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -154,7 +154,7 @@ extension ActionParameter {
             case .email:
                 return EmailRow(name) {
                     $0.add(rule: RuleEmail())
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -198,7 +198,7 @@ extension ActionParameter {
             case .rating:
                 return RatingRow(name) {
                     $0.text = ""
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -230,7 +230,7 @@ extension ActionParameter {
             case .spellOut:
                 return IntRow(name) {
                     $0.formatter = format.formatter
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -238,7 +238,7 @@ extension ActionParameter {
             case .scientific, .percent, .energy, .mass:
                 return DecimalRow {
                     $0.formatter = format.formatter
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -246,7 +246,7 @@ extension ActionParameter {
             case .dateLong, .dateShort, .dateMedium:
                 return DateRow {
                     $0.dateFormatter = format.dateFormatter
-                }
+                    }
                     .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
                     .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
                     .onChange { onRowEvent($0 as BaseRow, .onChange) }
@@ -272,58 +272,58 @@ extension ActionParameterType {
         switch self {
         case .bool, .boolean:
             return SwitchRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .integer:
             return IntRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .date:
             return DateRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .string, .text:
             return TextRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .number, .real:
-            return DecimalRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+            return DecimalRow(key) { $0.formatter = nil}
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .duration:
             return TimeRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .time:
             return TimeRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .picture, .image:
             return ImageRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         case .file, .blob:
             return TextRow(key)
-                    .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
-                    .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
-                    .onChange { onRowEvent($0 as BaseRow, .onChange) }
-                    .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
+                .onCellHighlightChanged { onRowEvent($1 as BaseRow, .onCellHighlightChanged) }
+                .onRowValidationChanged { onRowEvent($1 as BaseRow, .onRowValidationChanged) }
+                .onChange { onRowEvent($0 as BaseRow, .onChange) }
+                .onCellSelection { onRowEvent($1 as BaseRow, .onCellSelection) }
         }
     }
 }
