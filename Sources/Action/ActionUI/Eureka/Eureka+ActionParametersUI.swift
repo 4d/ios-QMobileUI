@@ -46,7 +46,9 @@ class ActionFormViewController: FormViewController {
         self.navigationItem.add(where: .right, item: doneItem)
 
         self.navigationItem.title = self.builder?.action.preferredShortLabel
-        self.navigationController?.navigationBar.tintColor = .white
+        if let navigationBar = self.navigationController?.navigationBar, let tintColor = navigationBar.tintColor {
+            navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: tintColor]
+        }
     }
 
     fileprivate func initDefaultValues() {

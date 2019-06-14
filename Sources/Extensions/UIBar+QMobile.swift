@@ -29,10 +29,10 @@ extension UIAppearanceCopyable {
 extension UINavigationBar: UIAppearanceCopyable {
 
     func copyAppearance(from bar: UINavigationBar, image: Bool = true) {
+        self.isTranslucent = bar.isTranslucent
         self.barStyle = bar.barStyle
         self.barTintColor = bar.barTintColor
         self.tintColor = bar.tintColor
-        self.isTranslucent = bar.isTranslucent
         self.prefersLargeTitles = bar.prefersLargeTitles
         if image {
             self.backIndicatorImage = bar.backIndicatorImage
