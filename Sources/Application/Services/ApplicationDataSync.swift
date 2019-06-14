@@ -236,9 +236,9 @@ extension ApplicationDataSync: DataSyncDelegate {
         onForeground {
             if let detailForm = UIApplication.detailViewController {
                 if detailForm.record == nil {
-                    detailForm.dismiss(animated: true, completion: {
+                    detailForm.dismiss(animated: true) {
 
-                    })
+                    }
                 } else {
                     detailForm.view?.bindTo.record = detailForm.record
                 }

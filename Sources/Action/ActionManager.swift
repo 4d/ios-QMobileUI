@@ -206,10 +206,17 @@ public class ActionManager {
                     _ = completionHandler?(.failure(error))
                 case .success(let value):
                     logger.debug("\(value)")
-
-                    let future = completionHandler?(.success(value))
-                    // delay handle action result, after form finish with it
-                    future?.onComplete { result in
+                    if let completionHandler = completionHandler {
+                        let future = completionHandler(.success(value))
+                        // delay handle action result, after form finish with it
+                        future.onComplete { result in
+                            onForeground {
+                                background {
+                                    _ = self.handle(result: value, for: action, from: actionUI, in: context)
+                                }
+                            }
+                        }
+                    } else {
                         onForeground {
                             background {
                                 _ = self.handle(result: value, for: action, from: actionUI, in: context)

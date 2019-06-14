@@ -220,70 +220,7 @@ class ActionFormViewController: FormViewController {
         remoteRemoteErrors()
         let errors = self.form.validateRows()
         if errors.isEmpty {
-            /*for row in self.form.rows {
-                row.removeValidationErrorRows()
-            }*/
-
-            let values = self.form.values()
-            self.builder?.success(with: values as ActionParameters) { result in
-                let promise = Promise<ActionResult, APIError>()
-
-                switch result {
-                case .success(let actionResult):
-                    if actionResult.success || actionResult.close {
-                        onForeground {
-                            self.dismiss(animated: true) {
-                                logger.debug("Action parameters form dismissed")
-                                promise.complete(result)
-                            }
-                        }
-                    } else {
-                        if let errors = actionResult.errors {
-                            var errorsByComponents: [String: [String]] = [:]
-                            for error in errors {
-                                if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
-                                    if errorsByComponents[tag] == nil {
-                                        errorsByComponents[tag] = []
-                                    }
-                                    errorsByComponents[tag]?.append(message)
-                                }
-                            }
-
-                            for (key, restErrors) in errorsByComponents {
-                                if let row = self.form.rowBy(tag: key) {
-                                    row.remoteErrorsString = restErrors
-                                } else {
-                                    logger.warning("Unknown field returned \(key) to display associated errors")
-                                }
-                            }
-                            self.refreshToDisplayErrors()
-                        }
-                        promise.complete(result)
-                    }
-                case .failure(let error):
-                    logger.debug("Errors from 4d server")
-                    if let restErrors = error.restErrors {
-                        /*if let statusText = restErrors.statusText {
-
-                         }*/
-
-                        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
-                            return [error.componentSignature: error.message]
-                        })
-
-                        for (key, restErrors) in errorsByComponents {
-                            if let row = self.form.rowBy(tag: key) {
-                                row.remoteErrorsString = restErrors
-                            } else {
-                                logger.warning("Unknown field returned \(key) to display associated errors")
-                            }
-                        }
-                        self.refreshToDisplayErrors()
-                    }
-                    promise.complete(result)
-                }
-                return promise.future
-            }
+            send()
         } else {
 
             // display errors
@@ -313,6 +250,73 @@ class ActionFormViewController: FormViewController {
                     row.baseCell.cellBecomeFirstResponder(withDirection: .down)
                 }
             }
+        }
+    }
+
+    func send() {
+        /*for row in self.form.rows {
+         row.removeValidationErrorRows()
+         }*/
+
+        let values = self.form.values()
+        self.builder?.success(with: values as ActionParameters) { result in
+            let promise = Promise<ActionResult, APIError>()
+
+            switch result {
+            case .success(let actionResult):
+                if actionResult.success || actionResult.close {
+                    onForeground {
+                        self.dismiss(animated: true) {
+                            logger.debug("Action parameters form dismissed")
+                            promise.complete(result)
+                        }
+                    }
+                } else {
+                    if let errors = actionResult.errors {
+                        var errorsByComponents: [String: [String]] = [:]
+                        for error in errors {
+                            if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
+                                if errorsByComponents[tag] == nil {
+                                    errorsByComponents[tag] = []
+                                }
+                                errorsByComponents[tag]?.append(message)
+                            }
+                        }
+
+                        for (key, restErrors) in errorsByComponents {
+                            if let row = self.form.rowBy(tag: key) {
+                                row.remoteErrorsString = restErrors
+                            } else {
+                                logger.warning("Unknown field returned \(key) to display associated errors")
+                            }
+                        }
+                        self.refreshToDisplayErrors()
+                    }
+                    promise.complete(result)
+                }
+            case .failure(let error):
+                logger.debug("Errors from 4d server")
+                if let restErrors = error.restErrors {
+                    /*if let statusText = restErrors.statusText {
+
+                     }*/
+
+                    let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+                        return [error.componentSignature: error.message]
+                    })
+
+                    for (key, restErrors) in errorsByComponents {
+                        if let row = self.form.rowBy(tag: key) {
+                            row.remoteErrorsString = restErrors
+                        } else {
+                            logger.warning("Unknown field returned \(key) to display associated errors")
+                        }
+                    }
+                    self.refreshToDisplayErrors()
+                }
+                promise.complete(result)
+            }
+            return promise.future
         }
     }
 
