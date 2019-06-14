@@ -8,6 +8,8 @@
 
 import Foundation
 import QMobileAPI
+import BrightFutures
+import Result
 
 /// UI to fill action parameters.
 protocol ActionParametersUI {
@@ -48,7 +50,7 @@ struct ActionParametersUIBuilder {
         return type.build(action, actionUI, context, completionHandler)
     }
 
-    func success(with parameters: ActionParameters?, _ actionCompletionHandler: APIManager.CompletionActionHandler?) {
+    func success(with parameters: ActionParameters?, _ actionCompletionHandler: ActionManager.ActionExecutionCompletionHandler?) {
         self.completionHandler(.success((self.action, self.actionUI, self.context, parameters, actionCompletionHandler)))
     }
 }
@@ -148,15 +150,18 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     @objc func doneAction(sender: UIButton!) {
         self.builder?.success(with: self.actionParametersValue) { result in
+            let promise = Promise<ActionResult, APIError>()
             switch result {
             case .success:
                 onForeground {
                     self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
+                        promise.complete(result)
                     }
                 }
             case .failure:
-                break
+                promise.complete(result)
             }
+            return promise.future
         }
     }
 

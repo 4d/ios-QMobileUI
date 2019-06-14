@@ -10,6 +10,7 @@ import Foundation
 
 import Eureka
 import SwiftMessages
+import BrightFutures
 
 import QMobileAPI
 
@@ -225,12 +226,15 @@ class ActionFormViewController: FormViewController {
 
             let values = self.form.values()
             self.builder?.success(with: values as ActionParameters) { result in
+                let promise = Promise<ActionResult, APIError>()
+
                 switch result {
                 case .success(let actionResult):
                     if actionResult.success || actionResult.close {
                         onForeground {
                             self.dismiss(animated: true) {
                                 logger.debug("Action parameters form dismissed")
+                                promise.complete(result)
                             }
                         }
                     } else {
@@ -254,6 +258,7 @@ class ActionFormViewController: FormViewController {
                             }
                             self.refreshToDisplayErrors()
                         }
+                        promise.complete(result)
                     }
                 case .failure(let error):
                     logger.debug("Errors from 4d server")
@@ -275,7 +280,9 @@ class ActionFormViewController: FormViewController {
                         }
                         self.refreshToDisplayErrors()
                     }
+                    promise.complete(result)
                 }
+                return promise.future
             }
         } else {
 

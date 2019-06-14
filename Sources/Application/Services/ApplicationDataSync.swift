@@ -234,8 +234,14 @@ extension ApplicationDataSync: DataSyncDelegate {
 
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
         onForeground {
-            if let detailForm = UIApplication.topViewController as? DetailsForm {
-                detailForm.updateViews()
+            if let detailForm = UIApplication.detailViewController {
+                if detailForm.record == nil {
+                    detailForm.dismiss(animated: true, completion: {
+
+                    })
+                } else {
+                    detailForm.updateViews()
+                }
             }
         }
     }
@@ -244,6 +250,28 @@ extension ApplicationDataSync: DataSyncDelegate {
         SwiftMessages.debug("Data \(operation) did end.\n \(error)")
     }
 
+}
+
+extension UIApplication {
+
+    static var detailViewController: (DetailsForm & UIViewController)? {
+        guard let topViewController = UIApplication.topViewController else { return nil }
+        if let detailViewController = topViewController as? (DetailsForm & UIViewController) {
+            return detailViewController
+        }
+        if let detailViewController = topViewController.parent as? (DetailsForm & UIViewController) {
+            return detailViewController
+        }
+        if let navigationController = topViewController.parent as? UINavigationController {
+            if let detailViewController = navigationController.topViewController as? (DetailsForm & UIViewController) {
+                return detailViewController
+            }
+            if let detailViewController = navigationController.children.first as? (DetailsForm & UIViewController) {
+                return detailViewController
+            }
+        }
+        return nil
+    }
 }
 
 // MARK: - Preferences

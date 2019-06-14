@@ -11,6 +11,8 @@ import Foundation
 import SwiftMessages
 import Prephirences
 import Eureka
+import BrightFutures
+import Result
 
 import QMobileAPI
 
@@ -26,6 +28,13 @@ public class ActionManager {
 
     init() {
         // default handlers
+
+        // Show message as info message
+        append { result, _, _, _ in
+            guard let statusText = result.statusText else { return false }
+            SwiftMessages.info(statusText)
+            return true
+        }
 
         // dataSynchro
         append { result, action, _, _ in
@@ -141,8 +150,8 @@ public class ActionManager {
             executeAction(action, actionUI, context, nil /*without parameters*/, nil)
         }
     }
-
-    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, APIManager.CompletionActionHandler?)
+    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> Future<ActionResult, APIError>)
+    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
     func handleAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
         switch result {
         case .success(let context):
@@ -152,7 +161,7 @@ public class ActionManager {
         }
     }
 
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: APIManager.CompletionActionHandler?) {
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
        // self.lastContext = context // keep as last context
         // execute the network action
         // For the moment merge all parameters...
@@ -188,23 +197,25 @@ public class ActionManager {
                                 self.executeAction(action, actionUI, context, actionParameters, completionHandler)
                             case .failure(let authError):
                                 self.showError(authError)
-                                completionHandler?(.failure(error))
+                               _ = completionHandler?(.failure(error))
                             }
                         }
                         return
                     }
                     self.showError(error)
-                    completionHandler?(.failure(error))
+                    _ = completionHandler?(.failure(error))
                 case .success(let value):
                     logger.debug("\(value)")
 
-                    completionHandler?(.success(value))
-                    // XXX maybe if completion handler manage value
-                    if let statusText = value.statusText {
-                        SwiftMessages.info(statusText)
+                    let future = completionHandler?(.success(value))
+                    // delay handle action result, after form finish with it
+                    future?.onComplete { result in
+                        onForeground {
+                            background {
+                                _ = self.handle(result: value, for: action, from: actionUI, in: context)
+                            }
+                        }
                     }
-
-                    _ = self.handle(result: value, for: action, from: actionUI, in: context)
                 }
             }
         }
