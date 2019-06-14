@@ -37,7 +37,12 @@ extension UIView: Binded {
     }
 
 	public func setProperty(name: String, value: Any?) {
-		self.setValue(value, forKey: name)
+        let oldValue: Any? = getPropertyValue(name: name)
+        var newValue = value
+        if let oldValue = oldValue, oldValue is Bool, value == nil {
+            newValue = false
+        }
+		self.setValue(newValue, forKey: name)
 	}
 
 	public func getPropertyValue(name: String) -> Any? {

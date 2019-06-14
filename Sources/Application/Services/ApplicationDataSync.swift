@@ -240,7 +240,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 
                     })
                 } else {
-                    detailForm.updateViews()
+                    detailForm.view?.bindTo.record = detailForm.record
                 }
             }
         }
