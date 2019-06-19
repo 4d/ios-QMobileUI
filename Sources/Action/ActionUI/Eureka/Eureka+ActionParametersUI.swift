@@ -121,6 +121,7 @@ class ActionFormViewController: FormViewController {
                         tableView.reloadData()
                         tableView.layoutIfNeeded()
                         tableView.layoutSubviews()
+                        cell.textView.becomeFirstResponder()
                     }
             }
         }

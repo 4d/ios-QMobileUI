@@ -83,17 +83,21 @@ public class ActionManager {
 
         append { result, _, actionUI, context in
             guard let actionSheet = result.actionSheet else { return false }
-            let alertController = UIAlertController.build(from: actionSheet, context: context, handler: self.prepareAndExecuteAction)
-            _ = alertController.checkPopUp(actionUI)
-            alertController.show {
+            onForeground {
+                let alertController = UIAlertController.build(from: actionSheet, context: context, handler: self.prepareAndExecuteAction)
+                _ = alertController.checkPopUp(actionUI)
+                alertController.show {
 
+                }
             }
             return true
         }
 
         append { result, _, actionUI, context in
             guard let action = result.action else { return false }
-            self.prepareAndExecuteAction(action, actionUI, context)
+            onForeground {
+                self.prepareAndExecuteAction(action, actionUI, context)
+            }
             return true
         }
 
@@ -102,7 +106,7 @@ public class ActionManager {
             /*if _ = result.goTo {
              // Open internal
              }*/
-             return false
+            return false
         }
 
         append { result, _, _, _ in
