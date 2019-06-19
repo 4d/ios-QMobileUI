@@ -28,6 +28,7 @@ extension ActionParameter {
         let row: BaseRow = self.baseRow(onRowEvent: eventCallback)
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
+        row.validationOptions = .validatesOnChange
 
         // Placeholder
         if let field = row as? FieldRowConformance {
@@ -157,12 +158,10 @@ extension ActionParameter {
                 return ZipCodeRow(name).onRowEvent(eventCallback)
             case .name:
                 return NameRow(name).onRowEvent(eventCallback)
-            case .countDown:
+            case .duration:
                 return CountDownRow(name).onRowEvent(eventCallback)
             case .rating:
-                return RatingRow(name) {
-                    $0.text = ""
-                    }.onRowEvent(eventCallback)
+                return RatingRow(name).onRowEvent(eventCallback)
             case .stepper:
                 return StepperRow(name).onRowEvent(eventCallback)
             case .slider:
@@ -188,19 +187,27 @@ extension ActionParameter {
     }
 
 }
+
+// MARK: Manage row event
+
+/// Eureka row event
 enum RowEvent {
     case onChange
-    //case cellUpdate, cellSetup
     case onCellSelection
     case onCellHighlightChanged
     case onRowValidationChanged
+    case cellUpdate, cellSetup
 }
 
 typealias OnRowEventCallback = (BaseCell?, BaseRow, RowEvent) -> Void
 
 extension RowType where Self: Eureka.BaseRow {
+    /// Map all callback into one with event. Allow to pass generic code to BaseRow.
     func onRowEvent(_ callback: @escaping OnRowEventCallback) -> BaseRow {
-        return self.onCellHighlightChanged { callback($0 as BaseCell, $1 as BaseRow, .onCellHighlightChanged) }
+        return self
+            .cellSetup { callback($0 as BaseCell, $1 as BaseRow, .cellSetup) }
+            .cellUpdate { callback($0 as BaseCell, $1 as BaseRow, .cellUpdate) }
+            .onCellHighlightChanged { callback($0 as BaseCell, $1 as BaseRow, .onCellHighlightChanged) }
             .onRowValidationChanged { callback($0 as BaseCell, $1 as BaseRow, .onRowValidationChanged) }
             .onChange { callback(nil, $0 as BaseRow, .onChange) }
             .onCellSelection { callback($0 as BaseCell, $1 as BaseRow, .onCellSelection) }
@@ -222,10 +229,8 @@ extension ActionParameterType {
             return TextRow(key).onRowEvent(eventCallback)
         case .number, .real:
             return DecimalRow(key) { $0.formatter = nil}.onRowEvent(eventCallback)
-        case .duration:
-            return NumberTimeRow(key).onRowEvent(eventCallback)
         case .time:
-            return NumberTimeRow(key).onRowEvent(eventCallback)
+            return TimeRow(key).onRowEvent(eventCallback)
         case .picture, .image:
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:

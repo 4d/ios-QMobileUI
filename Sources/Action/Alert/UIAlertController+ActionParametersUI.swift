@@ -26,6 +26,15 @@ extension UIAlertController: ActionParametersUI {
 
         var actionParametersValue: [String: Any] = [:]
 
+        if let format = parameter.format {
+            switch format {
+            case .email, .url, .phone:
+                break
+            default:
+                return nil // no managed yet
+            }
+        }
+
         switch parameter.type {
         case .string, .text:
             alertController.addOneTextField { textField in
@@ -60,7 +69,7 @@ extension UIAlertController: ActionParametersUI {
             alertController.addDatePicker(mode: .date, date: date) { date in
                 actionParametersValue[parameter.name] = date
             }
-        case .duration, .time:
+        case .time:
             alertController.addDatePicker(mode: .time, date: Date()) { date in
                 actionParametersValue[parameter.name] = date
             }

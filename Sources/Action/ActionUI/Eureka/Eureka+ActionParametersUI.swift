@@ -70,7 +70,6 @@ class ActionFormViewController: FormViewController {
             self.form.append(section)
             for parameter in parameters {
                 let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
-                decorate(row: row)
                 if settings.sectionForTextArea && row is TextAreaRow {
                     // add section to have title for text area (alternatively find a way to display title)
                     section = Section(parameter.preferredLongLabelMandatory)
@@ -84,7 +83,6 @@ class ActionFormViewController: FormViewController {
             for parameter in parameters {
                 let section = Section(parameter.preferredLongLabelMandatory)
                 let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
-                decorate(row: row)
                 row.title = nil
                 section.append(row)
                 self.form.append(section)
@@ -121,17 +119,18 @@ class ActionFormViewController: FormViewController {
                     (cell as? TextAreaCell)?.textView.becomeFirstResponder()
                 }
             }
-
+            // if not date, set current one
             if let dateRow = row as? DateRow {
                 if dateRow.value == nil {
                     dateRow.value = Date()
                 }
             }
         }
-    }
-
-    func decorate(row: BaseRow) {
-        row.validationOptions = .validatesOnChange
+        if case .cellSetup = event {
+            if let row = row as? RatingRow {
+                row.text = ""
+            }
+        }
     }
 
     // MARK: table view
@@ -207,10 +206,14 @@ class ActionFormViewController: FormViewController {
         if case .plain = settings.tableViewStyle {
             tableView.tableFooterView = UIView()
         }
-        /*let label = UILabel(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
-        label.text = "test on adding header"
-        tableView.tableHeaderView = label*/
-        //tableView.separatorStyle = .none
+
+        /*if let label = builder?.action.label, let shortLabel = builder?.action.shortLabel, label != shortLabel {
+            let headerLabel = UILabel(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+            headerLabel.text = label
+            tableView.tableHeaderView = headerLabel
+            headerLabel.sizeToFit()
+            //tableView.separatorStyle = .none
+        }*/
 
         initRows()
         initDefaultValues()
