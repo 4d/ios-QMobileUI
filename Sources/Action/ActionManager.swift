@@ -139,25 +139,29 @@ public class ActionManager {
     /// Execute the action.
     /// If there is parameters show a form.
     func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
-        if let actionParameters = action.parameters {
-
-            // Create UI according to action parameters
-            var control: ActionParametersUIControl?
-            if actionParameters.count == 1 && ActionFormSettings.alertIfOneField {
-                control = UIAlertController.build(action, actionUI, context, self.handleAction)
-            } else {
-                let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-                control = type.build(action, actionUI, context, self.handleAction)
-            }
-            control?.showActionParameters()
-        } else {
+        if action.parameters.isEmpty {
             // Execute action without any parameters
             executeAction(action, actionUI, context, nil /*without parameters*/, nil)
+        } else {
+            // Create UI according to action parameters
+            var control: ActionParametersUIControl?
+            if ActionFormSettings.alertIfOneField {
+                control = UIAlertController.build(action, actionUI, context, self.executeAction) // could return nil if not managed
+            }
+
+            if control == nil {
+                let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
+                control = type.build(action, actionUI, context, self.executeAction)
+            }
+            control?.showActionParameters()
         }
     }
+
     typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> Future<ActionResult, APIError>)
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
-    func handleAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
+
+    /// Execute action if success.
+    func executeAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
         switch result {
         case .success(let context):
             executeAction(context.0, context.1, context.2, context.3, context.4)
@@ -166,7 +170,7 @@ public class ActionManager {
         }
     }
 
-    //// Execute the network call for action.
+    /// Execute the network call for action.
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
        // self.lastContext = context // keep as last context
         // execute the network action
@@ -282,9 +286,9 @@ extension ActionParameter {
         case .string, .text:
             return .default
         case .real, .number:
-            return  .decimalPad
+            return .decimalPad
         case .integer:
-            return .numberPad // XXX test it numbersAndPunctuation
+            return .numberPad
         default:
             return .default
         }
@@ -296,15 +300,7 @@ extension Action {
     static let dummy =  Action(name: "")
 }
 
-/*extension ActionManager: ActionContext {
-    public func actionParameters(action: Action) -> ActionParameters? {
-        return lastContext?.actionParameters(action: action) // JUST for test purpose make it implement it, maybe return last action parameters
-    }
-
-    public func actionParameterValue(for field: String) -> Any? {
-        return lastContext?.actionParameterValue(for: field)
-    }
-}*/
+// MARK: ActionResultHandler
 
 extension ActionManager: ActionResultHandler {
 
@@ -316,12 +312,6 @@ extension ActionManager: ActionResultHandler {
         return handled
     }
 }
-
-/*extension UIActivityViewController {
-    func show(_ viewControllerToPresent: UIViewController? = UIApplication.topViewController, animated flag: Bool = true, completion: (() -> Swift.Void)? = nil) {
-        viewControllerToPresent?.present(self, animated: flag, completion: completion)
-    }
-}*/
 
 /// Handle an action results.
 public protocol ActionResultHandler {

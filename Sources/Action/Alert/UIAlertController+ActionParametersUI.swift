@@ -14,9 +14,12 @@ extension UIAlertController: ActionParametersUI {
 
     /// Build an action controller for one field
     static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
-        guard  let parameters = action.parameters, let parameter = parameters.first else {
+        guard let parameters = action.parameters, let parameter = parameters.first else {
             completionHandler(.failure(.noParameters))
             return nil
+        }
+        guard parameters.count == 1 else {
+            return nil // if two field ignore (maybe could support two text field)
         }
 
         let alertController = UIAlertController(title: parameter.preferredLongLabelMandatory, message: nil, preferredStyle: .actionSheet)
@@ -71,7 +74,7 @@ extension UIAlertController: ActionParametersUI {
                 actionParametersValue[parameter.name] = numberValues[index.row]
             }
         default:
-            break // XXX show notingg
+          return nil
         }
 
         let validateAction = UIAlertAction(title: "Done", style: .default) { _ in
