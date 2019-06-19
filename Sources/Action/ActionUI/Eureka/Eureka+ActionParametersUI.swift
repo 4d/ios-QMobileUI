@@ -69,7 +69,7 @@ class ActionFormViewController: FormViewController {
             var section = Section()
             self.form.append(section)
             for parameter in parameters {
-                let row = parameter.formRow(onRowEvent: self.onRowEvent(baseRow:event:))
+                let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
                 decorate(row: row)
                 if settings.sectionForTextArea && row is TextAreaRow {
                     // add section to have title for text area (alternatively find a way to display title)
@@ -83,7 +83,7 @@ class ActionFormViewController: FormViewController {
         } else {
             for parameter in parameters {
                 let section = Section(parameter.preferredLongLabelMandatory)
-                let row = parameter.formRow(onRowEvent: self.onRowEvent(baseRow:event:))
+                let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
                 decorate(row: row)
                 row.title = nil
                 section.append(row)
@@ -94,38 +94,43 @@ class ActionFormViewController: FormViewController {
 
     // MARK: configure rows
 
-    func onRowEvent(baseRow: BaseRow, event: RowEvent) {
+    func onRowEvent(cell: BaseCell?, row: BaseRow, event: RowEvent) {
+        // behaviours when selecting element
         if case .onCellHighlightChanged = event {
-            if !baseRow.isHighlighted, let indexPath = baseRow.indexPath {
-                baseRow.remoteErrorsString = []
+            // Focus, remove errors
+            if !row.isHighlighted, let indexPath = row.indexPath {
+                row.remoteErrorsString = []
                 let rowIndex = settings.useSection ? indexPath.section: indexPath.row
                 self.rowHasBeenEdited.insert(rowIndex)
                 self.tableView?.reloadSections([rowIndex], with: .none)
                 //self.tableView?.reloadData()
             }
+
+            // Expand text area
+            if settings.textAreaExpand, let textAreaRow = row as? TextAreaRow {
+                if case .fixed(let height) = textAreaRow.textAreaHeight {
+                    textAreaRow.textAreaHeight = .dynamic(initialTextViewHeight: height)
+                    cell?.setup()
+                    cell?.layoutIfNeeded()
+                    guard let tableView = cell?.formViewController()?.tableView else { return }
+                    tableView.setNeedsUpdateConstraints() // XXX clean, find only then needed functions to refresh
+                    tableView.setNeedsDisplay()
+                    tableView.reloadData()
+                    tableView.layoutIfNeeded()
+                    tableView.layoutSubviews()
+                    (cell as? TextAreaCell)?.textView.becomeFirstResponder()
+                }
+            }
+
+            if let dateRow = row as? DateRow {
+                if dateRow.value == nil {
+                    dateRow.value = Date()
+                }
+            }
         }
     }
 
     func decorate(row: BaseRow) {
-        if settings.textAreaExpand, let textAreaRow = row as? TextAreaRow {
-            textAreaRow.cellSetup { (_, _) in
-               // row.textAreaHeight = .fixed(cellHeight: 110) // try to minimize at start, not working, too late
-                }.onCellHighlightChanged { (cell, row) in
-                    if case .fixed(let height) = row.textAreaHeight {
-                        row.textAreaHeight = .dynamic(initialTextViewHeight: height)
-                        cell.setup()
-                        cell.layoutIfNeeded()
-                        guard let tableView = cell.formViewController()?.tableView else { return }
-                        tableView.setNeedsUpdateConstraints() // XXX clean, find only then needed functions to refresh
-                        tableView.setNeedsDisplay()
-                        tableView.reloadData()
-                        tableView.layoutIfNeeded()
-                        tableView.layoutSubviews()
-                        cell.textView.becomeFirstResponder()
-                    }
-            }
-        }
-
         row.validationOptions = .validatesOnChange
     }
 

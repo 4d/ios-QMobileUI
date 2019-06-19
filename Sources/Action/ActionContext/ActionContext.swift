@@ -45,6 +45,27 @@ extension ActionParameter {
 
     public func defaultValue(with context: ActionContext) -> Any? {
         if let value = self.default?.value {
+            if case .date = self.type {
+                if let dateString = value as? String {
+                    if let date = dateString.dateFromRFC3339 ?? dateString.simpleDate ?? dateString.dateFromISO8601 {
+                        return date
+                    }
+                    switch dateString.lowercased().replacingOccurrences(of: " ", with: "") {
+                    case "today":
+                        return Date()
+                    case "yesterday":
+                        return Date.yesterday
+                    case "tomorrow":
+                        return Date.tomorrow
+                    case "twodaysago":
+                        return Date.twoDaysAgo
+                    case "firstDayOfMonth":
+                        return Date.firstDayOfMonth
+                    default:
+                        break
+                    }
+                }
+            }
             return value
         }
         if let field = self.defaultField {
