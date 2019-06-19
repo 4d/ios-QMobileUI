@@ -136,7 +136,8 @@ public class ActionManager {
         handlers.append(ActionResultHandlerBlock(block))
     }
 
-    /// Execute the action
+    /// Execute the action.
+    /// If there is parameters show a form.
     func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if let actionParameters = action.parameters {
 
@@ -165,6 +166,7 @@ public class ActionManager {
         }
     }
 
+    //// Execute the network call for action.
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
        // self.lastContext = context // keep as last context
         // execute the network action
@@ -232,6 +234,7 @@ public class ActionManager {
         }
     }
 
+    /// Show error has status text.
     func showError(_ error: APIError) {
         // Try to display the best error message...
         if let statusText = error.restErrors?.statusText { // dev message
@@ -255,30 +258,35 @@ extension UITextField {
         if let defaultValue = actionParameter.defaultValue(with: context) {
             self.text = "\(defaultValue)"
         }
-        if let format = actionParameter.format {
+        self.keyboardType = actionParameter.keyboardType(with: context)
+    }
+
+}
+
+extension ActionParameter {
+
+    func keyboardType(with context: ActionContext) -> UIKeyboardType {
+        if let format = self.format {
             switch format {
             case .email/* .emailAddress*/:
-                self.keyboardType = .emailAddress
-                return
+                return .emailAddress
             case .url:
-                self.keyboardType = .URL
-                return
+                return .URL
             case .phone:
-                self.keyboardType = .phonePad
-                return
+                return .phonePad
             default:
                 break
             }
         }
-        switch actionParameter.type {
+        switch self.type {
         case .string, .text:
-            self.keyboardType = .default
+            return .default
         case .real, .number:
-            self.keyboardType = .decimalPad
+            return  .decimalPad
         case .integer:
-            self.keyboardType = .numberPad // XXX test it numbersAndPunctuation
+            return .numberPad // XXX test it numbersAndPunctuation
         default:
-            self.keyboardType = .default
+            return .default
         }
     }
 

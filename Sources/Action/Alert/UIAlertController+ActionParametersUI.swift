@@ -49,8 +49,12 @@ extension UIAlertController: ActionParametersUI {
                 }
             }
         case .date:
-            alertController.message = "Select a date"
-            alertController.addDatePicker(mode: .date, date: Date()) { date in
+            alertController.message = nil
+            var date = Date()
+            if let defaultValue = parameter.defaultValue(with: context) as? Date {
+                date = defaultValue
+            }
+            alertController.addDatePicker(mode: .date, date: date) { date in
                 actionParametersValue[parameter.name] = date
             }
         case .duration, .time:
@@ -80,6 +84,7 @@ extension UIAlertController: ActionParametersUI {
             }
         }
         alertController.addAction(validateAction)
+        alertController.addAction(alertController.dismissAction())
 
         _ = alertController.checkPopUp(actionUI)
         return alertController
