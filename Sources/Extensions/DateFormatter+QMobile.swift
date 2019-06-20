@@ -14,6 +14,10 @@ let kFormatterLocal = "formatter.locale"
 /// value of `kFormatterLocal` to use use preferred language
 let kFormatterLocalPreferred = "preferred"
 
+extension TimeZone {
+    static let greenwichMeanTime  = TimeZone(secondsFromGMT: 0)
+}
+
 extension DateFormatter {
 
     static func now(with format: String = "YYYYMMdd") -> String {
@@ -26,7 +30,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         // formatter.calendar = Calendar(identifier: .iso8601)
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = .greenwichMeanTime
         formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss zzz"
         return formatter
     }()
@@ -160,7 +164,7 @@ open class TimeFormatter {
     }
 
     open func string(from time: TimeInterval) -> String {
-        let date = Date(timeIntervalSince1970: time)
+        let date = Date(timeInterval: time)
         return dateFormatter.string(from: date)
     }
 
@@ -177,7 +181,7 @@ open class TimeFormatter {
         guard let date = dateFormatter.date(from: string) else {
             return nil
         }
-        return date.timeIntervalSince1970
+        return date.timeInterval
     }
 
     open func integer(from string: String) -> Int? {
@@ -194,13 +198,14 @@ open class TimeFormatter {
         return NSNumber(value: time)
     }
 
-    static func configureLocal(_ formatter: TimeFormatter) {
-        if let locale = preferredLocale {
+    static func configure(_ formatter: TimeFormatter) {
+       /* if let locale = preferredLocale {
             formatter.locale = locale
-        } // else we use currentLocal
+        } // else we use currentLocal*/
+        formatter.dateFormatter.timeZone = .greenwichMeanTime
     }
 
-    static var preferredLocale: Locale?  = {
+   /* static var preferredLocale: Locale?  = {
         if let identifier = Prephirences.sharedInstance.string(forKey: "time.locale") ??
             Prephirences.sharedInstance.string(forKey: kFormatterLocal) {
             if identifier == kFormatterLocalPreferred, let identifier = Locale.preferredLanguages.first {
@@ -211,13 +216,13 @@ open class TimeFormatter {
             }
         }
         return nil
-    }()
+    }()*/
 
     /// Specifies a short style, typically numeric only, such as “3:30 PM”.
     public static let short: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .short
-        //configureLocal(formatter)
+        configure(formatter)
         return formatter
     }()
 
@@ -225,7 +230,7 @@ open class TimeFormatter {
     public static let medium: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .medium
-        //configureLocal(formatter)
+         configure(formatter)
         return formatter
     }()
 
@@ -233,7 +238,7 @@ open class TimeFormatter {
     public static let long: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .long
-        //configureLocal(formatter)
+         configure(formatter)
         return formatter
     }()
 
@@ -241,7 +246,7 @@ open class TimeFormatter {
     public static let full: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .full
-        //configureLocal(formatter)
+         configure(formatter)
         return formatter
     }()
 
@@ -249,7 +254,7 @@ open class TimeFormatter {
     public static let simple: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeFormat = "HH:mm:ss"
-        //configureLocal(formatter)
+        configure(formatter)
         return formatter
     }()
 }
