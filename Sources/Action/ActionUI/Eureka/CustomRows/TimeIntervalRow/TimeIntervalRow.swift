@@ -1,0 +1,168 @@
+//
+//  TimeRow.swift
+//  QMobileUI
+//
+//  Created by Eric Marchand on 20/06/2019.
+//  Copyright © 2019 Eric Marchand. All rights reserved.
+//
+
+import Foundation
+import UIKit
+import Eureka
+
+open class _TimeIntervalRow: _TimeIntervalFieldRow { // swiftlint:disable:this type_name
+    required public init(tag: String?) {
+        super.init(tag: tag)
+        dateFormatter = DateFormatter()
+        dateFormatter?.timeStyle = .short
+        dateFormatter?.dateStyle = .none
+        dateFormatter?.locale = Locale.current
+    }
+}
+
+open class _CountDownTimeRow: _TimeIntervalFieldRow { // swiftlint:disable:this type_name
+    required public init(tag: String?) {
+        super.init(tag: tag)
+        displayValueFor = { [unowned self] value in
+            guard let val = value else {
+                return nil
+            }
+            if let formatter = self.dateFormatter {
+                return formatter.string(from: Date(timeIntervalSinceReferenceDate: val))
+            }
+
+            let dateComponents = Calendar.current.dateComponents([.hour, .minute/*, .second*/], from: Date(timeIntervalSinceReferenceDate: val))
+            return DateComponentsFormatter.localizedString(from: dateComponents, unitsStyle: .full)?.replacingOccurrences(of: ",", with: "")
+        }
+    }
+}
+
+/// A row with an Date as value where the user can select a time from a picker view.
+public final class TimeIntervalRow: _TimeIntervalRow, RowType {
+    required public init(tag: String?) {
+        super.init(tag: tag)
+    }
+}
+
+/// A row with an Date as value where the user can select hour and minute as a countdown timer in a picker view.
+public final class CountDownTimeRow: _CountDownTimeRow, RowType {
+    required public init(tag: String?) {
+        super.init(tag: tag)
+    }
+}
+
+open class _TimeIntervalFieldRow: Row<TimeIntervalCell>, TimeIntervalPickerRowProtocol, NoValueDisplayTextConformance { // swiftlint:disable:this type_name
+
+    /// The minimum value for this row's UIDatePicker
+    open var minimumDate: TimeInterval?
+
+    /// The maximum value for this row's UIDatePicker
+    open var maximumDate: TimeInterval?
+
+    /// The interval between options for this row's UIDatePicker
+    open var minuteInterval: Int?
+
+    /// The formatter for the date picked by the user
+    open var dateFormatter: DateFormatter?
+
+    open var noValueDisplayText: String?
+
+    required public init(tag: String?) {
+        super.init(tag: tag)
+        displayValueFor = { [unowned self] value in
+            guard let val = value, let formatter = self.dateFormatter else { return nil }
+            return formatter.string(from: Date(timeIntervalSinceReferenceDate: val))
+        }
+    }
+}
+
+// MARK: cell
+
+public protocol TimeIntervalPickerRowProtocol: class {
+    var minimumDate: TimeInterval? { get set }
+    var maximumDate: TimeInterval? { get set }
+    var minuteInterval: Int? { get set }
+}
+
+open class TimeIntervalCell: Cell<TimeInterval>, CellType {
+
+    public var datePicker: UIDatePicker
+
+    public required init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        datePicker = UIDatePicker()
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
+        datePicker = UIDatePicker()
+        super.init(coder: aDecoder)
+    }
+
+    open override func setup() {
+        super.setup()
+        accessoryType = .none
+        editingAccessoryType =  .none
+        datePicker.datePickerMode = datePickerMode()
+        datePicker.addTarget(self, action: #selector(TimeIntervalCell.datePickerValueChanged(_:)), for: .valueChanged)
+    }
+
+    deinit {
+        datePicker.removeTarget(self, action: nil, for: .allEvents)
+    }
+
+    open override func update() {
+        super.update()
+        selectionStyle = row.isDisabled ? .none : .default
+        let date: Date
+        if let value = row.value {
+            date = Date(timeIntervalSinceReferenceDate: value)
+        } else {
+            date = Date()
+        }
+        datePicker.setDate(date, animated: false)
+        datePicker.minimumDate = (row as? DatePickerRowProtocol)?.minimumDate
+        datePicker.maximumDate = (row as? DatePickerRowProtocol)?.maximumDate
+        if let minuteIntervalValue = (row as? DatePickerRowProtocol)?.minuteInterval {
+            datePicker.minuteInterval = minuteIntervalValue
+        }
+        if row.isHighlighted {
+            textLabel?.textColor = tintColor
+        }
+    }
+
+    open override func didSelect() {
+        super.didSelect()
+        row.deselect()
+    }
+
+    override open var inputView: UIView? {
+        if let value = row.value {
+            datePicker.setDate(Date(timeIntervalSinceReferenceDate: value), animated: row is CountDownTimeRow)
+        }
+        return datePicker
+    }
+
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        row.value = sender.date.timeIntervalSinceReferenceDate
+        detailTextLabel?.text = row.displayValueFor?(row.value)
+    }
+
+    private func datePickerMode() -> UIDatePicker.Mode {
+        switch row {
+        case is TimeIntervalRow:
+            return .time
+        case is CountDownTimeRow:
+            return .countDownTimer
+        default:
+            return .time
+        }
+    }
+
+    open override func cellCanBecomeFirstResponder() -> Bool {
+        return canBecomeFirstResponder
+    }
+
+    override open var canBecomeFirstResponder: Bool {
+        return !row.isDisabled
+    }
+}

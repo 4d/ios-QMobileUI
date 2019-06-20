@@ -155,7 +155,7 @@ extension ActionParameter {
             case .name:
                 return NameRow(name).onRowEvent(eventCallback)
             case .duration:
-                return CountDownRow(name).onRowEvent(eventCallback)
+                return CountDownTimeRow(name).onRowEvent(eventCallback)
             case .rating:
                 return RatingRow(name).onRowEvent(eventCallback)
             case .stepper:
@@ -171,9 +171,7 @@ extension ActionParameter {
             case .scientific, .percent, .energy, .mass:
                 return DecimalRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
             case .longDate, .shortDate, .mediumDate, .fullDate:
-                return DateRow(name) { $0.formatter = format.dateFormatter }.onRowEvent(eventCallback)
-            default:
-                break
+                return DateRow(name) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
             }
         }
         // If no format return basic one from type
@@ -218,13 +216,13 @@ extension ActionParameterType {
         case .integer:
             return IntRow(key).onRowEvent(eventCallback)
         case .date:
-            return DateRow(key) { $0.formatter = DateFormatter.rfc822 }.onRowEvent(eventCallback)
+            return DateRow(key) { $0.dateFormatter = DateFormatter.rfc822 }.onRowEvent(eventCallback)
         case .string, .text:
             return TextRow(key).onRowEvent(eventCallback)
         case .number, .real:
             return DecimalRow(key) { $0.formatter = nil }.onRowEvent(eventCallback)
         case .time:
-            return TimeRow(key).onRowEvent(eventCallback)
+            return TimeIntervalRow(key).onRowEvent(eventCallback)
         case .picture, .image:
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:

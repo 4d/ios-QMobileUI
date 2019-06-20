@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		48016A6C22BB88A5005A7C65 /* TimeIntervalRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48016A6B22BB88A5005A7C65 /* TimeIntervalRow.swift */; };
 		480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392A51E928C4B008CF992 /* UILabel+Binding.swift */; };
 		480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392A81E92916E008CF992 /* ApplicationServices.swift */; };
 		480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392AB1E9292C0008CF992 /* String+QMobile.swift */; };
@@ -203,6 +204,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		48016A6B22BB88A5005A7C65 /* TimeIntervalRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalRow.swift; sourceTree = "<group>"; };
 		480392A51E928C4B008CF992 /* UILabel+Binding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+Binding.swift"; sourceTree = "<group>"; };
 		480392A81E92916E008CF992 /* ApplicationServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServices.swift; sourceTree = "<group>"; };
 		480392AB1E9292C0008CF992 /* String+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+QMobile.swift"; sourceTree = "<group>"; };
@@ -434,6 +436,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		48016A6A22BB8885005A7C65 /* TimeIntervalRow */ = {
+			isa = PBXGroup;
+			children = (
+				48016A6B22BB88A5005A7C65 /* TimeIntervalRow.swift */,
+			);
+			path = TimeIntervalRow;
+			sourceTree = "<group>";
+		};
 		480392A71E928C4F008CF992 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -592,6 +602,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				48016A6A22BB8885005A7C65 /* TimeIntervalRow */,
 				48E655E3229EB2CC0060568B /* LocationRow */,
 				482C6544229D1BB10045E1CE /* RatingRow */,
 				483192522297F8000041B41A /* ImageRow */,
@@ -1390,6 +1401,7 @@
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
 				48DCEAE3212C528A00473910 /* ValueTransformers.swift in Sources */,
+				48016A6C22BB88A5005A7C65 /* TimeIntervalRow.swift in Sources */,
 				4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */,
 				4869D60B223BA4410042379F /* ActionManager.swift in Sources */,
 				48BC8567226EF5D000D548B2 /* ActionSheetUI.swift in Sources */,
