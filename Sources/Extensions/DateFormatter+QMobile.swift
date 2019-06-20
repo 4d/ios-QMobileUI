@@ -15,7 +15,21 @@ let kFormatterLocal = "formatter.locale"
 let kFormatterLocalPreferred = "preferred"
 
 extension TimeZone {
-    static let greenwichMeanTime  = TimeZone(secondsFromGMT: 0)
+    static let greenwichMeanTime  = TimeZone(secondsFromGMT: 0)! // swiftlint:disable:this force_cast
+}
+
+extension Calendar {
+    static let iso8601UTC: Calendar = {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
+
+    static let iso8601GreenwichMeanTime: Calendar = {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = .greenwichMeanTime
+        return calendar
+    }()
 }
 
 extension DateFormatter {

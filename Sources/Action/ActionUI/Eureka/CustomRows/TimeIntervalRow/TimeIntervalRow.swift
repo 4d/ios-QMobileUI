@@ -17,6 +17,7 @@ open class _TimeIntervalRow: _TimeIntervalFieldRow { // swiftlint:disable:this t
         dateFormatter?.timeStyle = .short
         dateFormatter?.dateStyle = .none
         dateFormatter?.locale = Locale.current
+        dateFormatter?.timeZone = .greenwichMeanTime
     }
 }
 
@@ -27,11 +28,12 @@ open class _CountDownTimeRow: _TimeIntervalFieldRow { // swiftlint:disable:this 
             guard let val = value else {
                 return nil
             }
+            self.dateFormatter?.timeZone = .greenwichMeanTime
             if let formatter = self.dateFormatter {
                 return formatter.string(from: Date(timeIntervalSinceReferenceDate: val))
             }
 
-            let dateComponents = Calendar.current.dateComponents([.hour, .minute/*, .second*/], from: Date(timeIntervalSinceReferenceDate: val))
+            let dateComponents = Calendar.iso8601GreenwichMeanTime.dateComponents([.hour, .minute/*, .second*/], from: Date(timeInterval: val))
             return DateComponentsFormatter.localizedString(from: dateComponents, unitsStyle: .full)?.replacingOccurrences(of: ",", with: "")
         }
     }
@@ -115,6 +117,7 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
         editingAccessoryType =  .none
         datePicker.datePickerMode = datePickerMode()
         datePicker.addTarget(self, action: #selector(TimeIntervalCell.datePickerValueChanged(_:)), for: .valueChanged)
+        datePicker.timeZone = .greenwichMeanTime
     }
 
     deinit {
