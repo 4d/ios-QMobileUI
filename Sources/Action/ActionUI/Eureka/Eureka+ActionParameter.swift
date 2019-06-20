@@ -141,13 +141,9 @@ extension ActionParameter {
         if let format = format {
             switch format {
             case .url:
-                return URLRow(name) {
-                    $0.add(rule: RuleURL())
-                    }.onRowEvent(eventCallback)
+                return URLRow(name) { $0.add(rule: RuleURL()) }.onRowEvent(eventCallback)
             case .email:
-                return EmailRow(name) {
-                    $0.add(rule: RuleEmail())
-                    }.onRowEvent(eventCallback)
+                return EmailRow(name) { $0.add(rule: RuleEmail()) }.onRowEvent(eventCallback)
             case .textArea, .comment:
                 return TextAreaRow(name).onRowEvent(eventCallback)
             case .password:
@@ -170,16 +166,14 @@ extension ActionParameter {
                 return CheckRow(name).onRowEvent(eventCallback)
             case .account:
                 return AccountRow(name).onRowEvent(eventCallback)
-            case .spellOut:
-                return IntRow(name) {
-                    $0.formatter = format.formatter
-                    }.onRowEvent(eventCallback)
+            case .spellOut, .integer:
+                return IntRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
             case .scientific, .percent, .energy, .mass:
-                return DecimalRow {
-                    $0.formatter = format.formatter
-                    }.onRowEvent(eventCallback)
-            case .dateLong, .dateShort, .dateMedium:
-                return DateRow(name).onRowEvent(eventCallback)
+                return DecimalRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
+            case .longDate, .shortDate, .mediumDate, .fullDate:
+                return DateRow(name) { $0.formatter = format.dateFormatter }.onRowEvent(eventCallback)
+            default:
+                break
             }
         }
         // If no format return basic one from type
@@ -224,34 +218,17 @@ extension ActionParameterType {
         case .integer:
             return IntRow(key).onRowEvent(eventCallback)
         case .date:
-            return DateRow(key).onRowEvent(eventCallback)
+            return DateRow(key) { $0.formatter = DateFormatter.rfc822 }.onRowEvent(eventCallback)
         case .string, .text:
             return TextRow(key).onRowEvent(eventCallback)
         case .number, .real:
-            return DecimalRow(key) { $0.formatter = nil}.onRowEvent(eventCallback)
+            return DecimalRow(key) { $0.formatter = nil }.onRowEvent(eventCallback)
         case .time:
             return TimeRow(key).onRowEvent(eventCallback)
         case .picture, .image:
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:
             return TextRow(key).onRowEvent(eventCallback)
-        }
-    }
-}
-
-final class NumberTimeRow: _TimeRow, RowType {
-    required public init(tag: String?) {
-        super.init(tag: tag)
-        displayValueFor = { [unowned self] value in
-            guard let val = value else {
-                return nil
-            }
-            if let formatter = self.dateFormatter {
-                return formatter.string(from: val)
-            }
-
-            let dateComponents = Calendar.current.dateComponents([.hour, .minute], from: val)
-            return DateComponentsFormatter.localizedString(from: dateComponents, unitsStyle: .full)?.replacingOccurrences(of: ",", with: "")
         }
     }
 }
@@ -264,7 +241,7 @@ extension ActionParameterFormat {
         case .percent, .spellOut, .scientific:
             let formatter = NumberFormatter()
             formatter.locale = .current
-            if let numberStyle =  self.numberStyle {
+            if let numberStyle = self.numberStyle {
                 formatter.numberStyle = numberStyle
             }
             return formatter
@@ -272,7 +249,7 @@ extension ActionParameterFormat {
             return EnergyFormatter()
         case .mass:
             return MassFormatter()
-        case .dateLong, .dateShort, .dateMedium:
+        case .longDate, .shortDate, .mediumDate, .fullDate:
             return dateFormatter
         default:
             return nil
@@ -287,32 +264,33 @@ extension ActionParameterFormat {
             return .scientific
         case .percent:
             return .percent
+        case .integer:
+            return .none
         default:
             return nil
         }
     }
 
     var dateFormatter: DateFormatter? {
-        switch self {
-        case .dateLong, .dateShort, .dateMedium:
+        if let dateStyle = self.dateStyle {
             let formatter = DateFormatter()
             formatter.locale = .current
-            if let dateStyle =  self.dateStyle {
-                formatter.dateStyle = dateStyle
-            }
+            formatter.dateStyle = dateStyle
             return formatter
-        default:
-            return nil
         }
+        return nil
     }
+
     var dateStyle: DateFormatter.Style? {
         switch self {
-        case .dateLong:
+        case .longDate:
             return .long
-        case .dateShort:
+        case .shortDate:
             return .short
-        case .dateMedium:
+        case .mediumDate:
             return .medium
+        case .fullDate:
+            return .full
         default:
             return nil
         }
