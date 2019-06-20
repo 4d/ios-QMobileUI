@@ -124,6 +124,10 @@ class ActionFormViewController: FormViewController {
                 if dateRow.value == nil {
                     dateRow.value = Date()
                 }
+            } else if let timeRow = row as? _TimeIntervalFieldRow {
+                if timeRow.value == nil {
+                    timeRow.value = 0
+                }
             }
         }
         if case .cellSetup = event {

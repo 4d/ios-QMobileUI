@@ -54,10 +54,10 @@ public final class CountDownTimeRow: _CountDownTimeRow, RowType {
 open class _TimeIntervalFieldRow: Row<TimeIntervalCell>, TimeIntervalPickerRowProtocol, NoValueDisplayTextConformance { // swiftlint:disable:this type_name
 
     /// The minimum value for this row's UIDatePicker
-    open var minimumDate: TimeInterval?
+    open var minimumTime: TimeInterval?
 
     /// The maximum value for this row's UIDatePicker
-    open var maximumDate: TimeInterval?
+    open var maximumTime: TimeInterval?
 
     /// The interval between options for this row's UIDatePicker
     open var minuteInterval: Int?
@@ -79,9 +79,20 @@ open class _TimeIntervalFieldRow: Row<TimeIntervalCell>, TimeIntervalPickerRowPr
 // MARK: cell
 
 public protocol TimeIntervalPickerRowProtocol: class {
-    var minimumDate: TimeInterval? { get set }
-    var maximumDate: TimeInterval? { get set }
+    var minimumTime: TimeInterval? { get set }
+    var maximumTime: TimeInterval? { get set }
     var minuteInterval: Int? { get set }
+}
+
+extension TimeIntervalPickerRowProtocol {
+    var minimumDate: Date? {
+        guard let time = minimumTime else { return nil }
+        return Date(timeInterval: time)
+    }
+    var maximumDate: Date? {
+        guard let time = maximumTime else { return nil }
+        return Date(timeInterval: time)
+    }
 }
 
 open class TimeIntervalCell: Cell<TimeInterval>, CellType {
@@ -113,16 +124,10 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     open override func update() {
         super.update()
         selectionStyle = row.isDisabled ? .none : .default
-        let date: Date
-        if let value = row.value {
-            date = Date(timeIntervalSinceReferenceDate: value)
-        } else {
-            date = Date()
-        }
-        datePicker.setDate(date, animated: false)
-        datePicker.minimumDate = (row as? DatePickerRowProtocol)?.minimumDate
-        datePicker.maximumDate = (row as? DatePickerRowProtocol)?.maximumDate
-        if let minuteIntervalValue = (row as? DatePickerRowProtocol)?.minuteInterval {
+        datePicker.setDate( Date(timeInterval: row.value ?? 0), animated: false)
+        datePicker.minimumDate = (row as? TimeIntervalPickerRowProtocol)?.minimumDate
+        datePicker.maximumDate = (row as? TimeIntervalPickerRowProtocol)?.maximumDate
+        if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
             datePicker.minuteInterval = minuteIntervalValue
         }
         if row.isHighlighted {
@@ -137,13 +142,13 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
 
     override open var inputView: UIView? {
         if let value = row.value {
-            datePicker.setDate(Date(timeIntervalSinceReferenceDate: value), animated: row is CountDownTimeRow)
+            datePicker.setDate(Date(timeInterval: value), animated: row is CountDownTimeRow)
         }
         return datePicker
     }
 
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        row.value = sender.date.timeIntervalSinceReferenceDate
+        row.value = sender.date.timeInterval
         detailTextLabel?.text = row.displayValueFor?(row.value)
     }
 
@@ -164,5 +169,15 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
 
     override open var canBecomeFirstResponder: Bool {
         return !row.isDisabled
+    }
+}
+
+extension Date {
+    var timeInterval: TimeInterval {
+        return self.timeIntervalSinceReferenceDate
+    }
+
+    init(timeInterval: TimeInterval) {
+        self.init(timeIntervalSinceReferenceDate: timeInterval)
     }
 }

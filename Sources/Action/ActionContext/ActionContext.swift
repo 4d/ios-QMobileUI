@@ -65,6 +65,10 @@ extension ActionParameter {
                         break
                     }
                 }
+            } else if case .time = self.type {
+                if let timeString = value as? String {
+                    return TimeFormatter.simple.time(from: timeString) ?? TimeFormatter.short.time(from: timeString)
+                }
             }
             return value
         }
