@@ -173,8 +173,9 @@ open class TimeFormatter {
         return string(from: time)
     }
 
-    open func string(from number: NSNumber) -> String {
-        return string(from: TimeInterval(number.doubleValue))
+    open func string(from number: NSNumber, milliseconds: Bool = true) -> String {
+        let timeInterval = milliseconds ? TimeInterval(number.doubleValue / 1000): TimeInterval(number.doubleValue)
+        return string(from: timeInterval)
     }
 
     open func time(from string: String) -> TimeInterval? {
