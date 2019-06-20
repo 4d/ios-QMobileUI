@@ -8,6 +8,9 @@
       location = "container:"
       name = "ThirdParty">
       <FileRef
+         location = "group:Carthage/Checkouts/Eureka/Eureka.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Carthage/Checkouts/SwiftyJSON/SwiftyJSON.xcodeproj">
       </FileRef>
       <FileRef
@@ -35,9 +38,6 @@
          location = "group:Carthage/Checkouts/Prephirences/Prephirences.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/Moya/Moya.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Carthage/Checkouts/Result/Result.xcodeproj">
       </FileRef>
       <FileRef
@@ -57,6 +57,9 @@
       </FileRef>
       <FileRef
          location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Carthage/Checkouts/Moya/Moya.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

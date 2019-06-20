@@ -217,7 +217,7 @@ open class TimeFormatter {
     public static let short: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .short
-        configureLocal(formatter)
+        //configureLocal(formatter)
         return formatter
     }()
 
@@ -225,6 +225,7 @@ open class TimeFormatter {
     public static let medium: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .medium
+        //configureLocal(formatter)
         return formatter
     }()
 
@@ -232,6 +233,7 @@ open class TimeFormatter {
     public static let long: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .long
+        //configureLocal(formatter)
         return formatter
     }()
 
@@ -239,6 +241,7 @@ open class TimeFormatter {
     public static let full: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeStyle = .full
+        //configureLocal(formatter)
         return formatter
     }()
 
@@ -246,6 +249,7 @@ open class TimeFormatter {
     public static let simple: TimeFormatter = {
         let formatter = TimeFormatter()
         formatter.timeFormat = "HH:mm:ss"
+        //configureLocal(formatter)
         return formatter
     }()
 }

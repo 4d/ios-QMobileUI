@@ -64,6 +64,7 @@
 		483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */; };
 		483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */; };
 		483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */; };
+		48459EC522BBC51400202812 /* TimeFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48459EC422BBC51400202812 /* TimeFormatterTests.swift */; };
 		4846083620AF057A00EE4696 /* Timer+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846083520AF057A00EE4696 /* Timer+QMobile.swift */; };
 		4846083820AF070000EE4696 /* SpinerLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846083720AF06FF00EE4696 /* SpinerLayer.swift */; };
 		4846083C20AF07DD00EE4696 /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846083A20AF07DD00EE4696 /* LoadingButton.swift */; };
@@ -158,6 +159,8 @@
 		48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */; };
 		48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
 		48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
+		48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
+		48E5CEC222BBC7F30025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
 		48E655E0229EA6770060568B /* Eureka+RowRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655DF229EA6770060568B /* Eureka+RowRules.swift */; };
 		48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */; };
 		48E655E5229EB2D40060568B /* LocationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E4229EB2D40060568B /* LocationRow.swift */; };
@@ -266,6 +269,7 @@
 		483FDA8E1E82886D00FAF84B /* UIApplication+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA901E828AB900FAF84B /* UIViewController+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+QMobile.swift"; sourceTree = "<group>"; };
 		483FDAB61E82DD0A00FAF84B /* DispatchQueue+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+QMobile.swift"; sourceTree = "<group>"; };
+		48459EC422BBC51400202812 /* TimeFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatterTests.swift; sourceTree = "<group>"; };
 		4846083520AF057A00EE4696 /* Timer+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Timer+QMobile.swift"; sourceTree = "<group>"; };
 		4846083720AF06FF00EE4696 /* SpinerLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpinerLayer.swift; sourceTree = "<group>"; };
 		4846083A20AF07DD00EE4696 /* LoadingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingButton.swift; sourceTree = "<group>"; };
@@ -356,6 +360,7 @@
 		48E49CF71EB9DC33002B60AF /* Moya.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Moya.framework; path = Carthage/Build/iOS/Moya.framework; sourceTree = "<group>"; };
 		48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ValueTransformerKit.framework; path = Carthage/Build/iOS/ValueTransformerKit.framework; sourceTree = "<group>"; };
+		48E5CEC022BBC7E40025E692 /* Eureka.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Eureka.framework; path = ../../../../../../../../../Library/Caches/com.4d.mobile/sdk/Carthage/Build/iOS/Eureka.framework; sourceTree = "<group>"; };
 		48E655DF229EA6770060568B /* Eureka+RowRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+RowRules.swift"; sourceTree = "<group>"; };
 		48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+ActionParameter.swift"; sourceTree = "<group>"; };
 		48E655E4229EB2D40060568B /* LocationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRow.swift; sourceTree = "<group>"; };
@@ -399,6 +404,7 @@
 				48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */,
 				48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */,
 				48E49CFA1EB9DC33002B60AF /* Moya.framework in Frameworks */,
+				48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */,
 				48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48E49CF11EB9D28D002B60AF /* QMobileDataSync.framework in Frameworks */,
 				48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
@@ -430,6 +436,7 @@
 				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
 				48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
 				48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */,
+				48E5CEC222BBC7F30025E692 /* Eureka.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +824,7 @@
 		48D3F98E1F7D16E600B96947 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				48E5CEC022BBC7E40025E692 /* Eureka.framework */,
 				48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */,
 				4859D9491F82773600C8A020 /* IBAnimatable.framework */,
 				4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */,
@@ -900,6 +908,7 @@
 				48A62CC41E9E27E8002A76C2 /* StringTests.swift */,
 				48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */,
 				487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */,
+				48459EC422BBC51400202812 /* TimeFormatterTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1238,6 +1247,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/IBAnimatable.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ZIPFoundation.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftMessages.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Eureka.framework",
 			);
 			name = carthage;
 			outputPaths = (
@@ -1418,6 +1428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */,
+				48459EC522BBC51400202812 /* TimeFormatterTests.swift in Sources */,
 				48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */,
 				48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */,
 				48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */,

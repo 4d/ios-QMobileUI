@@ -124,7 +124,7 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     open override func update() {
         super.update()
         selectionStyle = row.isDisabled ? .none : .default
-        datePicker.setDate( Date(timeInterval: row.value ?? 0), animated: false)
+        datePicker.setDate(Date(timeInterval: row.value ?? 0), animated: false)
         datePicker.minimumDate = (row as? TimeIntervalPickerRowProtocol)?.minimumDate
         datePicker.maximumDate = (row as? TimeIntervalPickerRowProtocol)?.maximumDate
         if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
