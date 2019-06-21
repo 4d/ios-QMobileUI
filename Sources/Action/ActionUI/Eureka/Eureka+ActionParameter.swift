@@ -60,7 +60,7 @@ extension ActionParameter {
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setGreaterOrEqual(than: min)
                 } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
-                    rowOf.setGreaterOrEqual(than: min)
+                    rowOf.setGreaterOrEqual(than: Int(min))
                 } else if let rowOf = row as? DecimalRow {
                     rowOf.setGreaterOrEqual(than: min)
                 } else {
@@ -70,7 +70,7 @@ extension ActionParameter {
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setSmallerOrEqual(than: max)
                 } else if let rowOf = row as? IntRow {
-                    rowOf.setSmallerOrEqual(than: max)
+                    rowOf.setSmallerOrEqual(than: Int(max))
                 } else if let rowOf = row as? DecimalRow {
                     rowOf.setSmallerOrEqual(than: max)
                 } else if let rowOf = row as? RatingRow {
