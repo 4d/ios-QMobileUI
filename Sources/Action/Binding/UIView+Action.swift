@@ -66,6 +66,12 @@ extension UIView {
     fileprivate func showActionSheet(_ recognizer: UIGestureRecognizer) {
         if let actionSheet = self.actionSheet {
             foreground {
+                if let cell = self as? UIViewCell {
+                    if cell.indexPath != self.bindTo.table?.indexPath {
+                        self.bindTo.table?.indexPath = cell.indexPath
+                        logger.warning("Cell no more binding good index \(String(describing: cell.indexPath)) != \(String(describing: self.bindTo.table?.indexPath))")
+                    }
+                }
                 var alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
 				alertController = alertController.checkPopUp(recognizer)
                 alertController.show()
