@@ -151,7 +151,9 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     }
 
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        row.value = sender.date.timeInterval
+        let date = sender.date
+        let timeInterval = date.timeInterval
+        row.value = timeInterval
         detailTextLabel?.text = row.displayValueFor?(row.value)
     }
 

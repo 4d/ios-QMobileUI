@@ -51,6 +51,7 @@ class TimeFormatterTests: XCTestCase {
 
         XCTAssertEqual(TimeFormatter.simple.string(from: 0), "00:00:00")
         XCTAssertEqual(TimeFormatter.simple.string(from: 79200), "22:00:00")
+        XCTAssertEqual(TimeFormatter.simple.time(from: "22:00:00"), 79200)
 
         XCTAssertEqual(TimeFormatter.medium.string(from: 0), "12:00:00 AM") // en XXX check local?
         XCTAssertEqual(TimeFormatter.medium.string(from: 79200), "10:00:00 PM") // en

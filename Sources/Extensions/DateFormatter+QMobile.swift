@@ -196,7 +196,8 @@ open class TimeFormatter {
         guard let date = dateFormatter.date(from: string) else {
             return nil
         }
-        return date.timeInterval
+        // XXX add one year ?
+        return Calendar.current.date(byAdding: .year, value: 1, to: date)?.timeInterval
     }
 
     open func integer(from string: String) -> Int? {
