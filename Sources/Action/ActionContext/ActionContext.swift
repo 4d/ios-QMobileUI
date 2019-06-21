@@ -73,8 +73,15 @@ extension ActionParameter {
             return value
         }
         if let field = self.defaultField {
-             // compute default value according to a defined properties and context
-            return context.actionParameterValue(for: field)
+            // compute default value according to a defined properties and context
+            if let value = context.actionParameterValue(for: field) {
+                if case .time = self.type {
+                    if let value = value as? Double {
+                        return value / 1000 // remove misslisecond to transform to timeInterval(seconde)
+                    }
+                }
+                return value
+            }
         }
         return nil
     }

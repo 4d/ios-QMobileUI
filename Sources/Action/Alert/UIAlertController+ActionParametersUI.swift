@@ -70,18 +70,22 @@ extension UIAlertController: ActionParametersUI {
                 actionParametersValue[parameter.name] = date
             }
         case .time:
-            alertController.addDatePicker(mode: .time, date: Date()) { date in
+            var date = Date(timeInterval: 0)
+            if let defaultValue = parameter.defaultValue(with: context) as? Date {
+                date = defaultValue
+            }
+            alertController.addDatePicker(mode: .time, date: date) { date in
                 actionParametersValue[parameter.name] = date
             }
         case .picture, .image:
             // XXX list of images from library?
             alertController.addImagePicker(flow: .vertical, paging: true, images: [])
-        case .integer, .number, .real:
+        /*case .integer, .number, .real:
             let numberValues: [Int] = (1...100).map { $0 }
             let pickerViewValues: [[String]] = [numberValues.map { $0.description }]
             alertController.addPickerView(values: pickerViewValues) { (_, _, index, _) in
                 actionParametersValue[parameter.name] = numberValues[index.row]
-            }
+            }*/
         default:
           return nil
         }
