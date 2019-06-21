@@ -82,6 +82,7 @@ extension ActionParameter {
                 }
                 return value
             }
+            logger.warning("Default field defined \(field) but not found in context \(context)")
         }
         return nil
     }
