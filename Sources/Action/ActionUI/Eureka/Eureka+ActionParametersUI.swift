@@ -268,12 +268,24 @@ class ActionFormViewController: FormViewController {
         }
     }
 
+    func formValues() -> [String: Any?] {
+        var values = self.form.values()
+        //  check JSON encodable parameters, because we use old way to encode JSON (see Alamofire parameters encoding)  // TODO if update to Alamofire 5 , see if we can remove this code, and implement Codable instead on ChoiceListItem
+        for (key, value) in values {
+            if let choiceOption = value as? ChoiceListItem {
+                values[key] = choiceOption.key.value
+            }
+        }
+        return values
+    }
+
     func send() {
         /*for row in self.form.rows {
          row.removeValidationErrorRows()
          }*/
 
-        let values = self.form.values()
+        let values = formValues()
+
         self.builder?.success(with: values as ActionParameters) { result in
             let promise = Promise<ActionResult, APIError>()
 

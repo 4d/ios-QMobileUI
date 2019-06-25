@@ -111,30 +111,20 @@ extension ActionParameter {
     // Create a row according to format and type
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
     private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { //swiftlint:disable:this function_body_length
-        if let choiceList = choiceList {
+        if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+
             // XXX multiple interface to choose between list
-            let choiceRow = SegmentedRow<String>(name)
-            // var choiceRow = PushRow<String>(key)
-            if let choiceArray = choiceList.value as? [AnyCodable] {
-                choiceRow.options = choiceArray.map { "\($0)" }
-            } else if let choiceDictionary = choiceList.value as? [String: AnyCodable] {
-                choiceRow.options = choiceDictionary.values.map { "\($0)" }
+            // let choiceRow = SegmentedRow<String>(name)
+            // let choiceRow = MultipleSelectorRow<String>(name)
+            // let choiceRow = PopoverSelectorRow<String>(name)
+            // let actionSheet = ActionSheetRow<String>(name)
+            let choiceRow = PushRow<ChoiceListItem>(name)
+            choiceRow.selectorTitle = self.preferredShortLabel
+
+            choiceRow.options = choice.options
+            if let value = self.default, let defaultChoice = choice.choice(for: value) {
+                choiceRow.value = defaultChoice
             }
-
-            /*let actionSheet = ActionSheetRow<String>() {
-             $0.title = "ActionSheetRow"
-             $0.selectorTitle = "Pick a number"
-             $0.options = ["One","Two","Three"]
-             $0.value = "Two"    // initially selected
-             }*/
-
-            /*let row = PushRow<Emoji>() {
-             $0.title = "PushRow"
-             $0.options = [💁🏻, 🍐, 👦🏼, 🐗, 🐼, 🐻]
-             $0.value = 👦🏼
-             $0.selectorTitle = "Choose an Emoji!"
-             }*/
-
             return choiceRow.onRowEvent(eventCallback)
         }
 
