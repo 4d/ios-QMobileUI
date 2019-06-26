@@ -11,6 +11,7 @@ import Foundation
 import Eureka
 import SwiftMessages
 import BrightFutures
+import Result
 
 import QMobileAPI
 
@@ -243,7 +244,10 @@ class ActionFormViewController: FormViewController {
         remoteRemoteErrors()
         let errors = self.form.validateRows()
         if errors.isEmpty {
-            send()
+            sender.isEnabled = false
+            send { _ in
+                sender.isEnabled = true
+            }
         } else {
 
             // display errors
@@ -287,7 +291,8 @@ class ActionFormViewController: FormViewController {
         return values
     }
 
-    func send() {
+    /// Send action to server, and manage result
+    func send(completionHandler: @escaping (Result<ActionResult, APIError>) -> Void) {
         /*for row in self.form.rows {
          row.removeValidationErrorRows()
          }*/
@@ -296,7 +301,7 @@ class ActionFormViewController: FormViewController {
 
         self.builder?.success(with: values as ActionParameters) { result in
             let promise = Promise<ActionResult, APIError>()
-
+            completionHandler(result)
             switch result {
             case .success(let actionResult):
                 if actionResult.success || actionResult.close {
