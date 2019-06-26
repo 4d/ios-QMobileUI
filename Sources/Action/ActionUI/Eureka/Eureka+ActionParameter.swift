@@ -31,8 +31,11 @@ extension ActionParameter {
         row.validationOptions = .validatesOnChange
 
         // Placeholder
-        if let field = row as? FieldRowConformance {
-            if let placeholder = self.placeholder {
+        if let placeholder = self.placeholder {
+            if let field = row as? FieldRowConformance {
+                field.placeholder = placeholder
+            }
+            if let field = row as? TextAreaRow /*TextAreaConformance private ;(*/ {
                 field.placeholder = placeholder
             }
         }
@@ -152,8 +155,10 @@ extension ActionParameter {
                 return StepperRow(name).onRowEvent(eventCallback)
             case .slider:
                 return SliderRow(name).onRowEvent(eventCallback)
-            case .check:
+            case .check, .checkBox:
                 return CheckRow(name).onRowEvent(eventCallback)
+            case .switch:
+                return SwitchRow(name).onRowEvent(eventCallback)
             case .account:
                 return AccountRow(name).onRowEvent(eventCallback)
             case .spellOut, .integer:

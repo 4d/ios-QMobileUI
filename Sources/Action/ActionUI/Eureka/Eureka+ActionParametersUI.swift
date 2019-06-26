@@ -128,6 +128,14 @@ class ActionFormViewController: FormViewController {
                 if timeRow.value == nil {
                     timeRow.value = 0
                 }
+            } else if let checkRow = row as? CheckRow {
+                if checkRow.value == nil {
+                    checkRow.value = false
+                }
+            } else if let checkRow = row as? SwitchRow {
+                if checkRow.value == nil {
+                    checkRow.value = false
+                }
             }
         }
         if case .cellSetup = event {
@@ -411,27 +419,6 @@ extension Eureka.BaseRow {
     }
 }
 
-/*
- extension Form {
-
- static func installDefaultValidationHandlers() {
- TextRow.defaultCellUpdate = highlightCellLabelIfValidationFailed
- TextRow.defaultOnRowValidationChanged = showValidationErrors
- }
-
- private static func highlightCellLabelIfValidationFailed(cell: BaseCell, row: BaseRow) {
- if !row.isValid {
- cell.textLabel?.textColor = .red
- }
- }
-
- private static func showValidationErrors(cell: BaseCell, row: BaseRow) {
- row.removeValidationErrorRows()
- row.addValidationErrorRows()
- }
- }
-
- */
 extension BaseRow {
 
     fileprivate func removeValidationErrorRows() {

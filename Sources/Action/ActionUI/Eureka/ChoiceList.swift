@@ -12,7 +12,11 @@ import QMobileAPI
 
 /// Represent a choice in choice list
 struct ChoiceList {
+
+    /// the choice list
     var options: [ChoiceListItem]
+
+    /// Create a choice list frm decoded data and parameter type.
     init?(choiceList: AnyCodable, type: ActionParameterType) {
         if let choiceArray = choiceList.value as? [Any] {
             options = choiceArray.enumerated().map { (arg) -> ChoiceListItem in
@@ -35,7 +39,7 @@ struct ChoiceList {
                 if let string = key as? String {
                     switch type {
                     case .bool, .boolean:
-                        return ChoiceListItem(key: string.boolValue, value: value) // "1" or "0"
+                        return ChoiceListItem(key: string.boolValue || string == "true", value: value) // "1" or "0"
                     case .integer:
                         return ChoiceListItem(key: Int(string) as Any, value: value)
                     case .number:
@@ -55,6 +59,7 @@ struct ChoiceList {
         }
     }
 
+    /// Get choice list item by key.
     func choice(for key: AnyCodable) -> ChoiceListItem? {
         for option in options where option.key == key {
             return option
