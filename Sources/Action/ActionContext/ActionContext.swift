@@ -45,12 +45,13 @@ extension ActionParameter {
 
     public func defaultValue(with context: ActionContext) -> Any? {
         if let value = self.default?.value {
-            if case .date = self.type {
-                if let dateString = value as? String {
-                    if let date = dateString.dateFromRFC3339 ?? dateString.simpleDate ?? dateString.dateFromISO8601 {
+            if let valueString = value as? String {
+                switch self.type {
+                case .date:
+                    if let date = valueString.dateFromRFC3339 ?? valueString.simpleDate ?? valueString.dateFromISO8601 {
                         return date
                     }
-                    switch dateString.lowercased().replacingOccurrences(of: " ", with: "") {
+                    switch valueString.lowercased().replacingOccurrences(of: " ", with: "") {
                     case "today":
                         return Date()
                     case "yesterday":
@@ -64,10 +65,16 @@ extension ActionParameter {
                     default:
                         break
                     }
-                }
-            } else if case .time = self.type {
-                if let timeString = value as? String {
-                    return TimeFormatter.simple.time(from: timeString) ?? TimeFormatter.short.time(from: timeString)
+                case .time:
+                    return TimeFormatter.simple.time(from: valueString) ?? TimeFormatter.short.time(from: valueString)
+                case .bool, .boolean:
+                    return valueString.boolValue || valueString == "true"
+                case .integer:
+                    return Int(valueString)
+                case .number:
+                    return Double(valueString)
+                default:
+                    break
                 }
             }
             return value
