@@ -15,7 +15,7 @@ import Result
 
 import QMobileAPI
 
-class ActionFormViewController: FormViewController {
+class ActionFormViewController: FormViewController { // swiftlint:disable:this type_body_length 
 
     var builder: ActionParametersUIBuilder?
     var settings: ActionFormSettings = ActionFormSettings()

@@ -13,7 +13,7 @@ import BrightFutures
 extension UIAlertController: ActionParametersUI {
 
     /// Build an action controller for one field
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? { //swiftlint:disable:this function_body_length
         guard let parameters = action.parameters, let parameter = parameters.first else {
             completionHandler(.failure(.noParameters))
             return nil

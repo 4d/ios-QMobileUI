@@ -8,7 +8,7 @@
 
 import Foundation
 
-import QMobileAPI
+import struct QMobileAPI.AnyCodable
 
 /// Represent a choice in choice list
 struct ChoiceListItem: Equatable {
@@ -17,28 +17,18 @@ struct ChoiceListItem: Equatable {
     /// the value displayed to user, not real data value
     var value: AnyCodable
 
+    /// Initialize a choice if real value `key` and displayed `value`
     init(key: Any, value: Any) {
         // unwrap any hashable or codable
         switch key {
-        case let key as AnyHashable:
-            self.key = AnyCodable(key.base)
-        case let key as AnyCodable:
-            self.key = key
-        case let key as Optional<Any>:
-            switch key {
-            case .none:
-                self.key = AnyCodable(nil)
-            case .some(let key):
-                self.key = AnyCodable(key)
-            }
+        case let key as AnyWrapped:
+            self.key = key.codable
         default:
             self.key = AnyCodable(key)
         }
         switch value {
-        case let value as AnyHashable:
-            self.value = AnyCodable(value.base)
-        case let value as AnyCodable:
-            self.value = value
+        case let value as AnyWrapped:
+            self.value = value.codable
         default:
             self.value = AnyCodable(value)
         }

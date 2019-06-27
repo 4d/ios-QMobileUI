@@ -26,6 +26,7 @@
 		4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */; };
 		4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */; };
 		48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */; };
+		48087E4F22C4F5F90008A3D6 /* AnyWrapped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */; };
 		480A36FF22C276170019BC39 /* ChoiceList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480A36FE22C276170019BC39 /* ChoiceList.swift */; };
 		480A602022392A3E002BE3E7 /* UINavigationItem+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480A601F22392A3E002BE3E7 /* UINavigationItem+QMobile.swift */; };
 		480A602222392A75002BE3E7 /* UIColor+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480A602122392A75002BE3E7 /* UIColor+QMobile.swift */; };
@@ -230,6 +231,7 @@
 		4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationXCallbackURL.swift; sourceTree = "<group>"; };
 		4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallbackURLKit.framework; path = Carthage/Build/iOS/CallbackURLKit.framework; sourceTree = "<group>"; };
 		48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceListItem.swift; sourceTree = "<group>"; };
+		48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyWrapped.swift; sourceTree = "<group>"; };
 		480A36FE22C276170019BC39 /* ChoiceList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceList.swift; sourceTree = "<group>"; };
 		480A601F22392A3E002BE3E7 /* UINavigationItem+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+QMobile.swift"; sourceTree = "<group>"; };
 		480A602122392A75002BE3E7 /* UIColor+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+QMobile.swift"; sourceTree = "<group>"; };
@@ -608,6 +610,7 @@
 				48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */,
 				480A36FE22C276170019BC39 /* ChoiceList.swift */,
 				48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */,
+				48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -1345,6 +1348,7 @@
 				48BC8574226F0C8D00D548B2 /* UIAlertController+Picker.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */,
+				48087E4F22C4F5F90008A3D6 /* AnyWrapped.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
 				48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */,
 				4846083820AF070000EE4696 /* SpinerLayer.swift in Sources */,

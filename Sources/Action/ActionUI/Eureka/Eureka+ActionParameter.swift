@@ -28,8 +28,11 @@ extension ActionParameter {
         let row: BaseRow = self.baseRow(onRowEvent: eventCallback)
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
-        row.validationOptions = .validatesOnChange
-
+        if row is DecimalRow {
+            // row.validationOptions = .validatesOnBlur // ie. default one
+        } else {
+            row.validationOptions = .validatesOnChange // issue with decimal row https://project.4d.com/issues/108712
+        }
         // Placeholder
         if let placeholder = self.placeholder {
             if let field = row as? FieldRowConformance {
@@ -48,14 +51,6 @@ extension ActionParameter {
                 if let rowOf = row as? RowOfEquatable {
                     rowOf.setRequired()
                 }
-                /* if let format = format {
-                 switch format {
-                 case .email:
-                 row.validationOptions = .validatesOnChangeAfterBlurred
-                 default:
-                 break
-                 }
-                 }*/
             case .min(let min):
                 if let rowOf = row as? RowOfComparable {
                     rowOf.setGreaterOrEqual(than: min)
@@ -94,16 +89,10 @@ extension ActionParameter {
                 if let rowOf = row as? RowOf<String> {
                     rowOf.add(rule: RuleRegExp(regExpr: regExpr))
                 }
-            @unknown default:
-                break
+            @unknown case _:
+                continue
             }
         }
-
-        /*row.cellUpdate({ cell, row in
-         if !row.isValid {
-         cell.titleLabel?.textColor = .red
-         }
-         })*/
 
         return row
     }
