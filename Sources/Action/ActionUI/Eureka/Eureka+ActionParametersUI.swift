@@ -246,7 +246,9 @@ class ActionFormViewController: FormViewController {
         if errors.isEmpty {
             sender.isEnabled = false
             send { _ in
-                sender.isEnabled = true
+                onForeground {
+                    sender.isEnabled = true
+                }
             }
         } else {
 

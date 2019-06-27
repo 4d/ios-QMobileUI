@@ -34,15 +34,12 @@ extension ActionParameter {
         if let placeholder = self.placeholder {
             if let field = row as? FieldRowConformance {
                 field.placeholder = placeholder
-            }
-            if let field = row as? TextAreaRow /*TextAreaConformance private ;(*/ {
+            } else if let field = row as? TextAreaRow /*TextAreaConformance private ;(*/ {
                 field.placeholder = placeholder
+            } else if let field = row as? NoValueDisplayTextConformance {
+                field.noValueDisplayText = placeholder
             }
         }
-
-        /*onRowValidationTests(row: row) { (_, _) in
-
-         }*/
 
         // Rules
         for rule in rules ?? [] {
@@ -155,7 +152,7 @@ extension ActionParameter {
                 return StepperRow(name).onRowEvent(eventCallback)
             case .slider:
                 return SliderRow(name).onRowEvent(eventCallback)
-            case .check, .checkBox:
+            case .check:
                 return CheckRow(name).onRowEvent(eventCallback)
             case .switch:
                 return SwitchRow(name).onRowEvent(eventCallback)
