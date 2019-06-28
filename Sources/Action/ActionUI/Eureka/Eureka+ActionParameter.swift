@@ -138,7 +138,7 @@ extension ActionParameter {
             case .rating:
                 return RatingRow(name).onRowEvent(eventCallback)
             case .stepper:
-                var row = StepperRow(name)
+                let row = StepperRow(name)
                 if let cellUI = row.cell?.stepper {
                     if let value = rules?.min {
                         cellUI.minimumValue = value
@@ -180,11 +180,11 @@ extension ActionParameter {
 
 }
 
-extension Sequence where Element: ActionParameterRule {
+extension Sequence where Element == ActionParameterRule {
 
     var min: Double? {
         for rule in self {
-            if let case .min(let value)) = rule {
+            if case let ActionParameterRule.min(value) = rule {
                 return value
             }
         }
@@ -192,7 +192,7 @@ extension Sequence where Element: ActionParameterRule {
     }
     var max: Double? {
         for rule in self {
-            if let case .max(let value)) = rule {
+            if case let ActionParameterRule.max(value) = rule {
                 return value
             }
         }
