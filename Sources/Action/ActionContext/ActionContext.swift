@@ -76,6 +76,29 @@ extension ActionParameter {
                 default:
                     break
                 }
+            } else if let valueInt = value as? Int {
+                switch self.type {
+                    /*case .time:
+                     return valueInt * 1000 if need convertion s to ms, but I do not thiknks so*/
+                case .bool, .boolean:
+                    return valueInt == 1
+                case .number:
+                    return Double(valueInt)
+                case .string:
+                    return "\(valueInt)"
+                default:
+                    break
+                }
+            } else if let valueDouble = value as? Double {
+                case .bool, .boolean:
+                    return valueDouble == 1.0
+                case .integer:
+                    return Int(valueDouble)
+                case .string:
+                    return "\(valueDouble)"
+                default:
+                    break
+                }
             }
             return value
         }
