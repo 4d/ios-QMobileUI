@@ -120,23 +120,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                     (cell as? TextAreaCell)?.textView.becomeFirstResponder()
                 }
             }
-            // if not date, set current one
-            if let dateRow = row as? DateRow {
-                if dateRow.value == nil {
-                    dateRow.value = Date()
-                }
-            } else if let timeRow = row as? _TimeIntervalFieldRow {
-                if timeRow.value == nil {
-                    timeRow.value = 0
-                }
-            } else if let checkRow = row as? CheckRow {
-                if checkRow.value == nil {
-                    checkRow.value = false
-                }
-            } else if let checkRow = row as? SwitchRow {
-                if checkRow.value == nil {
-                    checkRow.value = false
-                }
+            // if not value set a default one
+            if row.baseValue == nil, let row = row as? RowInitializable {
+                row.rowInitialize()
             }
         }
         if case .cellSetup = event {
@@ -379,6 +365,49 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
     }
 
+}
+
+// MARK: RowInitializable
+
+protocol RowInitializable {
+    /// Set an init value.
+    func rowInitialize()
+}
+
+extension DateRow {
+    func rowInitialize() {
+        self.value = Date()
+    }
+}
+
+extension _TimeIntervalFieldRow {
+    func rowInitialize() {
+        self.value = 0
+    }
+}
+
+extension CheckRow {
+    func rowInitialize() {
+        self.value = false
+    }
+}
+
+extension SwitchRow {
+    func rowInitialize() {
+        self.value = false
+    }
+}
+
+extension StepperRow {
+    func rowInitialize() {
+        self.value = self.cell?.stepper?.minimumValue ?? 0.0
+    }
+}
+
+extension SliderRow {
+    func rowInitialize() {
+        self.value = self.cell?.slider?.minimumValue ?? 0.0
+    }
 }
 
 private var xoAssociationKey: UInt8 = 0
