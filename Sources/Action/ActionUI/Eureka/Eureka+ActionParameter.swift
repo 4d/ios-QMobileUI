@@ -138,9 +138,28 @@ extension ActionParameter {
             case .rating:
                 return RatingRow(name).onRowEvent(eventCallback)
             case .stepper:
-                return StepperRow(name).onRowEvent(eventCallback)
+                var row = StepperRow(name)
+                if let cellUI = row.cell?.stepper {
+                    if let value = rules?.min {
+                        cellUI.minimumValue = value
+                    }
+                    if let value = rules?.max {
+                        cellUI.maximumValue = value
+                    }
+                }
+                return row.onRowEvent(eventCallback)
             case .slider:
-                return SliderRow(name).onRowEvent(eventCallback)
+                let row = SliderRow(name)
+                if let cellUI = row.cell?.slider {
+                    if let value = rules?.min {
+                        cellUI.minimumValue = Float(value)
+                    }
+                    if let value = rules?.max {
+                        cellUI.maximumValue = Float(value)
+                    }
+                }
+                row.steps = 1
+                return row.onRowEvent(eventCallback)
             case .check:
                 return CheckRow(name).onRowEvent(eventCallback)
             case .switch:
@@ -159,6 +178,26 @@ extension ActionParameter {
         return self.type.formRow(name, onRowEvent: eventCallback)
     }
 
+}
+
+extension Sequence where Element: ActionParameterRule {
+
+    var min: Double? {
+        for rule in self {
+            if let case .min(let value)) = rule {
+                return value
+            }
+        }
+        return nil
+    }
+    var max: Double? {
+        for rule in self {
+            if let case .max(let value)) = rule {
+                return value
+            }
+        }
+        return nil
+    }
 }
 
 // MARK: Manage row event
@@ -197,7 +236,7 @@ extension ActionParameterType {
         case .integer:
             return IntRow(key).onRowEvent(eventCallback)
         case .date:
-            return DateRow(key) { $0.dateFormatter = DateFormatter.rfc822 }.onRowEvent(eventCallback)
+            return DateRow(key) { $0.dateFormatter = .mediumDate /* .rfc822*/ }.onRowEvent(eventCallback)
         case .string, .text:
             return TextRow(key).onRowEvent(eventCallback)
         case .number, .real:
