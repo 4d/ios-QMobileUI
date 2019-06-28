@@ -90,6 +90,7 @@ extension ActionParameter {
                     break
                 }
             } else if let valueDouble = value as? Double {
+                switch self.type {
                 case .bool, .boolean:
                     return valueDouble == 1.0
                 case .integer:
