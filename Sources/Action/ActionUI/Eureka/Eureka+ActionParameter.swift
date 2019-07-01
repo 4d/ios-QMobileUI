@@ -110,7 +110,12 @@ extension ActionParameter {
             let choiceRow = PushRow<ChoiceListItem>(name)
             choiceRow.selectorTitle = self.preferredShortLabel
 
-            choiceRow.options = choice.options
+            switch type {
+            case .bool, .boolean:
+                choiceRow.options = choice.boolOptions
+            default:
+                choiceRow.options = choice.options
+            }
             if let value = self.default, let defaultChoice = choice.choice(for: value) {
                 choiceRow.value = defaultChoice
             }

@@ -39,7 +39,7 @@ struct ChoiceList {
                 if let string = key as? String {
                     switch type {
                     case .bool, .boolean:
-                        return ChoiceListItem(key: string.boolValue || string == "true", value: value) // "1" or "0"
+                        return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
                     case .integer:
                         return ChoiceListItem(key: Int(string) as Any, value: value)
                     case .number:
@@ -70,6 +70,12 @@ struct ChoiceList {
             logger.verbose("Options types \(options.map { type(of: $0.key) })")
         }
         return nil
+    }
+
+    var boolOptions: [ChoiceListItem] {
+        let result: [ChoiceListItem] = options
+        assert(result.count == 2) // maybe if possible reduce to only two options. but cannot do it here...
+        return options
     }
 
 }
