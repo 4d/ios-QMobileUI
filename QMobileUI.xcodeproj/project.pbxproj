@@ -40,6 +40,9 @@
 		480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */; };
 		480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435C1E842699007C90DD /* NSObject+QMobile.swift */; };
 		480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B435E1E842EF9007C90DD /* UIViewCell.swift */; };
+		480B785522CA01900037C1D8 /* TapOutsideTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B785422CA01900037C1D8 /* TapOutsideTableView.swift */; };
+		480B785722CA01E90037C1D8 /* ActionFormSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B785622CA01E90037C1D8 /* ActionFormSettings.swift */; };
+		480B785922CA02160037C1D8 /* RowInitializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480B785822CA02160037C1D8 /* RowInitializable.swift */; };
 		4810B01F20FF38AD0049F31D /* LogForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4810B01E20FF38AD0049F31D /* LogForm.storyboard */; };
 		4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4810B02120FF4C6D0049F31D /* LogSettingForm.swift */; };
 		48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48112D4B1E9FB53800A3A88C /* UIImage+QMobile.swift */; };
@@ -245,6 +248,9 @@
 		480B435A1E8425E3007C90DD /* UIStoryboard+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard+QMobile.swift"; sourceTree = "<group>"; };
 		480B435C1E842699007C90DD /* NSObject+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+QMobile.swift"; sourceTree = "<group>"; };
 		480B435E1E842EF9007C90DD /* UIViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewCell.swift; sourceTree = "<group>"; };
+		480B785422CA01900037C1D8 /* TapOutsideTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapOutsideTableView.swift; sourceTree = "<group>"; };
+		480B785622CA01E90037C1D8 /* ActionFormSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionFormSettings.swift; sourceTree = "<group>"; };
+		480B785822CA02160037C1D8 /* RowInitializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowInitializable.swift; sourceTree = "<group>"; };
 		4810B01E20FF38AD0049F31D /* LogForm.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LogForm.storyboard; sourceTree = "<group>"; };
 		4810B02120FF4C6D0049F31D /* LogSettingForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSettingForm.swift; sourceTree = "<group>"; };
 		48112D491E9FB11000A3A88C /* .slather.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .slather.yml; sourceTree = "<group>"; };
@@ -611,6 +617,9 @@
 				480A36FE22C276170019BC39 /* ChoiceList.swift */,
 				48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */,
 				48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */,
+				480B785422CA01900037C1D8 /* TapOutsideTableView.swift */,
+				480B785622CA01E90037C1D8 /* ActionFormSettings.swift */,
+				480B785822CA02160037C1D8 /* RowInitializable.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -1404,6 +1413,7 @@
 				4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */,
 				4869D606223BA2920042379F /* DataSource+ActionContext.swift in Sources */,
 				48F321DA20B3073900D39BAF /* ApplicationAuthenticate.swift in Sources */,
+				480B785522CA01900037C1D8 /* TapOutsideTableView.swift in Sources */,
 				481AF5F72029E70900D034C1 /* UITabBarController+QMobile.swift in Sources */,
 				4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */,
 				489322C11E815D7A007CD6F2 /* Binder.swift in Sources */,
@@ -1418,6 +1428,7 @@
 				489C3F8321AECE990018664B /* Main+Flow.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				482C6543229D1AC70045E1CE /* RatingRow.swift in Sources */,
+				480B785922CA02160037C1D8 /* RowInitializable.swift in Sources */,
 				480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */,
 				48E71DBE212AA475003D10BD /* UIStackVIew+QMobile.swift in Sources */,
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
@@ -1427,6 +1438,7 @@
 				4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */,
 				4869D60B223BA4410042379F /* ActionManager.swift in Sources */,
 				48BC8567226EF5D000D548B2 /* ActionSheetUI.swift in Sources */,
+				480B785722CA01E90037C1D8 /* ActionFormSettings.swift in Sources */,
 				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,
 				480392C11E929660008CF992 /* UIImageView+Binding.swift in Sources */,
 				480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */,

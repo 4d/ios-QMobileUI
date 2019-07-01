@@ -367,49 +367,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
 }
 
-// MARK: RowInitializable
-
-protocol RowInitializable {
-    /// Set an init value.
-    func rowInitialize()
-}
-
-extension DateRow {
-    func rowInitialize() {
-        self.value = Date()
-    }
-}
-
-extension _TimeIntervalFieldRow {
-    func rowInitialize() {
-        self.value = 0
-    }
-}
-
-extension CheckRow {
-    func rowInitialize() {
-        self.value = false
-    }
-}
-
-extension SwitchRow {
-    func rowInitialize() {
-        self.value = false
-    }
-}
-
-extension StepperRow {
-    func rowInitialize() {
-        self.value = self.cell?.stepper?.minimumValue ?? 0.0
-    }
-}
-
-extension SliderRow {
-    func rowInitialize() {
-        self.value = self.cell?.slider?.minimumValue ?? 0.0
-    }
-}
-
 private var xoAssociationKey: UInt8 = 0
 // MARK: extension eureka
 extension Eureka.BaseRow {
@@ -544,24 +501,6 @@ extension ValidationError: LocalizedError {
 
 // MARK: listen to click outside
 
-// a table delegate to notify tap outside cell
-protocol TapOutsideTableViewDelegate: UITableViewDelegate {
-    func tableViewDidTapBelowCells(in tableView: UITableView)
-}
-
-// a table to notify tap outside cell
-class TapOutsideTableView: UITableView {
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if self.indexPathForRow(at: point) == nil {
-            if let delegate = self.delegate as? TapOutsideTableViewDelegate {
-                delegate.tableViewDidTapBelowCells(in: self)
-            }
-        }
-        return super.hitTest(point, with: event)
-    }
-}
-
 extension ActionFormViewController: TapOutsideTableViewDelegate {
     func tableViewDidTapBelowCells(in tableView: UITableView) {
         tableView.endEditing(true)
@@ -583,37 +522,5 @@ extension ActionFormViewController: ActionParametersUI {
         navigationController.navigationBar.prefersLargeTitles = false
 
         return navigationController
-    }
-}
-
-// MARK: settings
-
-struct ActionFormSettings { // XXX use settings
-    // forms
-    static let alertIfOneField = true // use an alert if one field
-
-    // ui
-    var useSection = true // Use one section (if false one section by fields)
-    var tableViewStyle: UITableView.Style = .grouped
-
-    // text area
-    var sectionForTextArea = true
-    var textAreaExpand = true // when focus
-
-    // errors
-    var errorColor: UIColor = UIColor(named: "error") ?? .red
-    var errorColorInLabel = true
-    var errorAsDetail = true // use detail label, else add a new row
-}
-
-extension ActionFormSettings: JSONDecodable {
-
-    init?(json: JSON) {
-        self.useSection = json["useSection"].bool ?? true
-        self.tableViewStyle = (json["useSection"].stringValue == "plain") ? UITableView.Style.plain: UITableView.Style.grouped
-        self.sectionForTextArea = json["sectionForTextArea"].bool ?? true
-        self.textAreaExpand = json["sectionForTextArea"].bool ?? true
-        self.errorAsDetail = json["errorAsDetail"].bool ?? true
-        self.errorColorInLabel = json["errorColorInLabel"].bool ?? true
     }
 }
