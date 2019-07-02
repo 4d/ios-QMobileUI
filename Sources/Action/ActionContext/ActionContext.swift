@@ -72,6 +72,9 @@ extension ActionParameter {
                 case .integer:
                     return Int(valueString)
                 case .number:
+                    if let format = format, case .integer = format { // XXX crappy convert code... find a better place to do it
+                        return Int(valueString)
+                    }
                     return Double(valueString)
                 default:
                     break
@@ -83,6 +86,9 @@ extension ActionParameter {
                 case .bool, .boolean:
                     return valueInt == 1
                 case .number:
+                    if let format = format, case .integer = format { // XXX crappy convert code... find a better place to do it
+                        return valueInt
+                    }
                     return Double(valueInt)
                 case .string:
                     return "\(valueInt)"
