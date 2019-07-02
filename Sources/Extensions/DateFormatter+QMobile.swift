@@ -273,4 +273,12 @@ open class TimeFormatter {
         configure(formatter)
         return formatter
     }()
+
+    /// Specifies a short style, typically numeric only, such as “20:52”.
+    public static let hourMinute: TimeFormatter = {
+        let formatter = TimeFormatter()
+        formatter.timeFormat = "HH:mm"
+        configure(formatter)
+        return formatter
+    }()
 }

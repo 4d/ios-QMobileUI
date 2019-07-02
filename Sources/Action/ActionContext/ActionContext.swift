@@ -66,7 +66,7 @@ extension ActionParameter {
                         break
                     }
                 case .time:
-                    return TimeFormatter.simple.time(from: valueString) ?? TimeFormatter.short.time(from: valueString)
+                    return TimeFormatter.time(from: valueString)
                 case .bool, .boolean:
                     return valueString.boolValue || valueString == "true"
                 case .integer:
@@ -139,5 +139,18 @@ extension ActionParameterFormat {
         default:
             return false
         }
+    }
+}
+
+fileprivate extension TimeFormatter {
+
+    private static let formatters: [TimeFormatter] = [.simple, .short, .hourMinute]
+    static func time(from string: String) -> TimeInterval? {
+        for formatter in formatters {
+            if let value = formatter.time(from: string) {
+                return value
+            }
+        }
+        return nil
     }
 }
