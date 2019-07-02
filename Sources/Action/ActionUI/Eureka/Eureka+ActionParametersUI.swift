@@ -107,17 +107,22 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
             // Expand text area
             if settings.textAreaExpand, let textAreaRow = row as? TextAreaRow {
-                if case .fixed(let height) = textAreaRow.textAreaHeight {
-                    textAreaRow.textAreaHeight = .dynamic(initialTextViewHeight: height)
-                    cell?.setup()
-                    cell?.layoutIfNeeded()
-                    guard let tableView = cell?.formViewController()?.tableView else { return }
-                    tableView.setNeedsUpdateConstraints() // XXX clean, find only then needed functions to refresh
-                    tableView.setNeedsDisplay()
-                    tableView.reloadData()
-                    tableView.layoutIfNeeded()
-                    tableView.layoutSubviews()
-                    (cell as? TextAreaCell)?.textView.becomeFirstResponder()
+
+                if row.isHighlighted {
+                    if case .fixed(let height) = textAreaRow.textAreaHeight {
+                        textAreaRow.textAreaHeight = .dynamic(initialTextViewHeight: height)
+                        cell?.setup()
+                        cell?.layoutIfNeeded()
+                        cell?.formViewController()?.tableView?.reloadRows(at: [row.indexPath!], with: .none)
+                    }
+                } else {
+                    // could not active this code becose reloading row will put row.isHighlighted = false
+                   /* if case .dynamic(let height) = textAreaRow.textAreaHeight {
+                        textAreaRow.textAreaHeight = .fixed(cellHeight: height)
+                        cell?.setup()
+                        cell?.layoutIfNeeded()
+                        cell?.formViewController()?.tableView?.reloadRows(at: [row.indexPath!], with: .none)
+                    }*/
                 }
             }
             // if not value set a default one
