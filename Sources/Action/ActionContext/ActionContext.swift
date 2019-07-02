@@ -72,7 +72,7 @@ extension ActionParameter {
                 case .integer:
                     return Int(valueString)
                 case .number:
-                    if let format = format, case .integer = format { // XXX crappy convert code... find a better place to do it
+                    if let format = format, format.isIntRow {  // XXX crappy convert code... find a better place to do it
                         return Int(valueString)
                     }
                     return Double(valueString)
@@ -86,7 +86,7 @@ extension ActionParameter {
                 case .bool, .boolean:
                     return valueInt == 1
                 case .number:
-                    if let format = format, case .integer = format { // XXX crappy convert code... find a better place to do it
+                    if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
                         return valueInt
                     }
                     return Double(valueInt)
@@ -106,6 +106,9 @@ extension ActionParameter {
                 default:
                     break
                 }
+                if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
+                    return Int(valueDouble)
+                }
             }
             return value
         }
@@ -122,5 +125,19 @@ extension ActionParameter {
             logger.warning("Default field defined \(field) but not found in context \(context)")
         }
         return nil
+    }
+}
+
+extension ActionParameterFormat {
+
+    var isIntRow: Bool {
+        switch self {
+        case .spellOut:
+            return true
+        case .integer:
+            return true
+        default:
+            return false
+        }
     }
 }

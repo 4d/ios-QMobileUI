@@ -171,7 +171,7 @@ extension ActionParameter {
                 return SwitchRow(name).onRowEvent(eventCallback)
             case .account:
                 return AccountRow(name).onRowEvent(eventCallback)
-            case .spellOut, .integer:
+            case .spellOut, .integer: // See isIntRow()
                 return IntRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
             case .scientific, .percent, .energy, .mass:
                 return DecimalRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)

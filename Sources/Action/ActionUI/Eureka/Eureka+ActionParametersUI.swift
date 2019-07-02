@@ -59,7 +59,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         for parameter in parameters {
             values[parameter.name] = parameter.defaultValue(with: context)
         }
-        values = values.mapValues { ($0 as? AnyCodable)?.value ?? $0 }
+        values = values.compactMapValues { ($0 as? AnyCodable)?.value ?? $0 }
         self.form.setValues(values)
     }
 
