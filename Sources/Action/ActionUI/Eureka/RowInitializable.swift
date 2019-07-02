@@ -16,38 +16,38 @@ protocol RowInitializable {
     func rowInitialize()
 }
 
-extension DateRow {
+extension DateRow: RowInitializable {
     /// Set current date.
     func rowInitialize() {
         self.value = Date()
     }
 }
 
-extension _TimeIntervalFieldRow {
+extension _TimeIntervalFieldRow: RowInitializable {
     func rowInitialize() {
         self.value = 0
     }
 }
 
-extension CheckRow {
+extension CheckRow: RowInitializable {
     func rowInitialize() {
         self.value = false
     }
 }
 
-extension SwitchRow {
+extension SwitchRow: RowInitializable {
     func rowInitialize() {
         self.value = false
     }
 }
 
-extension StepperRow {
+extension StepperRow: RowInitializable {
     func rowInitialize() {
         self.value = self.cell?.stepper?.minimumValue ?? 0.0
     }
 }
 
-extension SliderRow {
+extension SliderRow: RowInitializable {
     func rowInitialize() {
         self.value = self.cell?.slider?.minimumValue ?? 0.0
     }
