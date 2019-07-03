@@ -305,7 +305,7 @@ extension Prephirences {
                 return instance?["kFactoryReset"] as? Bool ?? false
             }
             set {
-                instance?.set(false, forKey: "kFactoryReset")
+                instance?.set(newValue, forKey: "kFactoryReset")
             }
         }
     }

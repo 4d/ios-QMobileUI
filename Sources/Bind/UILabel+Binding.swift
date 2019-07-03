@@ -26,7 +26,7 @@ public extension UILabel {
         }
         set {
             // Set the value you want to display
-            self.text = text?.replacingOccurrences(of: ":", with: "/")
+            self.text = newValue?.replacingOccurrences(of: ":", with: "/")
         }
     }
     // MARK: - string
@@ -257,7 +257,7 @@ public extension UILabel {
             return integer
         }
         set {
-            integer = boolean
+            integer = newValue
         }
     }
 
@@ -502,7 +502,6 @@ public extension UILabel {
 
 // MARK: image
 
-import QMobileAPI
 import QMobileDataSync
 import Kingfisher
 extension UILabel {

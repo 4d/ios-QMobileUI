@@ -125,7 +125,7 @@ public class DataSource: NSObject {
             clearSectionNamesCache()
 
             var fetchRequest = self.fetchedResultsController.fetchRequest
-            fetchRequest.sortDescriptors = sortDescriptors
+            fetchRequest.sortDescriptors = newValue
 
             self.refresh()
         }

@@ -232,7 +232,7 @@ public extension UIButton {
             return integer
         }
         set {
-            integer = boolean
+            integer = newValue
         }
     }
 

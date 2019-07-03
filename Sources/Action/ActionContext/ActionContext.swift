@@ -43,7 +43,7 @@ struct ActionParametersKey {
 
 extension ActionParameter {
 
-    public func defaultValue(with context: ActionContext) -> Any? {
+    public func defaultValue(with context: ActionContext) -> Any? { // swiftlint:disable:this function_body_length
         if let value = self.default?.value {
             if let valueString = value as? String {
                 switch self.type {

@@ -31,7 +31,7 @@ extension UIViewController {
     #if TARGET_INTERFACE_BUILDER
     open var actionSheet: ActionSheet? {
         get { return nil }
-        set {}
+        set {} // swiftlint:disable:this unused_setter_value
     }
     #else
     open var actionSheet: ActionSheet? {

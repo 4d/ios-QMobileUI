@@ -103,9 +103,7 @@ extension UITableView: ActionSheetUI {
                 handle(false) // to dismiss immediatly or in completion handler of alertController
             }
         })
-        let oneHasImage = contextualActions.reduce(false) { result, contextualAction in
-            return result || contextualAction.image != nil
-        }
+        let oneHasImage = contextualActions.contains(where: { $0.image != nil })
         if oneHasImage {
             moreItem.image = .moreImage
         }

@@ -230,6 +230,7 @@ extension PasscodeField: UIKeyInput {
         get {
             return .numberPad
         }
+        // swiftlint:disable:next unused_setter_value
         set {}
     }
 
