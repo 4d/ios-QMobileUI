@@ -129,6 +129,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             if row.baseValue == nil, let row = row as? RowInitializable {
                 row.rowInitialize()
             }
+            if let updatableRow = row as? DetailHighlightedRow {
+                updatableRow.updateHighlighted()
+            }
         }
         if case .cellSetup = event {
             if let row = row as? RatingRow {

@@ -11,7 +11,7 @@ import Foundation
 import Eureka
 
 /// Protocol for row which must be initialized with a defaut value.
-protocol RowInitializable {
+protocol RowInitializable: BaseRowType {
     /// Set an init value.
     func rowInitialize()
 }
