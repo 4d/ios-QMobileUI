@@ -29,9 +29,9 @@ extension ActionParameter {
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
         if row is DecimalRow {
-            // row.validationOptions = .validatesOnBlur // ie. default one
+             row.validationOptions = .validatesOnBlur // ie. default one
         } else {
-            row.validationOptions = .validatesOnChange // issue with decimal row https://project.4d.com/issues/108712
+             row.validationOptions = .validatesOnChange // issue with decimal row https://project.4d.com/issues/108712
         }
         // Placeholder
         if let placeholder = self.placeholder {

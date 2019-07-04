@@ -138,6 +138,7 @@
 		48BC8571226F0C1500D548B2 /* UIAlertController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC856F226F0C1500D548B2 /* UIAlertController+ImagePicker.swift */; };
 		48BC8574226F0C8D00D548B2 /* UIAlertController+Picker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC8573226F0C8D00D548B2 /* UIAlertController+Picker.swift */; };
 		48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */; };
+		48D43CEF22CE48160013432C /* RowOfComparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D43CEE22CE48160013432C /* RowOfComparable.swift */; };
 		48D584631E7830E1006F56B5 /* QMobileUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 48D584611E7830E1006F56B5 /* QMobileUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D584711E7831B2006F56B5 /* DataSourceTests.swift */; };
 		48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */; };
@@ -168,7 +169,7 @@
 		48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
 		48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
 		48E5CEC222BBC7F30025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
-		48E655E0229EA6770060568B /* Eureka+RowRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655DF229EA6770060568B /* Eureka+RowRules.swift */; };
+		48E655E0229EA6770060568B /* RowOfEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655DF229EA6770060568B /* RowOfEquatable.swift */; };
 		48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */; };
 		48E655E5229EB2D40060568B /* LocationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E4229EB2D40060568B /* LocationRow.swift */; };
 		48E655E7229EB2ED0060568B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E6229EB2ED0060568B /* MapViewController.swift */; };
@@ -349,6 +350,7 @@
 		48BC856F226F0C1500D548B2 /* UIAlertController+ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ImagePicker.swift"; sourceTree = "<group>"; };
 		48BC8573226F0C8D00D548B2 /* UIAlertController+Picker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Picker.swift"; sourceTree = "<group>"; };
 		48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DetailsForm+DataSync.swift"; sourceTree = "<group>"; };
+		48D43CEE22CE48160013432C /* RowOfComparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowOfComparable.swift; sourceTree = "<group>"; };
 		48D5845E1E7830E1006F56B5 /* QMobileUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QMobileUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48D584611E7830E1006F56B5 /* QMobileUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QMobileUI.h; sourceTree = "<group>"; };
 		48D584621E7830E1006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -375,7 +377,7 @@
 		48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ValueTransformerKit.framework; path = Carthage/Build/iOS/ValueTransformerKit.framework; sourceTree = "<group>"; };
 		48E5CEC022BBC7E40025E692 /* Eureka.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Eureka.framework; path = ../../../../../../../../../Library/Caches/com.4d.mobile/sdk/Carthage/Build/iOS/Eureka.framework; sourceTree = "<group>"; };
-		48E655DF229EA6770060568B /* Eureka+RowRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+RowRules.swift"; sourceTree = "<group>"; };
+		48E655DF229EA6770060568B /* RowOfEquatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowOfEquatable.swift; sourceTree = "<group>"; };
 		48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+ActionParameter.swift"; sourceTree = "<group>"; };
 		48E655E4229EB2D40060568B /* LocationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRow.swift; sourceTree = "<group>"; };
 		48E655E6229EB2ED0060568B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -612,17 +614,15 @@
 		483190F22297F7960041B41A /* Eureka */ = {
 			isa = PBXGroup;
 			children = (
+				48D43CED22CE48020013432C /* RowType */,
 				483192512297F8000041B41A /* CustomRows */,
 				483190ED2297F4D40041B41A /* Eureka+ActionParametersUI.swift */,
-				48E655DF229EA6770060568B /* Eureka+RowRules.swift */,
 				48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */,
 				480A36FE22C276170019BC39 /* ChoiceList.swift */,
 				48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */,
 				48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */,
 				480B785422CA01900037C1D8 /* TapOutsideTableView.swift */,
 				480B785622CA01E90037C1D8 /* ActionFormSettings.swift */,
-				480B785822CA02160037C1D8 /* RowInitializable.swift */,
-				4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -865,6 +865,17 @@
 				48FB2CD31E93A22600F4F685 /* Prephirences.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		48D43CED22CE48020013432C /* RowType */ = {
+			isa = PBXGroup;
+			children = (
+				48E655DF229EA6770060568B /* RowOfEquatable.swift */,
+				48D43CEE22CE48160013432C /* RowOfComparable.swift */,
+				480B785822CA02160037C1D8 /* RowInitializable.swift */,
+				4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */,
+			);
+			path = RowType;
 			sourceTree = "<group>";
 		};
 		48D584541E7830E1006F56B5 = {
@@ -1300,6 +1311,7 @@
 			files = (
 				4846083C20AF07DD00EE4696 /* LoadingButton.swift in Sources */,
 				C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */,
+				48D43CEF22CE48160013432C /* RowOfComparable.swift in Sources */,
 				480A36FF22C276170019BC39 /* ChoiceList.swift in Sources */,
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
@@ -1395,7 +1407,7 @@
 				FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */,
 				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
 				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
-				48E655E0229EA6770060568B /* Eureka+RowRules.swift in Sources */,
+				48E655E0229EA6770060568B /* RowOfEquatable.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,
 				480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */,

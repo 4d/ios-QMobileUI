@@ -1,33 +1,14 @@
 //
-//  Eureka+RowRules.swift
+//  RowOfComparable.swift
 //  QMobileUI
 //
-//  Created by Eric Marchand on 29/05/2019.
+//  Created by Eric Marchand on 04/07/2019.
 //  Copyright © 2019 Eric Marchand. All rights reserved.
 //
 
 import Foundation
 
 import Eureka
-
-protocol RowOfEquatable: BaseRowType {
-    func setRequired(_ value: Bool)
-}
-extension RowOfEquatable {
-
-    func setRequired() {
-        setRequired(true)
-    }
-}
-
-extension RowOf: RowOfEquatable where T: Equatable {
-    func setRequired(_ value: Bool) {
-        self.remove(ruleWithIdentifier: "actionParameterRequired")
-        if value {
-            self.add(rule: RuleRequired(id: "actionParameterRequired"))
-        }
-    }
-}
 
 protocol RowOfComparable: BaseRowType {
     func setGreater(than value: Any?)
@@ -69,9 +50,4 @@ extension RowOf: RowOfComparable where T: Comparable {
             logger.debug("Wrong type for max \(value) \(type(of: value)) vs \(T.self)")
         }
     }
-}
-
-func onRowValidationTests<Row>(row: Row, _ callback: @escaping (_ cell: Row.Cell, _ row: Row) -> Void) where Row: BaseRow, Row: RowType {
-    row.validationOptions = ValidationOptions.validatesOnChange
-    row.onRowValidationChanged(callback)
 }
