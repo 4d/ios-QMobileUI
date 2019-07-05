@@ -29,6 +29,12 @@ public class ActionManager {
     init() {
         // default handlers
 
+        // Show log
+        append { result, _, _, _ in
+            logger.debug("Action result \(result.json)")
+            return true
+        }
+
         // Show message as info message
         append { result, _, _, _ in
             guard let statusText = result.statusText else { return false }

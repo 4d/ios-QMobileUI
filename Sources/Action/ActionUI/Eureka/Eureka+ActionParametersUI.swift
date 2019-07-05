@@ -327,6 +327,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                             }
                         }
                         self.refreshToDisplayErrors()
+                    } else {
+                        logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
                     }
                     promise.complete(result)
                 }

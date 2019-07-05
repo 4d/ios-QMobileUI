@@ -235,12 +235,21 @@ extension ApplicationDataSync: DataSyncDelegate {
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
         onForeground {
             if let detailForm = UIApplication.detailViewController {
-                if detailForm.record == nil {
-                    detailForm.dismiss(animated: true) {
-
+                if let formRecord = detailForm.record as? RecordBase {
+                    if let bindedRecord = detailForm.view?.bindTo.record as? Record {
+                        if formRecord != bindedRecord.store {
+                            detailForm.dismiss(animated: true) {
+                                logger.info("Close form with record deleted")
+                            }
+                        }
+                    } else {
+                       detailForm.view?.bindTo.record = formRecord
                     }
                 } else {
-                    detailForm.view?.bindTo.record = detailForm.record
+                    // dismiss no more record in table
+                    detailForm.dismiss(animated: true) {
+                        logger.info("Close form with no more records in table")
+                    }
                 }
             }
         }
