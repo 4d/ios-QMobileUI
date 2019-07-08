@@ -136,6 +136,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         if case .cellSetup = event {
             if let row = row as? RatingRow {
                 row.text = ""
+            } else if let row = row as? DateRow {
+                row.cell?.datePicker.timeZone = .greenwichMeanTime
             }
         }
     }

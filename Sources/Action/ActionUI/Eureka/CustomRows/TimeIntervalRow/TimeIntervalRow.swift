@@ -127,7 +127,9 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     open override func update() {
         super.update()
         selectionStyle = row.isDisabled ? .none : .default
-        datePicker.setDate(Date(timeInterval: row.value ?? 0), animated: false)
+        let timeInterval = row.value ?? 0
+        let date = Date(timeInterval: timeInterval)
+        datePicker.setDate(date, animated: false)
         datePicker.minimumDate = (row as? TimeIntervalPickerRowProtocol)?.minimumDate
         datePicker.maximumDate = (row as? TimeIntervalPickerRowProtocol)?.maximumDate
         if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
@@ -146,7 +148,6 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     override open var inputView: UIView? {
         if let value = row.value {
             let date = Date(timeInterval: value)
-            logger.debug("Set date \(date) to time picker \(datePicker) (value: \(value)")
             datePicker.setDate(date, animated: row is CountDownTimeRow)
         }
         return datePicker
@@ -154,8 +155,7 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
 
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let date = sender.date
-        let timeInterval = sender.countDownDuration
-          logger.debug("Date changed \(datePicker) \(date) \(date.timeInterval)")
+        let timeInterval = date.timeInterval
         row.value = timeInterval
         detailTextLabel?.text = row.displayValueFor?(row.value)
     }
