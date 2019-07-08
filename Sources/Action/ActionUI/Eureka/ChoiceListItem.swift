@@ -9,6 +9,7 @@
 import Foundation
 
 import struct QMobileAPI.AnyCodable
+import protocol QMobileAPI.ActionParameterEncodable
 
 /// Represent a choice in choice list
 struct ChoiceListItem: Equatable {
@@ -50,5 +51,11 @@ extension ChoiceListItem: CustomStringConvertible {
 
     var description: String {
         return "\(value)"
+    }
+}
+
+extension ChoiceListItem: ActionParameterEncodable {
+    func encodeForActionParameter() -> Any {
+        return self.key.value
     }
 }

@@ -145,14 +145,17 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
 
     override open var inputView: UIView? {
         if let value = row.value {
-            datePicker.setDate(Date(timeInterval: value), animated: row is CountDownTimeRow)
+            let date = Date(timeInterval: value)
+            logger.debug("Set date \(date) to time picker \(datePicker) (value: \(value)")
+            datePicker.setDate(date, animated: row is CountDownTimeRow)
         }
         return datePicker
     }
 
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let date = sender.date
-        let timeInterval = date.timeInterval
+        let timeInterval = sender.countDownDuration
+          logger.debug("Date changed \(datePicker) \(date) \(date.timeInterval)")
         row.value = timeInterval
         detailTextLabel?.text = row.displayValueFor?(row.value)
     }

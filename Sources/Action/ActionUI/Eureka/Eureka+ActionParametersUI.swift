@@ -276,15 +276,16 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
     }
 
-    func formValues() -> [String: Any?] {
-        var values = self.form.values()
-        //  check JSON encodable parameters, because we use old way to encode JSON (see Alamofire parameters encoding)  // TODO if update to Alamofire 5 , see if we can remove this code, and implement Codable instead on ChoiceListItem
-        for (key, value) in values {
-            if let choiceOption = value as? ChoiceListItem {
-                values[key] = choiceOption.key.value
-            }
+    /// Get form values.
+    func formValues() -> ActionParameters {
+        let values = self.form.values()
+        /// Remove nil values.
+        return values.reduce(ActionParameters()) { (dict, entry) in
+            guard let value = entry.1 else { return dict }
+            var dict = dict
+            dict[entry.0] = value
+            return dict
         }
-        return values
     }
 
     /// Send action to server, and manage result
