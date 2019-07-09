@@ -113,11 +113,14 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                         textAreaRow.textAreaHeight = .dynamic(initialTextViewHeight: height)
                         cell?.setup()
                         cell?.layoutIfNeeded()
-                        cell?.formViewController()?.tableView?.reloadRows(at: [row.indexPath!], with: .none)
+                        if let indexPath = row.indexPath {
+                            cell?.formViewController()?.tableView?.reloadRows(at: [indexPath], with: .none)
+                        }
+                        (cell as? TextAreaCell)?.textView.becomeFirstResponder()
                     }
                 } else {
                     // could not active this code becose reloading row will put row.isHighlighted = false
-                   /* if case .dynamic(let height) = textAreaRow.textAreaHeight {
+                    /* if case .dynamic(let height) = textAreaRow.textAreaHeight {
                         textAreaRow.textAreaHeight = .fixed(cellHeight: height)
                         cell?.setup()
                         cell?.layoutIfNeeded()
