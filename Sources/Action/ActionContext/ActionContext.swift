@@ -120,6 +120,12 @@ extension ActionParameter {
                         return value / 1000 // remove misslisecond to transform to timeInterval(seconde)
                     }
                 }
+                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+                    // find value in list
+                    if let value = choice.choice(for: AnyCodable(value)) {
+                        return value
+                    }
+                }
                 return value
             }
             logger.warning("Default field defined \(field) but not found in context \(context)")
