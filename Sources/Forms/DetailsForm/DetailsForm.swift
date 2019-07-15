@@ -32,7 +32,7 @@ extension DetailsForm {
     // MARK: model info from DataSource
 
     /// The source where to retrieve record information.
-    fileprivate var entry: DataSourceEntry? {
+    var entry: DataSourceEntry? {
         return view.table
     }
 

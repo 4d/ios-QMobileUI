@@ -37,13 +37,31 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     fileprivate func initNavigationBar() {
-        // let backItem = UIBarButtonItem(image: UIImage(named: "previous"), style: .plain, target: self, action: #selector(cancelAction))
-        // let backItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelAction)) // LOCALIZE
-        let cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
+        let style = self.builder?.action.style
+        let styleProperties = style?.properties
+
+        let cancelItem: UIBarButtonItem
+        if let dismissLabel = styleProperties?["dismissLabel"] as? String ?? styleProperties?["cancelLabel"] as? String {
+            cancelItem = UIBarButtonItem(title: dismissLabel, style: .plain, target: self, action: #selector(cancelAction))
+        } else {
+            cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
+
+        }
         self.navigationItem.add(where: .left, item: cancelItem)
 
-        // let doneItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneAction)) // LOCALIZE
-        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneAction))
+        let doneItem: UIBarButtonItem
+        if let doneLabel = styleProperties?["doneLabel"] as? String {
+            switch doneLabel.lowercased() {
+            case "save":
+                doneItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(doneAction))
+            case "reply":
+                doneItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(doneAction))
+            default:
+                doneItem = UIBarButtonItem(title: doneLabel, style: .done, target: self, action: #selector(doneAction))
+            }
+        } else {
+            doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneAction))
+        }
         self.navigationItem.add(where: .right, item: doneItem)
 
         self.navigationItem.title = self.builder?.action.preferredShortLabel
@@ -282,48 +300,97 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     /// Get form values.
-    func formValues() -> ActionParameters {
+    func formValues(completionHandler: @escaping (ActionParameters) -> Void) {
         let values = self.form.values()
         /// Remove nil values.
-        return values.reduce(ActionParameters()) { (dict, entry) in
+        var parameters = values.reduce(ActionParameters()) { (dict, entry) in
             guard let value = entry.1 else { return dict }
             var dict = dict
             dict[entry.0] = value
             return dict
         }
+
+        let images = parameters.compactMapValues { $0 as? UIImage }
+        if images.isEmpty {
+            // No image, return immediatly
+            completionHandler(parameters)
+        } else {
+            // upload images
+            var itemDone = 0
+            for (key, image) in images {
+                if let pngData = image.pngData() {
+                    _ = APIManager.instance.upload(data: pngData, image: true, mimeType: "image/png") { result in
+                        switch result {
+                        case .success(let uploadResult):
+                            logger.debug("Image uploaded \(uploadResult)")
+
+                            parameters[key] = uploadResult
+                        case .failure(let error):
+                            logger.warning("Failed to upload image \(error)")
+                            parameters.removeValue(forKey: key) // Not convertible
+                        }
+                        itemDone += 1
+                        if itemDone == images.count {
+                            completionHandler(parameters)
+                        }
+                    }
+                } else {
+                    parameters.removeValue(forKey: key) // Not convertible
+                }
+            }
+        }
     }
 
     /// Send action to server, and manage result
     func send(completionHandler: @escaping (Result<ActionResult, APIError>) -> Void) {
-        /*for row in self.form.rows {
-         row.removeValidationErrorRows()
-         }*/
-
-        let values = formValues()
-
-        self.builder?.success(with: values as ActionParameters) { result in
-            let promise = Promise<ActionResult, APIError>()
-            completionHandler(result)
-            switch result {
-            case .success(let actionResult):
-                if actionResult.success || actionResult.close {
-                    onForeground {
-                        self.dismiss(animated: true) {
-                            logger.debug("Action parameters form dismissed")
-                            promise.complete(result)
-                        }
-                    }
-                } else {
-                    if let errors = actionResult.errors {
-                        var errorsByComponents: [String: [String]] = [:]
-                        for error in errors {
-                            if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
-                                if errorsByComponents[tag] == nil {
-                                    errorsByComponents[tag] = []
-                                }
-                                errorsByComponents[tag]?.append(message)
+        formValues { values in
+            self.builder?.success(with: values) { result in
+                let promise = Promise<ActionResult, APIError>()
+                completionHandler(result)
+                switch result {
+                case .success(let actionResult):
+                    if actionResult.success || actionResult.close {
+                        onForeground {
+                            self.dismiss(animated: true) {
+                                logger.debug("Action parameters form dismissed")
+                                promise.complete(result)
                             }
                         }
+                    } else {
+                        if let errors = actionResult.errors {
+                            var errorsByComponents: [String: [String]] = [:]
+                            for error in errors {
+                                if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
+                                    if errorsByComponents[tag] == nil {
+                                        errorsByComponents[tag] = []
+                                    }
+                                    errorsByComponents[tag]?.append(message)
+                                }
+                            }
+
+                            for (key, restErrors) in errorsByComponents {
+                                if let row = self.form.rowBy(tag: key) {
+                                    row.remoteErrorsString = restErrors
+                                } else {
+                                    logger.warning("Unknown field returned \(key) to display associated errors")
+                                }
+                            }
+                            self.refreshToDisplayErrors()
+                        } else {
+                            logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
+                        }
+                        promise.complete(result)
+                    }
+                case .failure(let error):
+                    logger.debug("Errors from 4d server")
+                    if let restErrors = error.restErrors {
+                        /*if let statusText = restErrors.statusText {
+
+                         }*/
+
+                        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+                            return [error.componentSignature: error.message]
+                        })
 
                         for (key, restErrors) in errorsByComponents {
                             if let row = self.form.rowBy(tag: key) {
@@ -333,34 +400,11 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                             }
                         }
                         self.refreshToDisplayErrors()
-                    } else {
-                        logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
                     }
                     promise.complete(result)
                 }
-            case .failure(let error):
-                logger.debug("Errors from 4d server")
-                if let restErrors = error.restErrors {
-                    /*if let statusText = restErrors.statusText {
-
-                     }*/
-
-                    let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
-                        return [error.componentSignature: error.message]
-                    })
-
-                    for (key, restErrors) in errorsByComponents {
-                        if let row = self.form.rowBy(tag: key) {
-                            row.remoteErrorsString = restErrors
-                        } else {
-                            logger.warning("Unknown field returned \(key) to display associated errors")
-                        }
-                    }
-                    self.refreshToDisplayErrors()
-                }
-                promise.complete(result)
+                return promise.future
             }
-            return promise.future
         }
     }
 
