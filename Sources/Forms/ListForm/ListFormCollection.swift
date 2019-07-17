@@ -123,11 +123,7 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
         entry.indexPath = indexPath
 
         // pass to view controllers and views
-        if let navigation = segue.destination as? UINavigationController {
-            navigation.navigationBar.table = entry
-        }
-        let destination = segue.destination.firstController
-        destination.view.table = entry
+        segue.destination.prepare(with: entry)
 
         // listen to index path change, to scroll table to new selected record
         entry.add(indexPathObserver: self)

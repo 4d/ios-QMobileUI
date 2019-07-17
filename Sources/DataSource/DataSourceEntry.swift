@@ -22,6 +22,9 @@ public class DataSourceEntry: NSObject {
     /// The data source which represent a table
     open var dataSource: DataSource
 
+    /// The data source which represent a table
+    @objc dynamic open var record: BindedRecord?
+
     /// The record index.
     @objc dynamic open var indexPath: IndexPath? {
         willSet {
@@ -30,6 +33,7 @@ public class DataSourceEntry: NSObject {
             }
         }
         didSet {
+            record = recordFromSource
             for indexPathObserver in indexPathObservers {
                 indexPathObserver.didChangeIndexPath(from: oldValue, to: indexPath)
             }
@@ -42,6 +46,7 @@ public class DataSourceEntry: NSObject {
             indexPathObservers.append(indexPathObserver)
         }
     }
+
     func remove(indexPathObserver: IndexPathObserver) {
         indexPathObservers = indexPathObservers.filter { !self.isEqual($0) }
     }
@@ -53,7 +58,7 @@ public class DataSourceEntry: NSObject {
 
     // MARK: accessible property
 
-    @objc dynamic open var record: BindedRecord? {
+    open var recordFromSource: BindedRecord? {
         guard let indexPath = indexPath else {
             return nil
         }
@@ -81,6 +86,7 @@ public class DataSourceEntry: NSObject {
         return !self.dataSource.isEmpty
     }
 
+    // MARK: IndexPath
     @objc dynamic open var section: Int {
         return self.indexPath?.section ?? 0
     }
@@ -147,7 +153,25 @@ public class DataSourceEntry: NSObject {
 }
 
 extension DataSource {
+    /// Create a simple entry from this data source.
     func entry() -> DataSourceEntry {
         return DataSourceEntry(dataSource: self)
+    }
+}
+
+// MARK: UI
+protocol DataSourceEntryUI {
+
+    /// Fill this UI with this entry data
+    func prepare(with entry: DataSourceEntry)
+}
+
+extension UIViewController: DataSourceEntryUI {
+    func prepare(with entry: DataSourceEntry) {
+        if let navigation = self as? UINavigationController {
+            navigation.navigationBar.table = entry
+        }
+        let destination = self.firstController // self or embedded one in nav
+        destination.view.table = entry
     }
 }
