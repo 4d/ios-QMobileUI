@@ -19,7 +19,7 @@ import Prephirences
 @IBDesignable
 open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:this type_body_length
 
-    public var dataSource: DataSource! = nil
+    public var dataSource: DataSource?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -76,9 +76,9 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
         onLoad()
         logger.info("ListForm for '\(self.tableName)' table loaded.")
 
-        self.dataSource.performFetch()
+        self.dataSource?.performFetch()
         logger.verbose {
-            return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
+            return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
         }
     }
 
@@ -117,7 +117,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
     // MARK: - table view delegate
   override open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // super.tableView(tableView, didSelectRowAt: indexPath)
-        guard let record = dataSource.record(at: indexPath) else { return }
+        guard let record = dataSource?.record(at: indexPath) else { return }
         onClicked(record: record, at: indexPath)
     }
 
@@ -134,7 +134,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
     // MARK: - UITableViewUISwipeActionsConfigurationRowAction
     // or leadingSwipeActionsConfigurationForRowAt?
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let context = dataSource.entry()
+        guard let context = dataSource?.entry() else { return nil }
         context.indexPath = indexPath
         return tableView.swipeActionsConfiguration(with: context, at: indexPath)
     }
@@ -146,7 +146,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
         // get current index
         guard let indexPath = self.indexPath(for: sender) else { return }
         // create a new entry to bind
-        let entry = self.dataSource.entry()
+        guard let entry = self.dataSource?.entry() else { return }
         entry.indexPath = indexPath
 
         // pass to view controllers and views
@@ -217,9 +217,9 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
             sectionNameKeyPath: self.sectionFieldname,
             sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
-        dataSource.showSectionBar = showSectionBar
+        dataSource?.showSectionBar = showSectionBar
 
-        dataSource.tableConfigurationBlock = { [weak self] cell, record, index in
+        dataSource?.tableConfigurationBlock = { [weak self] cell, record, index in
             self?.configureListFormView(cell, record, index)
 
             if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {
@@ -227,10 +227,10 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
             }
         }
 
-        dataSource.delegate = self
+        dataSource?.delegate = self
 
         // self.tableView.delegate = self
-        self.view.table = self.dataSource.entry()
+        self.view.table = self.dataSource?.entry()
     }
 
     private func initComponents() {
@@ -449,7 +449,7 @@ extension ListFormTable {
 
     /// Scroll to the bottom of this list form.
     @IBAction open func scrollToLastRow(_ sender: Any?) {
-        if let indexPath = self.dataSource.lastIndexPath {
+        if let indexPath = self.dataSource?.lastIndexPath {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }

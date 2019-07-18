@@ -146,23 +146,23 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-        guard let entry = self.entry else { return }
+        //guard let entry = self.entry else { return }
         //self.record
 
-        guard let view = sender as? UIView else { return } // our view or button which contains information our relation field (XXX add a protocol?)
+        //guard let view = sender as? UIView else { return } // our view or button which contains information our relation field (XXX add a protocol?)
 
-        let keyPath = "" // get from sender
-        let relationEntry = DataSourceEntryRelation(entry: entry, keyPath: keyPath)
+        //let keyPath = "" // get from sender
+        //let relationEntry = DataSourceEntryRelation(entry: entry, keyPath: keyPath)
 
         // by pass navigation controller if any to get real controller
         let destination = segue.destination.firstController
 
         if let listForm = destination as? ListForm { // to Many relation
 
-        } else if let detailForm = destination as? DetailsForm { // to 1 relation
+        } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
 
            // detailForm.entry = relationEntry
-        }
+        }*/
     }
 
 }

@@ -18,7 +18,7 @@ import SwiftMessages
 @IBDesignable
 open class ListFormCollection: UICollectionViewController, ListForm { //swiftlint:disable:this type_body_length
 
-    public var dataSource: DataSource! = nil
+    public var dataSource: DataSource?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -75,9 +75,9 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
         onLoad()
         logger.info("ListForm for '\(self.tableName)' table loaded.")
 
-        self.dataSource.performFetch()
+        self.dataSource?.performFetch()
         logger.verbose {
-            return "source: \(String(describing: self.dataSource)) , count: \(self.dataSource.count)"
+            return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
         }
     }
 
@@ -119,7 +119,7 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
             return
         }
         // create a new entry to bind
-        let entry = self.dataSource.entry()
+        guard let entry = self.dataSource?.entry() else { return }
         entry.indexPath = indexPath
 
         // pass to view controllers and views
@@ -151,7 +151,7 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
         if onClickShowDetails {
             self.performSegue(withIdentifier: selectedSegueIdentifier, sender: self.collectionView(collectionView, cellForItemAt: indexPath))
         }
-        if let record = dataSource.record(at: indexPath) {
+        if let record = dataSource?.record(at: indexPath) {
             onClicked(record: record, at: indexPath)
         }
     }
@@ -208,16 +208,16 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
                                                                           sectionNameKeyPath: self.sectionFieldname,
                                                                           sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
-        dataSource.showSectionBar = showSectionBar
-        dataSource.performFetch()
+        dataSource?.showSectionBar = showSectionBar
+        dataSource?.performFetch()
 
-        dataSource.collectionConfigurationBlock = { [unowned self] cell, record, index in
+        dataSource?.collectionConfigurationBlock = { [unowned self] cell, record, index in
             self.configureListFormView(cell, record, index)
         }
 
-        self.view.table = self.dataSource.entry()
+        self.view.table = self.dataSource?.entry()
 
-        dataSource.delegate = self
+        dataSource?.delegate = self
     }
 
     fileprivate func initComponents() {
@@ -437,7 +437,7 @@ extension ListFormCollection {
 
     /// Scrol to the bottom of the current list form
     @IBAction open func scrollToLastRow(_ sender: Any?) {
-        if let indexPath = self.dataSource.lastIndexPath {
+        if let indexPath = self.dataSource?.lastIndexPath {
             self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
         }
     }

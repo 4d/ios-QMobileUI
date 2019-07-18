@@ -11,7 +11,7 @@ import QMobileDataStore
 
 public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
 
-    var dataSource: DataSource! { get }
+    var dataSource: DataSource? { get }
 
     var searchActive: Bool { get }
     var searchableField: String { get }

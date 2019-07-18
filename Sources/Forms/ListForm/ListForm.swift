@@ -15,7 +15,7 @@ import QMobileDataSync
 public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form {
 
     var tableName: String { get }
-    var dataSource: DataSource! { get }
+    var dataSource: DataSource? { get }
 }
 
 let searchController = UISearchController(searchResultsController: nil)
@@ -23,10 +23,9 @@ extension ListForm {
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
         // Give view information about records, let binding fill the UI components
-        let entry = self.dataSource.entry()
-        entry.indexPath = indexPath
+        let entry = self.dataSource?.entry()
+        entry?.indexPath = indexPath
         view.table = entry
-        // view.record = record
     }
 
     var defaultTableName: String {
@@ -42,14 +41,14 @@ extension ListForm {
     }
 
     public var firstRecord: Record? {
-        return dataSource.record(at: IndexPath.firstRow)
+        return dataSource?.record(at: IndexPath.firstRow)
     }
 
     public var lastRecord: Record? {
-        guard let index = dataSource.lastIndexPath else {
+        guard let index = dataSource?.lastIndexPath else {
             return nil
         }
-        return dataSource.record(at: index)
+        return dataSource?.record(at: index)
     }
 
 }
