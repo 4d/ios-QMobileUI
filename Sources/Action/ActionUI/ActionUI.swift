@@ -21,13 +21,13 @@ public protocol ActionUI {
 }
 
 /// Builder class to force cast
-struct ActionUIBuilder {
-    static func build<T>(_ type: T.Type, from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
+public struct ActionUIBuilder {
+    public static func build<T>(_ type: T.Type, from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> T? where T: ActionUI {
         return type.build(from: action, context: context, handler: handler) as? T
     }
 
     /// Provide an image for the passed action.
-    static func actionImage(for action: Action) -> UIImage? {
+    public static func actionImage(for action: Action) -> UIImage? {
         guard let icon = action.icon else {
             return nil
         }
@@ -35,7 +35,7 @@ struct ActionUIBuilder {
     }
 
     /// Provide a color for the passed action.
-    static func actionColor(for action: Action) -> UIColor? {
+    public static func actionColor(for action: Action) -> UIColor? {
         let defaultColor: UIColor? = nil
         guard let style = action.style else {
             return defaultColor

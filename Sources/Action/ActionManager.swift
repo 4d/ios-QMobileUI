@@ -144,7 +144,7 @@ public class ActionManager {
 
     /// Execute the action.
     /// If there is parameters show a form.
-    func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
+    public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
             // Execute action without any parameters
             executeAction(action, actionUI, context, nil /*without parameters*/, nil)
