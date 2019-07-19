@@ -59,7 +59,7 @@ public class PasscodeField: UIControl {
 
     }
 
-    @IBInspectable public var dashColor: UIColor = UIColor.gray {
+    @IBInspectable public var dashColor: UIColor = UIColor.systemGray {
         didSet {
             if oldValue != dashColor {
                 configureDigitLabels()
@@ -67,7 +67,7 @@ public class PasscodeField: UIControl {
         }
     }
 
-    @IBInspectable public var textColor: UIColor = UIColor.black {
+    @IBInspectable public var textColor: UIColor = UIColor.label {
         didSet {
             if oldValue != textColor {
                 configureDigitLabels()
@@ -75,7 +75,7 @@ public class PasscodeField: UIControl {
         }
     }
 
-    @IBInspectable public var dashBackColor: UIColor = UIColor.green {
+    @IBInspectable public var dashBackColor: UIColor = UIColor.systemGreen {
         didSet {
             if oldValue != dashBackColor {
                 configureDigitLabels()
@@ -83,7 +83,7 @@ public class PasscodeField: UIControl {
         }
     }
 
-    @IBInspectable public var backColor: UIColor = UIColor.yellow {
+    @IBInspectable public var backColor: UIColor = UIColor.systemYellow {
         didSet {
             if oldValue != backColor {
                 configureDigitLabels()

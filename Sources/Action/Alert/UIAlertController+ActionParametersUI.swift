@@ -44,7 +44,7 @@ extension UIAlertController: ActionParametersUI {
                 textField.becomeFirstResponder()
 
                 textField.borderWidth = 1
-                textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+                textField.borderColor = UIColor.systemGray2.withAlphaComponent(0.5)
                 textField.layer.cornerRadius = 8
                 textField.backgroundColor = nil
                 textField.textColor = .black

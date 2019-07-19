@@ -130,7 +130,7 @@ class ActionParametersController: UIViewController, ActionParametersUI {
             let textField = AlertTextField(frame: frame)
             textField.layer.borderWidth = 1
             textField.layer.cornerRadius = 8
-            textField.borderColor = UIColor.lightGray.withAlphaComponent(0.5)
+            textField.borderColor = UIColor.systemGray2.withAlphaComponent(0.5)
             textField.backgroundColor = nil
             textField.action { _ in
                 self.actionParametersValue[parameter.name] = textField.text

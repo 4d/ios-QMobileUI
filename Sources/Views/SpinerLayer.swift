@@ -9,7 +9,7 @@ import UIKit
 
 open class SpinerLayer: CAShapeLayer {
 
-    open var spinnerColor: UIColor = .white {
+    open var spinnerColor: UIColor = .systemBackground {
         didSet {
             strokeColor = spinnerColor.cgColor
         }

@@ -114,7 +114,7 @@ open class PlaceholderTextView: UITextView {
         }
     }
 
-    @IBInspectable open var placeholderColor: UIColor = .greyPlaceholder {
+    @IBInspectable open var placeholderColor: UIColor = .systemGray3 {
         didSet {
             configurePlaceholder()
         }

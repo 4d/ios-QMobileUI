@@ -62,12 +62,12 @@ open class LogForm: UIViewController {
 
     lazy var colorsFromLevel: [XCGLogger.Level: [NSAttributedString.Key: Any]?] = {
         var mapAttributes: [XCGLogger.Level: [NSAttributedString.Key: Any]?] = [:]
-        mapAttributes[.info] = [.foregroundColor: UIColor.black]
-        mapAttributes[.debug] = [.foregroundColor: UIColor.blue]
-        mapAttributes[.error] = [.foregroundColor: UIColor.red]
+        mapAttributes[.info] = [.foregroundColor: UIColor.label]
+        mapAttributes[.debug] = [.foregroundColor: UIColor.systemBlue]
+        mapAttributes[.error] = [.foregroundColor: UIColor.systemRed]
         mapAttributes[.severe] = [.foregroundColor: UIColor.brown]
-        mapAttributes[.warning] = [.foregroundColor: UIColor.orange]
-        mapAttributes[.verbose] = [.foregroundColor: UIColor.lightGray]
+        mapAttributes[.warning] = [.foregroundColor: UIColor.systemOrange]
+        mapAttributes[.verbose] = [.foregroundColor: UIColor.systemGray2]
         return mapAttributes
     }()
 

@@ -13,9 +13,9 @@ import IBAnimatable
 open class CircleProgressBar: UIView {
 
     @IBInspectable var percent: CGFloat = 0.90
-    @IBInspectable var barColor: UIColor = .blue
+    @IBInspectable var barColor: UIColor = .systemBlue
     @IBInspectable var bgColor: UIColor = .clear
-    @IBInspectable var shadownColor: UIColor = .black
+    @IBInspectable var shadownColor: UIColor = .label
     @IBInspectable var thickness: CGFloat = 20
     @IBInspectable var bgThickness: CGFloat = 20
     @IBInspectable var isHalfBar: Bool = false
