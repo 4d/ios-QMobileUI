@@ -46,7 +46,7 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
         let layer = CAShapeLayer()
         layer.bounds = CGRect(x: 0, y: 0, width: self.width, height: self.height)
         layer.path = self.ellipse.cgPath
-        layer.fillColor = UIColor.systemGray.cgColor
+        layer.fillColor = ColorCompatibility.systemGray.cgColor
         layer.fillRule = .nonZero
         layer.lineCap = .butt
         layer.lineDashPattern = nil
@@ -54,7 +54,7 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
         layer.lineJoin = .miter
         layer.lineWidth = 1.0
         layer.miterLimit = 10.0
-        layer.strokeColor = UIColor.systemGray.cgColor
+        layer.strokeColor = ColorCompatibility.systemGray.cgColor
         return layer
         }()
 

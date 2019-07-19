@@ -35,7 +35,7 @@ import UIKit
     }
 
     /// A UIColor value that determines text color of the placeholder label
-    @IBInspectable dynamic open var placeholderColor: UIColor = UIColor.systemGray2 {
+    @IBInspectable dynamic open var placeholderColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             updatePlaceholder()
         }
@@ -69,28 +69,28 @@ import UIKit
     }
 
     /// A UIColor value that determines the text color of the title label when in the normal state
-    @IBInspectable dynamic open var titleColor: UIColor = .systemGray {
+    @IBInspectable dynamic open var titleColor: UIColor = ColorCompatibility.systemGray {
         didSet {
             configureTitleColor()
         }
     }
 
     /// A UIColor value that determines the color of the bottom line when in the normal state
-    @IBInspectable dynamic open var lineColor: UIColor = .systemGray2 {
+    @IBInspectable dynamic open var lineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
     }
 
     /// A UIColor value that determines the color used for the title label and line when the error message is not `nil`
-    @IBInspectable dynamic open var errorColor: UIColor = .systemRed {
+    @IBInspectable dynamic open var errorColor: UIColor = ColorCompatibility.systemRed {
         didSet {
             configureColors()
         }
     }
 
     /// A UIColor value that determines the color used for the title label and line when text field is disabled
-    @IBInspectable dynamic open var disabledColor: UIColor = .systemGray5 {
+    @IBInspectable dynamic open var disabledColor: UIColor = ColorCompatibility.systemGray5 {
         didSet {
             configureControl()
             updatePlaceholder()
@@ -98,14 +98,14 @@ import UIKit
     }
 
     /// A UIColor value that determines the text color of the title label when editing
-    @IBInspectable dynamic open var selectedTitleColor: UIColor = .systemGray2 {
+    @IBInspectable dynamic open var selectedTitleColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureTitleColor()
         }
     }
 
     /// A UIColor value that determines the color of the line in a selected state
-    @IBInspectable dynamic open var selectedLineColor: UIColor = .systemGray2 {
+    @IBInspectable dynamic open var selectedLineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
