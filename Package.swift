@@ -18,12 +18,12 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "http://srv-git:3000/qmobile/QMobileAPI.git" , .revision("79bc3133cfeffb07bb3a287e813485ca2b5f6e03")),
-        // .package(url: "http://srv-git:3000/qmobile/QMobileDataStore.git" , .revision("afe11ee8ebaf2dc5f50cac05d1048ab05cad71ee")),
-        // .package(url: "http://srv-git:3000/qmobile/QMobileDataSync.git" , .revision("705843e457261833669a92689b8d0466b7c11b41")),
+        .package(url: "http://srv-git:3000/qmobile/QMobileAPI.git" , .revision("HEAD")),
+        .package(url: "http://srv-git:3000/qmobile/QMobileDataStore.git" , .revision("HEAD")),
+        .package(url: "http://srv-git:3000/qmobile/QMobileDataSync.git" , .revision("HEAD")),
 
-        .package(url: "https://github.com/phimage/CallbackURLKit.git" , .revision("736aece485957c4846db97bb882165e1e394adf0")), // Requires macOS(.v10_14)
-        .package(url: "https://github.com/nvzqz/FileKit.git" , .revision("48b5ddb287f131a5c628badc819b880453f94449")),
+        .package(url: "https://github.com/phimage/CallbackURLKit.git" , .revision("HEAD")), // Requires macOS(.v10_14)
+        .package(url: "https://github.com/nvzqz/FileKit.git" , .revision("48b5ddb287f131a5c628badc819b880453f94449")), // HEAD
         .package(url: "https://github.com/antitypical/Result.git" , from: "4.1.0"),
         .package(url: "https://github.com/DaveWoodCom/XCGLogger.git" , from: "7.0.0"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git" , from: "0.9.9"),
@@ -45,8 +45,8 @@ let package = Package(
             name: "QMobileUI",
             dependencies: [
                 "QMobileAPI",
-                // "QMobileDataStore",
-                // "QMobileDataSync",
+                "QMobileDataStore",
+                "QMobileDataSync",
                 "CallbackURLKit",
                 "FileKit",
                 "Result",
