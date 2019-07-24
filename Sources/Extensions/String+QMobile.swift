@@ -19,18 +19,12 @@ extension String {
     }
 
     var htmlToAttributedString: NSAttributedString {
-        do {
-            if let data = data(using: .utf8) {
-                let string = try NSAttributedString(data: data,
-                                                    options: [.documentType: NSAttributedString.DocumentType.html,
-                                                              .characterEncoding: String.Encoding.utf8],
-                                                    documentAttributes: nil)
-                return string
-            }
-        } catch {
-            // CLEAN Ignore (bad practice) ignoring exception
-        }
-        return NSAttributedString(string: self)
+        guard let data = data(using: .utf8) else { return NSAttributedString(string: self) }
+
+        return (try? NSAttributedString(data: data,
+                                       options: [.documentType: NSAttributedString.DocumentType.html,
+                                                 .characterEncoding: String.Encoding.utf8],
+                                       documentAttributes: nil)) ?? NSAttributedString(string: self)
     }
 
     var camelFirst: String {

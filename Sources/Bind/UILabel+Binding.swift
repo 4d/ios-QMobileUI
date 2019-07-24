@@ -498,6 +498,16 @@ public extension UILabel {
             self.text = newValue?.uppercased()
         }
     }
+
+    @objc dynamic var htmlText: String? {
+        get {
+            return self.text // N.B. no reverse transformation
+        }
+        set {
+            self.attributedText = newValue?.htmlToAttributedString
+        }
+    }
+
 }
 
 // MARK: image
