@@ -18,7 +18,10 @@ import SwiftMessages
 @IBDesignable
 open class ListFormCollection: UICollectionViewController, ListForm { //swiftlint:disable:this type_body_length
 
-    public var dataSource: DataSource?
+    public var dataSource: DataSource? {
+        return collectionDataSource
+    }
+    public var collectionDataSource: CollectionDataSource?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -207,11 +210,11 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
                                                                           sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
-        dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
+        collectionDataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         dataSource?.showSectionBar = showSectionBar
         dataSource?.performFetch()
 
-        dataSource?.collectionConfigurationBlock = { [unowned self] cell, record, index in
+        collectionDataSource?.collectionConfigurationBlock = { [unowned self] cell, record, index in
             self.configureListFormView(cell, record, index)
         }
 

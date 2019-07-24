@@ -144,8 +144,8 @@
 		48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D5845E1E7830E1006F56B5 /* QMobileUI.framework */; };
 		48D584801E783447006F56B5 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847A1E783447006F56B5 /* DataSource.swift */; };
 		48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */; };
-		48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */; };
-		48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */; };
+		48D584821E783447006F56B5 /* CollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847C1E783447006F56B5 /* CollectionDataSource.swift */; };
+		48D584831E783447006F56B5 /* TableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847D1E783447006F56B5 /* TableDataSource.swift */; };
 		48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */; };
 		48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */; };
 		48DCEAE3212C528A00473910 /* ValueTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DCEAE2212C528A00473910 /* ValueTransformers.swift */; };
@@ -359,8 +359,8 @@
 		48D584731E7831B2006F56B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		48D5847A1E783447006F56B5 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+FetchedResultsControllerDelegate.swift"; sourceTree = "<group>"; };
-		48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UICollectionViewDataSource.swift"; sourceTree = "<group>"; };
-		48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UITableViewDataSource.swift"; sourceTree = "<group>"; };
+		48D5847C1E783447006F56B5 /* CollectionDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionDataSource.swift; sourceTree = "<group>"; };
+		48D5847D1E783447006F56B5 /* TableDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableDataSource.swift; sourceTree = "<group>"; };
 		48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceCollectionHeaderView.swift; sourceTree = "<group>"; };
 		48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceDelegate.swift; sourceTree = "<group>"; };
 		48DCEAE2212C528A00473910 /* ValueTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueTransformers.swift; sourceTree = "<group>"; };
@@ -983,8 +983,8 @@
 				48D5847A1E783447006F56B5 /* DataSource.swift */,
 				4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */,
 				48D5847B1E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift */,
-				48D5847D1E783447006F56B5 /* DataSource+UITableViewDataSource.swift */,
-				48D5847C1E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift */,
+				48D5847D1E783447006F56B5 /* TableDataSource.swift */,
+				48D5847C1E783447006F56B5 /* CollectionDataSource.swift */,
 				48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */,
 				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
 				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
@@ -1406,7 +1406,7 @@
 				480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */,
 				FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */,
 				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
-				48D584821E783447006F56B5 /* DataSource+UICollectionViewDataSource.swift in Sources */,
+				48D584821E783447006F56B5 /* CollectionDataSource.swift in Sources */,
 				48E655E0229EA6770060568B /* RowOfEquatable.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,
@@ -1436,7 +1436,7 @@
 				483192562297F8F10041B41A /* ImagePickerController.swift in Sources */,
 				4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
-				48D584831E783447006F56B5 /* DataSource+UITableViewDataSource.swift in Sources */,
+				48D584831E783447006F56B5 /* TableDataSource.swift in Sources */,
 				48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */,
 				48BC856E226F0B9300D548B2 /* UIAlertController+DataPicker.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,

@@ -19,7 +19,10 @@ import Prephirences
 @IBDesignable
 open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:this type_body_length
 
-    public var dataSource: DataSource?
+    public var dataSource: DataSource? {
+        return tableDataSource
+    }
+    public var tableDataSource: TableDataSource?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -216,10 +219,10 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
             tableName: self.tableName,
             sectionNameKeyPath: self.sectionFieldname,
             sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
-        dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
-        dataSource?.showSectionBar = showSectionBar
+        tableDataSource = TableDataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
+        tableDataSource?.showSectionBar = showSectionBar
 
-        dataSource?.tableConfigurationBlock = { [weak self] cell, record, index in
+        tableDataSource?.tableConfigurationBlock = { [weak self] cell, record, index in
             self?.configureListFormView(cell, record, index)
 
             if index.row == self?.tableView.indexPathsForVisibleRows?.last?.row ?? -1 {

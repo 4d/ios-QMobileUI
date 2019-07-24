@@ -1,5 +1,5 @@
 //
-//  DataSource+UICollectionViewDataSource.swift
+//  CollectionDataSource.swift
 //  QMobileUI
 //
 //  Created by Eric Marchand on 15/03/2017.
@@ -9,8 +9,115 @@
 import UIKit
 import QMobileDataStore
 
-extension DataSource: UICollectionViewDataSource {
+open class CollectionDataSource: DataSource, UICollectionViewDataSource {
 
+    // Dictionary to configurate the animations to be applied by each change type. If not configured `.automatic` will be used.
+    open var animations: [FetchedResultsChangeType: UITableView.RowAnimation]?
+    open var defaultRowAnimation: UITableView.RowAnimation = .automatic
+
+    /// The collection view
+    weak var collectionView: UICollectionView?
+
+    // Cache for collection view
+    internal lazy var collectionChanges: CollectionChanges = {
+        return CollectionChanges()
+    }()
+
+    // MARK: Init
+
+    /// Initialize data source for a collection view.
+    public init(collectionView: UICollectionView, fetchedResultsController: FetchedResultsController, cellIdentifier: String? = nil) {
+        super.init(fetchedResultsController: fetchedResultsController, cellIdentifier: cellIdentifier)
+        self.collectionView = collectionView
+        self.collectionView?.dataSource = self
+
+        self.collectionView?.register(DataSourceCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: DataSourceCollectionViewHeader.Identifier)
+    }
+    deinit {
+        self.collectionView?.dataSource = nil
+        self.fetchedResultsController.delegate = nil
+    }
+    // MARK: sections
+
+    public override func onWillFetch() {
+        collectionChanges.cachedSectionNames.removeAll()
+    }
+
+    public override func sectionChange(at sectionIndex: Int, for type: FetchedResultsChangeType) {
+        if let collectionView = self.collectionView {
+            sectionChange(in: collectionView, for: type, at: sectionIndex)
+        }
+    }
+    fileprivate func sectionChange(in collectionView: UICollectionView, for type: FetchedResultsChangeType, at sectionIndex: Int) {
+        onWillFetch()
+        switch type {
+        case .insert, .delete:
+            if var indexSet = collectionChanges.sectionChanges[type] {
+                indexSet.insert(sectionIndex)
+                collectionChanges.sectionChanges[type] = indexSet
+            } else {
+                collectionChanges.sectionChanges[type] = IndexSet(integer: sectionIndex)
+            }
+        case .move, .update:
+            break
+        }
+    }
+    /// collection change for collection view
+    fileprivate func didChangeRecord(_ record: Record, in collectionView: UICollectionView, at indexPath: IndexPath?, for type: FetchedResultsChangeType, _ newIndexPath: IndexPath?) {
+        var changeSet = collectionChanges.objectChanges[type] ?? Set<IndexPath>()
+
+        switch type {
+        case .insert:
+            if let newIndexPath = newIndexPath {
+                changeSet.insert(newIndexPath)
+                collectionChanges.objectChanges[type] = changeSet
+            }
+        case .delete, .update:
+            if let indexPath = indexPath {
+                changeSet.insert(indexPath)
+                collectionChanges.objectChanges[type] = changeSet
+            }
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath {
+                if indexPath == newIndexPath {
+                    changeSet.insert(indexPath)
+                    collectionChanges.objectChanges[.update] = changeSet
+                } else {
+                    changeSet.insert(indexPath)
+                    changeSet.insert(newIndexPath)
+                    collectionChanges.objectChanges[type] = changeSet
+                }
+            }
+        }
+    }
+    override func didChangeRecord(_ record: Record, at indexPath: IndexPath?, for type: FetchedResultsChangeType, _ newIndexPath: IndexPath?) {
+        if let collectionView = self.collectionView {
+            didChangeRecord(record, in: collectionView, at: indexPath, for: type, newIndexPath)
+        }
+    }
+
+    // MARK: - Cell configuration
+
+    /// Configure a collection cell
+    func configure(_ cell: UICollectionViewCell, _ collectionView: UICollectionView, _ indexPath: IndexPath) {
+        cell.collectionView = collectionView
+        if let record = self.record(at: indexPath) {
+            if self.delegate?.responds(to: #selector(DataSourceDelegate.dataSource(_:configureCollectionViewCell:withRecord:atIndexPath:))) == true {
+                self.delegate?.dataSource?(self, configureCollectionViewCell: cell, withRecord: record, atIndexPath: indexPath)
+            } else if let configuration = self.collectionConfigurationBlock {
+                configuration(cell, record, indexPath)
+            } else {
+                logger.warning("No cell configuration for \(self)")
+            }
+        } else {
+            logger.verbose("No record at index \(indexPath) for \(self)")
+        }
+    }
+
+    /// Allow to configure each collection cell with selected record
+    open var collectionConfigurationBlock: ((_ cell: UICollectionViewCell, _ record: Record, _ indexPath: IndexPath) -> Void)? {
+        willSet {}
+    }
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.fetchedResultsController.numberOfSections
     }
@@ -76,10 +183,37 @@ extension DataSource: UICollectionViewDataSource {
         collectionChanges.cachedSectionNames.append(contentsOf: result)
     }
 
+    // MARK: override
+
+    override func reloadData() {
+        self.collectionView?.reloadData()
+    }
+
+    public override func reloadCells(at indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            if let collectionView = self.collectionView {
+                if let cell = collectionView.cellForItem(at: indexPath) {
+                    self.configure(cell, collectionView, indexPath)
+                }
+            }
+        }
+    }
+
+    /// Notify view of update beginning.
+    override func beginUpdates() {
+        collectionChanges.beginUpdates()
+    }
+
+    /// Notify view of update ends.
+    override func endUpdates() {
+        if let collectionView = collectionView {
+            collectionChanges.endUpdates(collectionView: collectionView)
+        }
+    }
 }
 
 // MARK: - UICollectionViewDatasourcePrefetching
-extension DataSource: UICollectionViewDataSourcePrefetching {
+extension CollectionDataSource: UICollectionViewDataSourcePrefetching {
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
@@ -196,5 +330,11 @@ extension UICollectionView {
             }
         }, completion: completion)
 
+    }
+}
+
+extension CollectionDataSource {
+    open override var description: String {
+        return "TableDataSource[fetch: \(fetchedResultsController)]"
     }
 }
