@@ -60,6 +60,10 @@ extension DetailsForm {
         return _record?.store // CLEAN, not really clean to use wrapper
     }
 
+    public var recordID: CVarArg? {
+        return _record?.store.objectID
+    }
+
     /// Get the primary key value of record.
     fileprivate var recordKey: Any? {
         guard let record = self._record else {

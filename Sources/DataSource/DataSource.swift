@@ -33,8 +33,6 @@ open class DataSource: NSObject {
     }
 
     deinit {
-        //self.tableView?.dataSource = nil
-        //self.collectionView?.dataSource = nil
         self.fetchedResultsController.delegate = nil
     }
 
@@ -48,13 +46,28 @@ open class DataSource: NSObject {
         set {
             var fetchRequest = self.fetchedResultsController.fetchRequest
             let oldPredicate = fetchRequest.predicate
-            fetchRequest.predicate = newValue
+            if let newValue = newValue {
+                if let contextPredicate = contextPredicate {
+                    fetchRequest.predicate = newValue && contextPredicate
+                } else {
+                    fetchRequest.predicate = newValue
+                }
+            } else {
+                fetchRequest.predicate = contextPredicate
+            }
 
             if oldPredicate != newValue {
                 self.refresh()
             } else {
                 onWillFetch()
             }
+        }
+    }
+
+    open var contextPredicate: NSPredicate? {
+        didSet {
+           let predicate = self.predicate
+           self.predicate = predicate // force create predicate XXX crappy, try to have an other value
         }
     }
 

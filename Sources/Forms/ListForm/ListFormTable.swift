@@ -23,6 +23,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
         return tableDataSource
     }
     public var tableDataSource: TableDataSource?
+    public var predicate: NSPredicate?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -220,6 +221,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
             sectionNameKeyPath: self.sectionFieldname,
             sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         tableDataSource = TableDataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
+        tableDataSource?.contextPredicate = predicate
         tableDataSource?.showSectionBar = showSectionBar
 
         tableDataSource?.tableConfigurationBlock = { [weak self] cell, record, index in
@@ -557,7 +559,6 @@ extension ListFormTable: DataSourceSearchable {
         searchBar.setShowsCancelButton(false, animated: false)
         searchBar.endEditing(true)
         dataSource?.predicate = nil
-        dataSource?.performFetch()
         onSearchCancel()
     }
 

@@ -22,6 +22,7 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
         return collectionDataSource
     }
     public var collectionDataSource: CollectionDataSource?
+    public var predicate: NSPredicate?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -211,6 +212,7 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
                                                                           sectionNameKeyPath: self.sectionFieldname,
                                                                           sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         collectionDataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
+        collectionDataSource?.contextPredicate = predicate
         dataSource?.showSectionBar = showSectionBar
         dataSource?.performFetch()
 
@@ -548,7 +550,6 @@ extension ListFormCollection: DataSourceSearchable {
         searchBar.setShowsCancelButton(false, animated: false)
         searchBar.endEditing(true)
         dataSource?.predicate = nil
-        dataSource?.performFetch()
         onSearchCancel()
     }
 

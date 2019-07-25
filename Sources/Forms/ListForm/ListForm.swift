@@ -16,6 +16,7 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextP
 
     var tableName: String { get }
     var dataSource: DataSource? { get }
+    var predicate: NSPredicate? { get set }
 }
 
 let searchController = UISearchController(searchResultsController: nil)

@@ -181,6 +181,7 @@
 		48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE077F1E7AED7100A8546E /* ListFormCollection.swift */; };
 		48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EE07851E7AEF1A00A8546E /* ListForm.swift */; };
 		48F321DA20B3073900D39BAF /* ApplicationAuthenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F321D920B3073900D39BAF /* ApplicationAuthenticate.swift */; };
+		48F8855322E88A4000343CBD /* UIControl+BindToRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8855222E88A4000343CBD /* UIControl+BindToRelation.swift */; };
 		48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8DF282057F35E0087066F /* PasscodeField.swift */; };
 		48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C11F7D0B23000080FB /* ServerStatus.swift */; };
 		48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */; };
@@ -389,6 +390,7 @@
 		48EE077F1E7AED7100A8546E /* ListFormCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListFormCollection.swift; sourceTree = "<group>"; };
 		48EE07851E7AEF1A00A8546E /* ListForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListForm.swift; sourceTree = "<group>"; };
 		48F321D920B3073900D39BAF /* ApplicationAuthenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationAuthenticate.swift; sourceTree = "<group>"; };
+		48F8855222E88A4000343CBD /* UIControl+BindToRelation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+BindToRelation.swift"; sourceTree = "<group>"; };
 		48F8DF282057F35E0087066F /* PasscodeField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeField.swift; sourceTree = "<group>"; };
 		48F8E2C11F7D0B23000080FB /* ServerStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerStatus.swift; sourceTree = "<group>"; };
 		48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RawRepresentable+IndexSet.swift"; sourceTree = "<group>"; };
@@ -598,6 +600,7 @@
 				48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */,
 				480392AD1E92930A008CF992 /* UIBarItem+BindTo.swift */,
 				48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */,
+				48F8855222E88A4000343CBD /* UIControl+BindToRelation.swift */,
 			);
 			path = Bind;
 			sourceTree = "<group>";
@@ -1454,6 +1457,7 @@
 				4869D60B223BA4410042379F /* ActionManager.swift in Sources */,
 				48BC8567226EF5D000D548B2 /* ActionSheetUI.swift in Sources */,
 				480B785722CA01E90037C1D8 /* ActionFormSettings.swift in Sources */,
+				48F8855322E88A4000343CBD /* UIControl+BindToRelation.swift in Sources */,
 				480B434B1E8403C7007C90DD /* UIButton+BackgroundColors.swift in Sources */,
 				480392C11E929660008CF992 /* UIImageView+Binding.swift in Sources */,
 				480B435D1E842699007C90DD /* NSObject+QMobile.swift in Sources */,

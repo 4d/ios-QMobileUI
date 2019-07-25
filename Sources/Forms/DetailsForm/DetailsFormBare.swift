@@ -145,51 +145,38 @@ open class DetailsFormBare: UIViewController, DetailsForm {
 
     /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
-        //guard let entry = self.entry else { return }
-        //self.record
-
-        //guard let view = sender as? UIView else { return } // our view or button which contains information our relation field (XXX add a protocol?)
-
-        //let keyPath = "" // get from sender
-        //let relationEntry = DataSourceEntryRelation(entry: entry, keyPath: keyPath)
-
-        // by pass navigation controller if any to get real controller
         let destination = segue.destination.firstController
-
         if let listForm = destination as? ListForm { // to Many relation
 
-        } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
+            guard listForm.dataSource == nil else {
+                logger.info(" data source \(String(describing: listForm.dataSource))")
+                assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
+                return
+            }
+            guard let recordID = self.recordID else {
+                logger.warning("No record to filter relation")
+                return
+            }
+            guard let relationInfo = sender as? RelationInfoUI, let inverseRelationName = relationInfo.inverseRelationName else {
+                logger.warning("No information about the relation")
+                return
+            }
 
-           // detailForm.entry = relationEntry
+            listForm.predicate = NSPredicate(format: "(\(inverseRelationName) = %@)", recordID)
+
+            if let relationName = relationInfo.relationName, let record = record {
+                logger.debug("Will display relation \(relationName) of record \(record) : \(String(describing: record[relationName]))")
+            }
+        } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
+         /// Not yet implemented
+         if let dataSource = detailForm.dataSource {
+                logger.info(" data source \(dataSource)")
+
+            } else {
+                // detailForm.predicate = NSPredicate.true
+                //logger.warning("No data source")
+            }
         }*/
     }
-
-}
-
-struct DataSourceEntryRelation {
-
-    var entry: DataSourceEntry
-    var keyPath: String
-    var record: AnyObject?
-
-    init(entry: DataSourceEntry, keyPath: String) {
-        self.entry = entry
-        self.keyPath = keyPath
-
-        self.record = entry.record // cache it immediatly, if there is any change...
-    }
-
-    var dataSource: DataSource {
-        return entry.dataSource
-    }
-
-    /*var relation: Any? {
-        return self.record?[keyPath] ?? <#default value#>
-    }*/
-
-}
-
-protocol DataSoruceField {
 
 }
