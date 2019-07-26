@@ -102,6 +102,8 @@
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
 		487EC33E20AD83B500646B5B /* SettingLogOutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487EC33D20AD83B500646B5B /* SettingLogOutCell.swift */; };
 		4881205D20FDEF510041D774 /* LogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4881205C20FDEF510041D774 /* LogForm.swift */; };
+		4888ACCE22EB077C00219E63 /* NSSet+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4888ACCD22EB077C00219E63 /* NSSet+Binding.swift */; };
+		4888ACD022EB083100219E63 /* NSSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4888ACCF22EB083100219E63 /* NSSetTests.swift */; };
 		4888E4D222CCA24D002C7BBE /* DetailHighlightedRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */; };
 		488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
@@ -317,6 +319,8 @@
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
 		487EC33D20AD83B500646B5B /* SettingLogOutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingLogOutCell.swift; sourceTree = "<group>"; };
 		4881205C20FDEF510041D774 /* LogForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogForm.swift; sourceTree = "<group>"; };
+		4888ACCD22EB077C00219E63 /* NSSet+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSSet+Binding.swift"; sourceTree = "<group>"; };
+		4888ACCF22EB083100219E63 /* NSSetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSSetTests.swift; sourceTree = "<group>"; };
 		4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailHighlightedRow.swift; sourceTree = "<group>"; };
 		488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Action.swift"; sourceTree = "<group>"; };
 		489A68AA21B526AA00A90DC6 /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
@@ -476,6 +480,7 @@
 				480392A51E928C4B008CF992 /* UILabel+Binding.swift */,
 				480392C01E929660008CF992 /* UIImageView+Binding.swift */,
 				48657A36203590A900000D45 /* UIButton+Binding.swift */,
+				4888ACCD22EB077C00219E63 /* NSSet+Binding.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -944,6 +949,7 @@
 				48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */,
 				487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */,
 				48459EC422BBC51400202812 /* TimeFormatterTests.swift */,
+				4888ACCF22EB083100219E63 /* NSSetTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1367,6 +1373,7 @@
 				48BC8571226F0C1500D548B2 /* UIAlertController+ImagePicker.swift in Sources */,
 				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
 				488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */,
+				4888ACCE22EB077C00219E63 /* NSSet+Binding.swift in Sources */,
 				484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
@@ -1477,6 +1484,7 @@
 				48D584721E7831B2006F56B5 /* DataSourceTests.swift in Sources */,
 				48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */,
 				487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */,
+				4888ACD022EB083100219E63 /* NSSetTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

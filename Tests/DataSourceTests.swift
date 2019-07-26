@@ -89,7 +89,7 @@ class DataSourceTests: XCTestCase {
         let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
 
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: sortDescriptors)
-        let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
+        let dataSource = TableDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in table view in data source")
 
         let randomString = UUID().uuidString
@@ -124,7 +124,7 @@ class DataSourceTests: XCTestCase {
 
         let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: sectionFieldname, sortDescriptors: sortDescriptors)
-        let dataSource = DataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
+        let dataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Inserted object not retrieve in collection view in data source")
         
         let randomString = UUID().uuidString
@@ -156,7 +156,7 @@ class DataSourceTests: XCTestCase {
 
         let sortDescriptors: [NSSortDescriptor] = [NSSortDescriptor(key: sectionFieldname, ascending: true)]
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: tableName, sectionNameKeyPath: nil, sortDescriptors: sortDescriptors)
-        let dataSource = DataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
+        let dataSource = TableDataSource(tableView: tableView, fetchedResultsController: fetchedResultsController)
         let expectation = self.expectation(description: "Deleted object not retrieve in table view in data source")
         
         let randomString = UUID().uuidString
