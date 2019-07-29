@@ -236,11 +236,9 @@ extension ApplicationDataSync: DataSyncDelegate {
         onForeground {
             if let detailForm = UIApplication.detailViewController {
                 if let formRecord = detailForm.record as? RecordBase {
-                    if let bindedRecord = detailForm.view?.bindTo.record as? Record {
-                        if formRecord != bindedRecord.store {
-                            detailForm.dismiss(animated: true) {
-                                logger.info("Close form with record deleted")
-                            }
+                    if let bindedRecord = detailForm.view?.bindTo.record as? Record, formRecord != bindedRecord.store {
+                        detailForm.dismiss(animated: true) {
+                            logger.info("Close form with record deleted")
                         }
                     } else {
                        detailForm.view?.bindTo.record = formRecord
