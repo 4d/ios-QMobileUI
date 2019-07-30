@@ -46,7 +46,7 @@ extension ApplicationServerCrashAPI: TargetType {
         if let path = Prephirences.sharedInstance["crash.server.path"] as? String {
             return path
         }
-        return "/4daction/MobileAppCrash"
+        return "4daction/MobileAppCrash"
     }
 
     var sampleData: Data {
