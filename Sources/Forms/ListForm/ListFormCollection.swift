@@ -246,17 +246,6 @@ open class ListFormCollection: UICollectionViewController, ListForm { //swiftlin
 
     // MARK: Install components
 
-    /// Apple issue with navigation bar color which use asset color as foreground color
-    /// If we detect the issue ie. alpha color less than 0.5, we apply your "ForegroundColor" color
-    open func fixNavigationBarColorFromAsset() {
-        var attributes = self.navigationController?.navigationBar.titleTextAttributes ?? [:]
-        if let oldColor = attributes[.foregroundColor] as? UIColor,
-            oldColor.rgba.alpha < 0.5, let namedColor = UIColor(named: "ForegroundColor") {
-            attributes = [.foregroundColor: namedColor]
-            self.navigationController?.navigationBar.titleTextAttributes = attributes
-        }
-    }
-
     /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
         guard hasRefreshControl else { return }

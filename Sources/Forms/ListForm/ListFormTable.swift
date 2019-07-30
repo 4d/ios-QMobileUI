@@ -297,17 +297,6 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
                               object: nil)
     }
 
-    /// Apple issue with navigation bar color which use asset color as foreground color
-    /// If we detect the issue ie. alpha color less than 0.5, we apply your "ForegroundColor" color
-    open func fixNavigationBarColorFromAsset() {
-        var attributes = self.navigationController?.navigationBar.titleTextAttributes ?? [:]
-        if let oldColor = attributes[.foregroundColor] as? UIColor,
-            oldColor.rgba.alpha < 0.5, let namedColor = UIColor(named: "ForegroundColor") {
-            attributes = [.foregroundColor: namedColor]
-            self.navigationController?.navigationBar.titleTextAttributes = attributes
-        }
-    }
-
     open func installDataEmptyView() {
         //self.tableView.emptyDataSetSource = self
         //self.tableView.emptyDataSetDelegate = self
