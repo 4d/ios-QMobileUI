@@ -17,7 +17,7 @@ import SwiftMessages
 import Prephirences
 
 @IBDesignable
-open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:this type_body_length
+open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource? {
         return tableDataSource
@@ -28,19 +28,23 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
     @IBOutlet open var searchBar: UISearchBar!
-    public private(set) var searchActive: Bool = false
+    public var searchActive: Bool = false
     /// Operator used to search. contains, beginwith, endwith. Default contains
     @IBInspectable open var searchOperator: String = "contains" {
         didSet {
             assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
         }
     }
-        /// Case sensitivity when searching. Default cd
+    /// Case sensitivity when searching. Default cd
     @IBInspectable open var searchSensitivity: String = "cd"
     /// Name(s) of the search field(s)
     @IBInspectable open var searchableField: String = "name"
     /// Add search bar in place of navigation bar title
     @IBInspectable open var searchableAsTitle: Bool = true
+    /// Keep search bar if scrolling
+    @IBInspectable open var searchableWhenScrolling: Bool = true
+    /// Hide navigation bar when searching
+    @IBInspectable open var searchableHideNavigation: Bool = true
 
     /// Name of the field used to sort. (You use multiple field using coma)
     @IBInspectable open var sortField: String = ""
@@ -51,10 +55,10 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
 
     /// Active or not a pull to refresh action on list form (default: true)
     @IBInspectable open var hasRefreshControl: Bool = true
-    /// Cancel reload data
-    var dataSyncTask: Cancellable?
     /// In dev: a view to do not allow action?
     var loadingView: UIView?
+    /// Cancel reload data
+    var dataSyncTask: Cancellable?
 
     /// Go no the next record.
     @IBOutlet open var nextButton: UIButton?
@@ -304,34 +308,7 @@ open class ListFormTable: UITableViewController, ListForm { //swiftlint:disable:
 
     /// Install the seach bar if defined using storyboard IBOutlet
     open func installSearchBar() {
-        // Install seachbar into navigation bar if any
-        if let searchBar = searchBar, !isSearchBarMustBeHidden {
-            if searchBar.superview == nil {
-                if searchableAsTitle {
-                    self.navigationItem.titleView = searchBar
-                } else {
-                    let searchController = UISearchController(searchResultsController: nil)
-                    searchController.searchResultsUpdater = self
-                    searchController.obscuresBackgroundDuringPresentation = false
-                    searchController.delegate = self
-                    self.navigationItem.searchController = searchController
-                    self.definesPresentationContext = true
-                    searchController.searchBar.copyAppearance(from: self.searchBar)
-
-                    self.searchBar = searchController.searchBar // continue to manage search using listener
-                }
-            }
-        }
-        if let subview = self.searchBar.subviews.first {
-            if let searchTextField = subview.subviews.compactMap({$0 as? UITextField }).first {
-                searchTextField.tintColor = searchTextField.textColor
-            }
-        }
-        self.searchBar?.delegate = self
-
-        if isSearchBarMustBeHidden {
-            searchBar.isHidden = true
-        }
+        doInstallSearchBar()
     }
 
     /// Install the back button in navigation bar.
@@ -517,59 +494,32 @@ extension ListFormTable: IndexPathObserver {
 
 }
 
+// Must be implement as @objc method, so not in protocol currently...
 extension ListFormTable: DataSourceSearchable {
 
     /// Perform a seach when text change
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchBar.showsCancelButton = true
-        performSearch(searchText)
+       do_searchBar(searchBar, textDidChange: searchText)
     }
 
     /// A search begin. Cancel button is displayed.
     /// You can receive this information by overriding `onSearchBegin`
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchActive = true
-        onSearchBegin()
-
-        searchBar.setShowsCancelButton(true, animated: true)
+        do_searchBarTextDidBeginEditing(searchBar)
     }
 
     // Search button is clicked. You can receive this information by overriding `onSearchButtonClicked`
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
-        searchBar.endEditing(true)
-        onSearchButtonClicked()
+        do_searchBarSearchButtonClicked(searchBar)
     }
 
     /// Cancel button is clicked, cancel the search.
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
-        searchBar.text = ""
-        searchBar.setShowsCancelButton(false, animated: false)
-        searchBar.endEditing(true)
-        dataSource?.predicate = nil
-        onSearchCancel()
-    }
-
-    // Function to do search
-
-    func performSearch(_ searchText: String) {
-        // XXX could add other predicate
-        if !isSearchBarMustBeHidden {
-            // Create the search predicate
-            dataSource?.predicate = createSearchPredicate(searchText, tableInfo: tableInfo)
-
-            // Event
-            onSearchFetching()
-        }
-        // XXX API here could load more from network
+        do_searchBarCancelButtonClicked(searchBar)
     }
 
     public func updateSearchResults(for searchController: UISearchController) {
-        //let searchBar = searchController.searchBar
-        //if let searchText = searchBar.text {
-            //performSearch(searchText) // already done by search bar listener
-        //}
+        do_updateSearchResults(for: searchController)
     }
 
 }

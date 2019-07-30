@@ -13,7 +13,7 @@ public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchContro
 
     var dataSource: DataSource? { get }
 
-    var searchActive: Bool { get }
+    var searchActive: Bool { get set }
     var searchableField: String { get }
     var searchOperator: String { get }
     var searchSensitivity: String { get }
