@@ -194,7 +194,10 @@ extension ApplicationCrashManager {
                     onComplete(false)
                 }
             case .failure(let error):
-                logger.warning("Failed to send crash file \(error)")
+                logger.warning("Failed to send crash file \(error) with url \(target.baseURL)\(target.path)")
+                if let response = error.responseString {
+                    logger.warning("with response \(response)")
+                }
                 alert.message = "Maybe check your network."
                 onComplete(false)
             }
