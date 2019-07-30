@@ -68,17 +68,23 @@ extension ListForm where Self: UIViewController {
     func fixNavigationBarColorFromAsset() {
         guard let navigationBar = self.navigationController?.navigationBar else {
             return }
+        guard let namedColor = UIColor(named: "ForegroundColor") else { return } // cannot fix
         var attributes = navigationBar.titleTextAttributes ?? [:]
-        if let oldColor = attributes[.foregroundColor] as? UIColor,
-            oldColor.rgba.alpha < 0.5, let namedColor = UIColor(named: "ForegroundColor") {
+        if let oldColor = attributes[.foregroundColor] as? UIColor, oldColor.rgba.alpha < 0.5 {
 
             /// Apple issue with navigation bar color which use asset color as foreground color
             /// If we detect the issue ie. alpha color less than 0.5, we apply your "ForegroundColor" color
-            attributes = [.foregroundColor: namedColor]
+            attributes[.foregroundColor] = namedColor
             navigationBar.titleTextAttributes = attributes
         }
         if navigationBar.largeTitleTextAttributes == nil {
             navigationBar.largeTitleTextAttributes = navigationBar.titleTextAttributes
+        } else  {
+            if navigationBar.largeTitleTextAttributes?[.foregroundColor] == nil {
+                navigationBar.largeTitleTextAttributes?[.foregroundColor] = namedColor
+            } else if let oldColor = navigationBar.largeTitleTextAttributes?[.foregroundColor] as? UIColor, oldColor.rgba.alpha < 0.5 {
+                navigationBar.largeTitleTextAttributes?[.foregroundColor] = namedColor
+            }
         }
     }
 }
