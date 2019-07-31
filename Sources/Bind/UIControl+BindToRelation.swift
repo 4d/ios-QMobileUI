@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Protocol to provide info on relation
-protocol RelationInfoUI {
+public protocol RelationInfoUI {
     /// Relation object data.
     var relation: Any? { get }
     /// The relation name
@@ -22,6 +22,7 @@ protocol RelationInfoUI {
 private var xoAssociationKey: UInt8 = 0
 private var xoAssociationKey2: UInt8 = 0
 private var xoAssociationKey3: UInt8 = 0
+
 extension UIControl: RelationInfoUI {
 
     #if TARGET_INTERFACE_BUILDER

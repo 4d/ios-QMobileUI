@@ -157,14 +157,23 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                 logger.warning("No record to filter relation")
                 return
             }
-            guard let relationInfo = sender as? RelationInfoUI, let inverseRelationName = relationInfo.inverseRelationName else {
+
+            /*guard let relationInfo = sender as? RelationInfoUI, let inverseRelationName = relationInfo.inverseRelationName else {
                 logger.warning("No information about the relation")
                 return
+            }*/
+
+            guard let relationInfoUI = sender as? RelationInfoUI,
+                let relationName = relationInfoUI.relationName,
+                let relationInfo = listForm.tableInfo?.relationships.first(where: { $0.name == relationName}), // OPTI have method to look up by name without creating the full info list
+                let inverseRelationName = relationInfo.inverseRelationship?.name ?? relationInfoUI.inverseRelationName else { // relationInfoUI.inverseRelationName could be removed if no more needed
+                    logger.warning("No information about the relation")
+                    return
             }
 
             listForm.predicate = NSPredicate(format: "(\(inverseRelationName) = %@)", recordID)
 
-            if let relationName = relationInfo.relationName, let record = record {
+            if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) : \(String(describing: record[relationName]))")
             }
         } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
