@@ -171,10 +171,11 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                     return
             }
 
-            listForm.predicate = NSPredicate(format: "(\(inverseRelationName) = %@)", recordID)
+            let predicatString = "(\(inverseRelationName) = %@)"
+            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID), actionContext: actionContext())
 
             if let record = record {
-                logger.debug("Will display relation \(relationName) of record \(record) : \(String(describing: record[relationName]))")
+                logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
             }
         } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
          /// Not yet implemented

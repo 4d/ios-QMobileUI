@@ -23,7 +23,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         return tableDataSource
     }
     public var tableDataSource: TableDataSource?
-    public var predicate: NSPredicate?
+    public var formContext: FormContext?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -225,7 +225,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
             sectionNameKeyPath: self.sectionFieldname,
             sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         tableDataSource = TableDataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
-        tableDataSource?.contextPredicate = predicate
+        tableDataSource?.contextPredicate = formContext?.predicate
         tableDataSource?.showSectionBar = showSectionBar
 
         tableDataSource?.tableConfigurationBlock = { [weak self] cell, record, index in

@@ -12,11 +12,20 @@ import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
 
+/// Context of a form, to filter or have information on parent controller
+public struct FormContext {
+
+    var predicate: NSPredicate?
+    var actionContext: ActionContext?
+
+}
+
+/// A List form display a list of table data
 public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form {
 
     var tableName: String { get }
     var dataSource: DataSource? { get }
-    var predicate: NSPredicate? { get set }
+    var formContext: FormContext? { get set }
 }
 
 let searchController = UISearchController(searchResultsController: nil)

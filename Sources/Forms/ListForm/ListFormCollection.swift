@@ -22,7 +22,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         return collectionDataSource
     }
     public var collectionDataSource: CollectionDataSource?
-    public var predicate: NSPredicate?
+    public var formContext: FormContext?
 
     @IBInspectable open var selectedSegueIdentifier: String = "showDetails"
 
@@ -220,7 +220,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
                                                                           sectionNameKeyPath: self.sectionFieldname,
                                                                           sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         collectionDataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
-        collectionDataSource?.contextPredicate = predicate
+        collectionDataSource?.contextPredicate = formContext?.predicate
         dataSource?.showSectionBar = showSectionBar
         dataSource?.performFetch()
 

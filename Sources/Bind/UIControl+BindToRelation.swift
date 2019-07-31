@@ -16,54 +16,102 @@ public protocol RelationInfoUI {
     /// The relation name
     var relationName: String? { get }
     /// The inverse relation name.
-    var inverseRelationName: String? { get }
+    var inverseRelationName: String? { get } // CLEAN to remove
+
+    /// Add action to launch segue.
+    var addRelationSegueAction: Bool { get }
 }
 
-private var xoAssociationKey: UInt8 = 0
-private var xoAssociationKey2: UInt8 = 0
-private var xoAssociationKey3: UInt8 = 0
+private struct AssociatedKeys {
+    static var relation = "RelationInfoUI.relation"
+    static var relationName = "RelationInfoUI.relationName"
+    static var inverseRelationName = "RelationInfoUI.inverseRelationName"
+    static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
+}
 
 extension UIControl: RelationInfoUI {
 
     #if TARGET_INTERFACE_BUILDER
+    // To prevent storyboard issue with xcode do less using storyboard
     @objc dynamic open var relation: Any? {
-        return nil
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var relationName: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var inverseRelationName: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var addRelationSegueAction: Bool {
+        get { return false }
+        set {} // swiftlint:disable:this unused_setter_value
     }
     #else
     @objc dynamic open var relation: Any? {
         get {
-            return objc_getAssociatedObject(self, &xoAssociationKey)
+            return objc_getAssociatedObject(self, &AssociatedKeys.relation)
         }
         set {
             // self.isEnabled = newValue != nil // Feature deactivate button if no relations?
-            objc_setAssociatedObject(self, &xoAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self, &AssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @objc dynamic open var relationName: String? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.relationName) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+            if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
+                self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
+
+                // For buttons animation?
+                self.addTarget(self, action: #selector(self.touchDown(sender:)), for: .touchDown)
+                self.addTarget(self, action: #selector(self.touchUp(sender:)), for: .touchUpOutside)
+            }
+        }
+    }
+    @objc dynamic open var inverseRelationName: String? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.inverseRelationName) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.inverseRelationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    @objc dynamic open var addRelationSegueAction: Bool {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.addRelationSegueAction) as? Bool ?? true
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.addRelationSegueAction, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
     #endif
 
-    #if TARGET_INTERFACE_BUILDER
-    @objc dynamic open var relationName: String? {
-        return nil
-    }
-    @objc dynamic open var inverseRelationName: String? {
-        return nil
-    }
-    #else
-    @objc dynamic open var relationName: String? {
-        get {
-            return objc_getAssociatedObject(self, &xoAssociationKey2) as? String
+    @objc func relationSegue(sender: UIControl!) {
+        touchUp(sender: sender)
+        guard let relationName = relationName else { return }
+        guard let viewController = self.owningViewController else {
+            logger.warning("Cannot find controller/form parent to make transition for relation \(relationName)")
+            return
         }
-        set {
-            objc_setAssociatedObject(self, &xoAssociationKey2, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-        }
+        viewController.performSegue(withIdentifier: relationName, sender: sender)
     }
-    @objc dynamic open var inverseRelationName: String? {
-        get {
-            return objc_getAssociatedObject(self, &xoAssociationKey3) as? String
-        }
-        set {
-            objc_setAssociatedObject(self, &xoAssociationKey3, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+    @objc func touchDown(sender: UIControl!) {
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseOut, animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { _ in //swiftlint:disable:this multiple_closures_with_trailing_closure
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseOut, animations: {
+                sender.transform = CGAffineTransform(scaleX: 1, y: 1)
+            }, completion: nil)
         }
     }
-    #endif
+    @objc func touchUp(sender: UIControl!) {
+        sender.transform = CGAffineTransform(scaleX: 1, y: 1)
+    }
 }
