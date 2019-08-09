@@ -12,7 +12,7 @@ import ValueTransformerKit
 // A value transformer to add a prefix to value.
 class StringPrefixer: ValueTransformer, ValueTransformerRegisterable {
     static let namePrefix = "StringPrefixer"
-    static let defaultSeparator = "StringPrefixer"
+    static let defaultSeparator = "_"
     var name: NSValueTransformerName {
         return NSValueTransformerName(StringPrefixer.namePrefix + prefix)
     }
