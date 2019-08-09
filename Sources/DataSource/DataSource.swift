@@ -195,24 +195,24 @@ open class DataSource: NSObject {
     }
 
     func valueTransformer(forName name: String) -> ResersableValueTransformerType? {
-        switch name {
-        case "mediumDate":
+        switch name.lowercased() {
+        case "mediumdate":
             return DateTransformers.medium
-        case "longDate":
+        case "longdate":
             return DateTransformers.long
-        case "shortDate":
+        case "shortdate":
             return DateTransformers.short
-        case "fullDate":
+        case "fulldate":
             return DateTransformers.full
         case "date":
             return DateTransformers.rfc822
-        case "longTime":
+        case "longtime":
             return TimeTransformers.long
-        case "fullTime":
+        case "fulltime":
             return TimeTransformers.full
-        case "mediumTime":
+        case "mediumtime":
             return TimeTransformers.medium
-        case "shortTime":
+        case "shorttime":
             return TimeTransformers.short
         case "duration":
             return TimeTransformers.short // XXX not implemented
@@ -222,19 +222,19 @@ open class DataSource: NSObject {
             return NumberTransformers.numberStyle(.percent)
         case "scientific":
             return NumberTransformers.numberStyle(.scientific)
-        case "spellOut":
+        case "spellout":
             return NumberTransformers.numberStyle(.spellOut)
         case "ordinal":
             return NumberTransformers.numberStyle(.ordinal)
         case "integer":
             return NumberTransformers.numberStyle(.none)
-        case "currencyDollar":
+        case "currencydollar":
             return NumberTransformers.formatter(.currencyDollar)
-        case "currencyEuro":
+        case "currencyeuro":
             return NumberTransformers.formatter(.currencyEuro)
-        case "currencyYen":
+        case "currencyyen":
             return NumberTransformers.formatter(.currencyYen)
-        case "currencyLivreSterling":
+        case "currencylivresterling":
             return NumberTransformers.formatter(.currencyLivreSterling)
         default:
             return nil
