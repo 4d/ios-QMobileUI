@@ -67,6 +67,8 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
+    /// Localize section with formatter.
+    @IBInspectable open var sectionFieldFormatter: String?
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
            dataSource?.showSectionBar =  showSectionBar
@@ -227,6 +229,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         tableDataSource = TableDataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         tableDataSource?.contextPredicate = formContext?.predicate
         tableDataSource?.showSectionBar = showSectionBar
+        tableDataSource?.sectionFieldFormatter = sectionFieldFormatter
 
         tableDataSource?.tableConfigurationBlock = { [weak self] cell, record, index in
             self?.configureListFormView(cell, record, index)

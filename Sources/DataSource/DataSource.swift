@@ -21,6 +21,7 @@ open class DataSource: NSObject {
 
     open weak var delegate: DataSourceDelegate?
     open var showSectionBar: Bool = false
+    open var sectionFieldFormatter: String?
 
     /// Initialize data source for a collection view.
     public init(fetchedResultsController: FetchedResultsController, cellIdentifier: String? = nil) {

@@ -66,6 +66,8 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
 
     /// Optional section for table using one field name
     @IBInspectable open var sectionFieldname: String?
+    /// Localize section with formatter.
+    @IBInspectable open var sectionFieldFormatter: String?
     @IBInspectable open var showSectionBar: Bool = false {
         didSet {
             dataSource?.showSectionBar =  showSectionBar
@@ -221,7 +223,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
                                                                           sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
         collectionDataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         collectionDataSource?.contextPredicate = formContext?.predicate
-        dataSource?.showSectionBar = showSectionBar
+        collectionDataSource?.showSectionBar = showSectionBar
+        collectionDataSource?.sectionFieldFormatter = sectionFieldFormatter
+
         dataSource?.performFetch()
 
         collectionDataSource?.collectionConfigurationBlock = { [unowned self] cell, record, index in

@@ -174,7 +174,11 @@ open class TableDataSource: DataSource, UITableViewDataSource {
         if let title = self.delegate?.dataSource?(self, tableView: tableView, titleForHeaderInSection: section) {
             return title
         }
-        return self.fetchedResultsController.sectionName(section) ?? ""
+        let title = self.fetchedResultsController.sectionName(section) ?? ""
+        guard let sectionFieldFormatter = sectionFieldFormatter else {
+            return title
+        }
+        return "\(sectionFieldFormatter)\(StringPrefixer.defaultSeparator)\(title)".localizedBinding
     }
 
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
