@@ -8,6 +8,7 @@
 
 import QMobileDataStore
 import XCGLogger
+import ValueTransformerKit
 
 /// Class to present data to table or collection views
 open class DataSource: NSObject {
@@ -21,7 +22,25 @@ open class DataSource: NSObject {
 
     open weak var delegate: DataSourceDelegate?
     open var showSectionBar: Bool = false
-    open var sectionFieldFormatter: String?
+    open var sectionFieldFormatter: String? {
+        didSet {
+            if let sectionFieldFormatter = sectionFieldFormatter {
+                if let valueTransformer = self.valueTransformer(forName: sectionFieldFormatter) {
+                    sectionFieldValueFormatter = valueTransformer.transformer
+                } else if let transformer = ValueTransformer(forName: NSValueTransformerName(sectionFieldFormatter)) {
+                    sectionFieldValueFormatter = transformer // have register a transformer could help to replace a big switch...
+                } else if sectionFieldFormatter.hasSuffix(",localizedText") {
+                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: ",localizedText", with: "")) + StringTransformers.localized(Bundle.uiBinding, String.localizedBindingTableName)
+
+                } else if sectionFieldFormatter.hasSuffix(",imageNamed") {
+                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: ",imageNamed", with: ""))
+                }
+            } else {
+                sectionFieldValueFormatter = nil
+            }
+        }
+    }
+    var sectionFieldValueFormatter: ValueTransformer?
 
     /// Initialize data source for a collection view.
     public init(fetchedResultsController: FetchedResultsController, cellIdentifier: String? = nil) {
@@ -175,4 +194,50 @@ open class DataSource: NSObject {
         failOverride()
     }
 
+    func valueTransformer(forName name: String) -> ResersableValueTransformerType? {
+        switch name {
+        case "mediumDate":
+            return DateTransformers.medium
+        case "longDate":
+            return DateTransformers.long
+        case "shortDate":
+            return DateTransformers.short
+        case "fullDate":
+            return DateTransformers.full
+        case "date":
+            return DateTransformers.rfc822
+        case "longTime":
+            return TimeTransformers.long
+        case "fullTime":
+            return TimeTransformers.full
+        case "mediumTime":
+            return TimeTransformers.medium
+        case "shortTime":
+            return TimeTransformers.short
+        case "duration":
+            return TimeTransformers.short // XXX not implemented
+        case "decimal":
+            return NumberTransformers.numberStyle(.decimal)
+        case "percent":
+            return NumberTransformers.numberStyle(.percent)
+        case "scientific":
+            return NumberTransformers.numberStyle(.scientific)
+        case "spellOut":
+            return NumberTransformers.numberStyle(.spellOut)
+        case "ordinal":
+            return NumberTransformers.numberStyle(.ordinal)
+        case "integer":
+            return NumberTransformers.numberStyle(.none)
+        case "currencyDollar":
+            return NumberTransformers.formatter(.currencyDollar)
+        case "currencyEuro":
+            return NumberTransformers.formatter(.currencyEuro)
+        case "currencyYen":
+            return NumberTransformers.formatter(.currencyYen)
+        case "currencyLivreSterling":
+            return NumberTransformers.formatter(.currencyLivreSterling)
+        default:
+            return nil
+        }
+    }
 }

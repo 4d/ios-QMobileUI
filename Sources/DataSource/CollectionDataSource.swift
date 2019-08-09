@@ -148,8 +148,8 @@ open class CollectionDataSource: DataSource, UICollectionViewDataSource {
             if !collectionChanges.cachedSectionNames.isEmpty && indexPath.section < collectionChanges.cachedSectionNames.count {
                 title = collectionChanges.cachedSectionNames[indexPath.section]
             }
-            if let sectionFieldFormatter = sectionFieldFormatter {
-                title = "\(sectionFieldFormatter)\(StringPrefixer.defaultSeparator)\(title ?? "")".localizedBinding
+            if let sectionFieldValueFormatter = sectionFieldValueFormatter {
+                title = sectionFieldValueFormatter.transformedValue(title)
             }
             if let view = self.delegate?.dataSource?(self, collectionView: collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath, withTitle: title) {
                 return view

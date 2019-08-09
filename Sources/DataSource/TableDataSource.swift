@@ -175,10 +175,10 @@ open class TableDataSource: DataSource, UITableViewDataSource {
             return title
         }
         let title = self.fetchedResultsController.sectionName(section) ?? ""
-        guard let sectionFieldFormatter = sectionFieldFormatter else {
+        guard let sectionFieldValueFormatter = sectionFieldValueFormatter else {
             return title
         }
-        return "\(sectionFieldFormatter)\(StringPrefixer.defaultSeparator)\(title)".localizedBinding
+        return sectionFieldValueFormatter.transformedValue(title) as? String
     }
 
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
