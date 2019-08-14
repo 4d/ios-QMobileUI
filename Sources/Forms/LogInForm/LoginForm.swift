@@ -229,6 +229,21 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
                 })
             }
         } else if let error = error.afError {
+            switch error {
+            case .responseValidationFailed(let reason):
+                switch reason {
+                case .unacceptableStatusCode(let code):
+                    if code == 401 {
+                        SwiftMessages.warning("You are not authorized")
+                        return
+                    }
+                default:
+                    break
+                }
+                return
+            default:
+                break
+            }
             SwiftMessages.warning(error.localizedDescription)
         } else if let error = error.moyaError {
             SwiftMessages.warning(error.localizedDescription)
