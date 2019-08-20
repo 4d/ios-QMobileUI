@@ -103,9 +103,9 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
     var searchBar: UISearchBar! { get set }
     /// Add search bar in place of navigation bar title
     var searchableAsTitle: Bool { get }
-    /// Keep search bar if scrolling
+    /// Keep search bar if scrolling (only if searchableAsTitle = false)
     var searchableWhenScrolling: Bool { get }
-    /// Hide navigation bar when searching
+    /// Hide navigation bar when searching (only if searchableAsTitle = false)
     var searchableHideNavigation: Bool { get }
 
     func onSearchBegin()

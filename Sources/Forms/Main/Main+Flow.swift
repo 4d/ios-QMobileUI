@@ -79,7 +79,6 @@ extension Main {
 
 }
 // MARK: - did login
-import Result
 
 extension Result {
     /// Returns `true` if the result is a success, `false` otherwise.

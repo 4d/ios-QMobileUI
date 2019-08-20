@@ -8,7 +8,6 @@
 
 import Foundation
 
-import Result
 import QMobileAPI
 
 extension Result {

@@ -11,7 +11,6 @@ import UIKit
 
 import Prephirences
 import Moya
-import Result
 
 import SwiftMessages
 

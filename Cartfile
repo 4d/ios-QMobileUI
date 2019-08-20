@@ -1,6 +1,6 @@
-git "https://gitfusion.wakanda.io/qmobile/QMobileDataStore.git" "HEAD"
-git "https://gitfusion.wakanda.io/qmobile/QMobileAPI.git" "HEAD"
-git "https://gitfusion.wakanda.io/qmobile/QMobileDataSync.git" "HEAD"
+git "http://srv-git:3000/qmobile/qmobile/QMobileDataStore.git" "HEAD"
+git "http://srv-git:3000/qmobile/qmobile/QMobileAPI.git" "HEAD"
+git "http://srv-git:3000/qmobile/qmobile/QMobileDataSync.git" "HEAD"
 
 github "onevcat/Kingfisher" # image download
 
@@ -15,7 +15,6 @@ github "xmartlabs/Eureka"
 github "dennisweissmann/DeviceKit"
 github "IBAnimatable/IBAnimatable"
 github "nvzqz/FileKit"
-github "antitypical/Result"
 github "DaveWoodCom/XCGLogger"
 github "weichsel/ZIPFoundation"
 #DataSync

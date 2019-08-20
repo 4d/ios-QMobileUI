@@ -317,7 +317,6 @@ extension UIView {
  // detect screenshot by user
 /*
 import Photos
-import Result
 
 class ScreenshotDetector: NSObject /*to listen to photo lib*/ {
 

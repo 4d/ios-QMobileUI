@@ -11,7 +11,6 @@ import Foundation
 import Eureka
 import SwiftMessages
 import BrightFutures
-import Result
 
 import QMobileAPI
 

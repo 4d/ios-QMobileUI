@@ -9,7 +9,6 @@
 import Foundation
 import QMobileAPI
 import BrightFutures
-import Result
 
 /// UI to fill action parameters.
 protocol ActionParametersUI {

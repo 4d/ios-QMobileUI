@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 import Prephirences
-import Result
 import Moya
 import SwiftMessages
 
@@ -176,6 +175,17 @@ extension ApplicationAuthenticate {
         }
     }
 }
+/*
+extension Result {
+    var isSuccess: Bool {
+        switch self {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+}*/
 
 // MARK: LoginFormDelegate
 extension ApplicationAuthenticate: LoginFormDelegate {
