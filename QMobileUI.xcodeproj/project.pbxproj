@@ -195,7 +195,6 @@
 		48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
 		48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
 		48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDB1E93A23900F4F685 /* Result.framework */; };
-		48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDB1E93A23900F4F685 /* Result.framework */; };
 		48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */; };
 		48FB2CE11E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */; };
 		48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */; };
@@ -454,7 +453,6 @@
 				48E49CFB1EB9DC33002B60AF /* Moya.framework in Frameworks */,
 				48FB2CD61E93A22600F4F685 /* Kingfisher.framework in Frameworks */,
 				48FB2CE11E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
-				48FB2CDD1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48D584741E7831B2006F56B5 /* QMobileUI.framework in Frameworks */,
 				48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
 				48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */,
@@ -1270,7 +1268,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/QMobileDataStore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjcExceptionBridging.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Prephirences.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/XCGLogger.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Guitar.framework",
