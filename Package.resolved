@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "Guitar",
+        "repositoryURL": "https://github.com/ArtSabintsev/Guitar.git",
+        "state": {
+          "branch": null,
+          "revision": "b67cc9d31162588df3ef7c8659d3ddda32d3e851",
+          "version": "1.0.2"
+        }
+      },
+      {
         "package": "MomXML",
         "repositoryURL": "https://github.com/phimage/MomXML.git",
         "state": {
@@ -78,7 +87,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileAPI.git",
         "state": {
           "branch": "HEAD",
-          "revision": "5c33cb567b35d27f27628cfa342380cce311ff63",
+          "revision": "b7106f4fca71dfc94ae5bf8ad52670ceefd21822",
           "version": null
         }
       },
@@ -87,7 +96,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataStore.git",
         "state": {
           "branch": "HEAD",
-          "revision": "c15ee2ba96c4bf4ed55b1d95ece33e660f4b8a93",
+          "revision": "d0bcac0f3e6c012199c66d497c3f134962ec9abe",
           "version": null
         }
       },
@@ -96,7 +105,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataSync.git",
         "state": {
           "branch": "HEAD",
-          "revision": "f4cf1999c79633ff2e059ca9546986c25002fb39",
+          "revision": "05a5e6fbeac4bf0d192b89f3a90d0b27450ff10f",
           "version": null
         }
       },
