@@ -1,6 +1,6 @@
-git "http://srv-git:3000/qmobile/qmobile/QMobileDataStore.git" "HEAD"
-git "http://srv-git:3000/qmobile/qmobile/QMobileAPI.git" "HEAD"
-git "http://srv-git:3000/qmobile/qmobile/QMobileDataSync.git" "HEAD"
+git "http://srv-git:3000/qmobile/QMobileDataStore.git" "HEAD"
+git "http://srv-git:3000/qmobile/QMobileAPI.git" "HEAD"
+git "http://srv-git:3000/qmobile/QMobileDataSync.git" "HEAD"
 
 github "onevcat/Kingfisher" # image download
 
