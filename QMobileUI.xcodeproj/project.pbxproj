@@ -194,7 +194,6 @@
 		48FB2CD61E93A22600F4F685 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD21E93A22600F4F685 /* Kingfisher.framework */; };
 		48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
 		48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CD31E93A22600F4F685 /* Prephirences.framework */; };
-		48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDB1E93A23900F4F685 /* Result.framework */; };
 		48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */; };
 		48FB2CE11E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */; };
 		48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */; };
@@ -426,7 +425,6 @@
 				48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */,
 				48E49CFA1EB9DC33002B60AF /* Moya.framework in Frameworks */,
 				48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */,
-				48FB2CDC1E93A23900F4F685 /* Result.framework in Frameworks */,
 				48E49CF11EB9D28D002B60AF /* QMobileDataSync.framework in Frameworks */,
 				48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
 				48E49CF81EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
