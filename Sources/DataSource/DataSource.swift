@@ -24,7 +24,7 @@ open class DataSource: NSObject {
     open var showSectionBar: Bool = false
     open var sectionFieldFormatter: String? {
         didSet {
-            if let sectionFieldFormatter = sectionFieldFormatter {
+            if let sectionFieldFormatter = sectionFieldFormatter, !sectionFieldFormatter.isEmpty {
                 if let valueTransformer = self.valueTransformer(forName: sectionFieldFormatter) {
                     sectionFieldValueFormatter = valueTransformer.transformer
                 } else if let transformer = ValueTransformer(forName: NSValueTransformerName(sectionFieldFormatter)) {

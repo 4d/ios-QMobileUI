@@ -178,7 +178,10 @@ open class TableDataSource: DataSource, UITableViewDataSource {
         guard let sectionFieldValueFormatter = sectionFieldValueFormatter else {
             return title
         }
-        return sectionFieldValueFormatter.transformedValue(title) as? String
+        guard let transformedValue = sectionFieldValueFormatter.transformedValue(title) else {
+            return nil // or title?
+        }
+        return "\(transformedValue)"
     }
 
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
