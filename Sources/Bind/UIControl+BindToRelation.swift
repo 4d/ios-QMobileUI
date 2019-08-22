@@ -115,3 +115,24 @@ extension UIControl: RelationInfoUI {
         sender.transform = CGAffineTransform(scaleX: 1, y: 1)
     }
 }
+
+extension UIButton {
+
+    /// for relation element allow to force template by property (not by asset , assert is in automatic mode)
+    @objc open var imageContextTemplate: Bool {
+        get {
+            return self.image(for: .normal)?.renderingMode == .alwaysTemplate
+        }
+        set {
+            let state: UIControl.State = .normal // other state?
+            if let image = self.image(for: state), image.renderingMode != .alwaysOriginal {
+                if newValue {
+                    setImage(image.withRenderingMode(.alwaysTemplate), for: state)
+                } else {
+                    setImage(image.withRenderingMode(.automatic), for: state) // XXX cannot restore default... or must keep in elsewhere
+                }
+            }
+        }
+    }
+
+}
