@@ -325,7 +325,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
                             parameters[key] = uploadResult
                         case .failure(let error):
-                            logger.warning("Failed to upload image \(error)")
+                            logger.warning("Failed to upload image \(error): \(String(describing: error.responseString))") // ok: true is not ok! we need id
                             parameters.removeValue(forKey: key) // Not convertible
                         }
                         itemDone += 1
