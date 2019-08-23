@@ -12,7 +12,7 @@ extension LoginForm: Storyboard {}
 
 extension LoginForm {
 
-    func performTransition(_ sender: Any? = nil) {
+    open func performTransition(_ sender: Any? = nil) {
         foreground { [weak self] in
             guard let source = self else { return }
             let segue = source.segue
