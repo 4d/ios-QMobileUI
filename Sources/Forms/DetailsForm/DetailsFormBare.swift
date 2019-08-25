@@ -158,21 +158,25 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                 return
             }
 
-            /*guard let relationInfo = sender as? RelationInfoUI, let inverseRelationName = relationInfo.inverseRelationName else {
-                logger.warning("No information about the relation")
+            guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
+                logger.warning("No information about the relation in UI")
                 return
-            }*/
-
-            guard let relationInfoUI = sender as? RelationInfoUI,
-                let relationName = relationInfoUI.relationName,
-                let relationInfo = listForm.tableInfo?.relationships.first(where: { $0.name == relationName}), // OPTI have method to look up by name without creating the full info list
-                let inverseRelationName = relationInfo.inverseRelationship?.name ?? relationInfoUI.inverseRelationName else { // relationInfoUI.inverseRelationName could be removed if no more needed
-                    logger.warning("No information about the relation")
+            }
+            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
+                else {
+                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                     return
             }
+            let inverseRelationName = inverseRelationInfo.name // relationInfoUI.inverseRelationName
 
+            var title: String?
+            if let record = record {
+                title = "\(record)"
+            }
             let predicatString = "(\(inverseRelationName) = %@)"
-            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID), actionContext: actionContext())
+            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
+                                               actionContext: actionContext(),
+                                               previousTitle: title)
 
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")

@@ -244,6 +244,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         self.installSearchBar()
         self.installDataSourcePrefetching()
         //self.installObservers()
+        if let previousTitle = self.formContext?.previousTitle {
+            self.navigationItem.title = previousTitle
+        }
     }
 
     fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {

@@ -17,6 +17,7 @@ public struct FormContext {
 
     var predicate: NSPredicate?
     var actionContext: ActionContext?
+    var previousTitle: String?
 
 }
 

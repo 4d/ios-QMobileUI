@@ -252,6 +252,9 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         self.installSearchBar()
         self.installDataSourcePrefetching()
         //self.installObservers()
+        if let previousTitle = self.formContext?.previousTitle {
+            self.navigationItem.title = previousTitle
+        }
     }
 
     private func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
