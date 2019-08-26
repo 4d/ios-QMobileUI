@@ -26,7 +26,7 @@ open class DataSource: NSObject {
         didSet {
             if let sectionFieldFormatter = sectionFieldFormatter, !sectionFieldFormatter.isEmpty {
                 if let valueTransformer = self.valueTransformer(forName: sectionFieldFormatter) {
-                    sectionFieldValueFormatter = valueTransformer.transformer
+                    sectionFieldValueFormatter = valueTransformer
                 } else if let transformer = ValueTransformer(forName: NSValueTransformerName(sectionFieldFormatter)) {
                     sectionFieldValueFormatter = transformer // have register a transformer could help to replace a big switch...
                 } else if sectionFieldFormatter.hasPrefix("localizedText,") {
@@ -194,7 +194,23 @@ open class DataSource: NSObject {
         failOverride()
     }
 
-    func valueTransformer(forName name: String) -> ResersableValueTransformerType? {
+    func valueTransformer(forName name: String) -> ValueTransformer? {
+        guard let resersableValueTransformer = self.resersableValueTransformer(forName: name) else {
+            return nil
+        }
+        var transformer = resersableValueTransformer.transformer
+
+        // transform string to date or number before apply transformation to string format (infact, core data already apply a simple to string to data)
+        if resersableValueTransformer is DateTransformers {
+            transformer = StringToDateDateTransformer(formatter: DateFormatter.reverseToStringformatter) + transformer
+        } else if resersableValueTransformer is TimeTransformers || resersableValueTransformer is NumberTransformers {
+            transformer = NumberTransformers.formatter(.none).transformer.reverse + transformer
+        }
+
+        return transformer
+    }
+
+    func resersableValueTransformer(forName name: String) -> ResersableValueTransformerType? {
         switch name.lowercased() {
         case "mediumdate":
             return DateTransformers.medium
@@ -240,4 +256,15 @@ open class DataSource: NSObject {
             return nil
         }
     }
+}
+
+extension DateFormatter {
+
+    // date formatter which return date from string producted when doing String(describing: date)
+    fileprivate static var reverseToStringformatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ssZZZZZ"
+        return formatter
+    }
+
 }
