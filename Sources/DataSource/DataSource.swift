@@ -29,11 +29,11 @@ open class DataSource: NSObject {
                     sectionFieldValueFormatter = valueTransformer.transformer
                 } else if let transformer = ValueTransformer(forName: NSValueTransformerName(sectionFieldFormatter)) {
                     sectionFieldValueFormatter = transformer // have register a transformer could help to replace a big switch...
-                } else if sectionFieldFormatter.hasSuffix(",localizedText") {
-                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: ",localizedText", with: "")) + StringTransformers.localized(Bundle.uiBinding, String.localizedBindingTableName)
+                } else if sectionFieldFormatter.hasPrefix("localizedText,") {
+                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: "localizedText,", with: "")) + StringTransformers.localized(Bundle.uiBinding, String.localizedBindingTableName)
 
-                } else if sectionFieldFormatter.hasSuffix(",imageNamed") {
-                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: ",imageNamed", with: ""))
+                } else if sectionFieldFormatter.hasPrefix("imageNamed,") {
+                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: "imageNamed,", with: ""))
                 }
             } else {
                 sectionFieldValueFormatter = nil
