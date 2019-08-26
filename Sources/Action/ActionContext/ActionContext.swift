@@ -43,76 +43,76 @@ struct ActionParametersKey {
 
 extension ActionParameter {
 
+    // Do the better to cast data according to action parameter type.
+    fileprivate func castData(_ value: Any) -> Any? {
+        if let valueString = value as? String {
+            switch self.type {
+            case .date:
+                if let date = valueString.dateFromRFC3339 ?? valueString.simpleDate ?? valueString.dateFromISO8601 ?? valueString.dateFromName {
+                    return date
+                }
+            case .time:
+                return TimeFormatter.time(from: valueString)
+            case .bool, .boolean:
+                return valueString.boolValue || valueString == "true"
+            case .integer:
+                return Int(valueString)
+            case .number:
+                if let format = format, format.isIntRow {  // XXX crappy convert code... find a better place to do it
+                    return Int(valueString)
+                }
+                return Double(valueString)
+            default:
+                break
+            }
+        } else if let valueInt = value as? Int {
+            switch self.type {
+                /*case .time:
+                 return valueInt * 1000 if need convertion s to ms, but I do not thiknks so*/
+            case .bool, .boolean:
+                return valueInt == 1
+            case .number:
+                if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
+                    return valueInt
+                }
+                return Double(valueInt)
+            case .string:
+                return "\(valueInt)"
+            default:
+                break
+            }
+        } else if let valueDouble = value as? Double {
+            switch self.type {
+            case .bool, .boolean:
+                return valueDouble == 1.0
+            case .integer:
+                return Int(valueDouble)
+            case .string:
+                return "\(valueDouble)"
+            default:
+                break
+            }
+            if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
+                return Int(valueDouble)
+            }
+        }
+        return value
+    }
+
+    /// Get default value for this parameters.
+    ///
+    /// - Parameters:
+    ///     - context: the context to get data values if `defaultField` defined.
     public func defaultValue(with context: ActionContext) -> Any? { // swiftlint:disable:this function_body_length
         if let value = self.default?.value {
-            if let valueString = value as? String {
-                switch self.type {
-                case .date:
-                    if let date = valueString.dateFromRFC3339 ?? valueString.simpleDate ?? valueString.dateFromISO8601 {
-                        return date
-                    }
-                    switch valueString.lowercased().replacingOccurrences(of: " ", with: "") {
-                    case "today":
-                        return Date()
-                    case "yesterday":
-                        return Date.yesterday
-                    case "tomorrow":
-                        return Date.tomorrow
-                    case "twodaysago":
-                        return Date.twoDaysAgo
-                    case "firstDayOfMonth":
-                        return Date.firstDayOfMonth
-                    default:
-                        break
-                    }
-                case .time:
-                    return TimeFormatter.time(from: valueString)
-                case .bool, .boolean:
-                    return valueString.boolValue || valueString == "true"
-                case .integer:
-                    return Int(valueString)
-                case .number:
-                    if let format = format, format.isIntRow {  // XXX crappy convert code... find a better place to do it
-                        return Int(valueString)
-                    }
-                    return Double(valueString)
-                default:
-                    break
-                }
-            } else if let valueInt = value as? Int {
-                switch self.type {
-                    /*case .time:
-                     return valueInt * 1000 if need convertion s to ms, but I do not thiknks so*/
-                case .bool, .boolean:
-                    return valueInt == 1
-                case .number:
-                    if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
-                        return valueInt
-                    }
-                    return Double(valueInt)
-                case .string:
-                    return "\(valueInt)"
-                default:
-                    break
-                }
-            } else if let valueDouble = value as? Double {
-                switch self.type {
-                case .bool, .boolean:
-                    return valueDouble == 1.0
-                case .integer:
-                    return Int(valueDouble)
-                case .string:
-                    return "\(valueDouble)"
-                default:
-                    break
-                }
-                if let format = format, format.isIntRow { // XXX crappy convert code... find a better place to do it
-                    return Int(valueDouble)
+            let castedData = castData(value)
+            if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+                if let value = choice.choice(for: AnyCodable(castedData)) {  // find value in list
+                    return value
                 }
             }
-            return value
-        }
-        if let field = self.defaultField {
+            return castedData
+        } else if let field = self.defaultField {
             // compute default value according to a defined properties and context
             if let value = context.actionParameterValue(for: field) {
                 if case .time = self.type {
@@ -121,8 +121,7 @@ extension ActionParameter {
                     }
                 }
                 if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
-                    // find value in list
-                    if let value = choice.choice(for: AnyCodable(value)) {
+                    if let value = choice.choice(for: AnyCodable(value)) { // find value in list
                         return value
                     }
                 }
@@ -136,11 +135,10 @@ extension ActionParameter {
 
 extension ActionParameterFormat {
 
+    /// Even if number, this format need integer data.
     var isIntRow: Bool {
         switch self {
-        case .spellOut:
-            return true
-        case .integer:
+        case .spellOut, .integer:
             return true
         default:
             return false
@@ -158,5 +156,26 @@ fileprivate extension TimeFormatter {
             }
         }
         return nil
+    }
+}
+
+extension String {
+
+    /// Get date from "today", ...
+    fileprivate var dateFromName: Date? {
+        switch self.lowercased().replacingOccurrences(of: " ", with: "") {
+        case "today":
+            return Date()
+        case "yesterday":
+            return Date.yesterday
+        case "tomorrow":
+            return Date.tomorrow
+        case "twodaysago":
+            return Date.twoDaysAgo
+        case "firstDayOfMonth":
+            return Date.firstDayOfMonth
+        default:
+            return nil
+        }
     }
 }
