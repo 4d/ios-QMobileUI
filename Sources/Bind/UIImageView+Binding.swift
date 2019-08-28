@@ -108,6 +108,9 @@ extension UIImageView {
             let completionHandler: ImageCompletionHandler = { result in
                 switch result {
                 case .success:
+                    #if DEBUG
+                    assert(ApplicationImageCache.isCached(imageResource)) // if failed maybe preprocessor
+                    #endif
                     //self.setNeedsDisplay() // force refresh ??
                     break
                 case .failure(let error):

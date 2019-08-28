@@ -62,6 +62,9 @@ class ApplicationImageCache: NSObject {
     private lazy var cacheMemoryOnly: Bool = {
         return pref["memoryOnly"] as? Bool ?? false
     }()
+    private lazy var pdfProcessor: Bool = {
+        return pref["pdfProcessor"] as? Bool ?? true
+    }()
 
     private lazy var atLaunch: Bool = {
         return pref["fill.atLaunch"] as? Bool ?? false
@@ -82,6 +85,13 @@ enum ImageCacheError: Error {
     case notFound
 }
 extension ApplicationImageCache {
+
+    static var processorIdentifier: String {
+        if ApplicationImageCache.instanceCached.pdfProcessor {
+            return PDFProcessor.instance.identifier
+        }
+        return DefaultImageProcessor.default.identifier
+    }
 
     // MARK: function
     private func fill(from bundle: Bundle = .main) {
@@ -124,10 +134,7 @@ extension ApplicationImageCache {
         let modifier = AnyModifier { request in // Setup some request modification
             return APIManager.instance.configure(request: request)
         }
-        var options: KingfisherOptionsInfo = [
-            .targetCache(instanceCached.imageCache),
-            .requestModifier(modifier)
-        ]
+        var options: KingfisherOptionsInfo = [.requestModifier(modifier), .targetCache(instanceCached.imageCache)]
         if instanceCached.forceRefresh {
             options.append(.forceRefresh)
         }
@@ -137,7 +144,9 @@ extension ApplicationImageCache {
         if instanceCached.cacheMemoryOnly {
             options.append(.cacheMemoryOnly)
         }
-        options.append(.processor(PDFProcessor.instance))
+        if instanceCached.pdfProcessor {
+            options.append(.processor(PDFProcessor.instance))
+        }
         return options
     }
 
@@ -148,7 +157,28 @@ extension ApplicationImageCache {
     }
 
     public static func store(image: UIImage, for resource: RestImageResource) {
-        instanceCached.imageCache.store(image, forKey: resource.cacheKey, toDisk: !instanceCached.cacheMemoryOnly)
+        instanceCached.imageCache.store(image, forKey: resource.cacheKey, processorIdentifier: processorIdentifier, toDisk: !instanceCached.cacheMemoryOnly)
+    }
+
+    public static func retrieve(for resource: RestImageResource) -> UIImage? {
+        let cacheKey = resource.cacheKey
+        if let image = instanceCached.imageCache.retrieveImageInMemoryCache(forKey: cacheKey) {
+            return image
+        }
+        var options: KingfisherOptionsInfo = [.loadDiskFileSynchronously, .waitForCache]
+        if instanceCached.pdfProcessor {
+            options.append(.processor(PDFProcessor.instance))
+        }
+        var image: UIImage?
+        instanceCached.imageCache.retrieveImage(forKey: resource.cacheKey, options: options, callbackQueue: .untouch) { result in
+            switch result {
+            case .success(let imageCache):
+                image = imageCache.image
+            case .failure(let error):
+                logger.warning("error when processing image \(error)")
+            }
+        }
+        return image
     }
 
     static func log(error kfError: KingfisherError, for imageURL: URL?) {
@@ -176,14 +206,13 @@ extension ApplicationImageCache {
     }
 
     static func checkCached(_ imageResource: RestImageResource) {
-        if !isCached(imageResource),
-            let image = imageInBundle(for: imageResource) {
+        if !isCached(imageResource), let image = imageInBundle(for: imageResource) {
             store(image: image, for: imageResource)
         }
     }
 
-    private static func isCached(_ imageResource: RestImageResource) -> Bool {
-        return instanceCached.imageCache.imageCachedType(forKey: imageResource.cacheKey).cached
+    static func isCached(_ imageResource: RestImageResource) -> Bool {
+        return instanceCached.imageCache.imageCachedType(forKey: imageResource.cacheKey, processorIdentifier: processorIdentifier).cached
     }
 
 }

@@ -115,10 +115,20 @@ extension ActionParameter {
         } else if let field = self.defaultField {
             // compute default value according to a defined properties and context
             if let value = context.actionParameterValue(for: field) {
-                if case .time = self.type {
+                switch self.type {
+                case .time:
                     if let value = value as? Double {
                         return value / 1000 // remove misslisecond to transform to timeInterval(seconde)
                     }
+                case .image:
+                    if let value = value as? [String: Any] {
+                        if let imageResource = ApplicationImageCache.imageResource(for: value),
+                            let image = ApplicationImageCache.retrieve(for: imageResource) {
+                            return image
+                        }
+                    }
+                default:
+                    break
                 }
                 if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
                     if let value = choice.choice(for: AnyCodable(value)) { // find value in list

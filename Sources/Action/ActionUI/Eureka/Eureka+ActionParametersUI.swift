@@ -332,22 +332,24 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             // upload images
             var itemDone = 0
             for (key, image) in images {
-                if let pngData = image.pngData() {
-                    _ = APIManager.instance.upload(data: pngData, image: true, mimeType: "image/png") { result in
-                        switch result {
-                        case .success(let uploadResult):
-                            logger.debug("Image uploaded \(uploadResult)")
-
-                            parameters[key] = uploadResult
-                        case .failure(let error):
-                            logger.warning("Failed to upload image \(error): \(String(describing: error.responseString))") // ok: true is not ok! we need id
-                            parameters.removeValue(forKey: key) // Not convertible
-                        }
-                        itemDone += 1
-                        if itemDone == images.count {
-                            completionHandler(parameters)
-                        }
+                let imageCompletion: APIManager.CompletionUploadResultHandler = { result in
+                    switch result {
+                    case .success(let uploadResult):
+                        logger.debug("Image uploaded \(uploadResult)")
+                        parameters[key] = uploadResult
+                    case .failure(let error):
+                        logger.warning("Failed to upload image \(error): \(String(describing: error.responseString))") // ok: true is not ok! we need id
+                        parameters.removeValue(forKey: key) // Not convertible
                     }
+                    itemDone += 1
+                    if itemDone == images.count {
+                        completionHandler(parameters)
+                    }
+                }
+                if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
+                    _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
+                } else if let imageData = image.pngData() {
+                    _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
                 } else {
                     parameters.removeValue(forKey: key) // Not convertible
                 }
