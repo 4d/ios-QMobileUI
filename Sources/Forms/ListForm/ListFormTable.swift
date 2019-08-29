@@ -161,6 +161,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
         // pass to view controllers and views
         segue.destination.prepare(with: entry)
+        segue.fix()
 
         // listen to index path change, to scroll table to new selected record
         entry.add(indexPathObserver: self)

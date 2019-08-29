@@ -121,6 +121,7 @@ open class SettingsForm: UITableViewController {
         } else {
             logger.debug("UI Transition with segue \(String(describing: segue.identifier))")
         }
+        segue.fix()
     }
 
     @objc func application(didEnterBackground notification: Notification) {

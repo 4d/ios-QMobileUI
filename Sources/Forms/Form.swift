@@ -22,3 +22,16 @@ public protocol Form {
     func onDidDisappear(_ animated: Bool)
 
 }
+
+extension UIStoryboardSegue {
+
+    func fix() {
+        #if swift(>=5.1)
+        if #available(iOS 13.0, *) {
+            if destination.modalPresentationStyle == .automatic || destination.modalPresentationStyle == .pageSheet { // iOS13 default pageSheet could failed
+                destination.modalPresentationStyle = .fullScreen
+            }
+        }
+        #endif
+    }
+}

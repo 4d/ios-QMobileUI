@@ -269,6 +269,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     open var performSegue = true
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        segue.fix()
     }
 
     /// Cancel the login.

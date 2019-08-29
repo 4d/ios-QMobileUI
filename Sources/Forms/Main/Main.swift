@@ -46,6 +46,7 @@ open class Main: UIViewController, Form {
         if let loginForm = segue.destination as? LoginForm {
             loginForm.delegate = ApplicationAuthenticate.instance as! ApplicationAuthenticate //swiftlint:disable:this force_cast
         }
+        segue.fix()
     }
 
     /// Called after the view has been loaded. Default does nothing
