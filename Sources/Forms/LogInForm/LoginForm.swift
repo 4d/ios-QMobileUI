@@ -97,6 +97,11 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    /// Function call before launch standard login.
+    open func onWillLogin() {}
+    /// Function after launching login process.
+    open func onDidLogin(result: Result<AuthToken, APIError>) {}
+
     // MARK: - Notifications
 
     func registerKeyboard() {
@@ -293,8 +298,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     fileprivate func doLogin(_ sender: Any?) {
         let startDate = Date() // keep start date
-        // Start UI animation
-        startLoginUI()
+        onWillLogin() // Called after the view has been loaded. Default does nothing
+        startLoginUI() // Start UI animation
         saveLoginText()
         logInAction = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
             guard let this = self else { return }
@@ -305,6 +310,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
             Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
 
             this.stopLoginUI {
+                this.onDidLogin(result: result)
+
                 let consumed = this.delegate?.didLogin(result: result) ?? false
                 // Display message
                 if !consumed {
