@@ -93,6 +93,20 @@ open class QApplication: UIApplication {
 
         // x-callback-url
         services.register(ApplicationXCallbackURL.instance)
+
+        // custom services?
+        let customServices = ApplicationPreferences.instance.services
+        for service in customServices {
+            if let cls = NSClassFromString(service) {
+                if let value = cls.value(forKey: "instance") as? ApplicationService {
+                    services.register(value)
+                } else {
+                    logger.warning("Not a valid service \(service). Must have a static 'instance' of type `ApplicationService`")
+                }
+            } else {
+                logger.warning("Cannot load service \(service) ")
+            }
+        }
     }
 
     public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
