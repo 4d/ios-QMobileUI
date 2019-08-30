@@ -185,7 +185,10 @@ open class TableDataSource: DataSource, UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return self.delegate?.dataSource?(self, tableView: tableView, titleForFooterInSection: section)
+        if let value = self.delegate?.dataSource?(self, tableView: tableView, titleForFooterInSection: section) {
+            return value
+        }
+        return nil
     }
 
     // MARK: Editing

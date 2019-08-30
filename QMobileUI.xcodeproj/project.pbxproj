@@ -93,6 +93,7 @@
 		4869D608223BA4110042379F /* ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D607223BA4110042379F /* ActionContext.swift */; };
 		4869D60B223BA4410042379F /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60A223BA4410042379F /* ActionManager.swift */; };
 		4869D60D223BA47F0042379F /* UIView+ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60C223BA47F0042379F /* UIView+ActionContext.swift */; };
+		486BC3CA231935710059B66C /* RecordFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486BC3C9231935710059B66C /* RecordFormat.swift */; };
 		48708B5D2195B36E005C9C4A /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* Main.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
@@ -308,6 +309,7 @@
 		4869D607223BA4110042379F /* ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionContext.swift; sourceTree = "<group>"; };
 		4869D60A223BA4410042379F /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
 		4869D60C223BA47F0042379F /* UIView+ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActionContext.swift"; sourceTree = "<group>"; };
+		486BC3C9231935710059B66C /* RecordFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFormat.swift; path = Sources/Forms/RecordFormat.swift; sourceTree = SOURCE_ROOT; };
 		48708B5C2195B36E005C9C4A /* Main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
@@ -568,6 +570,7 @@
 				483FDA8A1E82842000FAF84B /* DetailsFormBare.swift */,
 				480392C61E929DA3008CF992 /* DetailsFormTable.swift */,
 				48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */,
+				486BC3C9231935710059B66C /* RecordFormat.swift */,
 			);
 			path = DetailsForm;
 			sourceTree = "<group>";
@@ -1416,6 +1419,7 @@
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,
 				480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */,
+				486BC3CA231935710059B66C /* RecordFormat.swift in Sources */,
 				48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */,
 				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
 				48708B5D2195B36E005C9C4A /* Main.swift in Sources */,

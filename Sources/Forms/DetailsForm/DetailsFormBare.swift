@@ -167,16 +167,16 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                     logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                     return
             }
-            let inverseRelationName = inverseRelationInfo.name // relationInfoUI.inverseRelationName
+            let inverseRelationName = inverseRelationInfo.name // relationInfoUI.inverseRelationName (no more available)
 
-            var title: String?
-            if let record = record {
-                title = "\(record)"
+            var previousTitle: String?
+            if let record = record, let relationShortName = relationInfoUI.relationTitleFormat, let formatter = RecordFormatter(format: relationShortName) {
+                previousTitle = formatter.format(record)
             }
             let predicatString = "(\(inverseRelationName) = %@)"
             listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
                                                actionContext: actionContext(),
-                                               previousTitle: title)
+                                               previousTitle: previousTitle)
 
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")

@@ -15,8 +15,10 @@ public protocol RelationInfoUI {
     var relation: Any? { get }
     /// The relation name
     var relationName: String? { get }
+    /// The relation format
+    var relationTitleFormat: String? { get }
     /// The inverse relation name.
-    var inverseRelationName: String? { get } // CLEAN to remove
+    //var inverseRelationName: String? { get } // CLEAN to remove
 
     /// Add action to launch segue.
     var addRelationSegueAction: Bool { get }
@@ -25,7 +27,8 @@ public protocol RelationInfoUI {
 private struct AssociatedKeys {
     static var relation = "RelationInfoUI.relation"
     static var relationName = "RelationInfoUI.relationName"
-    static var inverseRelationName = "RelationInfoUI.inverseRelationName"
+    static var relationTitleFormat = "RelationInfoUI.relationTitleFormat"
+    //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
 }
 
@@ -41,10 +44,14 @@ extension UIControl: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
-    @objc dynamic open var inverseRelationName: String? {
+    @objc dynamic open var relationTitleFormat: String? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    /*@objc dynamic open var inverseRelationName: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }*/
     @objc dynamic open var addRelationSegueAction: Bool {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
@@ -75,12 +82,12 @@ extension UIControl: RelationInfoUI {
             }
         }
     }
-    @objc dynamic open var inverseRelationName: String? {
+    @objc dynamic open var relationTitleFormat: String? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.inverseRelationName) as? String
+            return objc_getAssociatedObject(self, &AssociatedKeys.relationTitleFormat) as? String
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.inverseRelationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self, &AssociatedKeys.relationTitleFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
     @objc dynamic open var addRelationSegueAction: Bool {

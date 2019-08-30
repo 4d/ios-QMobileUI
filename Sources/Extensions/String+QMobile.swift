@@ -86,3 +86,14 @@ extension String {
     }
 
 }
+
+extension NSRegularExpression {
+
+    func matched(_ string: String) -> (String, CountableRange<Int>)? {
+        let range = self.rangeOfFirstMatch(in: string, options: [], range: NSRange(0 ..< string.utf16.count))
+        if range.location != NSNotFound {
+            return ((string as NSString).substring(with: range), range.location ..< range.location + range.length)
+        }
+        return nil
+    }
+}
