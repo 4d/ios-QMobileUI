@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import QMobileDataStore
+import QMobileDataSync
 
 // XXX to move
 
@@ -15,13 +17,15 @@ struct RecordFormatter {
 
     enum Token {
         case field(String, CountableRange<Int>)
+        case fieldOriginal(String, CountableRange<Int>)
         case undefined(String, CountableRange<Int>)
     }
 
     class Lexer {
         typealias TokenBuilder = (String, CountableRange<Int>) -> Token? //swiftlint:disable:this nesting
         static let tokenStringList: [String: TokenBuilder] = [
-            ":[a-zA-Z][a-zA-Z0-9]*": ({ .field($0, $1) })
+            ":[a-zA-Z][a-zA-Z0-9]*": ({ .field($0, $1) }),
+            "%[\\w ]*%": ({ .fieldOriginal($0, $1) })
         ]
         typealias TokenRegularExpression = (NSRegularExpression, TokenBuilder) //swiftlint:disable:this nesting
         static let tokenList: [TokenRegularExpression] = tokenStringList.map {
@@ -108,25 +112,29 @@ struct RecordFormatter {
             let firstToken = popCurrentToken()
             switch firstToken {
             case .undefined(let name, _):
-                return Node(name: name)
+                return UndefinedNode(name: name)
             case .field(let name, _):
                 return FieldNode(name: String(name.dropFirst()))
+            case .fieldOriginal(let name, _):
+                return FieldOriginalNode(name: String(name.dropFirst().dropLast()))
             }
         }
     }
 
     var nodes: [Node]
-    init?(format: String) {
+    var tableInfo: DataStoreTableInfo
+    init?(format: String, tableInfo: DataStoreTableInfo) {
         guard let nodes = try? Parser(tokens: Lexer.tokenize(format)).parse() else {
             return nil
         }
+        self.tableInfo = tableInfo
         self.nodes = nodes.compact() // XXX better lexer or merge simple node?
     }
 
     func format(_ object: AnyObject) -> String {
         var string = ""
         for node in nodes {
-            string += node.format(object)
+            string += node.format(object, tableInfo: tableInfo)
         }
         return string
     }
@@ -139,18 +147,18 @@ extension Array where Element: Node {
         var newNodes: [Node] = []
         var currentNode: Node?
         for node in self {
-            if node is FieldNode {
+            if node is UndefinedNode {
+                if let toAppend = currentNode {
+                    currentNode = UndefinedNode(name: toAppend.name + node.name)
+                } else {
+                    currentNode = node
+                }
+            } else {
                 if let toAppend = currentNode {
                     newNodes.append(toAppend)
                     currentNode = nil
                 }
                 newNodes.append(node)
-            } else {
-                if let toAppend = currentNode {
-                    currentNode = Node(name: toAppend.name + node.name)
-                } else {
-                    currentNode = node
-                }
             }
         }
         if let toAppend = currentNode {
@@ -176,16 +184,31 @@ class Node: CustomStringConvertible, Equatable {
         return lhs.description == rhs.description
     }
 
-    func format(_ object: AnyObject) -> String {
+    func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
         return name
     }
 
 }
 
+
+class UndefinedNode: Node {}
+
 class FieldNode: Node {
 
-    override func format(_ object: AnyObject) -> String {
+    override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
         if let value = object.value(forKeyPath: name) {
+            return "\(value)"
+        }
+        return name
+    }
+
+}
+
+class FieldOriginalNode: Node {
+
+    override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
+        if let field = tableInfo.fields.filter({ $0.originalName == self.name}).first,
+            let value = object.value(forKeyPath: field.name) {
             return "\(value)"
         }
         return name

@@ -54,6 +54,10 @@ extension DetailsForm {
     fileprivate var _record: Record? { // swiftlint:disable:this identifier_name
         return entry?.record as? Record
     }
+    
+    var tableInfo: DataStoreTableInfo {
+        return _record.tableInfo
+    }
 
     /// The record in `dataSource` at the `indexPath`
     public var record: AnyObject? {
