@@ -101,11 +101,8 @@ struct RecordFormatter {
         }
 
         func parsePrimary() throws -> Node {
-            let currentToken = self.currentToken()
-            switch currentToken {
-            case .undefined, .field:
-                return try parseIdentifier()
-            }
+            _ = self.currentToken()
+            return try parseIdentifier()
         }
 
         func parseIdentifier() throws -> Node {
@@ -189,7 +186,6 @@ class Node: CustomStringConvertible, Equatable {
     }
 
 }
-
 
 class UndefinedNode: Node {}
 

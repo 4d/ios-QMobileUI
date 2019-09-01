@@ -187,13 +187,27 @@ extension Result {
     }
 }*/
 
+// MARK: - did login
+
+extension Result where Success == AuthToken {
+    /// Returns `true` if the use is SignIn, `false` otherwise.
+    public var isSignIn: Bool {
+        switch self {
+        case .success(let token):
+            return token.isValidToken
+        case .failure:
+            return false
+        }
+    }
+}
+
 // MARK: LoginFormDelegate
 extension ApplicationAuthenticate: LoginFormDelegate {
 
     /// What to after login.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool {
         // If reload data after login
-        guard result.isSuccess, result.value?.isValidToken ?? false else {
+        guard result.isSignIn else {
             self.tryCount = 0
             return false
         }
