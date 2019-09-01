@@ -89,8 +89,6 @@ extension ActionParameter {
                 if let rowOf = row as? RowOf<String> {
                     rowOf.add(rule: RuleRegExp(regExpr: regExpr))
                 }
-            @unknown case _:
-                continue
             }
         }
 

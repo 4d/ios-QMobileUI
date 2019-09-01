@@ -51,7 +51,7 @@ extension UIImageView {
 
     public var webURL: URL? {
         get {
-            return self.kf.webURL
+            return nil
         }
         set {
             if newValue != nil {
@@ -112,7 +112,6 @@ extension UIImageView {
                     assert(ApplicationImageCache.isCached(imageResource)) // if failed maybe preprocessor
                     #endif
                     //self.setNeedsDisplay() // force refresh ??
-                    break
                 case .failure(let error):
                     ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
                     _ = self.kf.setImage(with: imageResource.bundleProvider,
