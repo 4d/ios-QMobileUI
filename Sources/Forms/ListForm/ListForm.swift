@@ -22,7 +22,7 @@ public struct FormContext {
 }
 
 /// A List form display a list of table data
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form, Storyboardable {
 
     var tableName: String { get }
     var dataSource: DataSource? { get }

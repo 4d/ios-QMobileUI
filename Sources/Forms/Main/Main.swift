@@ -73,6 +73,17 @@ open class Main: UIViewController, Form {
         performTransition()
     }
 
+    @IBInspectable var style: String = "" {
+        didSet {
+            updateStyle()
+        }
+    }
+
+    var _style: UIUserInterfaceStyle = .unspecified //swiftlint:disable:this identifier_name
+
+}
+
+extension Main {
     func setupAppareance() {
         updateStyle()
         switch _style {
@@ -84,24 +95,13 @@ open class Main: UIViewController, Form {
             UITabBar.appearance().barStyle = .black
             UINavigationBar.appearance().barStyle = .blackTranslucent
             UISearchBar.appearance().barStyle = .blackTranslucent
-
-            // UIView.appearance().backgroundColor = UIColor.darkBackground
-            // UIColor.darkText
         default:
             break
         }
     }
 
-    @IBInspectable var style: String = "" {
-        didSet {
-            updateStyle()
-        }
-    }
-
-    var _style: UserInterfaceStyle = .unspecified //swiftlint:disable:this identifier_name
-
     func updateStyle() {
-        self._style = UserInterfaceStyle(string: style)
+        self._style = UIUserInterfaceStyle(string: style)
     }
 }
 
@@ -112,18 +112,7 @@ public extension UIColor {
     static let foreground = UIColor(named: "ForegroundColor")
 }
 
-// TODO Use UIUserInterfaceStyle when iOS12
-enum UserInterfaceStyle: Int {
-
-    case unspecified
-
-    case light
-
-    case dark
-
-}
-
-extension UserInterfaceStyle {
+extension UIUserInterfaceStyle {
 
     init(string: String) {
         switch string {
@@ -138,17 +127,9 @@ extension UserInterfaceStyle {
         case .light: return "light"
         case .dark: return "dark"
         case .unspecified: return "unspecified"
+        @unknown default:
+            fatalError()
         }
     }
 
 }
-
-#if DEBUG
-extension UIViewController {
-    // /!\ This method use private information
-    fileprivate func canPerformSegue(withIdentifier identifier: String) -> Bool {
-        guard let segues = self.value(forKey: "storyboardSegueTemplates") as? [NSObject] else { return false }
-        return segues.first { $0.value(forKey: "identifier") as? String == identifier } != nil
-    }
-}
-#endif

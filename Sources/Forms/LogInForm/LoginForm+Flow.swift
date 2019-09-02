@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension LoginForm: Storyboard {}
+extension LoginForm: Storyboardable {}
 
 extension LoginForm {
 

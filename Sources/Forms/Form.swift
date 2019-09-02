@@ -22,28 +22,3 @@ public protocol Form {
     func onDidDisappear(_ animated: Bool)
 
 }
-
-extension UIStoryboardSegue {
-
-    func fix() {
-        #if swift(>=5.1)
-        if #available(iOS 13.0, *) {
-            if Prephirences.Ui.Presentation.fullScreen {
-                if destination.modalPresentationStyle == .automatic || destination.modalPresentationStyle == .pageSheet { // iOS13 default pageSheet could failed
-                    destination.modalPresentationStyle = .fullScreen
-                }
-            }
-        }
-        #endif
-    }
-}
-
-import Prephirences
-extension Prephirences {
-    public struct Ui: Prephirencable { // swiftlint:disable:this type_name
-        public struct Presentation: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = Ui.instance
-            public static let fullScreen: Bool = instance["fullScreen"] as? Bool ?? false
-        }
-    }
-}

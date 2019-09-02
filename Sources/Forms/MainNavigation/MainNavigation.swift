@@ -8,8 +8,9 @@
 
 import Foundation
 
-class MainNavigation: NSObject, Storyboard {
-    static var identifier: String {
+/// Private bootstrap class to be able to create one in project. Could not make it parent because could be tab bar, collection, table etc...
+class MainNavigation: NSObject, Storyboardable {
+    static var storyboardIdentifier: String {
         return self.className
     }
 }

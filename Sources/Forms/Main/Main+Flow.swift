@@ -11,7 +11,7 @@ import Prephirences
 import SwiftMessages
 import QMobileAPI
 
-extension Main: Storyboard {}
+extension Main: Storyboardable {}
 
 extension Main {
 

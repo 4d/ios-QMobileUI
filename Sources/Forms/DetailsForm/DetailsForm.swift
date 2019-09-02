@@ -12,7 +12,7 @@ import UIKit
 import QMobileDataStore
 import QMobileAPI
 
-public protocol DetailsForm: class, ActionContextProvider, Form {
+public protocol DetailsForm: class, ActionContextProvider, Form, Storyboardable {
 
     // the root view of form
     var view: UIView! {get set}

@@ -11,7 +11,7 @@ import FileKit
 import XCGLogger
 
 @IBDesignable
-open class LogForm: UIViewController {
+open class LogForm: UIViewController, Storyboardable {
 
     /// If colorize, change color of the text according to log level.
     /// Work only if use a `BasicLogDestionation` from XCGLogger.
@@ -97,6 +97,12 @@ open class LogForm: UIViewController {
             // XXX maybe limit to let path = path,
             feedback.mailCompose(subject: "Send mail", body: "You will find log attached.", attachLog: true)
         }
+    }
+
+    // MARK: Storyboardable
+
+    public static var storyboardBundle: Bundle? {
+        return Bundle(for: LogForm.self)
     }
 }
 

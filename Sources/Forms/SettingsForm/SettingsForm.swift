@@ -15,7 +15,7 @@ import QMobileAPI
 import QMobileDataSync
 
 @IBDesignable
-open class SettingsForm: UITableViewController {
+open class SettingsForm: UITableViewController, Storyboardable {
 
     public enum Section: Int {
 
