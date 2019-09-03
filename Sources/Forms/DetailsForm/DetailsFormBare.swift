@@ -172,8 +172,8 @@ open class DetailsFormBare: UIViewController, DetailsForm {
             var previousTitle: String?
             if let record = record,
                 let tableInfo = tableInfo,
-                let relationShortName = relationInfoUI.relationTitleFormat,
-                let formatter = RecordFormatter(format: relationShortName, tableInfo: tableInfo) {
+                let relationFormat = relationInfoUI.relationFormat,
+                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
                 previousTitle = formatter.format(record)
             }
             let predicatString = "(\(inverseRelationName) = %@)"
