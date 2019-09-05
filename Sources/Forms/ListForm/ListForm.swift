@@ -124,12 +124,12 @@ extension ListFormSearchable where Self: UIViewController {
                 if searchableAsTitle {
                     self.navigationItem.titleView = searchBar
                 } else {
-                    let searchController = UISearchController(searchResultsController: self)
+                    let searchController = UISearchController(searchResultsController: nil)
                     searchController.searchResultsUpdater = self
                     searchController.obscuresBackgroundDuringPresentation = false
-                    searchController.dimsBackgroundDuringPresentation = false
                     searchController.hidesNavigationBarDuringPresentation = searchableHideNavigation
                     searchController.delegate = self
+                    self.definesPresentationContext = true
                     self.navigationItem.searchController = searchController
                     self.navigationItem.hidesSearchBarWhenScrolling = !searchableWhenScrolling
                     self.definesPresentationContext = true
@@ -146,7 +146,7 @@ extension ListFormSearchable where Self: UIViewController {
             }
         }
         if let subview = searchBar?.subviews.first {
-            let textFields = subview.subviews.compactMap({$0 as? UITextField })
+            let textFields = subview.allSubviews.compactMap({$0 as? UITextField })
             if let searchTextField = textFields.first {
                 searchTextField.tintColor = searchTextField.textColor // the |
                 if !searchableAsTitle {

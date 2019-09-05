@@ -100,6 +100,15 @@ public extension UIView {
         }
         return nil
     }
+
+    var allSubviews: [UIView] {
+        var result = self.subviews
+        var subviews = result
+        for subview in subviews {
+            result += subview.allSubviews
+        }
+        return result
+    }
 }
 
 protocol LayoutGuide {
