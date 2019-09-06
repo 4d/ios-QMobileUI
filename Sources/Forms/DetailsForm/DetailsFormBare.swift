@@ -184,6 +184,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
             }
+            segue.fix()
         } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
          /// Not yet implemented
          if let dataSource = detailForm.dataSource {

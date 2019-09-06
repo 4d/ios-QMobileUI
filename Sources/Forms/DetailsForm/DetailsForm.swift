@@ -17,9 +17,9 @@ public protocol DetailsForm: class, ActionContextProvider, Form, Storyboardable 
     // the root view of form
     var view: UIView! {get set}
 
-    /// @return: true if the is previous record
+    /// @return: true if there is previous record
     var hasPreviousRecord: Bool {get set}
-    /// @return: true if the is next record
+    /// @return: true if there is next record
     var hasNextRecord: Bool {get set}
 
     /// Called when record changed
