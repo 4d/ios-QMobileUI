@@ -16,9 +16,16 @@ extension UIStoryboardSegue {
             if Prephirences.Ui.Presentation.fullScreen {
                 if destination.modalPresentationStyle == .automatic || destination.modalPresentationStyle == .pageSheet { // iOS13 default pageSheet could failed
                     destination.modalPresentationStyle = .fullScreen
+                    logger.debug("\(self) has been presented using modal fullScreen style instead of \(destination.modalPresentationStyle)")
+                } else {
+                    logger.debug("\(self) is presented using modal style \(destination.modalPresentationStyle)")
                 }
+            } else {
+                logger.debug("Segue fix is not installed. See setting")
             }
         }
+        #else
+        logger.debug("Segue fix is not installed. Not available with swift 5. Need 5.1")
         #endif
     }
 }
