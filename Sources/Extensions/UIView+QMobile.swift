@@ -103,7 +103,7 @@ public extension UIView {
 
     var allSubviews: [UIView] {
         var result = self.subviews
-        var subviews = result
+        let subviews = result
         for subview in subviews {
             result += subview.allSubviews
         }
