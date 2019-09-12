@@ -5,9 +5,9 @@
         "package": "Alamofire",
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
-          "branch": null,
-          "revision": "75bba56748359f297a83f620d45f72cf4ebee4e7",
-          "version": "4.8.2"
+          "branch": "HEAD",
+          "revision": "e61de31dd38ec5b9f2e42b74b8aa4fa6f2ba67b0",
+          "version": null
         }
       },
       {
@@ -29,12 +29,39 @@
         }
       },
       {
+        "package": "CwlCatchException",
+        "repositoryURL": "https://github.com/mattgallagher/CwlCatchException.git",
+        "state": {
+          "branch": null,
+          "revision": "7cd2f8cacc4d22f21bc0b2309c3b18acf7957b66",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "CwlPreconditionTesting",
+        "repositoryURL": "https://github.com/mattgallagher/CwlPreconditionTesting.git",
+        "state": {
+          "branch": null,
+          "revision": "c228db5d2ad1b01ebc84435e823e6cca4e3db98b",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "DeviceKit",
+        "repositoryURL": "https://github.com/devicekit/DeviceKit.git",
+        "state": {
+          "branch": null,
+          "revision": "24fbc1daad4ab1cd26433add46b6480af018b017",
+          "version": "2.1.0"
+        }
+      },
+      {
         "package": "FileKit",
         "repositoryURL": "https://github.com/nvzqz/FileKit.git",
         "state": {
           "branch": null,
-          "revision": "48b5ddb287f131a5c628badc819b880453f94449",
-          "version": null
+          "revision": "826d9161b184509f80d85c28cd612d630646de98",
+          "version": "6.0.0"
         }
       },
       {
@@ -59,9 +86,9 @@
         "package": "Moya",
         "repositoryURL": "https://github.com/Moya/Moya.git",
         "state": {
-          "branch": null,
-          "revision": "ae2ca8a51c0e28d67e59c46f55bb43dda89ca0d6",
-          "version": "13.0.1"
+          "branch": "HEAD",
+          "revision": "cdef4ea7ecb7818491c5b710a718077d9513dcbd",
+          "version": null
         }
       },
       {
@@ -69,8 +96,8 @@
         "repositoryURL": "https://github.com/Quick/Nimble.git",
         "state": {
           "branch": null,
-          "revision": "f8657642dfdec9973efc79cc68bcef43a653a2bc",
-          "version": "8.0.2"
+          "revision": "6abeb3f5c03beba2b9e4dbe20886e773b5b629b6",
+          "version": "8.0.4"
         }
       },
       {
@@ -87,7 +114,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileAPI.git",
         "state": {
           "branch": "HEAD",
-          "revision": "b7106f4fca71dfc94ae5bf8ad52670ceefd21822",
+          "revision": "d0c50572ce9a37588f8b8a1906e4c03911b1faff",
           "version": null
         }
       },
@@ -96,7 +123,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataStore.git",
         "state": {
           "branch": "HEAD",
-          "revision": "d0bcac0f3e6c012199c66d497c3f134962ec9abe",
+          "revision": "a73c5fed8f3dbd99805d60b1f9ad00b6dfac0600",
           "version": null
         }
       },
@@ -105,7 +132,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataSync.git",
         "state": {
           "branch": "HEAD",
-          "revision": "05a5e6fbeac4bf0d192b89f3a90d0b27450ff10f",
+          "revision": "89a62e6403d9b58d7fe81dd453d73a17f9116aa4",
           "version": null
         }
       },
