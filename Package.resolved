@@ -5,9 +5,9 @@
         "package": "Alamofire",
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
-          "branch": "HEAD",
-          "revision": "e61de31dd38ec5b9f2e42b74b8aa4fa6f2ba67b0",
-          "version": null
+          "branch": null,
+          "revision": "c1d14588e5558a3669fd03510d135d88c5109069",
+          "version": "5.0.0-rc.2"
         }
       },
       {
@@ -47,15 +47,6 @@
         }
       },
       {
-        "package": "DeviceKit",
-        "repositoryURL": "https://github.com/devicekit/DeviceKit.git",
-        "state": {
-          "branch": null,
-          "revision": "24fbc1daad4ab1cd26433add46b6480af018b017",
-          "version": "2.1.0"
-        }
-      },
-      {
         "package": "FileKit",
         "repositoryURL": "https://github.com/nvzqz/FileKit.git",
         "state": {
@@ -86,9 +77,9 @@
         "package": "Moya",
         "repositoryURL": "https://github.com/Moya/Moya.git",
         "state": {
-          "branch": "HEAD",
-          "revision": "cdef4ea7ecb7818491c5b710a718077d9513dcbd",
-          "version": null
+          "branch": null,
+          "revision": "062db248c4f320d35a18bd4046a2adc164d64934",
+          "version": "14.0.0-beta.2"
         }
       },
       {
@@ -114,7 +105,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileAPI.git",
         "state": {
           "branch": "HEAD",
-          "revision": "d0c50572ce9a37588f8b8a1906e4c03911b1faff",
+          "revision": "7421c7dace284bd09957ecb7ef9686e9bf360abe",
           "version": null
         }
       },
@@ -123,7 +114,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataStore.git",
         "state": {
           "branch": "HEAD",
-          "revision": "a73c5fed8f3dbd99805d60b1f9ad00b6dfac0600",
+          "revision": "164628d361eb33ae94f4ae6c92ffa494b3c5214e",
           "version": null
         }
       },
@@ -132,7 +123,7 @@
         "repositoryURL": "http://srv-git:3000/qmobile/QMobileDataSync.git",
         "state": {
           "branch": "HEAD",
-          "revision": "89a62e6403d9b58d7fe81dd453d73a17f9116aa4",
+          "revision": "9172d896b6efe84e7aeb0dd0c70667accf705507",
           "version": null
         }
       },
@@ -150,17 +141,8 @@
         "repositoryURL": "https://github.com/ReactiveCocoa/ReactiveSwift.git",
         "state": {
           "branch": null,
-          "revision": "c37950dc5020544c58d4bf47c0d028893686b9e6",
-          "version": "5.0.1"
-        }
-      },
-      {
-        "package": "Result",
-        "repositoryURL": "https://github.com/antitypical/Result.git",
-        "state": {
-          "branch": null,
-          "revision": "2ca499ba456795616fbc471561ff1d963e6ae160",
-          "version": "4.1.0"
+          "revision": "b772fa0b624926e6e2f21acbb79297736a05c585",
+          "version": "6.1.0"
         }
       },
       {
@@ -168,8 +150,8 @@
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
-          "revision": "cce95dd704bc08cd3d69c087a05a6fc3118e2722",
-          "version": "4.5.0"
+          "revision": "b3e888b4972d9bc76495dd74d30a8c7fad4b9395",
+          "version": "5.0.1"
         }
       },
       {
@@ -188,6 +170,15 @@
           "branch": null,
           "revision": "f43166a8e18fdd0857f29e303b1bb79a5428bca0",
           "version": "4.9.0"
+        }
+      },
+      {
+        "package": "ValueTransformerKit",
+        "repositoryURL": "https://github.com/phimage/ValueTransformerKit.git",
+        "state": {
+          "branch": null,
+          "revision": "1b99809eca26ce3dcc807a36c7ab6b6429accf67",
+          "version": "1.2.1"
         }
       },
       {
