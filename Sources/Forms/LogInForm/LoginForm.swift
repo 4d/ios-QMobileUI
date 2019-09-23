@@ -245,6 +245,9 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
                     break
                 }
                 return
+            case .sessionTaskFailed(let error):
+                SwiftMessages.warning(error.localizedDescription)
+                return
             default:
                 break
             }
