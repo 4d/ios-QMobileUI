@@ -34,6 +34,8 @@ extension UINavigationBar: UIAppearanceCopyable {
         self.barTintColor = bar.barTintColor
         self.tintColor = bar.tintColor
         self.prefersLargeTitles = bar.prefersLargeTitles
+        self.titleTextAttributes = bar.titleTextAttributes
+        self.largeTitleTextAttributes = bar.largeTitleTextAttributes
         if image {
             self.backIndicatorImage = bar.backIndicatorImage
         }
