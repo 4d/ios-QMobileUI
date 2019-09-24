@@ -72,3 +72,21 @@ extension UISearchBar: UIAppearanceCopyable {
     }
 
 }
+
+extension UINavigationBar {
+
+    /// try to find default title view.
+    func findTitleView(title: String?) -> UIView? {
+        let labels = allSubviews.compactMap { $0 as? UILabel }
+        for label in labels {
+            if let title = title {
+                if label.text == title {
+                    return label
+                } // else go on
+            } else {
+                return label // return first... (XXX maybe label elsewhere...)
+            }
+        }
+        return nil
+    }
+}

@@ -38,11 +38,11 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     @IBInspectable open var searchSensitivity: String = "cd"
     /// Name(s) of the search field(s)
     @IBInspectable open var searchableField: String = "name"
-    /// Add search bar in place of navigation bar title
+    /// Add search bar in place of navigation bar title (default: `true`)
     @IBInspectable open var searchableAsTitle: Bool = true
-    /// Keep search bar if scrolling
+    /// Keep search bar if scrolling (default: `true`) - only if `searchableAsTitle` is `false`
     @IBInspectable open var searchableWhenScrolling: Bool = true
-    /// Hide navigation bar when searching
+    /// Hide navigation bar when searching (default: `true`) - only if `searchableAsTitle` is `false`
     @IBInspectable open var searchableHideNavigation: Bool = true
 
     /// Name of the field used to sort. (You use multiple field using coma)
@@ -248,16 +248,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         if let previousTitle = self.formContext?.previousTitle {
             self.navigationItem.title = previousTitle
         }
-    }
-
-    fileprivate func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
-        if parent == nil {
-            self.originalParent = self.parent
-        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
-            if let navigationController = self.originalParent  as? UINavigationController {
-                moreNavigationController.navigationBar.copyAppearance(from: navigationController.navigationBar)
-            }
-        }
+        self.installNatigationMenu()
     }
 
     // MARK: Install components

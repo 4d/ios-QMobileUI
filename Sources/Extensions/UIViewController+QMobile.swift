@@ -132,6 +132,15 @@ extension UIViewController {
         return viewController == navigation.viewControllers.first
     }
 
+    var firstSelectedController: UIViewController {
+        if let navigationController = self as? UINavigationController {
+            return navigationController.viewControllers.first ?? self
+        } else if let tabBarController = self as? UITabBarController {
+            return tabBarController.selectedViewController?.firstController ?? self
+        }
+        return self
+    }
+
     /// Add a gesture recognizer to main view of controller.
     func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer?) {
         if let gestureRecognizer = gestureRecognizer {
@@ -199,6 +208,14 @@ extension UIViewController {
             navigationController.navigationBar.copyAppearance(from: topBar)
         }
         return navigationController
+    }
+
+    var navigationBarTitleView: UIView? {
+        if let titleView = self.navigationItem.titleView {
+            return titleView
+        } else {
+            return self.navigationController?.navigationBar.findTitleView(title: self.navigationItem.title)
+        }
     }
 
 }

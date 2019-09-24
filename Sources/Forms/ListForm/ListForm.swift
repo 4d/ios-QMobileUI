@@ -24,12 +24,17 @@ public struct FormContext {
 /// A List form display a list of table data
 public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form, Storyboardable {
 
+    /// The table name displayed by this form.
     var tableName: String { get }
+    /// The data source.
     var dataSource: DataSource? { get }
+    /// A context that could change the for behaviour.
     var formContext: FormContext? { get set }
+
+    /// A parent controller. (used to fix issue with more view controller).
+    var originalParent: UIViewController? { get set }
 }
 
-let searchController = UISearchController(searchResultsController: nil)
 extension ListForm {
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
@@ -98,6 +103,16 @@ extension ListForm where Self: UIViewController {
         }
     }
 
+    func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
+        if parent == nil {
+            self.originalParent = self.parent
+        } else if let moreNavigationController = parent as? UINavigationController, moreNavigationController.isMoreNavigationController {
+            if let navigationController = self.originalParent  as? UINavigationController {
+                moreNavigationController.navigationBar.copyAppearance(from: navigationController.navigationBar)
+            }
+        }
+    }
+
 }
 
 public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
@@ -116,6 +131,19 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
 }
 
 extension ListFormSearchable where Self: UIViewController {
+
+    func installNatigationMenu() {
+        if #available(iOS 13.0, *) {
+            if let titleView = self.navigationBarTitleView {
+                let interaction = UIContextMenuInteraction(delegate: self)
+                titleView.addInteraction(interaction)
+                titleView.isUserInteractionEnabled = true
+            } else {
+                logger.debug("Cannot get navigation bar title for \(self)")
+            }
+        } // else Fallback on earlier versions
+    }
+
     func doInstallSearchBar() {
        var searchBar = self.searchBar
         // Install seachbar into navigation bar if any
@@ -207,4 +235,85 @@ extension ListFormSearchable where Self: UIViewController {
         //performSearch(searchText) // already done by search bar listener
         //}
     }
+}
+
+// MARK: navigation menu controller
+
+let useImage = false
+let useMenuTitle = true
+
+@available(iOS 13.0, *)
+extension UIViewController: UIContextMenuInteractionDelegate {
+
+    public var displayableHierachy: [UIViewController]? {
+        let presentationStyle = self.modalPresentationStyle
+        if presentationStyle == .automatic || presentationStyle == .pageSheet {
+            if let parent = self.parent {
+                return [parent] + (parent.hierarchy ?? [])
+            }
+            if let presentingViewController = self.presentingViewController {
+                return [presentingViewController] + (presentingViewController.hierarchy ?? [])
+            }
+        }
+        return nil
+    }
+
+    public func contextMenuInteractionWillPresent(_ interaction: UIContextMenuInteraction) {}
+
+    public func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let hierarchy: [UIViewController] = self.displayableHierachy else {  return nil }
+
+        let actionImage: UIImage? = useImage ? UIImage(systemName: "arrow.left.to.line"): nil
+        let menuTitle = useMenuTitle ? "Go Back": ""
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            var children: [UIMenuElement] = []
+            for vcInHierarchy in hierarchy {
+                let firstController = vcInHierarchy.firstController
+                let title = firstController.navigationItem.title
+                if firstController == self {
+                    // ignore current level
+                } else if vcInHierarchy == firstController { // last one main?, ie. stop to last one...
+                    let action = UIAction(title: vcInHierarchy.firstSelectedController.navigationItem.title ?? "Dismiss all", image: actionImage) { _ in
+                        vcInHierarchy.firstSelectedController.dismiss(animated: true)
+                    }
+                    children.append(action)
+
+                    // If want to add tab bar controller level
+                    /*if let tabBarController = vc as? UITabBarController {
+                     // allow to show all ?
+                     if let tabs = tabBarController.viewControllers {
+                     var children0: [UIMenuElement] = []
+                     for tab in tabs {0
+                     let form = tab.firstController
+                     let title = form.navigationItem.title
+                     if !(hierarchy.map { $0.firstController }.contains(form)) {
+
+                     let action = UIAction(title: title ?? "\(form)", image: tab.tabBarItem?.image ??   form.tabBarItem?.image ?? UIImage(systemName: "square")) { action in
+                     tabBarController.selectedViewController?.dismiss(animated: true, completion: {
+
+                     tabBarController.selectedViewController = tab
+                     })
+                     }
+                     // children0.append(action)
+                     children.append(action)
+                     }
+                     }
+
+                     //  let menu0 =   UIMenu(title: "tab", children: children0)
+
+                     //  children.append(menu0)
+                     }
+                     }*/
+                } else {
+                    let action = UIAction(title: title ?? "\(firstController)", image: actionImage) { _ in
+                        firstController.dismiss(animated: true)
+                    }
+                    children.append(action)
+                }
+            }
+            return UIMenu(title: menuTitle, children: children)
+        }
+    }
+
 }
