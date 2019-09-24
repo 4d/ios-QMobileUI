@@ -349,6 +349,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
                     logger.debug("Upload image using url \(url)")
                     _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
+                } else if let imageData = image.jpegData(compressionQuality: 1) {
+                    logger.debug("Upload image using jpegData")
+                    _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/jpeg", completionHandler: imageCompletion)
                 } else if let imageData = image.pngData() {
                     logger.debug("Upload image using pngData")
                     _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
