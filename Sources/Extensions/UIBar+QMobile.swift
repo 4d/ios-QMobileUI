@@ -40,6 +40,11 @@ extension UINavigationBar: UIAppearanceCopyable {
         } else {
             self.largeTitleTextAttributes = bar.largeTitleTextAttributes
         }
+        if #available(iOS 13.0, *) {
+            if let scrollEdgeAppearance = bar.scrollEdgeAppearance {
+                self.scrollEdgeAppearance = scrollEdgeAppearance
+            }
+        }
         if image {
             self.backIndicatorImage = bar.backIndicatorImage
         }
