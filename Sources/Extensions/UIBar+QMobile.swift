@@ -35,7 +35,11 @@ extension UINavigationBar: UIAppearanceCopyable {
         self.tintColor = bar.tintColor
         self.prefersLargeTitles = bar.prefersLargeTitles
         self.titleTextAttributes = bar.titleTextAttributes
-        self.largeTitleTextAttributes = bar.largeTitleTextAttributes
+        if bar.largeTitleTextAttributes == nil {
+            self.largeTitleTextAttributes = bar.titleTextAttributes // dirty fix, because large title do not work with asset
+        } else {
+            self.largeTitleTextAttributes = bar.largeTitleTextAttributes
+        }
         if image {
             self.backIndicatorImage = bar.backIndicatorImage
         }
