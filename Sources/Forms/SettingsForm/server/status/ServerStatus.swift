@@ -110,6 +110,11 @@ extension ServerStatus {
             case .success:
                 return ""
             case .failure(let error):
+                if let afError = error.afError {
+                    if case .sessionTaskFailed(let urlError)  = afError {
+                        return urlError.localizedDescription
+                    }
+                }
                 let failureReason = error.failureReason ?? ""
                 return "\(failureReason)"
             }

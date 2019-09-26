@@ -117,6 +117,12 @@ extension ListForm {
                         return
                 }
                 /*}*/
+                if let afError = apiError.afError {
+                    if case .sessionTaskFailed(let urlError)  = afError {
+                        SwiftMessages.warning(urlError.localizedDescription)
+                        return
+                    }
+                }
             }
             /// Localized error
             if let failureReason = error.failureReason {
