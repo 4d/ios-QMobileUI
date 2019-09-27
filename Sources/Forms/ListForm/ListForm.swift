@@ -80,6 +80,7 @@ extension ListForm {
 }
 
 extension ListForm where Self: UIViewController {
+
     func fixNavigationBarColorFromAsset() {
         guard let navigationBar = self.navigationController?.navigationBar else {
             return }
@@ -102,20 +103,7 @@ extension ListForm where Self: UIViewController {
             }
         }
 
-        if #available(iOS 13.0, *) {
-            let navBarAppearance = navigationBar.standardAppearance.copy() // UINavigationBarAppearance()
-            // navBarAppearance.configureWithOpaqueBackground()
-            if let titleTextAttributes = navigationBar.titleTextAttributes {
-                navBarAppearance.titleTextAttributes = titleTextAttributes
-            }
-            if let largeTitleTextAttributes = navigationBar.largeTitleTextAttributes {
-                navBarAppearance.largeTitleTextAttributes = largeTitleTextAttributes
-            }
-            navBarAppearance.backgroundColor = navigationBar.backgroundColor ?? navigationBar.barTintColor
-
-            navigationBar.standardAppearance = navBarAppearance
-            navigationBar.scrollEdgeAppearance = navBarAppearance
-        }
+        applyScrollEdgeAppareance()
     }
 
     func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {

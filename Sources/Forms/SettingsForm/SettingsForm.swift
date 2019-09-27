@@ -64,6 +64,7 @@ open class SettingsForm: UITableViewController, Storyboardable {
         super.viewDidLoad()
         initSections() // Register external UI from other file
         initFooter()
+        initNavigationBar()
         onLoad()
 
         let center = NotificationCenter.default
@@ -150,6 +151,12 @@ open class SettingsForm: UITableViewController, Storyboardable {
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.tableView?.adjustFooterViewHeightToFillTableView()
+    }
+
+    // init navigation bar
+
+    open func initNavigationBar() {
+        applyScrollEdgeAppareance()
     }
 
     // init section
