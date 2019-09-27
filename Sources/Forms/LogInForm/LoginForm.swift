@@ -39,7 +39,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// The login buttons.
     @IBOutlet open weak var loginButton: LoadingButton!
     /// The text field for the login information ie. the email.
-    @IBOutlet open weak var loginTextField: FloatingLabelTextField!
+    @IBOutlet open weak var loginTextField: UITextField!
 
     /// The current action of login ie. the process cancellable.
     var logInAction: Cancellable?
@@ -147,15 +147,20 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// Function called when email change.
     @IBAction open func loginTextDidChange(_ sender: Any) {
-        if checkLoginClickable() {
-            loginTextField.errorMessage = ""
-        } else {
+        var errorMessage = ""
+        if !checkLoginClickable() {
             let email = self.email
             if email.count > 3 && !email.isValidEmail {
-                loginTextField.errorMessage = "Invalid email"
-            } else {
-                loginTextField.errorMessage = ""
+                errorMessage = "Invalid email"
             }
+        }
+        displayInputError(message: errorMessage)
+    }
+
+    /// Display the input error message such as "Invalid email". By default if text field is floating label,
+    open func displayInputError(message: String) {
+        if let errorLabel = loginTextField as? FloatingLabelTextField {
+            errorLabel.errorMessage = message
         }
     }
 

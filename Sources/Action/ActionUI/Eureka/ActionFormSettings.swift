@@ -25,7 +25,7 @@ struct ActionFormSettings { // XXX use settings
     var textAreaExpand = true // when focus
 
     // errors
-    var errorColor: UIColor = UIColor(named: "error") ?? .red
+    var errorColor: UIColor = UIColor(named: "error") ?? ColorCompatibility.systemRed
     var errorColorInLabel = true
     var errorAsDetail = true // use detail label, else add a new row
 }

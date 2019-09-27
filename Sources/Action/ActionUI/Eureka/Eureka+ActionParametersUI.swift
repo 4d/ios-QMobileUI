@@ -511,8 +511,8 @@ extension BaseRow {
                 $0.cell.height = { 15 }
                 $0.cellStyle = .subtitle
             }.cellUpdate { cell, _ in
-                cell.textLabel?.textColor = .red
-                cell.detailTextLabel?.textColor = .red
+                cell.textLabel?.textColor =  ColorCompatibility.systemRed
+                cell.detailTextLabel?.textColor =  ColorCompatibility.systemRed
                 cell.backgroundColor = .clear
                 cell.borderColor = .clear
             }

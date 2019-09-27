@@ -11,19 +11,13 @@ import UIKit
 //swiftlint:disable:next type_body_length
 @IBDesignable open class FloatingLabelTextField: UITextField {
 
-    // MARK: Animation timing
-
-    /// The value of the title appearing duration
     @objc dynamic open var titleFadeInDuration: TimeInterval = 0.2
-    /// The value of the title disappearing duration
     @objc dynamic open var titleFadeOutDuration: TimeInterval = 0.3
 
     // MARK: Attributes
 
-    // private cache for text color.
     fileprivate var cachedTextColor: UIColor?
 
-    /// A UIColor value that determines the text color of the editable text
     @IBInspectable override dynamic open var textColor: UIColor? {
         set {
             cachedTextColor = newValue
@@ -34,14 +28,12 @@ import UIKit
         }
     }
 
-    /// A UIColor value that determines text color of the placeholder label
     @IBInspectable dynamic open var placeholderColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             updatePlaceholder()
         }
     }
 
-    /// A UIFont value that determines text color of the placeholder label
     @objc dynamic open var placeholderFont: UIFont? {
         didSet {
             updatePlaceholder()
@@ -61,35 +53,30 @@ import UIKit
         )
     }
 
-    /// A UIFont value that determines the text font of the title label
     @objc dynamic open var titleFont: UIFont = .systemFont(ofSize: 13) {
         didSet {
             configureTitleLabel()
         }
     }
 
-    /// A UIColor value that determines the text color of the title label when in the normal state
     @IBInspectable dynamic open var titleColor: UIColor = ColorCompatibility.systemGray {
         didSet {
             configureTitleColor()
         }
     }
 
-    /// A UIColor value that determines the color of the bottom line when in the normal state
     @IBInspectable dynamic open var lineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
     }
 
-    /// A UIColor value that determines the color used for the title label and line when the error message is not `nil`
     @IBInspectable dynamic open var errorColor: UIColor = ColorCompatibility.systemRed {
         didSet {
             configureColors()
         }
     }
 
-    /// A UIColor value that determines the color used for the title label and line when text field is disabled
     @IBInspectable dynamic open var disabledColor: UIColor = ColorCompatibility.systemGray5 {
         didSet {
             configureControl()
@@ -97,23 +84,20 @@ import UIKit
         }
     }
 
-    /// A UIColor value that determines the text color of the title label when editing
     @IBInspectable dynamic open var selectedTitleColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureTitleColor()
         }
     }
 
-    /// A UIColor value that determines the color of the line in a selected state
     @IBInspectable dynamic open var selectedLineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
     }
 
-    // MARK: Line height
+    // MARK: - Line height
 
-    /// A CGFloat value that determines the height for the bottom line when the control is in the normal state
     @IBInspectable dynamic open var lineHeight: CGFloat = 0.5 {
         didSet {
             configureLineView()
@@ -121,7 +105,6 @@ import UIKit
         }
     }
 
-    /// A CGFloat value that determines the height for the bottom line when the control is in a selected state
     @IBInspectable dynamic open var selectedLineHeight: CGFloat = 1.0 {
         didSet {
             configureLineView()
@@ -129,29 +112,24 @@ import UIKit
         }
     }
 
-    // MARK: Internal views
+    // MARK: - Internal views
 
-    /// The internal `UIView` to display the line below the text input.
     open var lineView: UIView!
 
-    /// The internal `UILabel` that displays the selected, deselected title or error message based on the current state.
     open var titleLabel: UILabel!
 
-    // MARK: Properties
+    // MARK: - Properties
 
-    /// Closure to defined a formatter to display title. By default string are uppercased.
     open var titleFormatter: ((String) -> String) = { (text: String) -> String in
         return text.localizedUppercase
     }
 
-    /// A String value for the error message to display.
     open var errorMessage: String? {
         didSet {
             configureControl(true)
         }
     }
 
-    /// A Boolean value that determines whether the receiver has an error message.
     open var hasErrorMessage: Bool {
         guard let errorMessage = errorMessage else {
             return false
@@ -159,10 +137,8 @@ import UIKit
         return !errorMessage.isEmpty
     }
 
-    /// The backing property for the highlighted property
     fileprivate var _isHighlighted: Bool = false
 
-    /// Is high lighted.
     override open var isHighlighted: Bool {
         get {
             return _isHighlighted
@@ -174,21 +150,18 @@ import UIKit
         }
     }
 
-    /// A `Boolean`` value that determines whether the textfield is being edited or is selected.
     open var isEditingOrSelected: Bool {
         return isEditing || isSelected
     }
 
     fileprivate var isRenderingInInterfaceBuilder: Bool = false
 
-    /// The text.
     @IBInspectable override open var text: String? {
         didSet {
             configureControl(false)
         }
     }
 
-    /// The placeholder text.
     @IBInspectable override open var placeholder: String? {
         didSet {
             setNeedsDisplay()
@@ -197,21 +170,18 @@ import UIKit
         }
     }
 
-    /// The String to display when the textfield is editing and the input is not empty.
     @IBInspectable open var selectedTitle: String? {
         didSet {
             configureControl()
         }
     }
 
-    /// The String to display when the textfield is not editing and the input is not empty.
     @IBInspectable open var title: String? {
         didSet {
             configureControl()
         }
     }
 
-    /// Is selected.
     open override var isSelected: Bool {
         didSet {
             configureControl(true)
