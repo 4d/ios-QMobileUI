@@ -58,7 +58,7 @@ extension UITableView: ActionSheetUI {
         return 3
     }
 
-    fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = ColorCompatibility.systemBackground) {
+    fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = UIColor.background) {
         if var color = color {
             for _ in contextualActions {
                 color = color.lighter() ?? color
@@ -137,7 +137,13 @@ extension UIContextualAction: ActionUI {
                 let success = false // if true and style = destructive, line will be removed...
                 handle(success)
         }
-        actionUI.image = ActionUIBuilder.actionImage(for: action)
+        if var image = ActionUIBuilder.actionImage(for: action) {
+            if image.renderingMode != .alwaysOriginal {
+                image = image.withRenderingMode(.alwaysTemplate)
+            }
+            actionUI.image = image
+        }
+
         if let backgroundColor = ActionUIBuilder.actionColor(for: action) {
             actionUI.backgroundColor = backgroundColor
         }
