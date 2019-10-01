@@ -137,13 +137,13 @@ extension ListFormSearchable where Self: UIViewController {
 
     func installNatigationMenu() {
         if #available(iOS 13.0, *) {
-            if let titleView = self.navigationBarTitleView {
+            /*if let titleView = self.navigationBarTitleView {
                 let interaction = UIContextMenuInteraction(delegate: self)
                 titleView.addInteraction(interaction)
                 titleView.isUserInteractionEnabled = true
             } else {
                 logger.debug("Cannot get navigation bar title for \(self)")
-            }
+            }*/
         } // else Fallback on earlier versions
     }
 
@@ -241,7 +241,7 @@ extension ListFormSearchable where Self: UIViewController {
 }
 
 // MARK: navigation menu controller
-
+/*
 let useImage = false
 let useMenuTitle = true
 
@@ -320,3 +320,4 @@ extension UIViewController: UIContextMenuInteractionDelegate {
     }
 
 }
+*/
