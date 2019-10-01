@@ -276,7 +276,7 @@ extension Prephirences {
 
         /// Login authentification preferences.
         public struct Login: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = Auth.instance
+            public static let parent = Auth.instance
             /// Save or not log in information for next log in. (save email).
             public static let save: Bool = instance["save"] as? Bool ?? false
             /// Email saved to log
@@ -293,7 +293,7 @@ extension Prephirences {
 
             /// Guest mode login authentification preferences.
             public struct Guest: Prephirencable { // swiftlint:disable:this nesting
-                static let parent = Login.instance
+                public static let parent = Login.instance
                 static let maxRetry = instance["maxRetry"] as? Int ?? 2
 
                 // Guest mode is enabled if there is no login form
@@ -303,7 +303,7 @@ extension Prephirences {
 
         /// Logoutç authentification preferences.
         public struct Logout: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = Auth.instance
+            public static let parent = Auth.instance
             /// Application will ask for login screen each time, event if alread logged before. (Default false)
             public static let atStart: Bool = instance["atStart"] as? Bool ?? false
             /// token saved temporary to logout
@@ -321,7 +321,7 @@ extension Prephirences {
 }
 
 // MARK: - Prephirencable
-
+/*
 /// some test about automatic proxy creation
 protocol Prephirencable {
     static var key: String {get}
@@ -344,7 +344,7 @@ extension Prephirencable {
         return MutableProxyPreferences(preferences: parent, key: key)
     }
 }
-
+*/
 extension String {
 
     fileprivate var lowercasingFirst: String {

@@ -34,7 +34,7 @@ import Prephirences
 extension Prephirences {
     public struct Ui: Prephirencable { // swiftlint:disable:this type_name
         public struct Presentation: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = Ui.instance
+            public static let parent = Ui.instance
             public static let fullScreen: Bool = instance["fullScreen"] as? Bool ?? false
         }
     }

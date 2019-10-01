@@ -289,14 +289,14 @@ extension Prephirences {
     public struct DataSync: Prephirencable {
 
         public struct Cancel: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = DataSync.instance
+            public static let parent = DataSync.instance
 
             public static let atTheEnd: Bool = instance["atEnd"] as? Bool ?? true
             public static let ifEnterBackground: Bool = instance["ifEnterBackground"] as? Bool ?? false
         }
 
         public struct Sync: Prephirencable { // swiftlint:disable:this nesting
-            static let parent = DataSync.instance
+            public static let parent = DataSync.instance
 
             public static let atStart: Bool = instance["atStart"] as? Bool ?? true
             public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
