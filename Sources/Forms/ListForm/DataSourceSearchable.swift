@@ -24,6 +24,7 @@ public protocol DataSourceSortable: DataSourceSearchable {
     var sortField: String { get }
     var sortAscending: Bool { get }
     var searchFieldAsSortField: Bool { get }
+    var sectionFieldname: String? {get}
 }
 
 extension DataSourceSortable {
@@ -34,36 +35,32 @@ extension DataSourceSortable {
 
     func makeSortDescriptors(tableInfo: DataStoreTableInfo?) -> [NSSortDescriptor] {
         var sortDescriptors: [NSSortDescriptor] = []
-        guard let fields = tableInfo?.fields.filter({$0.type.isSortable}) else {
-            // no table info, do the best we providen information
-            if !sortField.isEmpty {
-                sortDescriptors = sortFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
-            } else if !searchableField.isEmpty && searchFieldAsSortField {
-                sortDescriptors = searchableFields.map { NSSortDescriptor(key: String($0), ascending: sortAscending) }
-            }
-            return sortDescriptors
-        }
-        // if sort field
-        if !sortField.isEmpty {
+
+        if !sortField.isEmpty { // if sort field defined
             sortDescriptors = sortFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
-            if let sortDescriptors = filter(sortDescriptors: sortDescriptors, by: fields) {
-                return sortDescriptors
-            }
-        }
-        if !searchableField.isEmpty && searchFieldAsSortField {
+        } else if !searchableField.isEmpty && searchFieldAsSortField {
             sortDescriptors = searchableFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
-            if let sortDescriptors = filter(sortDescriptors: sortDescriptors, by: fields) {
-                return sortDescriptors
-            }
         }
-        // XXX Find in UI Cell first/main field?
 
         // for the moment take the first in data store
-        if let firstField = fields.first {
-            logger.warning("There is no valid sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
-            sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+        if sortDescriptors.isEmpty {
+            if let sectionFieldname = self.sectionFieldname {
+                sortDescriptors = [NSSortDescriptor(key: sectionFieldname, ascending: sortAscending)]
+            } else if let firstField = tableInfo?.fields.filter({$0.type.isSortable}).first {
+                logger.warning("There is no valid sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
+                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+            } else {
+                // XXX Find in UI Cell first/main field?
+                //assertionFailure("No sort field. Please fill sortField with a field name")
+            }
         } else {
-            //assertionFailure("No sort field. Please fill sortField with a field name")
+            if let sectionFieldname = self.sectionFieldname { // Section must sorted first it seems
+                sortDescriptors.insert(NSSortDescriptor(key: sectionFieldname, ascending: sortAscending), at: 0)
+            }
+            if let fields = tableInfo?.fields.filter({$0.type.isSortable}),
+                let filtered = filter(sortDescriptors: sortDescriptors, by: fields) { // remove not valable sort field ie. field not exit in data model
+                sortDescriptors = filtered
+            }
         }
         return sortDescriptors
     }
