@@ -39,6 +39,8 @@ struct ActionParametersKey {
     static let table = "dataClass"
     static let record = "entity"
     static let primaryKey = "primaryKey"
+    static let parent = "parent"
+    static let relationName = "relationName"
 }
 
 extension ActionParameter {

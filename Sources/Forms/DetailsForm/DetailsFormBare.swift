@@ -179,7 +179,8 @@ open class DetailsFormBare: UIViewController, DetailsForm {
             let predicatString = "(\(inverseRelationName) = %@)"
             listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
                                                actionContext: actionContext(),
-                                               previousTitle: previousTitle)
+                                               previousTitle: previousTitle,
+                                               relationName: relationName)
 
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")

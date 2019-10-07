@@ -18,6 +18,7 @@ public struct FormContext {
     var predicate: NSPredicate?
     var actionContext: ActionContext?
     var previousTitle: String?
+    var relationName: String?
 
 }
 
@@ -74,7 +75,11 @@ extension ListForm {
 extension ListForm {
 
     public func actionContext() -> ActionContext? {
-        return self.dataSource
+        if let formContext = self.formContext {
+            return DataSourceParentEntry(dataSource: self.dataSource, formContext: formContext)
+        } else {
+            return self.dataSource
+        }
     }
 
 }

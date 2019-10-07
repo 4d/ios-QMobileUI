@@ -206,6 +206,7 @@
 		48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
 		48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
+		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
 		FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */; };
 /* End PBXBuildFile section */
@@ -416,6 +417,7 @@
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QMobileDataStore.framework; path = Carthage/Build/iOS/QMobileDataStore.framework; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
+		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
 		FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServerCrashAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1016,6 +1018,7 @@
 				48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */,
 				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
 				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
+				C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";
@@ -1387,6 +1390,7 @@
 				483190EE2297F4D40041B41A /* Eureka+ActionParametersUI.swift in Sources */,
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */,
+				C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */,
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				48BC8571226F0C1500D548B2 /* UIAlertController+ImagePicker.swift in Sources */,
