@@ -264,10 +264,13 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     // MARK: Install components
 
-    /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
+    /// Install a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
         guard hasRefreshControl else { return }
         self.refreshControl = UIRefreshControl()
+        if let navigationBar = self.navigationController?.navigationBar, let tintColor = navigationBar.tintColor, navigationBar.prefersLargeTitles {
+            refreshControl?.tintColor = tintColor
+        }
         refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
     }
 

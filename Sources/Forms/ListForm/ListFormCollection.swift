@@ -256,12 +256,15 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
 
     // MARK: Install components
 
-    /// Intall a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
+    /// Install a refresh controll. You could change implementation by overriding or deactivate using `hasRefreshControl` attribute
     open func installRefreshControll() {
         guard hasRefreshControl else { return }
         self.collectionView?.alwaysBounceVertical = true
 
         self.refreshControl = UIRefreshControl()
+        if let navigationBar = self.navigationController?.navigationBar, let tintColor = navigationBar.tintColor, navigationBar.prefersLargeTitles {
+            refreshControl?.tintColor = tintColor
+        }
         refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         if let refreshControl = refreshControl {
             self.collectionView?.addSubview(refreshControl)
