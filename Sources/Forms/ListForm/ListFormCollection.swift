@@ -16,7 +16,7 @@ import Moya
 import SwiftMessages
 
 @IBDesignable
-open class ListFormCollection: UICollectionViewController, ListFormSearchable { //swiftlint:disable:this type_body_length
+open class ListFormCollection: UICollectionViewController, ListFormSearchable {
 
     public var dataSource: DataSource? {
         return collectionDataSource
@@ -79,6 +79,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     @IBInspectable open var onClickShowDetails: Bool = false
 
     public var originalParent: UIViewController?
+    public var scrollView: UIScrollView? {
+        return self.collectionView
+    }
 
     // MARK: - override
 
@@ -239,7 +242,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     }
 
     fileprivate func initComponents() {
-        self.fixNavigationBarColorFromAsset()
+        self.fixNavigationBarColor()
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()

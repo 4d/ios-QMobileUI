@@ -76,6 +76,9 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
     }
 
     public var originalParent: UIViewController?
+    public var scrollView: UIScrollView? {
+        return self.tableView
+    }
 
     // MARK: - override
 
@@ -247,7 +250,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
     }
 
     private func initComponents() {
-        self.fixNavigationBarColorFromAsset()
+        self.fixNavigationBarColor()
         self.installRefreshControll()
         self.installDataEmptyView()
         self.installSearchBar()

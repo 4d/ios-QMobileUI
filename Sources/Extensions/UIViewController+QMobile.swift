@@ -188,13 +188,27 @@ extension UIViewController {
         }
     }
 
+    func window() -> UIWindow {
+        /*if #available(iOS 13.0, *) {
+            let windowScene = UIApplication.shared
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            if let windowScene = windowScene as? UIWindowScene {
+                return UIWindow(windowScene: windowScene)
+            }
+        }*/
+        return UIWindow(frame: UIScreen.main.bounds)
+    }
+
     // present constroller on new windows
-    func presentOnTop(windowLevel: UIWindow.Level = UIWindow.Level.alert + 1, animated: Bool = true, completion: (() -> Swift.Void)? = nil) {
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = windowLevel
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(self, animated: animated, completion: completion)
+    func presentOnTop(windowLevel: UIWindow.Level = UIWindow.Level.alert + 1, animated: Bool = true, completion: (() -> Swift.Void)? = nil) -> UIWindow {
+        let onTopWindow = self.window()
+        onTopWindow.rootViewController = UIViewController()
+        onTopWindow.windowLevel = windowLevel
+        onTopWindow.makeKeyAndVisible()
+        onTopWindow.rootViewController?.present(self, animated: animated, completion: completion)
+        return onTopWindow
     }
 
     func show(_ viewController: UIViewController? = UIApplication.topViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -233,6 +247,7 @@ extension UIViewController {
             navBarAppearance.backgroundColor = navigationBar.backgroundColor ?? navigationBar.barTintColor
 
             navigationBar.standardAppearance = navBarAppearance
+            navigationBar.compactAppearance = navBarAppearance
             navigationBar.scrollEdgeAppearance = navBarAppearance
         }
     }

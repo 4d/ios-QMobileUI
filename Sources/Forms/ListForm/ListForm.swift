@@ -34,6 +34,8 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextP
 
     /// A parent controller. (used to fix issue with more view controller).
     var originalParent: UIViewController? { get set }
+    /// A scroll view used to fix navigation bar scrolling position..
+    var scrollView: UIScrollView? { get }
 }
 
 extension ListForm {
@@ -86,7 +88,16 @@ extension ListForm {
 
 extension ListForm where Self: UIViewController {
 
-    func fixNavigationBarColorFromAsset() {
+    func fixNavigationBarColor() {
+        fixNavigationBarLargeTitlePosition() // redmine #110851: try to show large title always and make status bar color active when starting
+        fixNavigationBarColorFromAsset()
+    }
+
+    fileprivate func fixNavigationBarLargeTitlePosition() {
+        self.scrollView?.setContentOffset(CGPoint(x: 0, y: -10), animated: false)
+    }
+
+    fileprivate func fixNavigationBarColorFromAsset() {
         guard let navigationBar = self.navigationController?.navigationBar else {
             return }
         guard let namedColor = UIColor(named: "ForegroundColor") else { return } // cannot fix
