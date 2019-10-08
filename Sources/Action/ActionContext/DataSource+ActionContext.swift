@@ -38,7 +38,7 @@ extension DataSourceEntry: ActionContext {
 }
 
 extension DataSourceParentEntry: ActionContext {
-    
+
     /// DataSourceParentEntry provide table and parent record primary key and its data class and also relationName  as context.
     public func actionParameters(action: Action) -> ActionParameters? {
         guard var parameters = self.dataSource?.actionParameters(action: action) else {
@@ -46,13 +46,14 @@ extension DataSourceParentEntry: ActionContext {
         }
 
         if let parentContext = self.formContext.actionContext,
-            let parentContextParameters = parentContext.actionParameters(action: action)/*,
-            let record = parentContextParameters[ActionParametersKey.record] as? [String: Any]*/ {
-            var parent: [String: Any] = parentContextParameters
+            let parentContextParameters = parentContext.actionParameters(action: action),
+            let record = parentContextParameters[ActionParametersKey.record] as? [String: Any] {
+
+            var parent: [String: Any] = record
             if let relationName = self.formContext.relationName {
                 parent[ActionParametersKey.relationName] = relationName
             }
-           // parent[ActionParametersKey.table] = parentContextParameters[ActionParametersKey.table]
+            parent[ActionParametersKey.table] = parentContextParameters[ActionParametersKey.table]
             parameters[ActionParametersKey.parent] = parent
         }
 
