@@ -216,9 +216,10 @@ extension UIViewController {
         /// XXX assert or log viewController != nil
     }
 
-    func embedIntoNavigationController() -> UINavigationController {
+    func embedIntoNavigationController(copyAppearance: Bool = true) -> UINavigationController {
         let navigationController = UINavigationController(rootViewController: self)
-        if let topBar = UIApplication.topNavigationController?.navigationBar {
+        let controller = UIApplication.topNavigationController
+        if copyAppearance, let topBar = controller?.navigationBar {
             navigationController.navigationBar.copyAppearance(from: topBar)
         }
         return navigationController
@@ -234,21 +235,7 @@ extension UIViewController {
 
     func applyScrollEdgeAppareance() {
         if #available(iOS 13.0, *) {
-            guard let navigationBar = self.navigationController?.navigationBar else {
-                return }
-            let navBarAppearance = navigationBar.standardAppearance.copy() // UINavigationBarAppearance()
-            // navBarAppearance.configureWithOpaqueBackground()
-            if let titleTextAttributes = navigationBar.titleTextAttributes {
-                navBarAppearance.titleTextAttributes = titleTextAttributes
-            }
-            if let largeTitleTextAttributes = navigationBar.largeTitleTextAttributes {
-                navBarAppearance.largeTitleTextAttributes = largeTitleTextAttributes
-            }
-            navBarAppearance.backgroundColor = navigationBar.backgroundColor ?? navigationBar.barTintColor
-
-            navigationBar.standardAppearance = navBarAppearance
-            navigationBar.compactAppearance = navBarAppearance
-            navigationBar.scrollEdgeAppearance = navBarAppearance
+            self.navigationController?.navigationBar.fillAppearance()
         }
     }
 }

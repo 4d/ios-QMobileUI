@@ -41,15 +41,29 @@ extension UINavigationBar: UIAppearanceCopyable {
             self.largeTitleTextAttributes = bar.largeTitleTextAttributes
         }
         if #available(iOS 13.0, *) {
-            if let scrollEdgeAppearance = bar.scrollEdgeAppearance {
-                self.scrollEdgeAppearance = scrollEdgeAppearance
-            }
+            fillAppearance()
         }
         if image {
             self.backIndicatorImage = bar.backIndicatorImage
         }
     }
 
+    @available(iOS 13.0, *)
+    func fillAppearance() {
+        let navBarAppearance = self.standardAppearance.copy() // UINavigationBarAppearance()
+        // navBarAppearance.configureWithOpaqueBackground()
+        if let titleTextAttributes = self.titleTextAttributes {
+            navBarAppearance.titleTextAttributes = titleTextAttributes
+        }
+        if let largeTitleTextAttributes = self.largeTitleTextAttributes {
+            navBarAppearance.largeTitleTextAttributes = largeTitleTextAttributes
+        }
+        navBarAppearance.backgroundColor = self.backgroundColor ?? self.barTintColor
+
+        self.standardAppearance = navBarAppearance
+        self.compactAppearance = navBarAppearance
+        self.scrollEdgeAppearance = navBarAppearance
+    }
 }
 
 extension UITabBar: UIAppearanceCopyable {
