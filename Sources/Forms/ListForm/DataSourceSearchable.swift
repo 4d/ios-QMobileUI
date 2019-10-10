@@ -44,7 +44,7 @@ extension DataSourceSortable {
 
         // for the moment take the first in data store
         if sortDescriptors.isEmpty {
-            if let sectionFieldname = self.sectionFieldname {
+            if let sectionFieldname = self.sectionFieldname, !sectionFieldname.isEmpty {
                 sortDescriptors = [NSSortDescriptor(key: sectionFieldname, ascending: sortAscending)]
             } else if let firstField = tableInfo?.fields.filter({$0.type.isSortable}).first {
                 logger.warning("There is no valid sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
@@ -54,7 +54,7 @@ extension DataSourceSortable {
                 //assertionFailure("No sort field. Please fill sortField with a field name")
             }
         } else {
-            if let sectionFieldname = self.sectionFieldname { // Section must sorted first it seems
+            if let sectionFieldname = self.sectionFieldname, !sectionFieldname.isEmpty { // Section must sorted first it seems
                 sortDescriptors.insert(NSSortDescriptor(key: sectionFieldname, ascending: sortAscending), at: 0)
             }
             if let fields = tableInfo?.fields.filter({$0.type.isSortable}),
