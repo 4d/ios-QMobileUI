@@ -34,7 +34,7 @@ extension ApplicationFeedback: ApplicationService {
 
     public static var showFeedback: Bool { // dynamic value, could be changed from setting, do not setore it
         get {
-            return true // pref["show"] as? Bool ?? false
+            return pref["show"] as? Bool ?? false
         }
         set {
             pref.set(newValue, forKey: "show")
