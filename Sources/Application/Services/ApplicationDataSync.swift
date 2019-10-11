@@ -33,6 +33,8 @@ class ApplicationDataSync: NSObject {
     /// keep terminate information
     fileprivate var applicationWillTerminate: Bool = false
 
+    fileprivate var starting: Bool = false
+
 }
 
 extension ApplicationDataSync: ApplicationService {
@@ -45,7 +47,7 @@ extension ApplicationDataSync: ApplicationService {
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         dataSync.delegate = self
-
+        starting = true
         // Start sync after data store loading
         dataStoreListeners += [dataSync.dataStore.onLoad(queue: operationQueue) { [weak self] _ in
             self?.startSyncAtStart()
@@ -64,7 +66,10 @@ extension ApplicationDataSync: ApplicationService {
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        startSyncIfEnterForeground()
+        if !starting {
+            startSyncIfEnterForeground()
+        }
+        starting = false
     }
 
     public func applicationDidEnterBackground(_ application: UIApplication) {

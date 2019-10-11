@@ -189,15 +189,14 @@ extension UIViewController {
     }
 
     func window() -> UIWindow {
-        /*if #available(iOS 13.0, *) {
-            let windowScene = UIApplication.shared
-                .connectedScenes
-                .filter { $0.activationState == .foregroundActive }
-                .first
+        if #available(iOS 13.0, *) {
+            let scenes: Set<UIScene> = UIApplication.shared.connectedScenes
+            let windowScene = scenes.filter { $0.activationState == .foregroundActive }.first ?? scenes.first
             if let windowScene = windowScene as? UIWindowScene {
                 return UIWindow(windowScene: windowScene)
             }
-        }*/
+
+        }
         return UIWindow(frame: UIScreen.main.bounds)
     }
 

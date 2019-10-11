@@ -20,6 +20,7 @@ class ApplicationFeedback: NSObject {
 
     var shakeListener: AnyObject?
     var inShake: Bool = false
+    var window: UIWindow?
 
 }
 
@@ -27,8 +28,30 @@ extension ApplicationFeedback: ApplicationService {
 
     static var instance: ApplicationService = ApplicationFeedback()
 
-    static var pref: PreferencesType {
-        return ProxyPreferences(preferences: preferences, key: "feedback.")
+    static var pref: MutablePreferencesType {
+        return MutableProxyPreferences(preferences: preferences, key: "feedback.")
+    }
+
+    public static var showFeedback: Bool { // dynamic value, could be changed from setting, do not setore it
+        get {
+            return true // pref["show"] as? Bool ?? false
+        }
+        set {
+            pref.set(newValue, forKey: "show")
+        }
+    }
+
+    public static var showComposeOption: Bool {
+        return pref["compose"] as? Bool ?? true
+    }
+
+    fileprivate func feedbackWhenGoToFront() {
+        if ApplicationFeedback.showFeedback {
+            self.showDialog(tips: "Feedback activated by setting",
+                            presented: { ApplicationFeedback.showFeedback = false },
+                            completion: { logger.debug("Feedback dialog completed") }
+            )
+        }
     }
 
     // swiftlint:disable:next function_body_length
@@ -67,6 +90,7 @@ extension ApplicationFeedback: ApplicationService {
             logger.info("Feedback not activated by automatic action.")
         }
 
+        feedbackWhenGoToFront()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -75,16 +99,28 @@ extension ApplicationFeedback: ApplicationService {
         }
     }
 
-    func showDialog(tips: String, presented: (() -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil) { // tips must depend of parent event
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        feedbackWhenGoToFront()
+    }
+
+    func showDialog(tips: String, presented: (() -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil) { // swiftlint:disable:this function_body_length
+        // tips must depend of parent event
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
-        /*alert.addAction(UIAlertAction(title: "💬 Talk to us", style: .default, handler: { _ in
-             self.mailCompose(subject: "Talk to us", body: "here sugest improvement")
-         }))*/
-        /*alert.addAction(UIAlertAction(title: "📣 Suggest an improvement", style: .default, handler: { _ in
-            self.mailCompose(subject: "Suggest an improvement", body: "here sugest improvement")
-        }))*/
+        let completion: (() -> Swift.Void) = {
+            completion?()
+            self.window = nil // free window on completion. must keep a reference on window to no be dismissed automatically
+        }
+        if ApplicationFeedback.showComposeOption {
+            alert.addAction(UIAlertAction(title: "💬 Talk to us", style: .default, handler: { _ in
+                self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", attachLogs: false, completion: completion)
+            }))
+            alert.addAction(UIAlertAction(title: "📣 Suggest an improvement", style: .default, handler: { _ in
+                self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", attachLogs: false, completion: completion)
+            }))
+        }
+
         alert.addAction(UIAlertAction(title: "📄 Show current log", style: .default, handler: { _ in
             guard let topVC = UIApplication.topViewController else {
                 logger.error("No view controller to show log")
@@ -94,35 +130,18 @@ extension ApplicationFeedback: ApplicationService {
                 logForm.path = ApplicationLogger.currentLog
                 topVC.show(logForm.navigationController ?? logForm, sender: topVC)
             }
-            completion?()
+            completion()
         }))
 
         if ApplicationFeedback.isConfigured {
             alert.addAction(UIAlertAction(title: "🐞 Report a problem", style: .destructive, handler: { _ in
-                guard let topVC = UIApplication.topViewController else {
-                    logger.error("No view controller to show log")
-                    return
-                }
-                if let form = FeedbackForm.instantiate() {
-                    form.delegate = self
-                    var feedback = Feedback()
-                    feedback.title = "Report a problem"
-                    feedback.summaryPlaceholder = "What went wrong?"
-                    feedback.attach = { // attach log
-                        let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
-                        if !ApplicationLogger.compressAllLog(to: zipPath) {
-                            logger.error("Failed to compress the logs")
-                        }
-                        return zipPath
-                    }
-                    form.feedback = feedback
-                    topVC.show(form.navigationController ?? form, sender: topVC)
-                } else {
-                    self.mailCompose(subject: "Report a problem", body: "What went wrong?", attachLog: true) // Alternative by mail
-                }
-                completion?()
+                self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
             }))
         }
+
+        var feedback = Feedback()
+        feedback.title = "Report a problem"
+        feedback.summaryPlaceholder = "What went wrong?"
 
         if ApplicationCrashManager.pref["me"] as? Bool ?? false {
             alert.addAction(UIAlertAction(title: "💣 Crash me", style: .destructive, handler: { _ in
@@ -131,7 +150,7 @@ extension ApplicationFeedback: ApplicationService {
                 } else {
                     self.crashMe()
                 }
-                completion?()
+                completion()
             }))
         }
 
@@ -140,15 +159,15 @@ extension ApplicationFeedback: ApplicationService {
             if !crashs.isEmpty {
                 alert.addAction(UIAlertAction(title: "📤 Report previous crash", style: .destructive, handler: { _ in
                     (ApplicationCrashManager.instance as? ApplicationCrashManager)?.send(crashs: crashs)
-                     completion?()
+                     completion()
                 }))
             }
         }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
-            completion?() // XXX find a way to listen to dismiss, and do not put in each action...
+            completion() // XXX find a way to listen to dismiss, and do not put in each action...
         }))
-        alert.presentOnTop(completion: presented)
+        self.window = alert.presentOnTop(completion: presented)
     }
 
     static var isConfigured: Bool {
@@ -156,22 +175,55 @@ extension ApplicationFeedback: ApplicationService {
     }
 
     /// Force crash
-    fileprivate func crashMe() {
+    private func crashMe() {
         _ = [Any]()[13]
     }
 
-    fileprivate func throwMe() {
+    private func throwMe() {
        NSException(name: .genericException, reason: "throw me testing", userInfo: nil).raise()
+    }
+
+    func showFeedbackForm(subject: String, body: String, attachLogs: Bool, completion: (() -> Swift.Void)? = nil) {
+        guard let topVC = UIApplication.topViewController else {
+            logger.error("No view controller to show log")
+            return
+        }
+        if let form = FeedbackForm.instantiate() {
+            form.delegate = self
+            var feedback = Feedback()
+            feedback.title = subject
+            feedback.summaryPlaceholder = body
+            if attachLogs {
+                feedback.attach = { // attach log
+                    let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
+                    if !ApplicationLogger.compressAllLog(to: zipPath) {
+                        logger.error("Failed to compress the logs")
+                    }
+                    return zipPath
+                }
+            }
+            if #available(iOS 13.0, *) {
+                form.isModalInPresentation = true
+            }
+            form.feedback = feedback
+            topVC.show(form.navigationController ?? form, sender: topVC)
+
+        } else {
+            self.mailCompose(subject: subject, body: "What went wrong?", attachLog: true) // Alternative by mail
+        }
+        completion?()
     }
 }
 
 extension ApplicationFeedback: FeedbackFormDelegate {
 
     func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void) {
+        logger.debug("prepare attached files")
         let path = feedback.attach?() ?? .userTemporary + "empty.txt"
         if !path.exists {
             try? path.touch() // touch file because server maybe wait for attachment everytime
         }
+        logger.debug(" attached files prepared")
 
         var applicationInformation = QApplication.applicationInformation
         applicationInformation["email"] = feedback.email ?? ""
@@ -181,8 +233,10 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
         applicationInformation["isCrash"] = "0"
 
-        //swiftlint:disable:next force_cast
-        let manager = ApplicationCrashManager.instance as! ApplicationCrashManager
+        guard let manager = ApplicationCrashManager.instance as? ApplicationCrashManager else {
+            logger.warning("No manager to send files")
+            return
+        }
         manager.send(file: path, parameters: applicationInformation) { success in
             if success {
                 logger.info("Report send")
@@ -223,7 +277,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
         }
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
 
-        alert.presentOnTop()
+        self.window = alert.presentOnTop()
     }
 
     func mailCompose(subject: String, body: String, isBodyHTML: Bool = false, attachLog: Bool = false, screenshot: Bool = false, toRecipient: String = "eric.marchand@4d.com") {
@@ -263,7 +317,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
             }
         }
 
-        mailComposerVC.presentOnTop()
+        self.window = mailComposerVC.presentOnTop()
     }
 
     public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {

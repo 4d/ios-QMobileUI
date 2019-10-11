@@ -110,11 +110,21 @@ extension UIApplication {
 extension UIApplication {
     /// Do not call in app extension, UIApplication.shared not exist
     public static var topViewController: UIViewController? {
-            return UIApplication.shared.topViewController
+        return UIApplication.shared.topViewController
+    }
+
+    var topWindow: UIWindow? {
+        if #available(iOS 13.0, *) {
+            let scenes: Set<UIScene> = UIApplication.shared.connectedScenes
+            let windowScene = (scenes.filter { $0.activationState == .foregroundActive }.first ?? scenes.first) as? UIWindowScene
+            return windowScene?.windows.first ?? self.keyWindow
+        } else {
+            return self.keyWindow
+        }
     }
 
     open var topViewController: UIViewController? {
-        guard let rootController = self.keyWindow?.rootViewController else {
+        guard let rootController = self.topWindow?.rootViewController else {
             return nil
         }
         return UIViewController.topViewController(rootController)

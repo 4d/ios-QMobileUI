@@ -25,6 +25,7 @@ class ApplicationCrashManager: NSObject {
     static var parentCrashDirectory: Path {
         return Path.userCaches
     }
+    var window: UIWindow?
 }
 
 // MARK: Service
@@ -64,13 +65,19 @@ extension ApplicationCrashManager: ApplicationService {
                 let alert = UIAlertController(title: "Oops! It looks like your app didn't close correctly. Want to help us get better?",
                                               message: "An error report has been generated, please send it to 4D.com. We'll keep your information confidential.",
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Save report for later", style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Save report for later", style: .cancel, handler: { _ in
+                    self.window = nil
+                }))
                 alert.addAction(UIAlertAction(title: "Send report", style: .default, handler: { _ in
                     self.send(crashs: crashs)
+                    self.window = nil
                 }))
-                alert.addAction(UIAlertAction(title: "Don't send a report", style: .destructive, handler: deleteCrashFile))
+                alert.addAction(UIAlertAction(title: "Don't send a report", style: .destructive, handler: { _ in
+                    self.deleteCrashFile()
+                    self.window = nil
+                }))
 
-                alert.presentOnTop()
+                self.window = alert.presentOnTop()
             }
         }
     }
@@ -92,7 +99,7 @@ extension ApplicationCrashManager {
     }
 
     // MARK: Actions
-    open func deleteCrashFile(_ action: UIAlertAction) {
+    open func deleteCrashFile() {
         let crashDirectory = ApplicationCrashManager.parentCrashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }
@@ -124,7 +131,7 @@ extension ApplicationCrashManager {
     }
 
     fileprivate func getLog(nameLogFile: String, nameCrashFile: String) -> Bool {
-        var nameCrashFileArr = nameCrashFile.components(separatedBy: "-")
+        let nameCrashFileArr = nameCrashFile.components(separatedBy: "-")
         if !nameCrashFileArr.isEmpty {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YYYYMMdd"
@@ -203,7 +210,7 @@ extension ApplicationCrashManager {
             }
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
 
-            alert.presentOnTop()
+            self.window = alert.presentOnTop()
         }
     }
 

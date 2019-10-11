@@ -95,7 +95,9 @@ open class LogForm: UIViewController, Storyboardable {
     @IBAction open func send(_ sender: Any!) {
         if let feedback = (ApplicationFeedback.instance as? ApplicationFeedback) {
             // XXX maybe limit to let path = path,
-            feedback.mailCompose(subject: "Send mail", body: "You will find log attached.", attachLog: true)
+            feedback.showFeedbackForm(subject: "Send logs", body: "", attachLogs: true) {
+
+            }
         }
     }
 

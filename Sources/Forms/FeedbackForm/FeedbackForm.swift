@@ -23,15 +23,23 @@ open class FeedbackForm: UIViewController {
     @IBOutlet open weak var mailTextField: UITextField!
     @IBOutlet open weak var textView: PlaceholderTextView!
     @IBOutlet open weak var separatorBar: UIView!
+    @IBOutlet weak var informationLabel: UIBarButtonItem!
 
     open weak var delegate: FeedbackFormDelegate?
     open var feedback: Feedback?
+    open var window: UIWindow?
 
     /// Set placeholder color every where
     @IBInspectable open var harmonizeColor: Bool = true
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        if feedback?.attach == nil {
+            informationLabel.title = ""
+        }
+        if let title = feedback?.title {
+            self.navigationItem.title = title
+        }
 
         feedback?.restoreEmail()
         if harmonizeColor, let placeHolderColor = textView?.attributedText?.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor {
@@ -54,9 +62,27 @@ open class FeedbackForm: UIViewController {
             feedback.email = mailTextField.text
             feedback.saveEmail()
             feedback.summary = textView.text
-            delegate?.send(feedback: feedback) { animated in
-                self.dismiss(animated: animated, completion: nil)
+            if sender is UIBarButtonItem {
+                let indicator = UIActivityIndicatorView(style: .gray)
+                indicator.hidesWhenStopped = true
+                // indicator.center = sendButton.center
+                // sendButton.superview?.insertSubview(indicator, aboveSubview: sendButton)
+                // sendButton.addSubview(indicator)
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: indicator)
+                indicator.startAnimating()
+            } else {
+                logger.debug("Cannot add activity indicator, not more a UIBarButtonItem")
             }
+            logger.debug("Will send feedback from \(String(describing: feedback.email))")
+            DispatchQueue.background.async {
+                self.delegate?.send(feedback: feedback) { animated in
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: animated, completion: nil)
+                    }
+                }
+            }
+        } else {
+            logger.warning("No feedback instance to send")
         }
     }
 
@@ -69,8 +95,9 @@ open class FeedbackForm: UIViewController {
         actionDialog.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
             self.delegate?.discard(feedback: self.feedback)
             self.dismiss(animated: true, completion: nil)
+            self.window = nil
         }))
-        actionDialog.presentOnTop()
+        window = actionDialog.presentOnTop()
     }
 }
 
@@ -129,9 +156,11 @@ open class PlaceholderTextView: UITextView {
     }
 
     func startEditing() {
-        if self.textColor == self.placeholderColor {
-            self.text = nil
-            self.textColor = _textColor
+        DispatchQueue.main.async {
+            if self.textColor == self.placeholderColor {
+                self.text = nil
+                self.textColor = self._textColor
+            }
         }
     }
 
