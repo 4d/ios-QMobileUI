@@ -196,12 +196,12 @@ extension ListFormSearchable where Self: UIViewController {
         if let subview = searchBar?.subviews.first {
             let textFields = subview.allSubviews.compactMap({$0 as? UITextField })
             if let searchTextField = textFields.first {
-                searchTextField.tintColor = searchTextField.textColor // the |
-                if !searchableAsTitle {
+                //if !searchableAsTitle {
                     if let navigationBarColor = self.navigationController?.navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor {
-                        searchTextField.tintColor = navigationBarColor
+                        searchTextField.textColor = navigationBarColor
                     }
-                }
+                //}
+                searchTextField.tintColor = searchTextField.textColor // the |
             }
         }
         searchBar?.delegate = self
