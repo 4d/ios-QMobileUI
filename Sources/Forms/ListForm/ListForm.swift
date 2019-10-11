@@ -19,6 +19,7 @@ public struct FormContext {
     var actionContext: ActionContext?
     var previousTitle: String?
     var relationName: String?
+    var inverseRelationName: String?
 
 }
 
@@ -78,7 +79,7 @@ extension ListForm {
 
     public func actionContext() -> ActionContext? {
         if let formContext = self.formContext {
-            return DataSourceParentEntry(dataSource: self.dataSource, formContext: formContext)
+            return DataSourceParentEntry(actionContext: self.dataSource, formContext: formContext)
         } else {
             return self.dataSource
         }
