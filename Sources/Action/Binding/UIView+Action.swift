@@ -65,19 +65,42 @@ extension UIView {
 
     fileprivate func showActionSheet(_ recognizer: UIGestureRecognizer) {
         if let actionSheet = self.actionSheet {
+            var dataSourceParentEntry: ActionContext?
             foreground {
                 if let cell = self as? UIViewCell {
+                    let viewController = cell.parentView?.findViewController()
+                    if let listForm = viewController as? ListForm {
+                        if let formContext = listForm.formContext {
+                            /// Success, there is a parent
+                            dataSourceParentEntry = DataSourceParentEntry(actionContext: self, formContext: formContext)
+                        }
+                    }
                     if cell.indexPath != self.bindTo.table?.indexPath {
                         self.bindTo.table?.indexPath = cell.indexPath
                         logger.warning("Cell no more binding good index \(String(describing: cell.indexPath)) != \(String(describing: self.bindTo.table?.indexPath))")
                     }
                 }
-                var alertController: UIAlertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
-				alertController = alertController.checkPopUp(recognizer)
-                alertController.show()
+                var alertController: UIAlertController?
+                if let dataSourceParentEntry = dataSourceParentEntry {
+                    alertController = .build(from: actionSheet, context: dataSourceParentEntry, handler: ActionManager.instance.prepareAndExecuteAction)
+                } else {
+                    alertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
+                }
+                alertController = alertController?.checkPopUp(recognizer)
+                alertController?.show()
             }
         } else {
             logger.debug("Action pressed on \(self) but not actionSheet information")
+        }
+    }
+
+    fileprivate func findViewController() -> UIViewController? {
+        if let nextResponder = self.next as? UIViewController {
+            return nextResponder
+        } else if let nextResponder = self.next as? UIView {
+            return nextResponder.findViewController()
+        } else {
+            return nil
         }
     }
 
