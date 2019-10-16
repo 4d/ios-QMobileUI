@@ -167,7 +167,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                     logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                     return
             }
-            let inverseRelationName = inverseRelationInfo.name // relationInfoUI.inverseRelationName (no more available)
+            let inverseRelationName = inverseRelationInfo.originalName // relationInfoUI.inverseRelationName (no more available)
 
             var previousTitle: String?
             if let record = record,
