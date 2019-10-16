@@ -167,7 +167,8 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                     logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                     return
             }
-            let inverseRelationName = inverseRelationInfo.originalName // relationInfoUI.inverseRelationName (no more available)
+
+            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
 
             var previousTitle: String?
             if let record = record,
@@ -176,12 +177,12 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                 let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
                 previousTitle = formatter.format(record)
             }
-            let predicatString = "(\(inverseRelationName) = %@)"
+            let predicatString = "(\(inverseRelationInfo.name) = %@)"
             listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
                                                actionContext: actionContext(),
                                                previousTitle: previousTitle,
-                                               relationName: relationName,
-                                               inverseRelationName: inverseRelationName)
+                                               relationName: relationOriginalName,
+                                               inverseRelationName: inverseRelationInfo.originalName)
 
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
