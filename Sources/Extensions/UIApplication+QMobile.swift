@@ -132,6 +132,14 @@ extension UIApplication {
         }
     }
 
+    public var statusBarHeight: CGFloat {
+        if #available(iOS 13.0, *) {
+            return self.topWindowScene?.statusBarManager?.statusBarFrame.size.height ?? 0
+        } else {
+            return statusBarFrame.size.height
+        }
+    }
+
     open var topViewController: UIViewController? {
         guard let rootController = self.topWindow?.rootViewController else {
             return nil
