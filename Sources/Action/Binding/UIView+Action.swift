@@ -65,27 +65,22 @@ extension UIView {
 
     fileprivate func showActionSheet(_ recognizer: UIGestureRecognizer) {
         if let actionSheet = self.actionSheet {
-            var dataSourceParentEntry: ActionContext?
+            var actionContext: ActionContext = self
             foreground {
                 if let cell = self as? UIViewCell {
-                    let viewController = cell.parentView?.findViewController()
-                    if let listForm = viewController as? ListForm {
-                        if let formContext = listForm.formContext {
-                            /// Success, there is a parent
-                            dataSourceParentEntry = DataSourceParentEntry(actionContext: self, formContext: formContext)
-                        }
+                    let cellIndexPath = cell.indexPath
+                    if cellIndexPath != self.bindTo.table?.indexPath {
+                        self.bindTo.table?.indexPath = cellIndexPath
+                        logger.warning("Cell no more binding good index \(String(describing: cellIndexPath)) != \(String(describing: self.bindTo.table?.indexPath))")
                     }
-                    if cell.indexPath != self.bindTo.table?.indexPath {
-                        self.bindTo.table?.indexPath = cell.indexPath
-                        logger.warning("Cell no more binding good index \(String(describing: cell.indexPath)) != \(String(describing: self.bindTo.table?.indexPath))")
+                    let viewController = cell.parentView?.findViewController()
+                    if let listForm = viewController as? ListForm,
+                        let formContext = listForm.formContext { // Success, there is a parent
+                        actionContext = DataSourceParentEntry(actionContext: self, formContext: formContext)
                     }
                 }
                 var alertController: UIAlertController?
-                if let dataSourceParentEntry = dataSourceParentEntry {
-                    alertController = .build(from: actionSheet, context: dataSourceParentEntry, handler: ActionManager.instance.prepareAndExecuteAction)
-                } else {
-                    alertController = .build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
-                }
+                alertController = .build(from: actionSheet, context: actionContext, handler: ActionManager.instance.prepareAndExecuteAction)
                 alertController = alertController?.checkPopUp(recognizer)
                 alertController?.show()
             }
