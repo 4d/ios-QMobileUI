@@ -57,4 +57,7 @@ public extension CGSize {
     func divide(by divider: CGFloat) -> CGSize {
         return CGSize(width: self.width / divider, height: self.height / divider)
     }
+    func inset(_ inset: UIEdgeInsets) -> CGSize {
+        return CGSize(width: self.width - inset.left - inset.right, height: self.height - inset.top - inset.bottom)
+    }
 }
