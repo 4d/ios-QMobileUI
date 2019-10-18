@@ -12,6 +12,8 @@ import Foundation
 /// https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html
 open class ApplicationOpenAppBeta: NSObject {
 
+    static var window: UIWindow?
+
     public enum Kind {
         case safari
         case map
@@ -205,7 +207,7 @@ extension ApplicationOpenAppBeta {
         let title = address
         let message = ""
 
-        controller(title, message, actions, sender).presentOnTop()
+        self.window = controller(title, message, actions, sender).presentOnTop()
     }
 
     public static func alertPhone(_ phone: String, sender: Any) {
@@ -234,7 +236,7 @@ extension ApplicationOpenAppBeta {
         let title = ""
         let message = phone
 
-        controller(title, message, actions, sender).presentOnTop()
+        self.window = controller(title, message, actions, sender).presentOnTop()
     }
 
 }
