@@ -64,4 +64,8 @@ extension DataSourceParentEntry: ActionContext {
 
         return parameters
     }
+
+    public func actionParameterValue(for field: String) -> Any? {
+        return self.actionContext?.actionParameterValue(for: field)
+    }
 }
