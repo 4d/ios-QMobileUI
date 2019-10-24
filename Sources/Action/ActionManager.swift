@@ -248,13 +248,16 @@ public class ActionManager {
         // Try to display the best error message...
         if let statusText = error.restErrors?.statusText { // dev message
             SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
-        } else /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
+        } else { /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
             if !ApplicationReachability.isReachable { // so check reachability status
                 SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
+            } else if case .sessionTaskFailed(let urlError) = error.afError {
+                SwiftMessages.warning(urlError.localizedDescription)
             } else if let failureReason = error.failureReason {
                 SwiftMessages.warning(failureReason)
             } else {
                 SwiftMessages.error(title: error.errorDescription ?? "", message: "")
+            }
         }
     }
 

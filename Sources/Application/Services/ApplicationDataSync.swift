@@ -246,7 +246,8 @@ extension ApplicationDataSync: DataSyncDelegate {
                             logger.info("Close form with record deleted")
                         }
                     } else {
-                       detailForm.view?.bindTo.record = formRecord
+                        detailForm.view?.bindTo.record = formRecord
+                        logger.verbose("Close form with no more records in table \(String(describing: detailForm.view?.bindTo.record)) \n \(formRecord)")
                     }
                 } else {
                     // dismiss no more record in table
@@ -274,12 +275,21 @@ extension UIApplication {
         if let detailViewController = topViewController.parent as? (DetailsForm & UIViewController) {
             return detailViewController
         }
+        // CLEAN: make code recursive to find it, not copy paste
         if let navigationController = topViewController.parent as? UINavigationController {
             if let detailViewController = navigationController.topViewController as? (DetailsForm & UIViewController) {
                 return detailViewController
             }
             if let detailViewController = navigationController.children.first as? (DetailsForm & UIViewController) {
                 return detailViewController
+            }
+            if let navigationControllerPResenting = navigationController.presentingViewController as? UINavigationController {
+                if let detailViewController = navigationControllerPResenting.topViewController as? (DetailsForm & UIViewController) {
+                    return detailViewController
+                }
+                if let detailViewController = navigationControllerPResenting.children.first as? (DetailsForm & UIViewController) {
+                    return detailViewController
+                }
             }
         }
         return nil
