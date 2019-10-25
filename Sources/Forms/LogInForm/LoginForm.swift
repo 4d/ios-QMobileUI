@@ -18,7 +18,7 @@ import QMobileAPI
 import QMobileDataSync
 
 /// Delegate for login form
-protocol LoginFormDelegate: NSObjectProtocol {
+public protocol LoginFormDelegate: NSObjectProtocol {
     /// Result of login operation.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool
 }
@@ -44,7 +44,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// The current action of login ie. the process cancellable.
     var logInAction: Cancellable?
 
-    weak var delegate: LoginFormDelegate?
+    public weak var delegate: LoginFormDelegate?
 
     // MARK: event
     final public override func viewDidLoad() {
