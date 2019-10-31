@@ -49,6 +49,7 @@ open class FeedbackForm: UIViewController {
 
         if let summaryPlaceholder = feedback?.summaryPlaceholder {
             textView.text = summaryPlaceholder
+            textView.placeholder = summaryPlaceholder
         }
 
         if let email = feedback?.email {
@@ -76,7 +77,7 @@ open class FeedbackForm: UIViewController {
             logger.debug("Will send feedback from \(String(describing: feedback.email))")
             DispatchQueue.background.async {
                 self.delegate?.send(feedback: feedback) { animated in
-                    DispatchQueue.main.async {
+                    foreground {
                         self.dismiss(animated: animated, completion: nil)
                     }
                 }
@@ -87,17 +88,23 @@ open class FeedbackForm: UIViewController {
     }
 
     @IBAction open func discard(_ sender: Any) {
+        /*if textView.text.isEmpty {
+            maybe dismiss without dialog
+            return
+        }*/
         let actionDialog = UIAlertController(title: "Discard report?", message: "Are you sure you want to discard the report?", preferredStyle: .alert)
 
         actionDialog.addAction(UIAlertAction(title: "Stay", style: .default, handler: { _ in
-            // do nothing
+            self.window = nil
         }))
         actionDialog.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
             self.delegate?.discard(feedback: self.feedback)
             self.dismiss(animated: true, completion: nil)
             self.window = nil
         }))
-        window = actionDialog.presentOnTop()
+        foreground {
+            self.window = actionDialog.presentOnTop()
+        }
     }
 }
 

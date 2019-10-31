@@ -90,7 +90,7 @@ extension ApplicationFeedback: ApplicationService {
             logger.info("Feedback not activated by automatic action.")
         }
 
-        feedbackWhenGoToFront()
+        //feedbackWhenGoToFront()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -167,7 +167,9 @@ extension ApplicationFeedback: ApplicationService {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
             completion() // XXX find a way to listen to dismiss, and do not put in each action...
         }))
-        self.window = alert.presentOnTop(completion: presented)
+        foreground {
+            self.window = alert.presentOnTop(completion: presented)
+        }
     }
 
     static var isConfigured: Bool {
