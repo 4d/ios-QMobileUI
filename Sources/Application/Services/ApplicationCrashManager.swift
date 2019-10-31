@@ -176,9 +176,8 @@ extension ApplicationCrashManager {
     }
 
     func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
-        let target = ApplicationServerCrashAPI(fileURL: file.url, parameters: parameters)
-        let crashServeProvider = MoyaProvider<ApplicationServerCrashAPI>()
-        crashServeProvider.request(target) { (result) in
+        let target = CrashTarget(fileURL: file.url, parameters: parameters)
+        MoyaProvider<CrashTarget>().request(target) { (result) in
 
             let alert = UIAlertController(title: "Failed to send crash file.", message: "", preferredStyle: .alert)
             switch result {

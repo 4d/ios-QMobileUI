@@ -75,7 +75,7 @@ open class FeedbackForm: UIViewController {
                 logger.debug("Cannot add activity indicator, not more a UIBarButtonItem")
             }
             logger.debug("Will send feedback from \(String(describing: feedback.email))")
-            DispatchQueue.background.async {
+            background {
                 self.delegate?.send(feedback: feedback) { animated in
                     foreground {
                         self.dismiss(animated: animated, completion: nil)

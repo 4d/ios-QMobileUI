@@ -13,6 +13,7 @@ import XCGLogger
 import Prephirences
 import FileKit
 import DeviceKit
+import Moya
 
 import MessageUI
 
@@ -235,11 +236,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
         applicationInformation["isCrash"] = "0"
 
-        guard let manager = ApplicationCrashManager.instance as? ApplicationCrashManager else {
-            logger.warning("No manager to send files")
-            return
-        }
-        manager.send(file: path, parameters: applicationInformation) { success in
+        self.send(file: path, parameters: applicationInformation) { success in
             if success {
                 logger.info("Report send")
                 dismiss(true/*animated*/)
@@ -256,6 +253,43 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         logger.info("Report discarded")
     }
 
+    func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
+        let target = FeedbackTarget(fileURL: file.url, parameters: parameters)
+        MoyaProvider<FeedbackTarget>().request(target) { (result) in
+
+            let alert = UIAlertController(title: "Failed to send feedback file.", message: "", preferredStyle: .alert)
+            switch result {
+            case .success(let response):
+                do {
+                    let status = try response.map(to: CrashStatus.self)
+                    if status.ok {
+                        onComplete(true)
+                        alert.title = "Feedback sent"
+                        alert.message = "Thanks for helping improve this app!"
+                        /// XXX could take message from server like information about bug id created by decoding to CrashStatus
+                    } else {
+                        logger.warning("Server did not accept the feedback")
+                        alert.message = "Server did not accept the feedback"
+                        onComplete(false)
+                    }
+                } catch let error {
+                    logger.warning("Failed to decode response from feedback server \(error)")
+                    alert.message = "Failed to decode response from feedback server"
+                    onComplete(false)
+                }
+            case .failure(let error):
+                logger.warning("Failed to send feedback file \(error) with url \(target.baseURL)\(target.path)")
+                if let response = error.responseString {
+                    logger.warning("with response \(response)")
+                }
+                alert.message = "Maybe check your network."
+                onComplete(false)
+            }
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+
+            self.window = alert.presentOnTop()
+        }
+    }
 }
 
 extension ApplicationFeedback: MFMailComposeViewControllerDelegate {

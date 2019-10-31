@@ -205,10 +205,12 @@
 		48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */; };
 		48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
 		48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
+		C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */; };
+		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
-		FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */; };
+		FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFF20AD95EF00B55336 /* CrashTarget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -416,10 +418,12 @@
 		48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QMobileDataStore.framework; path = Carthage/Build/iOS/QMobileDataStore.framework; sourceTree = "<group>"; };
+		C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashStatus.swift; sourceTree = "<group>"; };
+		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
-		FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServerCrashAPI.swift; sourceTree = "<group>"; };
+		FE655FFF20AD95EF00B55336 /* CrashTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashTarget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1068,7 +1072,9 @@
 		48F8C66022414C2B00F12922 /* Crash */ = {
 			isa = PBXGroup;
 			children = (
-				FE655FFF20AD95EF00B55336 /* ApplicationServerCrashAPI.swift */,
+				FE655FFF20AD95EF00B55336 /* CrashTarget.swift */,
+				C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */,
+				C4585D30236B159400A96AF7 /* FeedbackTarget.swift */,
 			);
 			path = Crash;
 			sourceTree = "<group>";
@@ -1344,6 +1350,7 @@
 				48D43CEF22CE48160013432C /* RowOfComparable.swift in Sources */,
 				480A36FF22C276170019BC39 /* ChoiceList.swift in Sources */,
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
+				C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
 				48E655E5229EB2D40060568B /* LocationRow.swift in Sources */,
@@ -1373,7 +1380,7 @@
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
-				FE65600020AD95EF00B55336 /* ApplicationServerCrashAPI.swift in Sources */,
+				FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */,
@@ -1394,6 +1401,7 @@
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				48BC8571226F0C1500D548B2 /* UIAlertController+ImagePicker.swift in Sources */,
+				C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */,
 				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
 				488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */,
 				4888ACCE22EB077C00219E63 /* NSSet+Binding.swift in Sources */,
