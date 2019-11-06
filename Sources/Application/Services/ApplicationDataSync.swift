@@ -239,22 +239,23 @@ extension ApplicationDataSync: DataSyncDelegate {
 
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
         onForeground {
-            if let detailForm = UIApplication.detailViewController {
-                if let formRecord = detailForm.record as? RecordBase {
-                    if let bindedRecord = detailForm.view?.bindTo.record as? Record, formRecord != bindedRecord.store {
-                        detailForm.dismiss(animated: true) {
-                            logger.info("Close form with record deleted")
-                        }
-                    } else {
-                        detailForm.view?.bindTo.record = formRecord
-                        logger.verbose("Close form with no more records in table \(String(describing: detailForm.view?.bindTo.record)) \n \(formRecord)")
-                    }
-                } else {
-                    // dismiss no more record in table
-                    detailForm.dismiss(animated: true) {
-                        logger.info("Close form with no more records in table")
-                    }
+            guard let detailForm = UIApplication.detailViewController else { return }
+            guard let formRecord = detailForm.record as? RecordBase else {
+                detailForm.dismiss(animated: true) {
+                    logger.info("Close form with no more records in table")
                 }
+                return
+            }
+            if let bindedRecord = detailForm.view?.bindTo.record as? Record, formRecord != bindedRecord.store {
+                detailForm.dismiss(animated: true) {
+                    logger.info("Close form with record deleted")
+                }
+            } else if formRecord.isFault {
+                detailForm.dismiss(animated: true) {
+                    logger.info("Close form with record deleted")
+                }
+            } else {
+                detailForm.view?.bindTo.record = formRecord // just maybe for refresh
             }
         }
     }
