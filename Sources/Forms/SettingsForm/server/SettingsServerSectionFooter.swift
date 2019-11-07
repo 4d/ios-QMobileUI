@@ -62,4 +62,5 @@ extension SettingsServerSectionFooter: ServerStatusListener {
 }
 
 /// Indicator view for server status
-open class ServerStatusView: AnimatableActivityIndicatorView {}
+
+@objc open class ServerStatusView: AnimatableActivityIndicatorView {}

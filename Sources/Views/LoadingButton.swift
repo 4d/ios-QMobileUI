@@ -24,7 +24,7 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
 
     static var buttonDisabledColor: String = "buttonDisabledColor"
 
-    @IBInspectable dynamic open var disabledColor: UIColor =
+    @IBInspectable open var disabledColor: UIColor =
         UIColor(named: LoadingButton.buttonDisabledColor) ?? ColorCompatibility.systemGray4 {
         didSet {
             configureBackgroundColor()

@@ -8,6 +8,12 @@
       location = "container:"
       name = "ThirdParty">
       <FileRef
+         location = "group:../../../../../../../../../Library/Caches/com.4d.mobile/sdk/Carthage/Checkouts/Guitar/GuitarExample/GuitarExample.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:../../../../../../../../../Library/Caches/com.4d.mobile/sdk/Carthage/Checkouts/ZIPFoundation/ZIPFoundation.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Carthage/Checkouts/IBAnimatable/IBAnimatable/IBAnimatable.xcodeproj">
       </FileRef>
       <FileRef

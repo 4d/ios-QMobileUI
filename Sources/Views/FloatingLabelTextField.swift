@@ -18,7 +18,7 @@ import UIKit
 
     fileprivate var cachedTextColor: UIColor?
 
-    @IBInspectable override dynamic open var textColor: UIColor? {
+    @IBInspectable override open var textColor: UIColor? {
         set {
             cachedTextColor = newValue
             configureControl(false)
@@ -28,7 +28,7 @@ import UIKit
         }
     }
 
-    @IBInspectable dynamic open var placeholderColor: UIColor = ColorCompatibility.systemGray2 {
+    @IBInspectable open var placeholderColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             updatePlaceholder()
         }
@@ -59,38 +59,38 @@ import UIKit
         }
     }
 
-    @IBInspectable dynamic open var titleColor: UIColor = ColorCompatibility.systemGray {
+    @IBInspectable open var titleColor: UIColor = ColorCompatibility.systemGray {
         didSet {
             configureTitleColor()
         }
     }
 
-    @IBInspectable dynamic open var lineColor: UIColor = ColorCompatibility.systemGray2 {
+    @IBInspectable open var lineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
     }
 
-    @IBInspectable dynamic open var errorColor: UIColor = ColorCompatibility.systemRed {
+    @IBInspectable open var errorColor: UIColor = ColorCompatibility.systemRed {
         didSet {
             configureColors()
         }
     }
 
-    @IBInspectable dynamic open var disabledColor: UIColor = ColorCompatibility.systemGray5 {
+    @IBInspectable open var disabledColor: UIColor = ColorCompatibility.systemGray5 {
         didSet {
             configureControl()
             updatePlaceholder()
         }
     }
 
-    @IBInspectable dynamic open var selectedTitleColor: UIColor = ColorCompatibility.systemGray2 {
+    @IBInspectable open var selectedTitleColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureTitleColor()
         }
     }
 
-    @IBInspectable dynamic open var selectedLineColor: UIColor = ColorCompatibility.systemGray2 {
+    @IBInspectable open var selectedLineColor: UIColor = ColorCompatibility.systemGray2 {
         didSet {
             configureLineView()
         }
@@ -98,14 +98,14 @@ import UIKit
 
     // MARK: - Line height
 
-    @IBInspectable dynamic open var lineHeight: CGFloat = 0.5 {
+    @IBInspectable open var lineHeight: CGFloat = 0.5 {
         didSet {
             configureLineView()
             setNeedsDisplay()
         }
     }
 
-    @IBInspectable dynamic open var selectedLineHeight: CGFloat = 1.0 {
+    @IBInspectable open var selectedLineHeight: CGFloat = 1.0 {
         didSet {
             configureLineView()
             setNeedsDisplay()
