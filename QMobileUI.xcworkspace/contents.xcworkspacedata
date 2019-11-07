@@ -8,6 +8,9 @@
       location = "container:"
       name = "ThirdParty">
       <FileRef
+         location = "group:Carthage/Checkouts/IBAnimatable/IBAnimatable/IBAnimatable.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Carthage/Checkouts/Eureka/Eureka.xcodeproj">
       </FileRef>
       <FileRef
@@ -38,22 +41,19 @@
          location = "group:Carthage/Checkouts/Prephirences/Prephirences.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/Result/Result.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Carthage/Checkouts/ValueTransformerKit/ValueTransformerKit.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/QMobileAPI/QMobileAPI.xcodeproj">
+         location = "group:../QMobileAPI/QMobileAPI.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/QMobileDataStore/QMobileDataStore.xcodeproj">
+         location = "group:../QMobileDataStore/QMobileDataStore.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/QMobileDataSync/QMobileDataSync.xcodeproj">
+         location = "group:../QMobileDataSync/QMobileDataSync.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/Alamofire/../CallbackURLKit/CallbackURLKit.xcodeproj">
+         location = "group:Carthage/Checkouts/CallbackURLKit/CallbackURLKit.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
