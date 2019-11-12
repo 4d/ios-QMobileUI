@@ -34,8 +34,6 @@ open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
     // Cache title (removed when animating)
     private var cachedTitle: String?
 
-    /// Cache title (removed when animating)
-    private var cachedTitle: String?
     /// Cache for background color (changed when disabled)
     private var cachedBackgroundColor: UIColor?
 
