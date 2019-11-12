@@ -476,7 +476,7 @@ extension Eureka.BaseRow {
         // XXX multiple errors?
     }
 
-    @objc dynamic open var remoteErrorsString: [String] {
+    open var remoteErrorsString: [String] {
         get {
             return objc_getAssociatedObject(self, &xoAssociationKey) as? [String] ?? []
         } set {
