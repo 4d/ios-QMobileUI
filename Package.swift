@@ -26,8 +26,10 @@ let package = Package(
         .package(url: "https://github.com/phimage/Prephirences.git", from: "5.1.0"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.8.1"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "2.3.0"),
-        .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", from: "7.0.0"), // No Package.swift file
-        .package(url: "https://github.com/xmartlabs/Eureka.git", from: "5.0.0"), // No Package.swift file
+//        .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", from: "7.0.0"), // No Package.swift file
+        .package(url: "https://github.com/AccioSupport/SwiftMessages.git", .revision("HEAD")),  // https://github.com/SwiftKickMobile/SwiftMessages/pull/297
+//        .package(url: "https://github.com/xmartlabs/Eureka.git", from: "5.0.0"), // No Package.swift file
+        .package(url: "https://github.com/thebluepotato/Eureka.git", .branch("spm")), // https://github.com/xmartlabs/Eureka/pull/1877
         .package(url: "https://github.com/IBAnimatable/IBAnimatable.git", .revision("HEAD"))
     ],
     targets: [
