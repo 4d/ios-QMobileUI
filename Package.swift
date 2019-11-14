@@ -10,7 +10,7 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        .library( name: "QMobileUI", targets: ["QMobileUI"]),
+        .library(name: "QMobileUI", targets: ["QMobileUI"])
     ],
     dependencies: [
         .package(url: "https://gitlab-4d.private.4d.fr/qmobile/QMobileAPI.git", .revision("HEAD")),
@@ -22,7 +22,7 @@ let package = Package(
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.9"),
         .package(url: "https://github.com/Thomvis/BrightFutures.git", from: "8.0.1"),
         .package(url: "https://github.com/ArtSabintsev/Guitar.git", from: "1.1.0"),
-        .package(url: "https://github.com/phimage/ValueTransformerKit.git", from: "1.2.1"),
+        .package(url: "https://github.com/phimage/ValueTransformerKit.git", from: "1.2.3"),
         .package(url: "https://github.com/phimage/Prephirences.git", from: "5.1.0"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.8.1"),
 //         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "2.3.0"), // no mac support
@@ -46,7 +46,11 @@ let package = Package(
                 "ZIPFoundation",
                 "BrightFutures",
                 "Guitar",
+                "Prephirences",
                 "ValueTransformerKit",
+                "SwiftMessages",
+                "Eureka",
+                "IBAnimatable",
                 "DeviceKit",
                 "Kingfisher"
             ],
