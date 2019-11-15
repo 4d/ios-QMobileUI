@@ -26,4 +26,16 @@ extension UITabBarController {
         }
     }
 
+    open func customizeMoreView() {
+        if let moreListViewController = moreNavigationController.topViewController {
+            if let moreTableView = moreListViewController.view as? UITableView {
+                moreTableView.tintColor = .background // To set color on  "more" panel table icon
+                moreTableView.tableFooterView = UIView() // remove footer
+                // moreTableView.separatorStyle = .none // to remove all separator
+            }
+        }
+        let navigationBar = self.moreNavigationController.navigationBar
+        navigationBar.tintColor = .foreground
+        navigationBar.barTintColor = .background
+    }
 }
