@@ -114,7 +114,7 @@
         "repositoryURL": "https://gitlab-4d.private.4d.fr/qmobile/QMobileAPI.git",
         "state": {
           "branch": "HEAD",
-          "revision": "7421c7dace284bd09957ecb7ef9686e9bf360abe",
+          "revision": "0d207f1bc5716358a3b8f79631dca534c35f9f15",
           "version": null
         }
       },
@@ -123,7 +123,7 @@
         "repositoryURL": "https://gitlab-4d.private.4d.fr/qmobile/QMobileDataStore.git",
         "state": {
           "branch": "HEAD",
-          "revision": "164628d361eb33ae94f4ae6c92ffa494b3c5214e",
+          "revision": "ca2a0bf29df975c179fdd610bd64bd0a36e1839e",
           "version": null
         }
       },
@@ -132,7 +132,7 @@
         "repositoryURL": "https://gitlab-4d.private.4d.fr/qmobile/QMobileDataSync.git",
         "state": {
           "branch": "HEAD",
-          "revision": "9172d896b6efe84e7aeb0dd0c70667accf705507",
+          "revision": "3d61c7a1a2debdae2c4ae6a311a77a24c2160ddc",
           "version": null
         }
       },
