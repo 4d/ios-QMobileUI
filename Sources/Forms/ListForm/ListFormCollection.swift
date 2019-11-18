@@ -1,5 +1,5 @@
 //
-//  CollectionViewController.swift
+//  ListFormCollection.swift
 //  QMobileUI
 //
 //  Created by Eric Marchand on 16/03/2017.
@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 import QMobileAPI
 import QMobileDataStore

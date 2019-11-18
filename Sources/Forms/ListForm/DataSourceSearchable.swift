@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+
 import QMobileDataStore
 
 public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 // An UIBarButtonItem is not a view, so binding information must be look in attached view
 

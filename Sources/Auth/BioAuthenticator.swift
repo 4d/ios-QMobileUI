@@ -21,7 +21,7 @@ class BioAuthentificator {
 
     public static var isFaceIDAvailable: Bool {
         if #available(iOS 11.0, *) {
-            return (LAContext().biometryType == .typeFaceID)
+            return (LAContext().biometryType == .faceID)
         }
         return false
     }

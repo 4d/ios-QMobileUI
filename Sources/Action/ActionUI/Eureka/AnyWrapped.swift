@@ -10,7 +10,7 @@ import Foundation
 
 import struct QMobileAPI.AnyCodable
 
-// Protocol to unwrap internval value.
+// Protocol to unwrap internal value.
 protocol AnyWrapped {
     /// The value wrapped by this instance.
     var wrapped: Any? { get }

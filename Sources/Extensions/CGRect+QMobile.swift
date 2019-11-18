@@ -6,7 +6,7 @@
 //  Copyright © 2017 Eric Marchand. All rights reserved.
 //
 
-import CoreGraphics
+import UIKit
 
 public extension CGRect {
 

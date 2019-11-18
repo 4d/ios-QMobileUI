@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+
 import Moya
 import class Alamofire.NetworkReachabilityManager
 

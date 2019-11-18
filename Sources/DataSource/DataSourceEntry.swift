@@ -160,6 +160,7 @@ extension DataSource {
 }
 
 // MARK: UI
+import UIKit
 protocol DataSourceEntryUI {
 
     /// Fill this UI with this entry data

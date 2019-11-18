@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Protocol for an application service. @see UIApplicationDelegate.
 public protocol ApplicationService {

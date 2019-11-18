@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import UIKit
 import Eureka
 
 public struct ImageRowSourceTypes: OptionSet {

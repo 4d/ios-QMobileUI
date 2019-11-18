@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import UIKit
 import Eureka
 
 /// Selector Controller used to pick an image

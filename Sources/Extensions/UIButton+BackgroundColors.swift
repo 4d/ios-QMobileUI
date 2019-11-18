@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 private var xoAssociationKey: UInt8 = 0
 extension UIButton {

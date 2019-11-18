@@ -24,7 +24,7 @@
         "repositoryURL": "https://github.com/phimage/CallbackURLKit.git",
         "state": {
           "branch": "HEAD",
-          "revision": "736aece485957c4846db97bb882165e1e394adf0",
+          "revision": "d2184b90d1dfcfd207c90a2c2c20a843d319eebe",
           "version": null
         }
       },
@@ -33,7 +33,7 @@
         "repositoryURL": "https://github.com/phimage/DeviceKit.git",
         "state": {
           "branch": "feature/macos",
-          "revision": "15fa25b33473cfbd5257cb89cae97b980973f1e9",
+          "revision": "ddbcea225aaf3c216824494181810b3f34339421",
           "version": null
         }
       },
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "3f0200463a2c747f985fa32845e7b70b0172474c",
-          "version": "5.9.0"
+          "revision": "e951bc286f12f140a14813cc01193731c160ecba",
+          "version": "5.10.0"
         }
       },
       {
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/phimage/MomXML.git",
         "state": {
           "branch": "HEAD",
-          "revision": "f5b77798de0c9003f43e67bcd2406ccf37df3b4c",
+          "revision": "af192409d9b183fb853d6b13425a20f3346c2889",
           "version": null
         }
       },
@@ -156,10 +156,10 @@
       },
       {
         "package": "SwiftMessages",
-        "repositoryURL": "https://github.com/AccioSupport/SwiftMessages.git",
+        "repositoryURL": "https://github.com/phimage/SwiftMessages.git",
         "state": {
           "branch": "HEAD",
-          "revision": "1ea40a6a1574ed647cb664e7dbd0eaedf028b169",
+          "revision": "6fe4f6af76ad4503e3e1f976a9aff6abd193387e",
           "version": null
         }
       },

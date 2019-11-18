@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 import Eureka
 
@@ -286,7 +287,7 @@ extension ActionParameterFormat {
         case .percent:
             return .percent
         case .integer:
-            return .none
+            return NumberFormatter.Style.none
         default:
             return nil
         }

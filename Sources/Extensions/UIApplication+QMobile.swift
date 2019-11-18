@@ -8,6 +8,7 @@
 
 import Foundation
 import Prephirences
+import UIKit
 
 // MARK: App informations
 extension UIApplication {

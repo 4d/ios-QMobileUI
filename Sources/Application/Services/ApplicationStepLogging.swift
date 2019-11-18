@@ -5,6 +5,8 @@
 //  Created by Eric Marchand on 28/03/2017.
 //  Copyright © 2017 Eric Marchand. All rights reserved.
 //
+
+import Foundation
 import UIKit
 
 import XCGLogger

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Open native app
 /// https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html
