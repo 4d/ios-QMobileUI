@@ -95,7 +95,7 @@
 		4869D60B223BA4410042379F /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60A223BA4410042379F /* ActionManager.swift */; };
 		4869D60D223BA47F0042379F /* UIView+ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60C223BA47F0042379F /* UIView+ActionContext.swift */; };
 		486BC3CA231935710059B66C /* RecordFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486BC3C9231935710059B66C /* RecordFormat.swift */; };
-		48708B5D2195B36E005C9C4A /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* Main.swift */; };
+		48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* MainForm.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
 		4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496020AC548F008876B8 /* ServerStatusManager.swift */; };
@@ -114,7 +114,7 @@
 		489A68AB21B526AA00A90DC6 /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A68AA21B526AA00A90DC6 /* Form.swift */; };
 		489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
-		489C3F8321AECE990018664B /* Main+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C3F8221AECE990018664B /* Main+Flow.swift */; };
+		489C3F8321AECE990018664B /* MainForm+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C3F8221AECE990018664B /* MainForm+Flow.swift */; };
 		489C3F8821AEDD810018664B /* MainNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C3F8721AEDD810018664B /* MainNavigation.swift */; };
 		48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */; };
 		48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */; };
@@ -283,6 +283,7 @@
 		483192532297F8000041B41A /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		483192542297F8000041B41A /* ImageRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRow.swift; sourceTree = "<group>"; };
 		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
+		483689E12385A0FB00A7C64A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		483A964A21B04465009F2330 /* LoginForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginForm+Flow.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		483FDA821E826C9900FAF84B /* UIView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+QMobile.swift"; sourceTree = "<group>"; };
@@ -319,7 +320,7 @@
 		4869D60A223BA4410042379F /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
 		4869D60C223BA47F0042379F /* UIView+ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActionContext.swift"; sourceTree = "<group>"; };
 		486BC3C9231935710059B66C /* RecordFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFormat.swift; path = Sources/Forms/RecordFormat.swift; sourceTree = SOURCE_ROOT; };
-		48708B5C2195B36E005C9C4A /* Main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		48708B5C2195B36E005C9C4A /* MainForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainForm.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
 		4879496020AC548F008876B8 /* ServerStatusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStatusManager.swift; sourceTree = "<group>"; };
@@ -335,7 +336,7 @@
 		489A68AA21B526AA00A90DC6 /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
-		489C3F8221AECE990018664B /* Main+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Main+Flow.swift"; sourceTree = "<group>"; };
+		489C3F8221AECE990018664B /* MainForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainForm+Flow.swift"; sourceTree = "<group>"; };
 		489C3F8721AEDD810018664B /* MainNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigation.swift; sourceTree = "<group>"; };
 		48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUpdate.swift; sourceTree = "<group>"; };
 		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
@@ -745,8 +746,8 @@
 		48708B572195B2E2005C9C4A /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				48708B5C2195B36E005C9C4A /* Main.swift */,
-				489C3F8221AECE990018664B /* Main+Flow.swift */,
+				48708B5C2195B36E005C9C4A /* MainForm.swift */,
+				489C3F8221AECE990018664B /* MainForm+Flow.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -915,6 +916,7 @@
 		48D584541E7830E1006F56B5 = {
 			isa = PBXGroup;
 			children = (
+				483689E12385A0FB00A7C64A /* Package.swift */,
 				48D584691E7830F9006F56B5 /* Sources */,
 				48D5846A1E783169006F56B5 /* Xcode */,
 				48D584701E7831B2006F56B5 /* Tests */,
@@ -1459,7 +1461,7 @@
 				486BC3CA231935710059B66C /* RecordFormat.swift in Sources */,
 				48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */,
 				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
-				48708B5D2195B36E005C9C4A /* Main.swift in Sources */,
+				48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */,
 				480392BF1E929593008CF992 /* UIRefreshControl+QMobile.swift in Sources */,
 				480B43531E842289007C90DD /* UIDevice+QMobile.swift in Sources */,
 				480392AE1E92930A008CF992 /* UIBarItem+BindTo.swift in Sources */,
@@ -1487,7 +1489,7 @@
 				48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */,
 				48BC856E226F0B9300D548B2 /* UIAlertController+DataPicker.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
-				489C3F8321AECE990018664B /* Main+Flow.swift in Sources */,
+				489C3F8321AECE990018664B /* MainForm+Flow.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				482C6543229D1AC70045E1CE /* RatingRow.swift in Sources */,
 				480B785922CA02160037C1D8 /* RowInitializable.swift in Sources */,

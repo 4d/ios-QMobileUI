@@ -9,6 +9,8 @@ import UIKit
 import Prephirences
 import QMobileAPI
 
+// Do not name this file Main.swift -> compilator want to make an executable
+
 /// Main controller. This controller present a view similar to the launchscreen,
 /// then transition to the next controller according to the application state.
 open class Main: UIViewController, Form {
