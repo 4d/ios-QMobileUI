@@ -78,7 +78,9 @@ extension ApplicationCrashManager: ApplicationService {
                     self.window = nil
                 }))
 
-                self.window = alert.presentOnTop()
+                foreground {
+                  self.window = alert.presentOnTop()
+                }
             }
         }
     }
