@@ -393,23 +393,21 @@ private class KeyPathParser {
 
     // allow to extract int argument from <function>[<arg>]
     static func intParser(function: String, block :@escaping (_ view: Binded?, _ parameter: Int?) -> Binded?) -> KeyPathParser {
-
         return KeyPathParser(function: function) { view, keyPathComponent in
             let result = scan(keyPathComponent: keyPathComponent, function: function)
             return block(view, result)
         }
     }
 
-    func scan(keyPathComponent: String, function: String) -> Int? {
-        var success = true
-        var result: Int = 0
-        
+    static func scan(keyPathComponent: String, function: String) -> Int? {
         let scanner = Scanner(string: keyPathComponent)
-        success = scanner.scanString(function, into: nil) && success
-        success = scanner.scanString("[", into: nil) && success
-        success = scanner.scanInt(&result) && success
-        success = scanner.scanString("]", into: nil) && success
-        return success ? result : nil
+        guard scanner.scanString(function) != nil else { return nil }
+        guard scanner.scanString("[") != nil else { return nil }
+        if let result = scanner.scanInt() {
+            return result
+        }
+        // scanner.scanString("]")
+        return nil
     }
     // XXX do it for string if <function>[<arg>] zith string arg
 
