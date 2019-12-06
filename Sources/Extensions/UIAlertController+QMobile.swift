@@ -46,7 +46,7 @@ public extension UIAlertController {
 			} else if let viewController = sender as? UIViewController, let view = viewController.view {
 				popoverController.sourceView = view
 				popoverController.sourceRect = CGRect(origin: view.bounds.mid, size: .zero)
-			} else if let view = UIApplication.shared.keyWindow?.rootViewController?.view { // Get root view in last ressort
+			} else if let view = UIApplication.shared.topWindow?.rootViewController?.view { // Get root view in last ressort
                 popoverController.sourceView = view
                 popoverController.sourceRect = CGRect(origin: view.bounds.mid, size: .zero)
             } else {

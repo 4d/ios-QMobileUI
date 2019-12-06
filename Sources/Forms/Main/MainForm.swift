@@ -95,8 +95,8 @@ extension Main {
             UISearchBar.appearance().barStyle = .default
         case .dark:
             UITabBar.appearance().barStyle = .black
-            UINavigationBar.appearance().barStyle = .blackTranslucent
-            UISearchBar.appearance().barStyle = .blackTranslucent
+            UINavigationBar.appearance().barStyle = .black
+            UISearchBar.appearance().barStyle = .black
         default:
             break
         }

@@ -64,7 +64,7 @@ open class FeedbackForm: UIViewController {
             feedback.saveEmail()
             feedback.summary = textView.text
             if sender is UIBarButtonItem {
-                let indicator = UIActivityIndicatorView(style: .gray)
+                let indicator = UIActivityIndicatorView(style: .medium)
                 indicator.hidesWhenStopped = true
                 // indicator.center = sendButton.center
                 // sendButton.superview?.insertSubview(indicator, aboveSubview: sendButton)

@@ -41,7 +41,7 @@ open class DialogForm: IBAnimatable.AnimatableModalViewController {
     // MARK: view
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.isModalInPopover = true
+        // self.isModalInPopover = true
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {

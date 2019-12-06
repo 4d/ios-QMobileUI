@@ -11,7 +11,11 @@ import UIKit
 public extension UIScreen {
 
     static var orientation: UIInterfaceOrientation {
-        return UIApplication.shared.statusBarOrientation
+        if #available(iOS 13.0, *) {
+            return UIApplication.shared.topWindowScene?.interfaceOrientation ?? .unknown
+        } else {
+            return UIApplication.shared.statusBarOrientation
+        }
     }
 
     static var size: CGSize {
@@ -27,7 +31,11 @@ public extension UIScreen {
     }
 
     static var screenStatusBarHeight: CGFloat {
-        return UIApplication.shared.statusBarFrame.height
+        if #available(iOS 13.0, *) {
+            return UIApplication.shared.topWindowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        } else {
+            return UIApplication.shared.statusBarFrame.height
+        }
     }
 
     static var screenHeightWithoutStatusBar: CGFloat {
