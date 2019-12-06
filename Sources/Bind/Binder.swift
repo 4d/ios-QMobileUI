@@ -395,17 +395,21 @@ private class KeyPathParser {
     static func intParser(function: String, block :@escaping (_ view: Binded?, _ parameter: Int?) -> Binded?) -> KeyPathParser {
 
         return KeyPathParser(function: function) { view, keyPathComponent in
-            var success = true
-            var result: Int = 0
-
-            let scanner = Scanner(string: keyPathComponent)
-            success = scanner.scanString(function, into: nil) && success
-            success = scanner.scanString("[", into: nil) && success
-            success = scanner.scanInt(&result) && success
-            success = scanner.scanString("]", into: nil) && success
-
-            return block(view, success ? result : nil)
+            let result = scan(keyPathComponent: keyPathComponent, function: function)
+            return block(view, result)
         }
+    }
+
+    func scan(keyPathComponent: String, function: String) -> Int? {
+        var success = true
+        var result: Int = 0
+        
+        let scanner = Scanner(string: keyPathComponent)
+        success = scanner.scanString(function, into: nil) && success
+        success = scanner.scanString("[", into: nil) && success
+        success = scanner.scanInt(&result) && success
+        success = scanner.scanString("]", into: nil) && success
+        return success ? result : nil
     }
     // XXX do it for string if <function>[<arg>] zith string arg
 
