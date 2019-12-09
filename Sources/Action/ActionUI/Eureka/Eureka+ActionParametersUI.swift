@@ -325,7 +325,16 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             return dict
         }
 
-        let images = parameters.compactMapValues { $0 as? UIImage }
+        // Check if there is some value to upload
+        var images: [(String, UIImage)] = parameters.compactMapValues { $0 as? UIImage }.compactMap { ($0.key, $0.value) }
+        let multipleImages: [String: [UIImage]] = parameters.compactMapValues({ $0 as? [UIImage] })
+        for (key, subImages) in multipleImages { // XXX maybe a more clean way to do it with reduce and map
+            for image in subImages {
+                images.append((key, image))
+            }
+            parameters[key] = []
+        }
+
         if images.isEmpty {
             // No image, return immediatly
             completionHandler(parameters)
@@ -337,10 +346,22 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                     switch result {
                     case .success(let uploadResult):
                         logger.debug("Image uploaded \(uploadResult)")
-                        parameters[key] = uploadResult
+                        if multipleImages[key] == nil {
+                             // replace UIImage by UploadResult
+                            parameters[key] = uploadResult
+                        } else {
+                            // append new UploadResult to array of UploadResult
+                            var uploadResults = parameters[key] as? [UploadResult] ?? []
+                            uploadResults.append(uploadResult)
+                            parameters[key] = uploadResults
+                        }
                     case .failure(let error):
                         logger.warning("Failed to upload image \(error): \(String(describing: error.responseString))") // ok: true is not ok! we need id
-                        parameters.removeValue(forKey: key) // Not convertible
+                        if multipleImages[key] == nil {
+                            parameters.removeValue(forKey: key) // Not convertible
+                        } else {
+                            // do nothing, we have already removed UIImage values
+                        }
                     }
                     itemDone += 1
                     if itemDone == images.count {
@@ -348,6 +369,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                     }
                 }
                 if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
+                    logger.debug("Upload image using url \(url)")
+                    _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
+                } else if let url = (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image) {
                     logger.debug("Upload image using url \(url)")
                     _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
                 } else if let imageData = image.jpegData(compressionQuality: 1) {

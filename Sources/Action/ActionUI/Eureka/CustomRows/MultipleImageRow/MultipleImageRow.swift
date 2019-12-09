@@ -1,74 +1,21 @@
-//  ImageRow.swift
-//  Eureka ( https://github.com/xmartlabs/Eureka )
 //
-//  Copyright (c) 2016 Xmartlabs SRL ( http://xmartlabs.com )
+//  MultipleImageRow.swift
+//  QMobileUI
 //
+//  Created by Eric Marchand on 09/12/2019.
+//  Copyright © 2019 Eric Marchand. All rights reserved.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 import Foundation
+
 import UIKit
 import Eureka
 
-public struct ImageRowSourceTypes: OptionSet {
-
-    public let rawValue: Int
-    public var imagePickerControllerSourceTypeRawValue: Int { return self.rawValue >> 1 }
-
-    public init(rawValue: Int) { self.rawValue = rawValue }
-    init(_ sourceType: UIImagePickerController.SourceType) { self.init(rawValue: 1 << sourceType.rawValue) }
-
-    public static let photoLibrary = ImageRowSourceTypes(.photoLibrary)
-    public static let camera = ImageRowSourceTypes(.camera)
-    public static let savedPhotosAlbum = ImageRowSourceTypes(.savedPhotosAlbum)
-    public static let all: ImageRowSourceTypes = [camera, photoLibrary, savedPhotosAlbum]
-
-}
-
-extension ImageRowSourceTypes {
-
-// MARK: Helpers
-
-    var localizedString: String {
-        switch self {
-        case ImageRowSourceTypes.camera:
-            return "Take photo"
-        case ImageRowSourceTypes.photoLibrary:
-            return "Photo Library"
-        case ImageRowSourceTypes.savedPhotosAlbum:
-            return "Saved Photos"
-        default:
-            return ""
-        }
-    }
-}
-
-public enum ImageClearAction {
-    case no // swiftlint:disable:this identifier_name
-    case yes(style: UIAlertAction.Style)
-}
-
 // MARK: Row
  //swiftlint:disable:next type_name
-open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where Cell: BaseCell, Cell.Value == UIImage {
+open class _MultipleImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where Cell: BaseCell, Cell.Value == [UIImage] {
 
-    public typealias PresenterRow = ImagePickerController
+    public typealias PresenterRow = MultipleImagePickerController
 
     /// Defines how the view controller will be presented, pushed, etc.
     open var presentationMode: PresentationMode<PresenterRow>?
@@ -77,7 +24,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
     open var onPresentCallback: ((FormViewController, PresenterRow) -> Void)?
 
     open var sourceTypes: ImageRowSourceTypes
-    open internal(set) var imageURL: URL?
+    open internal(set) var imageURLs: [URL?] = []
     open var clearAction = ImageClearAction.yes(style: .destructive)
 
     private var _sourceType = UIImagePickerController.SourceType.camera
@@ -85,7 +32,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
     public required init(tag: String?) {
         sourceTypes = .all
         super.init(tag: tag)
-        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return ImagePickerController() }, onDismiss: { [weak self] viewController in
+        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return MultipleImagePickerController() }, onDismiss: { [weak self] viewController in
             self?.select()
             viewController.dismiss(animated: true)
             })
@@ -157,7 +104,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         if case .yes(let style) = clearAction, value != nil {
             let clearPhotoOption = UIAlertAction(title: NSLocalizedString("Clear Photo", comment: ""), style: style, handler: { [weak self] _ in
                 self?.value = nil
-                self?.imageURL = nil
+                self?.imageURLs = []
                 self?.updateCell()
                 })
             sourceActionSheet.addAction(clearPhotoOption)
@@ -196,10 +143,10 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         cell.accessoryType = .none
         cell.editingAccessoryView = .none
 
-        if let image = self.value {
+        if let images = self.value {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
             imageView.contentMode = .scaleAspectFill
-            imageView.image = image
+            imageView.image = images.first
             imageView.clipsToBounds = true
 
             cell.accessoryView = imageView
@@ -210,9 +157,26 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         }
     }
 
+    open func position(of image: UIImage) -> Int? {
+        guard let images = self.value  else { return nil }
+        for (index, value) in images.enumerated() where value == image {
+            return index
+        }
+        return nil
+    }
+
+    open func imageURL(for image: UIImage) -> URL? {
+        guard let position = position(of: image) else { return nil }
+        guard position >= self.imageURLs.count else {
+            assertionFailure("imageURLS count could not provide image url at \(position)")
+            return nil
+        }
+        return self.imageURLs[position]
+    }
+
 }
 
-extension _ImageRow {
+extension _MultipleImageRow {
 
 // MARK: Helpers
 
@@ -232,7 +196,7 @@ extension _ImageRow {
 }
 
 /// A selector row where the user can pick an image
-public final class ImageRow: _ImageRow<PushSelectorCell<UIImage>>, RowType {
+public final class MultipleImageRow: _MultipleImageRow<PushSelectorCell<[UIImage]>>, RowType {
     public required init(tag: String?) {
         super.init(tag: tag)
     }
