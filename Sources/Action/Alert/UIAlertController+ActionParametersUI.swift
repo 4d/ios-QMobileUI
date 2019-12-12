@@ -34,7 +34,9 @@ extension UIAlertController: ActionParametersUI {
                 return nil // no managed yet
             }
         }
-
+        if parameter.choiceList != nil {
+            return nil
+        }
         switch parameter.type {
         case .string, .text:
             alertController.addOneTextField { textField in
@@ -77,9 +79,9 @@ extension UIAlertController: ActionParametersUI {
             alertController.addDatePicker(mode: .time, date: date) { date in
                 actionParametersValue[parameter.name] = date
             }
-        case .picture, .image:
+        /*case .picture, .image:
             // XXX list of images from library?
-            alertController.addImagePicker(flow: .vertical, paging: true, images: [])
+            alertController.addImagePicker(flow: .vertical, paging: true, images: [])*/
         /*case .integer, .number, .real:
             let numberValues: [Int] = (1...100).map { $0 }
             let pickerViewValues: [[String]] = [numberValues.map { $0.description }]
