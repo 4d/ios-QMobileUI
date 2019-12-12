@@ -37,12 +37,12 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     @IBOutlet weak open var bottomLayoutConstraint: NSLayoutConstraint!
 
     /// The login buttons.
-    @IBOutlet open weak var loginButton: LoadingButton!
+    @IBOutlet open weak var loginButton: UIButton!
     /// The text field for the login information ie. the email.
     @IBOutlet open weak var loginTextField: UITextField!
 
     /// The current action of login ie. the process cancellable.
-    var logInAction: Cancellable?
+    public var logInAction: Cancellable?
 
     public weak var delegate: LoginFormDelegate?
 
@@ -50,7 +50,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     final public override func viewDidLoad() {
         super.viewDidLoad()
 
-        initLoginText()
+        initLoginInformation()
         loginTextField.delegate = self
         _ = checkLoginClickable()
         onLoad()
@@ -102,6 +102,18 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// Function after launching login process.
     open func onDidLogin(result: Result<AuthToken, APIError>) {}
 
+    ///  Called before `onWillLogin` to stop login process.
+    ///  By default if email invalid. Display an error, and stop login.
+    /// - return `true` if login could start.
+    open func couldLogin() -> Bool {
+        guard email.isValidEmail else {
+            displayInputError(message: "Invalid Email")
+            self.loginTextField.shake()
+            return false
+        }
+        return true
+    }
+
     // MARK: - Notifications
 
     func registerKeyboard() {
@@ -111,12 +123,13 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 
+    /// Notification about keyboard. Allow to move graphic elements, for instance constraintes.
     @objc open func keyboardChanged(_ notification: NSNotification) {
         update(constraint: bottomLayoutConstraint, with: notification )
     }
 
     /// Animate bottom constraint when keyboard show or hide.
-    func update(constraint: NSLayoutConstraint, with notification: NSNotification) {
+    open func update(constraint: NSLayoutConstraint, with notification: NSNotification) {
         guard let userInfo = notification.userInfo,
             let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
             let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
@@ -135,7 +148,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     // MARK: - Get info
 
-    /// Return the email from `loginTextField`.
+    /// Return the email, by default from `loginTextField`.
     open var email: String {
         return self.loginTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
@@ -145,32 +158,41 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         return [:]
     }
 
-    /// Function called when email change.
+    /// Function called when email text field change.
     @IBAction open func loginTextDidChange(_ sender: Any) {
         var errorMessage = ""
         if !checkLoginClickable() {
-            let email = self.email
-            if email.count > 3 && !email.isValidEmail {
-                errorMessage = "Invalid email"
-            }
+           errorMessage = loginNotClickableMessage() ?? errorMessage
         }
         displayInputError(message: errorMessage)
     }
 
+    /// Optionnal message to display if not email not clickable. By default nothing.
+    open func loginNotClickableMessage() -> String? {
+        /*let email = self.email
+        if email.count > 3 && !email.isValidEmail {
+           return "Invalid email"
+        }*/
+        return nil
+    }
+
     /// Display the input error message such as "Invalid email". By default if text field is floating label,
     open func displayInputError(message: String) {
-        if let errorLabel = loginTextField as? FloatingLabelTextField {
+        if var errorLabel = loginTextField as? ErrorMessageableTextField {
             errorLabel.errorMessage = message
         }
     }
 
-    open func initLoginText() {
+    /// When starting fill email with stored one.
+    /// Could override to store other parameters.
+    open func initLoginInformation() {
         if let email = Prephirences.Auth.Login.email {
             loginTextField.text = email
         }
     }
 
-    fileprivate func saveLoginText() {
+    /// Save login email when clicking login button.
+    open func storeLoginInformation() {
         if saveLoginInfo {
             Prephirences.Auth.Login.email = email
         }
@@ -193,23 +215,22 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     // MARK: - Actions
 
-    /// Respond if email is valid or not to login with.
+    /// Respond if login button clicable or not.
     /// Could be overriden to add custom logic like specific emails pattern.
+    /// - returns : true by efault if email not empty.
     open var isLoginClickable: Bool {
-        return email.isValidEmail
+        return !email.isEmpty
     }
 
     fileprivate func startLoginUI() {
-        loginButton.startAnimation()
+        (loginButton as? QAnimatableButton)?.startAnimation()
         loginTextField.isEnabled = false
     }
 
     fileprivate func stopLoginUI(completion: @escaping () -> Void) {
         onForeground {
-            self.loginButton.stopAnimation {
-                self.loginButton.reset()
+            (self.loginButton as? QAnimatableButton)?.stopAnimation {
                 self.loginTextField.isEnabled = true
-
                 self.loginTextField.becomeFirstResponder()
                 completion()
             }
@@ -291,7 +312,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         // XXX maybe reset ui component
     }
 
-    fileprivate func log(_ result: (Result<AuthToken, APIError>)) {
+    /// Log login result.
+    public func log(_ result: (Result<AuthToken, APIError>)) {
         switch result {
         case .success(let token):
             if token.isValidToken {
@@ -304,11 +326,33 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         }
     }
 
+    /// On login, displayed error if needed, call delegate and perform transition if authentification success.
+    public func manageLoginResult(_ result: Result<AuthToken, APIError>, _ sender: Any?) {
+        self.onDidLogin(result: result)
+
+        let consumed = self.delegate?.didLogin(result: result) ?? false
+        // Display message
+        if !consumed {
+            self.display(result: result)
+        }
+
+        // If success, transition (otherway to do that, ask a delegate to do it)
+        switch result {
+        case .success(let token):
+            if token.isValidToken {
+                self.performTransition(sender)
+            }
+        case .failure:
+            break
+        }
+    }
+
     fileprivate func doLogin(_ sender: Any?) {
         let startDate = Date() // keep start date
         onWillLogin() // Called after the view has been loaded. Default does nothing
         startLoginUI() // Start UI animation
-        saveLoginText()
+        storeLoginInformation()
+
         logInAction = APIManager.instance.authentificate(login: self.email, parameters: self.customParameters) {  [weak self] result in
             guard let this = self else { return }
 
@@ -318,23 +362,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
             Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
 
             this.stopLoginUI {
-                this.onDidLogin(result: result)
-
-                let consumed = this.delegate?.didLogin(result: result) ?? false
-                // Display message
-                if !consumed {
-                    this.display(result: result)
-                }
-
-                // If success, transition (otherway to do that, ask a delegate to do it)
-                switch result {
-                case .success(let token):
-                    if token.isValidToken {
-                        this.performTransition(sender)
-                    }
-                case .failure:
-                    break
-                }
+                this.manageLoginResult(result, sender)
             }
         }
     }
@@ -343,9 +371,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// Login action linked to the login button.
     @IBAction open func login(_ sender: Any!) {
-        // if click but not available -> shake
-        guard isLoginClickable else {
-            self.loginTextField.shake()
+        guard couldLogin() else {
             return
         }
 

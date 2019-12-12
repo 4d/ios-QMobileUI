@@ -8,8 +8,22 @@
 
 import UIKit
 
+public protocol ErrorMessageable {
+    var errorMessage: String? { get set }
+}
+public extension ErrorMessageable {
+    var hasErrorMessage: Bool {
+        guard let errorMessage = errorMessage else {
+            return false
+        }
+        return !errorMessage.isEmpty
+    }
+}
+
+public typealias ErrorMessageableTextField = UITextField & ErrorMessageable
+
 //swiftlint:disable:next type_body_length
-@IBDesignable open class FloatingLabelTextField: UITextField {
+@IBDesignable open class FloatingLabelTextField: ErrorMessageableTextField {
 
     @objc dynamic open var titleFadeInDuration: TimeInterval = 0.2
     @objc dynamic open var titleFadeOutDuration: TimeInterval = 0.3
@@ -128,13 +142,6 @@ import UIKit
         didSet {
             configureControl(true)
         }
-    }
-
-    open var hasErrorMessage: Bool {
-        guard let errorMessage = errorMessage else {
-            return false
-        }
-        return !errorMessage.isEmpty
     }
 
     fileprivate var _isHighlighted: Bool = false

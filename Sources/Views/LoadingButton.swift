@@ -7,8 +7,14 @@
 //
 import UIKit
 
+public protocol QAnimatable {
+    func startAnimation()
+    func stopAnimation(completionHandler: (() -> Void)?)
+}
+public typealias QAnimatableButton = QAnimatable & UIButton
+
 @IBDesignable
-open class LoadingButton: UIButton, UIViewControllerTransitioningDelegate {
+open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelegate {
 
     @IBInspectable open var activityIndicatorColor: UIColor = UIColor.white {
         didSet {
