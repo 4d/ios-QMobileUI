@@ -24,7 +24,7 @@ extension ActionParameter {
         return result
     }
 
-    // Create a row, fill value, add rules
+    /// Create a row, fill value, add rules
     func formRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
         let row: BaseRow = self.baseRow(onRowEvent: eventCallback)
         row.title = self.preferredLongLabelMandatory
@@ -46,54 +46,31 @@ extension ActionParameter {
         }
 
         // Rules
-        for rule in rules ?? [] {
-            switch rule {
-            case .mandatory:
-                if let rowOf = row as? RowOfEquatable {
-                    rowOf.setRequired()
-                }
-            case .min(let min):
-                if let rowOf = row as? RowOfComparable {
-                    rowOf.setGreaterOrEqual(than: min)
-                } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
-                    rowOf.setGreaterOrEqual(than: Int(min))
-                } else if let rowOf = row as? DecimalRow {
-                    rowOf.setGreaterOrEqual(than: min)
-                } else {
-                    logger.warning("Rule min(\(min) applyed to non comparable data \(row)")
-                }
-            case .max(let max):
-                if let rowOf = row as? RowOfComparable {
-                    rowOf.setSmallerOrEqual(than: max)
-                } else if let rowOf = row as? IntRow {
-                    rowOf.setSmallerOrEqual(than: Int(max))
-                } else if let rowOf = row as? DecimalRow {
-                    rowOf.setSmallerOrEqual(than: max)
-                } else if let rowOf = row as? RatingRow {
-                    rowOf.cosmosSettings.totalStars = Int(max)
-                } else {
-                    logger.warning("Rule max(\(max) applyed to non comparable data \(row)")
-                }
-            case .minLength(let length):
-                if let rowOf = row as? RowOf<String> {
-                    rowOf.add(rule: RuleMinLength(minLength: UInt(length)))
-                }
-            case .maxLength(let length):
-                if let rowOf = row as? RowOf<String> {
-                    rowOf.add(rule: RuleMaxLength(maxLength: UInt(length)))
-                }
-            case .exactLength(let length):
-                if let rowOf = row as? RowOf<String> {
-                    rowOf.add(rule: RuleExactLength(exactLength: UInt(length)))
-                }
-            case .regex(let regExpr):
-                if let rowOf = row as? RowOf<String> {
-                    rowOf.add(rule: RuleRegExp(regExpr: regExpr))
-                }
-            }
-        }
+        applyRules(row)
 
         return row
+    }
+
+    fileprivate func applyRules(_ row: BaseRow) {
+        for rule in rules ?? [] {
+            row.applyRule(rule)
+        }
+
+        if let rowOf = row as? StepperRow, let cellUI = rowOf.cell?.stepper {
+            if let value = rules?.min {
+                cellUI.minimumValue = value
+            }
+            if let value = rules?.max {
+                cellUI.maximumValue = value
+            }
+        } else if let rowOf = row as? SliderRow, let cellUI = rowOf.cell?.slider {
+            if let value = rules?.min {
+                cellUI.minimumValue = Float(value)
+            }
+            if let value = rules?.max {
+                cellUI.maximumValue = Float(value)
+            }
+        }
     }
 
     // Create a row according to format and type
@@ -122,86 +99,12 @@ extension ActionParameter {
         }
 
         if let format = format {
-            switch format {
-            case .url:
-                return URLRow(name) { $0.add(rule: RuleURL()) }.onRowEvent(eventCallback)
-            case .email:
-                return EmailRow(name) { $0.add(rule: RuleEmail()) }.onRowEvent(eventCallback)
-            case .textArea, .comment:
-                return TextAreaRow(name).onRowEvent(eventCallback)
-            case .password:
-                return PasswordRow(name).onRowEvent(eventCallback)
-            case .phone:
-                return PhoneRow(name).onRowEvent(eventCallback)
-            case .zipCode:
-                return ZipCodeRow(name).onRowEvent(eventCallback)
-            case .name:
-                return NameRow(name).onRowEvent(eventCallback)
-            case .duration:
-                return CountDownTimeRow(name).onRowEvent(eventCallback)
-            case .rating:
-                return RatingRow(name).onRowEvent(eventCallback)
-            case .stepper:
-                let row = StepperRow(name)
-                if let cellUI = row.cell?.stepper {
-                    if let value = rules?.min {
-                        cellUI.minimumValue = value
-                    }
-                    if let value = rules?.max {
-                        cellUI.maximumValue = value
-                    }
-                }
-                return row.onRowEvent(eventCallback)
-            case .slider:
-                let row = SliderRow(name)
-                if let cellUI = row.cell?.slider {
-                    if let value = rules?.min {
-                        cellUI.minimumValue = Float(value)
-                    }
-                    if let value = rules?.max {
-                        cellUI.maximumValue = Float(value)
-                    }
-                }
-                row.steps = 1
-                return row.onRowEvent(eventCallback)
-            case .check:
-                return CheckRow(name).onRowEvent(eventCallback)
-            case .switch:
-                return SwitchRow(name).onRowEvent(eventCallback)
-            case .account:
-                return AccountRow(name).onRowEvent(eventCallback)
-            case .spellOut, .integer: // See isIntRow()
-                return IntRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
-            case .scientific, .percent, .energy, .mass:
-                return DecimalRow(name) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
-            case .longDate, .shortDate, .mediumDate, .fullDate:
-                return DateRow(name) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
-            }
+            return format.formRow(name, onRowEvent: eventCallback)
         }
         // If no format return basic one from type
         return self.type.formRow(name, onRowEvent: eventCallback)
     }
 
-}
-
-extension Sequence where Element == ActionParameterRule {
-
-    var min: Double? {
-        for rule in self {
-            if case let ActionParameterRule.min(value) = rule {
-                return value
-            }
-        }
-        return nil
-    }
-    var max: Double? {
-        for rule in self {
-            if case let ActionParameterRule.max(value) = rule {
-                return value
-            }
-        }
-        return nil
-    }
 }
 
 // MARK: Manage row event
@@ -230,7 +133,8 @@ extension RowType where Self: Eureka.BaseRow {
     }
 }
 
-// MARK: ActionParameterType
+// MARK: Create rows from type and formats
+
 extension ActionParameterType {
 
     func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
@@ -251,6 +155,51 @@ extension ActionParameterType {
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:
             return TextRow(key).onRowEvent(eventCallback)
+        }
+    }
+}
+
+extension ActionParameterFormat {
+
+    func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
+        let format = self
+        switch format {
+        case .url:
+            return URLRow(key) { $0.add(rule: RuleURL()) }.onRowEvent(eventCallback)
+        case .email:
+            return EmailRow(key) { $0.add(rule: RuleEmail()) }.onRowEvent(eventCallback)
+        case .textArea, .comment:
+            return TextAreaRow(key) {
+                $0.textAreaHeight = .dynamic(initialTextViewHeight: 110)
+            }.onRowEvent(eventCallback)
+        case .password:
+            return PasswordRow(key).onRowEvent(eventCallback)
+        case .phone:
+            return PhoneRow(key).onRowEvent(eventCallback)
+        case .zipCode:
+            return ZipCodeRow(key).onRowEvent(eventCallback)
+        case .name:
+            return NameRow(key).onRowEvent(eventCallback)
+        case .duration:
+            return CountDownTimeRow(key).onRowEvent(eventCallback)
+        case .rating:
+            return RatingRow(key).onRowEvent(eventCallback)
+        case .stepper:
+            return StepperRow(key).onRowEvent(eventCallback)
+        case .slider:
+            return SliderRow(key) { $0.steps = 1 }.onRowEvent(eventCallback)
+        case .check:
+            return CheckRow(key).onRowEvent(eventCallback)
+        case .switch:
+            return SwitchRow(key).onRowEvent(eventCallback)
+        case .account:
+            return AccountRow(key).onRowEvent(eventCallback)
+        case .spellOut, .integer: // See isIntRow()
+            return IntRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
+        case .scientific, .percent, .energy, .mass:
+            return DecimalRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
+        case .longDate, .shortDate, .mediumDate, .fullDate:
+            return DateRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
         }
     }
 }
@@ -316,5 +265,77 @@ extension ActionParameterFormat {
         default:
             return nil
         }
+    }
+}
+
+// MARK: - Rules
+
+extension BaseRow {
+    fileprivate func applyRule(_ rule: ActionParameterRule) {
+        let row = self
+        switch rule {
+        case .mandatory:
+            if let rowOf = row as? RowOfEquatable {
+                rowOf.setRequired()
+            }
+        case .min(let min):
+            if let rowOf = row as? RowOfComparable {
+                rowOf.setGreaterOrEqual(than: min)
+            } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
+                rowOf.setGreaterOrEqual(than: Int(min))
+            } else if let rowOf = row as? DecimalRow {
+                rowOf.setGreaterOrEqual(than: min)
+            } else {
+                logger.warning("Rule min(\(min) applyed to non comparable data \(row)")
+            }
+        case .max(let max):
+            if let rowOf = row as? RowOfComparable {
+                rowOf.setSmallerOrEqual(than: max)
+            } else if let rowOf = row as? IntRow {
+                rowOf.setSmallerOrEqual(than: Int(max))
+            } else if let rowOf = row as? DecimalRow {
+                rowOf.setSmallerOrEqual(than: max)
+            } else if let rowOf = row as? RatingRow {
+                rowOf.cosmosSettings.totalStars = Int(max)
+            } else {
+                logger.warning("Rule max(\(max) applyed to non comparable data \(row)")
+            }
+        case .minLength(let length):
+            if let rowOf = row as? RowOf<String> {
+                rowOf.add(rule: RuleMinLength(minLength: UInt(length)))
+            }
+        case .maxLength(let length):
+            if let rowOf = row as? RowOf<String> {
+                rowOf.add(rule: RuleMaxLength(maxLength: UInt(length)))
+            }
+        case .exactLength(let length):
+            if let rowOf = row as? RowOf<String> {
+                rowOf.add(rule: RuleExactLength(exactLength: UInt(length)))
+            }
+        case .regex(let regExpr):
+            if let rowOf = row as? RowOf<String> {
+                rowOf.add(rule: RuleRegExp(regExpr: regExpr))
+            }
+        }
+    }
+}
+
+extension Sequence where Element == ActionParameterRule {
+
+    var min: Double? {
+        for rule in self {
+            if case let ActionParameterRule.min(value) = rule {
+                return value
+            }
+        }
+        return nil
+    }
+    var max: Double? {
+        for rule in self {
+            if case let ActionParameterRule.max(value) = rule {
+                return value
+            }
+        }
+        return nil
     }
 }
