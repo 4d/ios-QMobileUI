@@ -79,7 +79,7 @@ extension ApplicationCrashManager: ApplicationService {
                 }))
 
                 foreground {
-                  self.window = alert.presentOnTop()
+                    self.window = alert.presentOnTop()
                 }
             }
         }
@@ -190,8 +190,12 @@ extension ApplicationCrashManager {
                     if status.ok {
                         onComplete(true)
                         alert.title = "Report sent"
-                        alert.message = "Thanks for helping improve this app!"
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
+                        var message = "Thanks for helping improve this app!"
+                        if Bool(status.valueTicket) ?? true {
+                            message = message + "\nPlease keep the reference "+status.valueTicket+" to follow the report"
+                        }
+                        alert.message = message
                     } else {
                         logger.warning("Server did not accept the crash file")
                         alert.message = "Server did not accept the crash file"
