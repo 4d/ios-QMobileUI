@@ -45,10 +45,12 @@ extension SettingLogOutCell: DialogFormDelegate {
     }
 
     func performTransition(sender: Any? = nil) {
-        if let viewController =  self.owningViewController {
-            viewController.performSegue(withIdentifier: "logout", sender: sender)
-        } else {
-            logger.warning("Bug: cannot get controller to perform logout segue/transition")
+        foreground {
+            if let viewController =  self.owningViewController {
+                viewController.performSegue(withIdentifier: "logout", sender: sender)
+            } else {
+                logger.warning("Bug: cannot get controller to perform logout segue/transition")
+            }
         }
     }
 
