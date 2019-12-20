@@ -79,11 +79,12 @@ extension Archive {
     public func addEntry(with path: Path, type: Entry.EntryType, permissions: UInt16? = nil,
                          compressionMethod: CompressionMethod = .none, bufferSize: UInt32 = defaultWriteChunkSize,
                          progress: Progress? = nil) throws {
-        try addEntry(with: path.fileName, type: type, uncompressedSize: UInt32(path.fileSize ?? 0),
+        let data = try File<Data>(path: path).read()
+        try addEntry(with: path.fileName, type: type, uncompressedSize: UInt32(data.count),
                      modificationDate: path.modificationDate ?? path.creationDate ?? Date(), permissions: permissions,
                      compressionMethod: compressionMethod, bufferSize: bufferSize,
-                     progress: progress) { _, _ in
-                        return try File<Data>(path: path).read()
+                     progress: progress) { position, size in
+                        return data.subdata(in: position..<(position+size))
         }
     }
 }
