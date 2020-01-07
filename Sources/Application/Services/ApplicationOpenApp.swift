@@ -13,7 +13,7 @@ import UIKit
 /// https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html
 open class ApplicationOpenAppBeta: NSObject {
 
-    static var window: UIWindow?
+    public static var window: UIWindow?
 
     public enum Kind {
         case safari
@@ -193,18 +193,22 @@ extension ApplicationOpenAppBeta {
 
         actions.append(UIAlertAction(title: "Get Directions", style: .default) { _ in
             ApplicationOpenAppBeta.openMap(destination: address)
+            self.window = nil
         })
         actions.append(UIAlertAction(title: "Open in Maps", style: .default) { _ in
             ApplicationOpenAppBeta.openMap(address: address)
+            self.window = nil
         })
         /*actions.append(UIAlertAction(title: "Add to Contacts", style: .default) { _ in
 
         })*/
         actions.append(UIAlertAction(title: "Copy Address", style: .default) { _ in
             UIPasteboard.general.string = address
+            self.window = nil
         })
-        actions.append(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
+        actions.append(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            self.window = nil
+        })
         let title = address
         let message = ""
 
@@ -216,15 +220,19 @@ extension ApplicationOpenAppBeta {
 
         actions.append(UIAlertAction(title: "Call", style: .default) { _ in
             ApplicationOpenAppBeta.openPhone(phone: phone)
+            self.window = nil
         })
         actions.append(UIAlertAction(title: "Message", style: .default) { _ in
             ApplicationOpenAppBeta.openSMS(phone: phone)
+            self.window = nil
         })
         actions.append(UIAlertAction(title: "FaceTime", style: .default) { _ in
             ApplicationOpenAppBeta.openFaceTime(call: phone)
+            self.window = nil
         })
         actions.append(UIAlertAction(title: "Copy Phone Number", style: .default) { _ in
             UIPasteboard.general.string = phone
+            self.window = nil
         })
         /*actions.append(UIAlertAction(title: "Add to Existing Contact", style: .default) { _ in
 
@@ -232,7 +240,9 @@ extension ApplicationOpenAppBeta {
         /*actions.append(UIAlertAction(title: "Create New contact", style: .default) { _ in
 
          })*/
-        actions.append(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actions.append(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            self.window = nil
+        })
 
         let title = ""
         let message = phone
