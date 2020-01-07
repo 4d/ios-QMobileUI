@@ -193,7 +193,7 @@ extension ApplicationCrashManager {
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                         var message = "Thanks for helping improve this app!"
                         if Bool(status.valueTicket) ?? true {
-                            message = message + "\nPlease keep the reference "+status.valueTicket+" to follow the report"
+                            message += "\nPlease keep the reference "+status.valueTicket+" to follow the report"
                         }
                         alert.message = message
                     } else {
@@ -214,7 +214,9 @@ extension ApplicationCrashManager {
                 alert.message = "Maybe check your network."
                 onComplete(false)
             }
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                self.window = nil
+            }))
 
             self.window = alert.presentOnTop()
         }
