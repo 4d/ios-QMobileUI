@@ -191,7 +191,7 @@ extension ApplicationCrashManager {
                         onComplete(true)
                         alert.title = "Report sent"
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
-                        var message = "Thanks for helping improve this app!"
+                        var message = "Thank you for helping us improve this app!"
                         if Bool(status.valueTicket) ?? true {
                             message += "\nPlease keep the reference "+status.valueTicket+" to follow the report"
                         }

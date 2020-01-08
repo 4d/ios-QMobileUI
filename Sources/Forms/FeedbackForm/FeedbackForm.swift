@@ -39,6 +39,7 @@ open class FeedbackForm: UIViewController {
         }
         if let title = feedback?.title {
             self.navigationItem.title = title
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
         }
 
         feedback?.restoreEmail()
@@ -92,7 +93,7 @@ open class FeedbackForm: UIViewController {
             maybe dismiss without dialog
             return
         }*/
-        let actionDialog = UIAlertController(title: "Discard report?", message: "Are you sure you want to discard the report?", preferredStyle: .alert)
+        let actionDialog = UIAlertController(title: "Discard report", message: "Are you sure you want to discard the report?", preferredStyle: .alert)
 
         actionDialog.addAction(UIAlertAction(title: "Stay", style: .default, handler: { _ in
             self.window = nil

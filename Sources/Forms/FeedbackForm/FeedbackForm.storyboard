@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -70,11 +71,13 @@
                     </view>
                     <navigationItem key="navigationItem" title="Report a Problem" id="YgC-Hg-tzf">
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="stop" id="Lg3-Wg-FZR">
+                            <color key="tintColor" name="ForegroundColor"/>
                             <connections>
                                 <action selector="discard:" destination="BYZ-38-t0r" id="f1A-0a-ghm"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Send" style="done" id="eH0-kv-uqZ">
+                        <barButtonItem key="rightBarButtonItem" title="Send" width="20" style="done" id="eH0-kv-uqZ">
+                            <color key="tintColor" name="ForegroundColor"/>
                             <connections>
                                 <action selector="send:" destination="BYZ-38-t0r" id="NFd-Jk-IHd"/>
                             </connections>
@@ -99,6 +102,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="BTK-HF-hmi">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" name="BackgroundColor"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -110,4 +114,12 @@
             <point key="canvasLocation" x="117.59999999999999" y="118.29085457271366"/>
         </scene>
     </scenes>
+    <resources>
+        <namedColor name="BackgroundColor">
+            <color red="0.031372549019607843" green="0.29019607843137257" blue="0.58039215686274515" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="ForegroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
 </document>
