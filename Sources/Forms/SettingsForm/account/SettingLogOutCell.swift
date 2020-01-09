@@ -29,6 +29,8 @@ extension SettingLogOutCell: DialogFormDelegate {
             button.startAnimation()
         }
 
+        BackGroundDataSyncManager.instance.didLogout() // cancel any sync
+
         // call logout
         _ = APIManager.instance.logout { result in
             logger.info("Logout \(result)")
@@ -37,9 +39,9 @@ extension SettingLogOutCell: DialogFormDelegate {
                 if let button = sender as? LoadingButton {
                     button.stopAnimation()
                 }
-                dialog.dismiss(animated: true)
-
-                self.performTransition(sender: sender)
+                dialog.dismiss(animated: true) {
+                    self.performTransition(sender: sender)
+                }
             }
         }
     }

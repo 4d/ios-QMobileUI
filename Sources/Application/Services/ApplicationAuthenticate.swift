@@ -423,4 +423,8 @@ class BackGroundDataSyncManager {
         }
         return cancellable
     }
+
+    func didLogout() {
+        cancellable.cancel()
+    }
 }
