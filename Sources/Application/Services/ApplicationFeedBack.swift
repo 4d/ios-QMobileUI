@@ -109,20 +109,27 @@ extension ApplicationFeedback: ApplicationService {
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
+        let imageColor = UIColor(named: "colorActionSheet") ?? UIColor.darkGray
+        alert.view.tintColor = imageColor
         let completion: (() -> Swift.Void) = {
             completion?()
             self.window = nil // free window on completion. must keep a reference on window to no be dismissed automatically
         }
         if ApplicationFeedback.showComposeOption {
-            alert.addAction(UIAlertAction(title: "💬 Talk to us", style: .default, handler: { _ in
+            let talkToUs = UIAlertAction(title: "Talk to us", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", attachLogs: false, completion: completion)
-            }))
-            alert.addAction(UIAlertAction(title: "📣 Suggest an improvement", style: .default, handler: { _ in
+            })
+            talkToUs.setValue(UIImage(named: "discuss")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+            talkToUs.setValue(0, forKey: "titleTextAlignment")
+            alert.addAction(talkToUs)
+            let suggestImprovement = UIAlertAction(title: "Suggest an improvement", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", attachLogs: false, completion: completion)
-            }))
+            })
+            suggestImprovement.setValue(0, forKey: "titleTextAlignment")
+            suggestImprovement.setValue(UIImage(named: "improvements")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+            alert.addAction(suggestImprovement)
         }
-
-        alert.addAction(UIAlertAction(title: "📄 Show current log", style: .default, handler: { _ in
+        let showCurrentLog = UIAlertAction(title: "Show current log", style: .default, handler: { _ in
             guard let topVC = UIApplication.topViewController else {
                 logger.error("No view controller to show log")
                 return
@@ -132,12 +139,18 @@ extension ApplicationFeedback: ApplicationService {
                 topVC.show(logForm.navigationController ?? logForm, sender: topVC)
             }
             completion()
-        }))
+        })
+        showCurrentLog.setValue(0, forKey: "titleTextAlignment")
+        showCurrentLog.setValue(UIImage(named: "log")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+        alert.addAction(showCurrentLog)
 
         if ApplicationFeedback.isConfigured {
-            alert.addAction(UIAlertAction(title: "🐞 Report a problem", style: .destructive, handler: { _ in
-                self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
-            }))
+            let reportProblem = UIAlertAction(title: "Report a problem", style: .destructive, handler: { _ in
+               self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
+            })
+            reportProblem.setValue(0, forKey: "titleTextAlignment")
+            reportProblem.setValue(UIImage(named: "warning")?.withRenderingMode(.alwaysOriginal).withTintColor(UIColor.red), forKey: "image")
+            alert.addAction(reportProblem)
         }
 
         var feedback = Feedback()
@@ -145,7 +158,7 @@ extension ApplicationFeedback: ApplicationService {
         feedback.summaryPlaceholder = "What went wrong?"
 
         if ApplicationCrashManager.pref["me"] as? Bool ?? false {
-            alert.addAction(UIAlertAction(title: "💣 Crash me", style: .destructive, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Crash me", style: .destructive, handler: { _ in
                 if ApplicationCrashManager.pref["me.throw"] as? Bool ?? false {
                     self.throwMe()
                 } else {
@@ -252,6 +265,12 @@ extension ApplicationFeedback: FeedbackFormDelegate {
     func discard(feedback: Feedback?) {
         logger.info("Report discarded")
     }
+    func discardShow() {
+        /*self.showDialog(tips: "Feedback activated by setting",
+                        presented: { ApplicationFeedback.showFeedback = false },
+                        completion: { logger.debug("Feedback dialog completed") }
+        )*/
+    }
 
     func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
         let target = FeedbackTarget(fileURL: file.url, parameters: parameters)
@@ -289,8 +308,9 @@ extension ApplicationFeedback: FeedbackFormDelegate {
                 alert.message = "Maybe check your network."
                 onComplete(false)
             }
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                self.window = nil
+            }))
             self.window = alert.presentOnTop()
         }
     }
@@ -315,7 +335,9 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
                 }
             }))
         }
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+            self.window = nil
+        }))
 
         self.window = alert.presentOnTop()
     }
