@@ -20,6 +20,7 @@ public protocol FeedbackFormDelegate: class {
 @IBDesignable
 open class FeedbackForm: UIViewController {
 
+    @IBOutlet var globalView: UIView!
     @IBOutlet open weak var mailTextField: UITextField!
     @IBOutlet open weak var textView: PlaceholderTextView!
     @IBOutlet open weak var separatorBar: UIView!
@@ -56,8 +57,16 @@ open class FeedbackForm: UIViewController {
         if let email = feedback?.email {
             mailTextField.text = email
         }
+        if self.traitCollection.userInterfaceStyle == .dark {
+            globalView.backgroundColor = .black
+            textView._textColor = .white
+            informationLabel.tintColor = .white
+        } else {
+            globalView.backgroundColor = .white
+            textView._textColor = .black
+            informationLabel.tintColor = .black
+        }
     }
-
     // MARK: Action
     @IBAction open func send(_ sender: Any) {
         if var feedback = feedback {

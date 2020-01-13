@@ -19,6 +19,7 @@ open class LogForm: UIViewController, Storyboardable {
 
     /// Text view used to display the logs.
     @IBOutlet weak var textView: UITextView!
+    @IBOutlet var globalView: UIView!
 
     /// Path of the file.
     open var path: Path?
@@ -27,9 +28,14 @@ open class LogForm: UIViewController, Storyboardable {
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
         if let path = path {
             fill(with: path)
+        }
+        if self.traitCollection.userInterfaceStyle == .dark {
+            globalView.backgroundColor = .black
+        } else {
+            globalView.backgroundColor = .white
         }
     }
 
@@ -38,7 +44,6 @@ open class LogForm: UIViewController, Storyboardable {
 
         textView.scrollToTheEnd()
     }
-
     // MARK: - Fill
 
     fileprivate func fill(with logText: String?) {
@@ -74,7 +79,16 @@ open class LogForm: UIViewController, Storyboardable {
     // MARK: action
 
     @IBAction open func dismiss(_ sender: Any!) {
-        self.dismiss(animated: true, completion: nil)
+        let actionDialog = UIAlertController(title: "Discard report", message: "Are you sure you want to discard the report?", preferredStyle: .alert)
+
+        actionDialog.addAction(UIAlertAction(title: "Stay", style: .default, handler: { _ in
+        }))
+        actionDialog.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
+            let isplayedDialogd = ApplicationFeedback()
+            isplayedDialogd.discardShow()
+            self.dismiss(animated: true, completion: nil)
+        }))
+        self.present(actionDialog, animated: true)
     }
 
     @IBAction open func refresh(_ sender: Any!) {
