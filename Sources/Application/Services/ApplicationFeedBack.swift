@@ -298,8 +298,8 @@ extension ApplicationFeedback: FeedbackFormDelegate {
                         alert.title = "Feedback sent"
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                         var message = "Thank you for helping us improve this app!"
-                        if Bool(status.valueTicket) ?? true {
-                            message = message + "\nPlease keep the reference \(status.valueTicket) to follow the report"
+                        if let ticket = status.ticket {
+                            message +=  "\nPlease keep the reference \(ticket) to follow the report"
                         }
                         alert.message = message
                     } else {
