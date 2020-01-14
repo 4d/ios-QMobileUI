@@ -123,14 +123,14 @@ extension ApplicationFeedback: ApplicationService {
             let talkToUs = UIAlertAction(title: "Talk to us", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", attachLogs: false, completion: completion)
             })
-            talkToUs.setValue(UIImage(named: "discuss")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+            talkToUs.leftImage = UIImage(named: "discuss")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
             talkToUs.setValue(0, forKey: "titleTextAlignment")
             alert.addAction(talkToUs)
             let suggestImprovement = UIAlertAction(title: "Suggest an improvement", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", attachLogs: false, completion: completion)
             })
             suggestImprovement.setValue(0, forKey: "titleTextAlignment")
-            suggestImprovement.setValue(UIImage(named: "improvements")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+            suggestImprovement.leftImage = UIImage(named: "improvements")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
             alert.addAction(suggestImprovement)
         }
         let showCurrentLog = UIAlertAction(title: "Show current log", style: .default, handler: { _ in
@@ -146,7 +146,7 @@ extension ApplicationFeedback: ApplicationService {
             completion()
         })
         showCurrentLog.setValue(0, forKey: "titleTextAlignment")
-        showCurrentLog.setValue(UIImage(named: "log")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor), forKey: "image")
+        showCurrentLog.leftImage = UIImage(named: "log")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
         alert.addAction(showCurrentLog)
 
         if ApplicationFeedback.isConfigured {
@@ -154,7 +154,7 @@ extension ApplicationFeedback: ApplicationService {
                self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
             })
             reportProblem.setValue(0, forKey: "titleTextAlignment")
-            reportProblem.setValue(UIImage(named: "warning")?.withRenderingMode(.alwaysOriginal).withTintColor(UIColor.red), forKey: "image")
+            reportProblem.leftImage = UIImage(named: "warning")?.withRenderingMode(.alwaysOriginal).withTintColor(UIColor.red)
             alert.addAction(reportProblem)
         }
 
