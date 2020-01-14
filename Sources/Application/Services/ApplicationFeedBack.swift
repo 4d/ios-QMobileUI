@@ -113,8 +113,8 @@ extension ApplicationFeedback: ApplicationService {
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
-        let imageColor = UIColor(named: "colorActionSheet") ?? UIColor.darkGray
-        alert.view.tintColor = imageColor
+        let textColor = UIColor.label
+        alert.view.tintColor = textColor
         let completion: (() -> Swift.Void) = {
             completion?()
             self.window = nil // free window on completion. must keep a reference on window to no be dismissed automatically
@@ -123,14 +123,14 @@ extension ApplicationFeedback: ApplicationService {
             let talkToUs = UIAlertAction(title: "Talk to us", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", attachLogs: false, completion: completion)
             })
-            talkToUs.leftImage = UIImage(named: "discuss")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
+            talkToUs.leftImage = UIImage(named: "discuss")
             talkToUs.setValue(0, forKey: "titleTextAlignment")
             alert.addAction(talkToUs)
             let suggestImprovement = UIAlertAction(title: "Suggest an improvement", style: .default, handler: { _ in
                 self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", attachLogs: false, completion: completion)
             })
             suggestImprovement.setValue(0, forKey: "titleTextAlignment")
-            suggestImprovement.leftImage = UIImage(named: "improvements")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
+            suggestImprovement.leftImage = UIImage(named: "improvements")
             alert.addAction(suggestImprovement)
         }
         let showCurrentLog = UIAlertAction(title: "Show current log", style: .default, handler: { _ in
@@ -146,7 +146,7 @@ extension ApplicationFeedback: ApplicationService {
             completion()
         })
         showCurrentLog.setValue(0, forKey: "titleTextAlignment")
-        showCurrentLog.leftImage = UIImage(named: "log")?.withRenderingMode(.alwaysOriginal).withTintColor(imageColor)
+        showCurrentLog.leftImage = UIImage(named: "log")
         alert.addAction(showCurrentLog)
 
         if ApplicationFeedback.isConfigured {
@@ -154,7 +154,7 @@ extension ApplicationFeedback: ApplicationService {
                self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
             })
             reportProblem.setValue(0, forKey: "titleTextAlignment")
-            reportProblem.leftImage = UIImage(named: "warning")?.withRenderingMode(.alwaysOriginal).withTintColor(UIColor.red)
+            reportProblem.leftImage = UIImage(named: "warning")
             alert.addAction(reportProblem)
         }
 
