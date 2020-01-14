@@ -266,10 +266,10 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         logger.info("Report discarded")
     }
     func discardShow() {
-        /*self.showDialog(tips: "Feedback activated by setting",
+        self.showDialog(tips: "Feedback activated by setting",
                         presented: { ApplicationFeedback.showFeedback = false },
                         completion: { logger.debug("Feedback dialog completed") }
-        )*/
+        )
     }
 
     func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {

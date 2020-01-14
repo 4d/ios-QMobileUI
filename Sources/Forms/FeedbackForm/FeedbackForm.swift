@@ -13,7 +13,7 @@ public protocol FeedbackFormDelegate: class {
 
     func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void)
     func discard(feedback: Feedback?)
-
+    func discardShow()
 }
 
 /// A form to send feedback information
@@ -109,6 +109,7 @@ open class FeedbackForm: UIViewController {
         }))
         actionDialog.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
             self.delegate?.discard(feedback: self.feedback)
+            self.delegate?.discardShow()
             self.dismiss(animated: true, completion: nil)
             self.window = nil
         }))
