@@ -48,12 +48,16 @@ extension ApplicationFeedback: ApplicationService {
 
     fileprivate func feedbackWhenGoToFront() {
         if ApplicationFeedback.showFeedback {
-            self.showDialog(tips: "Feedback activated by setting",
-                            presented: { ApplicationFeedback.showFeedback = false },
-                            completion: { logger.debug("Feedback dialog completed") }
-            )
+            self.showFeedbackDialog()
         }
     }
+
+    fileprivate func showFeedbackDialog() {
+         self.showDialog(tips: "Feedback activated by setting",
+                         presented: { ApplicationFeedback.showFeedback = false },
+                         completion: { logger.debug("Feedback dialog completed") }
+         )
+     }
 
     // swiftlint:disable:next function_body_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
@@ -135,6 +139,7 @@ extension ApplicationFeedback: ApplicationService {
                 return
             }
             if let logForm = LogForm.instantiate() {
+                logForm.delegate = self
                 logForm.path = ApplicationLogger.currentLog
                 topVC.show(logForm.navigationController ?? logForm, sender: topVC)
             }
@@ -199,13 +204,13 @@ extension ApplicationFeedback: ApplicationService {
        NSException(name: .genericException, reason: "throw me testing", userInfo: nil).raise()
     }
 
-    func showFeedbackForm(subject: String, body: String, attachLogs: Bool, completion: (() -> Swift.Void)? = nil) {
+    func showFeedbackForm(subject: String, body: String, attachLogs: Bool, delegate: FeedbackFormDelegate? = nil, completion: (() -> Swift.Void)? = nil) {
         guard let topVC = UIApplication.topViewController else {
             logger.error("No view controller to show log")
             return
         }
         if let form = FeedbackForm.instantiate() {
-            form.delegate = self
+            form.delegate = delegate ?? self
             var feedback = Feedback()
             feedback.title = subject
             feedback.summaryPlaceholder = body
@@ -228,6 +233,18 @@ extension ApplicationFeedback: ApplicationService {
             self.mailCompose(subject: subject, body: "What went wrong?", attachLog: true) // Alternative by mail
         }
         completion?()
+    }
+}
+
+extension ApplicationFeedback: LogFormDegate {
+
+    func logFormDismiss(logForm: LogForm) {
+        showFeedbackDialog()
+    }
+
+    func logFormSend(logForm: LogForm) {
+            // XXX maybe limit to let path = path,
+        self.showFeedbackForm(subject: "Send logs", body: "", attachLogs: true, delegate: logForm)
     }
 }
 
@@ -264,12 +281,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
 
     func discard(feedback: Feedback?) {
         logger.info("Report discarded")
-    }
-    func discardShow() {
-        self.showDialog(tips: "Feedback activated by setting",
-                        presented: { ApplicationFeedback.showFeedback = false },
-                        completion: { logger.debug("Feedback dialog completed") }
-        )
+        self.showFeedbackDialog()
     }
 
     func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
@@ -287,7 +299,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
                         /// XXX could take message from server like information about bug id created by decoding to CrashStatus
                         var message = "Thank you for helping us improve this app!"
                         if Bool(status.valueTicket) ?? true {
-                            message = message + "\nPlease keep the reference "+status.valueTicket+" to follow the report"
+                            message = message + "\nPlease keep the reference \(status.valueTicket) to follow the report"
                         }
                         alert.message = message
                     } else {

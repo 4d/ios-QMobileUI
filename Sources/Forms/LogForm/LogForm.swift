@@ -10,6 +10,11 @@ import UIKit
 import FileKit
 import XCGLogger
 
+protocol LogFormDegate: NSObjectProtocol {
+    func logFormDismiss(logForm: LogForm)
+    func logFormSend(logForm: LogForm)
+}
+
 @IBDesignable
 open class LogForm: UIViewController, Storyboardable {
 
@@ -20,6 +25,8 @@ open class LogForm: UIViewController, Storyboardable {
     /// Text view used to display the logs.
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var globalView: UIView!
+
+    weak var delegate: LogFormDegate?
 
     /// Path of the file.
     open var path: Path?
@@ -79,16 +86,9 @@ open class LogForm: UIViewController, Storyboardable {
     // MARK: action
 
     @IBAction open func dismiss(_ sender: Any!) {
-        let actionDialog = UIAlertController(title: "Discard report", message: "Are you sure you want to discard the report?", preferredStyle: .alert)
-
-        actionDialog.addAction(UIAlertAction(title: "Stay", style: .default, handler: { _ in
-        }))
-        actionDialog.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
-            let isplayedDialogd = ApplicationFeedback()
-            isplayedDialogd.discardShow()
-            self.dismiss(animated: true, completion: nil)
-        }))
-        self.present(actionDialog, animated: true)
+        self.dismiss(animated: true) {
+            self.delegate?.logFormDismiss(logForm: self)
+        }
     }
 
     @IBAction open func refresh(_ sender: Any!) {
@@ -107,12 +107,7 @@ open class LogForm: UIViewController, Storyboardable {
     }
 
     @IBAction open func send(_ sender: Any!) {
-        if let feedback = (ApplicationFeedback.instance as? ApplicationFeedback) {
-            // XXX maybe limit to let path = path,
-            feedback.showFeedbackForm(subject: "Send logs", body: "", attachLogs: true) {
-
-            }
-        }
+        self.delegate?.logFormSend(logForm: self)
     }
 
     // MARK: Storyboardable
@@ -141,6 +136,17 @@ extension BaseDestination {
         }
         return .none
     }
+}
+
+extension LogForm: FeedbackFormDelegate {
+    public func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void) {
+        (ApplicationFeedback.instance as? ApplicationFeedback)?.send(feedback: feedback, dismiss: dismiss)
+    }
+
+    public func discard(feedback: Feedback?) {
+         // nothing to do
+    }
+
 }
 
 extension UITextView {
