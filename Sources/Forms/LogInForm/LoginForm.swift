@@ -58,10 +58,8 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // objserve keyboard for bottom change
+        // observe keyboard for bottom change
         registerKeyboard()
-        // login field is selected
-        loginTextField.becomeFirstResponder()
         onWillAppear(animated)
     }
 
