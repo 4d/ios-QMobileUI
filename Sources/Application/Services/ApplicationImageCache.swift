@@ -147,6 +147,7 @@ extension ApplicationImageCache {
         if instanceCached.pdfProcessor {
             options.append(.processor(PDFProcessor.instance))
         }
+        options.append(.downloader(getImageDownloader()))
         return options
     }
 
@@ -169,6 +170,7 @@ extension ApplicationImageCache {
         if instanceCached.pdfProcessor {
             options.append(.processor(PDFProcessor.instance))
         }
+        options.append(.downloader(getImageDownloader()))
         var image: UIImage?
         instanceCached.imageCache.retrieveImage(forKey: resource.cacheKey, options: options, callbackQueue: .untouch) { result in
             switch result {
@@ -179,6 +181,14 @@ extension ApplicationImageCache {
             }
         }
         return image
+    }
+
+    static func getImageDownloader() -> ImageDownloader {
+        let imageDownloader = ImageDownloader.default
+        if let host = APIManager.instance.base.baseURL.host {
+            imageDownloader.trustedHosts = Set([host])
+        }
+        return imageDownloader
     }
 
     static func log(error kfError: KingfisherError, for imageURL: URL?) {
