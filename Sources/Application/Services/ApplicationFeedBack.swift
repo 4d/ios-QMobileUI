@@ -46,14 +46,15 @@ extension ApplicationFeedback: ApplicationService {
         return pref["compose"] as? Bool ?? true
     }
 
-    fileprivate func feedbackWhenGoToFront() {
+    fileprivate func feedbackWhenGoToFront(application: UIApplication) {
         if ApplicationFeedback.showFeedback {
-            self.showFeedbackDialog()
+            self.showFeedbackDialog(sender: application)
         }
     }
 
-    fileprivate func showFeedbackDialog() {
+    fileprivate func showFeedbackDialog(sender: Any) {
          self.showDialog(tips: "Feedback activated by setting",
+                         sender: sender,
                          presented: { ApplicationFeedback.showFeedback = false },
                          completion: { logger.debug("Feedback dialog completed") }
          )
@@ -76,13 +77,13 @@ extension ApplicationFeedback: ApplicationService {
         switch event {
         case .shake:
             application.applicationSupportsShakeToEdit = true
-            shakeListener = center.addObserver(forName: .motionShakeEnd, object: nil, queue: .main) { [weak self] _ in
+            shakeListener = center.addObserver(forName: .motionShakeEnd, object: nil, queue: .main) { [weak self] notification in
                 guard let strongSelf = self else {
                     return
                 }
                 if !strongSelf.inShake {
                     strongSelf.inShake = true
-                    strongSelf.showDialog(tips: "💡 Shake the device to display this dialog again.") {
+                    strongSelf.showDialog(tips: "💡 Shake the device to display this dialog again.", sender: notification) {
                         strongSelf.inShake = false
                     }
                 }
@@ -94,8 +95,6 @@ extension ApplicationFeedback: ApplicationService {
         case .none:
             logger.info("Feedback not activated by automatic action.")
         }
-
-        //feedbackWhenGoToFront()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -105,14 +104,15 @@ extension ApplicationFeedback: ApplicationService {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        feedbackWhenGoToFront()
+        feedbackWhenGoToFront(application: application)
     }
 
-    func showDialog(tips: String, presented: (() -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil) { // swiftlint:disable:this function_body_length
+    func showDialog(tips: String, sender: Any, presented: (() -> Swift.Void)? = nil, completion: (() -> Swift.Void)? = nil) { // swiftlint:disable:this function_body_length
         // tips must depend of parent event
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
+         _ = alert.checkPopUp(sender)
         let textColor = UIColor.label
         alert.view.tintColor = textColor
         let completion: (() -> Swift.Void) = {
@@ -121,13 +121,13 @@ extension ApplicationFeedback: ApplicationService {
         }
         if ApplicationFeedback.showComposeOption {
             let talkToUs = UIAlertAction(title: "Talk to us", style: .default, handler: { _ in
-                self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", attachLogs: false, completion: completion)
+                self.showFeedbackForm(subject: "Talk to us", body: "here sugest improvement", type: .question, attachLogs: false, completion: completion)
             })
             talkToUs.leftImage = UIImage(named: "discuss")
             talkToUs.setValue(0, forKey: "titleTextAlignment")
             alert.addAction(talkToUs)
             let suggestImprovement = UIAlertAction(title: "Suggest an improvement", style: .default, handler: { _ in
-                self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", attachLogs: false, completion: completion)
+                self.showFeedbackForm(subject: "Suggest an improvement", body: "here suggest improvement", type: .enhancement, attachLogs: false, completion: completion)
             })
             suggestImprovement.setValue(0, forKey: "titleTextAlignment")
             suggestImprovement.leftImage = UIImage(named: "improvements")
@@ -151,7 +151,7 @@ extension ApplicationFeedback: ApplicationService {
 
         if ApplicationFeedback.isConfigured {
             let reportProblem = UIAlertAction(title: "Report a problem", style: .destructive, handler: { _ in
-               self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", attachLogs: true, completion: completion)
+                self.showFeedbackForm(subject: "Report a problem", body: "What went wrong?", type: .bug, attachLogs: true, completion: completion)
             })
             reportProblem.setValue(0, forKey: "titleTextAlignment")
             reportProblem.leftImage = UIImage(named: "warning")
@@ -204,7 +204,7 @@ extension ApplicationFeedback: ApplicationService {
        NSException(name: .genericException, reason: "throw me testing", userInfo: nil).raise()
     }
 
-    func showFeedbackForm(subject: String, body: String, attachLogs: Bool, delegate: FeedbackFormDelegate? = nil, completion: (() -> Swift.Void)? = nil) {
+    func showFeedbackForm(subject: String, body: String, type: FeedbackType, attachLogs: Bool, delegate: FeedbackFormDelegate? = nil, completion: (() -> Swift.Void)? = nil) {
         guard let topVC = UIApplication.topViewController else {
             logger.error("No view controller to show log")
             return
@@ -214,6 +214,7 @@ extension ApplicationFeedback: ApplicationService {
             var feedback = Feedback()
             feedback.title = subject
             feedback.summaryPlaceholder = body
+            feedback.type = type
             if attachLogs {
                 feedback.attach = { // attach log
                     let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
@@ -239,12 +240,12 @@ extension ApplicationFeedback: ApplicationService {
 extension ApplicationFeedback: LogFormDegate {
 
     func logFormDismiss(logForm: LogForm) {
-        showFeedbackDialog()
+        showFeedbackDialog(sender: UIApplication.shared)
     }
 
     func logFormSend(logForm: LogForm) {
             // XXX maybe limit to let path = path,
-        self.showFeedbackForm(subject: "Send logs", body: "", attachLogs: true, delegate: logForm)
+        self.showFeedbackForm(subject: "Send logs", body: "", type: .log, attachLogs: true, delegate: logForm)
     }
 }
 
@@ -261,6 +262,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         var applicationInformation = QApplication.applicationInformation
         applicationInformation["email"] = feedback.email ?? ""
         applicationInformation["summary"] = feedback.summary ?? ""
+        applicationInformation["type"] = feedback.type.rawValue
 
         applicationInformation["fileName"] = path.fileName
         applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
@@ -281,7 +283,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
 
     func discard(feedback: Feedback?) {
         logger.info("Report discarded")
-        self.showFeedbackDialog()
+        self.showFeedbackDialog(sender: UIApplication.shared)
     }
 
     func send(file: Path, parameters: [String: String], onComplete: @escaping (Bool) -> Void) {
@@ -413,9 +415,18 @@ public struct Feedback {
     var summaryPlaceholder: String?
     var attach: (() -> Path)?
     var deleteAttach: Bool = true
+    var type: FeedbackType = .log
 
     var email: String?
     var summary: String?
+}
+
+enum FeedbackType: String {
+    case question
+    case enhancement
+    case crash
+    case log
+    case bug
 }
 
 enum FeedbackEvent: String {

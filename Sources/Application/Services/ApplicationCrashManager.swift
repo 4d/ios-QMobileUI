@@ -165,6 +165,7 @@ extension ApplicationCrashManager {
             applicationInformation["fileName"] = crashFile.fileName
             applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
             applicationInformation["isCrash"] = "1"
+            applicationInformation["type"] = "crash"
 
             send(file: zipPath, parameters: applicationInformation) { success in
                 if success {
