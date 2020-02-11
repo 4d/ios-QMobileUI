@@ -178,6 +178,7 @@ extension ApplicationFeedback: ApplicationService {
             if !crashs.isEmpty {
                 let reportCrash = UIAlertAction(title: "Report previous crash", style: .destructive, handler: { _ in
                     (ApplicationCrashManager.instance as? ApplicationCrashManager)?.send(crashs: crashs)
+                    completion()
                 })
                 reportCrash.setValue(0, forKey: "titleTextAlignment")
                 reportCrash.leftImage = UIImage(named: "warning")

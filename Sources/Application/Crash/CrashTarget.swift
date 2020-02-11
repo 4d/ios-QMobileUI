@@ -44,7 +44,11 @@ class CrashTarget: TargetType {
     var task: Task {
         var multipartFormData: [MultipartFormData] = [MultipartFormData(provider: .file(self.fileURL), name: "file", fileName: "data.zip", mimeType: "application/zip")]
         for (key, value) in self.parameters {
-            multipartFormData.append(MultipartFormData(provider: .data(value.data(using: .utf8)!), name: key, mimeType: "text/plain"))
+            if let data = value.data(using: .utf8) {
+                multipartFormData.append(MultipartFormData(provider: .data(data), name: key, mimeType: "text/plain"))
+            } else {
+                logger.warning("cannot encode \(key) \(value)")
+            }
         }
         return .uploadMultipart(multipartFormData)
     }
