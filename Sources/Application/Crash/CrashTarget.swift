@@ -41,9 +41,12 @@ class CrashTarget: TargetType {
         }
         return "4daction/MobileAppCrash"
     }
-
     var task: Task {
-        return .uploadFile(self.fileURL)
+        var multipartFormData: [MultipartFormData] = [MultipartFormData(provider: .file(self.fileURL), name: "file", fileName: "data.zip", mimeType: "application/zip")]
+        for (key, value) in self.parameters {
+            multipartFormData.append(MultipartFormData(provider: .data(value.data(using: .utf8)!), name: key, mimeType: "text/plain"))
+        }
+        return .uploadMultipart(multipartFormData)
     }
 
     var sampleData: Data {
@@ -51,7 +54,7 @@ class CrashTarget: TargetType {
     }
 
     var headers: [String: String]? {
-        return self.parameters
+        return nil
     }
 
     var validationType: ValidationType {

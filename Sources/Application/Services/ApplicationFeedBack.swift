@@ -176,10 +176,12 @@ extension ApplicationFeedback: ApplicationService {
         if ApplicationCrashManager.isConfigured {
             let crashs = ApplicationCrashManager.crash()
             if !crashs.isEmpty {
-                alert.addAction(UIAlertAction(title: "📤 Report previous crash", style: .destructive, handler: { _ in
+                let reportCrash = UIAlertAction(title: "Report previous crash", style: .destructive, handler: { _ in
                     (ApplicationCrashManager.instance as? ApplicationCrashManager)?.send(crashs: crashs)
-                     completion()
-                }))
+                })
+                reportCrash.setValue(0, forKey: "titleTextAlignment")
+                reportCrash.leftImage = UIImage(named: "warning")
+                alert.addAction(reportCrash)
             }
         }
 
@@ -263,7 +265,6 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         applicationInformation["email"] = feedback.email ?? ""
         applicationInformation["summary"] = feedback.summary ?? ""
         applicationInformation["type"] = feedback.type.rawValue
-
         applicationInformation["fileName"] = path.fileName
         applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
         applicationInformation["isCrash"] = "0"
@@ -456,47 +457,37 @@ extension UIView {
  // detect screenshot by user
 /*
 import Photos
-
 class ScreenshotDetector: NSObject /*to listen to photo lib*/ {
-
     enum Error: Swift.Error {
         case unauthorized(status: PHAuthorizationStatus)
         case fetchFailure
         case loadFailure
     }
-
     open var detectionEnabled: Bool {
         didSet {
             setupListener()
         }
     }
-
     private let notificationCenter: NotificationCenter
     private let application: UIApplication
     private let imageManager: PHImageManager?
     fileprivate let photoLibrary: PHPhotoLibrary
     var handler: (Result<UIImage, ScreenshotDetector.Error>) -> Void
-
     var listener: AnyObject?
-
     public init(notificationCenter: NotificationCenter = .default,
                 application: UIApplication = .shared,
                 imageManager: PHImageManager? = nil, /* will use default one*/
                 photoLibrary: PHPhotoLibrary = .shared(),
                 detectionEnabled: Bool = true,
                 handler: @escaping (Result<UIImage, ScreenshotDetector.Error>) -> Void) {
-
         self.notificationCenter = notificationCenter
         self.application = application
         self.imageManager = imageManager
         self.photoLibrary = photoLibrary
         self.detectionEnabled = detectionEnabled
-
         self.handler = handler
-
         setupListener()
     }
-
     func setupListener() {
         if let listener = listener {
             notificationCenter.removeObserver(listener)
@@ -512,7 +503,6 @@ class ScreenshotDetector: NSObject /*to listen to photo lib*/ {
             listener = nil
         }
     }
-
     private func requestPhotosAuthorization() {
         PHPhotoLibrary.requestAuthorization { authorizationStatus in
             OperationQueue.main.addOperation {
@@ -525,7 +515,6 @@ class ScreenshotDetector: NSObject /*to listen to photo lib*/ {
             }
         }
     }
-
     fileprivate func findScreenshot() {
         guard let screenshot = PHAsset.fetchLastScreenshot() else {
             self.handler(.failure(.fetchFailure))
@@ -545,39 +534,29 @@ class ScreenshotDetector: NSObject /*to listen to photo lib*/ {
                     strongSelf.handler(.failure(.loadFailure))
                     return
                 }
-
                 strongSelf.handler(.success(image))
             }
         }
     }
-
 }
-
 private extension PHAsset {
-
     static func fetchLastScreenshot() -> PHAsset? {
         let options = PHFetchOptions()
-
         options.fetchLimit = 1
         options.includeAssetSourceTypes = [.typeUserLibrary]
         options.wantsIncrementalChangeDetails = false
         options.predicate = NSPredicate(format: "(mediaSubtype & %d) != 0", PHAssetMediaSubtype.photoScreenshot.rawValue)
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-
         return PHAsset.fetchAssets(with: .image, options: options).firstObject
     }
 }
-
 extension ScreenshotDetector: PHPhotoLibraryChangeObserver {
-
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         photoLibrary.unregisterChangeObserver(self)
         findScreenshot()
     }
 }
-
 private extension PHImageRequestOptions {
-
     static func highQualitySynchronousLocalOptions() -> PHImageRequestOptions {
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
@@ -587,7 +566,6 @@ private extension PHImageRequestOptions {
     }
 }
 */
-
 /*public protocol LogCollector { // Make more generic feedback with protocol
 
     func retrieveLogs(includeCurrent: Bool = true, rangeDate: Range<Date>? = nil) -> [String]
