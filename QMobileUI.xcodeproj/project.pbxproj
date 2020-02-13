@@ -23,6 +23,7 @@
 		480392C91E92A03F008CF992 /* DataSourceSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392C81E92A03F008CF992 /* DataSourceSearchable.swift */; };
 		480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392CA1E92A181008CF992 /* NumberFormatter+QMobile.swift */; };
 		480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */; };
+		4806A64523F53E8C008F9AA7 /* RecordDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4806A64423F53E8C008F9AA7 /* RecordDataSource.swift */; };
 		4807DD3D1F67DF6B00DA924B /* ApplicationXCallbackURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */; };
 		4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */; };
 		48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */; };
@@ -245,6 +246,7 @@
 		480392C81E92A03F008CF992 /* DataSourceSearchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceSearchable.swift; sourceTree = "<group>"; };
 		480392CA1E92A181008CF992 /* NumberFormatter+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+QMobile.swift"; sourceTree = "<group>"; };
 		480392CC1E92A19E008CF992 /* DateFormatter+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+QMobile.swift"; sourceTree = "<group>"; };
+		4806A64423F53E8C008F9AA7 /* RecordDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordDataSource.swift; sourceTree = "<group>"; };
 		4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationXCallbackURL.swift; sourceTree = "<group>"; };
 		4807DD3E1F67DFA100DA924B /* CallbackURLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallbackURLKit.framework; path = Carthage/Build/iOS/CallbackURLKit.framework; sourceTree = "<group>"; };
 		48087E4C22C4D69E0008A3D6 /* ChoiceListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceListItem.swift; sourceTree = "<group>"; };
@@ -1040,6 +1042,7 @@
 				483FDA8C1E82851E00FAF84B /* DataSourceEntry.swift */,
 				48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */,
 				C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */,
+				4806A64423F53E8C008F9AA7 /* RecordDataSource.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";
@@ -1505,6 +1508,7 @@
 				48BC856E226F0B9300D548B2 /* UIAlertController+DataPicker.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
 				489C3F8321AECE990018664B /* MainForm+Flow.swift in Sources */,
+				4806A64523F53E8C008F9AA7 /* RecordDataSource.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,
 				482C6543229D1AC70045E1CE /* RatingRow.swift in Sources */,
 				480B785922CA02160037C1D8 /* RowInitializable.swift in Sources */,

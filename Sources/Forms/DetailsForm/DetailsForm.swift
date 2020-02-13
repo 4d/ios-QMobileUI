@@ -51,7 +51,7 @@ extension DetailsForm {
         return entry?.indexPath
     }
 
-    fileprivate var _record: Record? { // swiftlint:disable:this identifier_name
+    var _record: Record? { // swiftlint:disable:this identifier_name
         return entry?.record as? Record
     }
 

@@ -9,6 +9,8 @@
 import UIKit
 import Kingfisher
 
+import QMobileDataStore
+
 /// A detail form based on apple `UIViewController`, a simple empty view.
 open class DetailsFormBare: UIViewController, DetailsForm {
 
@@ -146,20 +148,21 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination.firstController
-        if let listForm = destination as? ListForm { // to Many relation
 
+        guard let recordID = self.recordID else {
+            logger.warning("No record to check database relation")
+            return
+        }
+
+        guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
+            logger.warning("No information about the relation in UI")
+            return
+        }
+
+        if let listForm = destination as? ListForm { // to Many relation
             guard listForm.dataSource == nil else {
                 logger.info(" data source \(String(describing: listForm.dataSource))")
                 assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
-                return
-            }
-            guard let recordID = self.recordID else {
-                logger.warning("No record to filter relation")
-                return
-            }
-
-            guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
-                logger.warning("No information about the relation in UI")
                 return
             }
             guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
@@ -187,17 +190,26 @@ open class DetailsFormBare: UIViewController, DetailsForm {
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
             }
-            segue.fix()
-        } /*else if let detailForm = destination as? DetailsForm { // to 1 relation
-         /// Not yet implemented
-         if let dataSource = detailForm.dataSource {
-                logger.info(" data source \(dataSource)")
+        } else if destination is DetailsForm { // to 1 relation
 
-            } else {
-                // detailForm.predicate = NSPredicate.true
-                //logger.warning("No data source")
+            guard let record = self._record, let relationRecord = record[relationName] as? RecordBase else {
+                logger.warning("Cannot display relation \(relationName)")
+                return
             }
-        }*/
+
+            guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
+                logger.warning("Cannot get record attribute to make data source: \(relationRecord)")
+                return
+            }
+
+            let entry = DataSourceEntry(dataSource: relationDataSource)
+            entry.indexPath = IndexPath(item: 0, section: 0)
+            segue.destination.prepare(with: entry)
+
+            logger.debug("Will display relation \(relationName) of record \(record)")
+            logger.debug("Go to \(String(describing: entry.record))")
+        }
+        segue.fix()
     }
 
 }
