@@ -162,7 +162,7 @@ extension ApplicationCrashManager {
         if zipCrashFile(pathCrash: crashFile.absolute, zipPath: zipPath) {
             var applicationInformation = QApplication.applicationInformation
 
-            applicationInformation["fileName"] = crashFile.fileName
+            applicationInformation["fileName"] = crashFile.fileName + ".zip"
             applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
             applicationInformation["isCrash"] = "1"
             applicationInformation["type"] = "crash"

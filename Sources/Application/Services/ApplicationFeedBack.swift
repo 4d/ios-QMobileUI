@@ -266,7 +266,7 @@ extension ApplicationFeedback: FeedbackFormDelegate {
         applicationInformation["email"] = feedback.email ?? ""
         applicationInformation["summary"] = feedback.summary ?? ""
         applicationInformation["type"] = feedback.type.rawValue
-        applicationInformation["fileName"] = path.fileName
+        applicationInformation["fileName"] = path.fileName + ".zip"
         applicationInformation["SendDate"] = DateFormatter.now(with: "dd_MM_yyyy_HH_mm_ss")
         applicationInformation["isCrash"] = "0"
 
