@@ -207,6 +207,11 @@ extension UIViewController {
         onTopWindow.rootViewController = UIViewController()
         onTopWindow.windowLevel = windowLevel
         onTopWindow.makeKeyAndVisible()
+        if self.popoverPresentationController != nil, let sourceView = onTopWindow.rootViewController?.view {
+            // popoverController.sourceView = sourceView // prevent this window to be on top of the window
+            sourceView.isUserInteractionEnabled = false
+            onTopWindow.isUserInteractionEnabled = false
+        }
         onTopWindow.rootViewController?.present(self, animated: animated, completion: completion)
         return onTopWindow
     }
