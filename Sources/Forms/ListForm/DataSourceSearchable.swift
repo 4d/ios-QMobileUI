@@ -13,28 +13,42 @@ import QMobileDataStore
 
 public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
 
+    /// The dataSource to search.
     var dataSource: DataSource? { get }
 
+    /// Is search active?
     var searchActive: Bool { get set }
+    /// Name(s) of the search field(s)
     var searchableField: String { get }
+    /// Operator used to search. contains, beginwith,endwith. Default contains
     var searchOperator: String { get }
+    /// Case sensitivity when searching. Default cd
     var searchSensitivity: String { get }
+
+    /// When there is no more things to search, apply still a predicate (default: nil)
+    var defaultSearchPredicate: NSPredicate? { get }
 }
 
 public protocol DataSourceSortable: DataSourceSearchable {
 
+    /// Name of the field used to sort. (You use multiple field using coma)
     var sortField: String { get }
+    /// Sort ascending on `sortField`
     var sortAscending: Bool { get }
+    /// If no sort field, use search field as sort field
     var searchFieldAsSortField: Bool { get }
+    /// Optional section for table using one field name
     var sectionFieldname: String? {get}
 }
 
 extension DataSourceSortable {
 
+    /// Return multiple sort fields if defined in `sortField` with separator `,`
     var sortFields: [String] {
         return sortField.split(separator: ",").map { String($0) }
     }
 
+    /// Compute the mandatory sort descriptors.
     func makeSortDescriptors(tableInfo: DataStoreTableInfo?) -> [NSSortDescriptor] {
         var sortDescriptors: [NSSortDescriptor] = []
 
@@ -84,17 +98,18 @@ extension DataSourceSortable {
 
 extension DataSourceSearchable {
 
+    /// Return multiple search fields if defined in `searchableField` with separator `,`
     var searchableFields: [String] {
         return searchableField.split(separator: ",").map { String($0) }
     }
 
+    // Hide if search field name is empty by default
     public var isSearchBarMustBeHidden: Bool {
-        // Hide if search field name is empty
         return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     func createSearchPredicate(_ searchText: String, tableInfo: DataStoreTableInfo?) -> NSPredicate? {
-        var predicate: NSPredicate?
+        var predicate: NSPredicate? = self.defaultSearchPredicate
         // need text to seach
         if !searchText.isEmpty {
             let fields = self.searchableFields

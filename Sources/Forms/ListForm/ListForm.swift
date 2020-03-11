@@ -246,7 +246,7 @@ extension ListFormSearchable where Self: UIViewController {
         searchBar.text = ""
         searchBar.setShowsCancelButton(false, animated: false)
         searchBar.endEditing(true)
-        dataSource?.predicate = nil
+        dataSource?.predicate = self.defaultSearchPredicate
         onSearchCancel()
     }
 
