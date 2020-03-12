@@ -60,7 +60,14 @@ extension ApplicationDataSync: ApplicationService {
         if Prephirences.Auth.reloadData {
             // When logout, drop the data...
             apiManagerListeners += [dataSync.apiManager.observe(APIManager.logout) { _ in
-                _ = self.dataSync.drop()
+                let future = self.dataSync.drop()
+                future.onSuccess {
+                    logger.info("Dropped data after logout")
+                   // Prephirences.DataSync.firstSync = true // reload from files
+                }
+                future.onFailure { error in
+                    logger.error("Dropped data after logout failed \(error)")
+                }
                 }]
         }
     }
