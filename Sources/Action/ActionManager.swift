@@ -38,7 +38,11 @@ public class ActionManager {
         // Show message as info message
         append { result, _, _, _ in
             guard let statusText = result.statusText else { return false }
-            SwiftMessages.info(statusText)
+            if result.success {
+                SwiftMessages.info(statusText)
+            } else {
+                SwiftMessages.warning(statusText)
+            }
             return true
         }
 
