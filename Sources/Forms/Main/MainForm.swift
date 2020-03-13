@@ -110,8 +110,8 @@ extension Main {
 public extension UIColor {
     // static let darkBackground = UIColor(red: 0.184313725, green: 0.184313725, blue: 0.184313725, alpha: 1.0)
 
-    static let background = UIColor(named: "BackgroundColor")
-    static let foreground = UIColor(named: "ForegroundColor")
+    static let background = UIColor(named: "BackgroundColor") ?? UIColor.white
+    static let foreground = UIColor(named: "ForegroundColor") ?? UIColor.black
 }
 
 extension UIUserInterfaceStyle {
