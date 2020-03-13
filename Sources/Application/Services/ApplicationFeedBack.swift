@@ -384,7 +384,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
                     logger.warning("Failed to read log data \(error)")
                 }
             }
-            if screenshot, let image = UIApplication.shared.keyWindow?.rootViewController?.view?.window?.screenshot() {
+            if screenshot, let image = UIApplication.shared.topWindow?.rootViewController?.view?.window?.screenshot() {
                 if let data = image.pngData() {
                     mailComposerVC.addAttachmentData(data, mimeType: "application/png", fileName: "screenshot.jpg")
                 }
