@@ -380,6 +380,26 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         cancelLogIn()
     }
 
+    // MARK: Server
+
+    fileprivate var serverPrefererences: MutablePreferencesType {
+        return UserDefaults.standard
+    }
+
+    /// Allow to change current server URL config before login.
+    open var serverURL: String? {
+        get {
+            let preference = serverPrefererences
+            return preference["server.url"] as? String
+        }
+        set {
+            var preference = serverPrefererences
+            preference["server.url"] = newValue
+            preference["server.url.edited"] = true
+            APIManager.instance = APIManager(url: URL.qmobile)
+        }
+    }
+
 }
 
 private let serverCertificateCodes: [URLError.Code] = [
