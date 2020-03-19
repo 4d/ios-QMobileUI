@@ -397,6 +397,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
             preference["server.url"] = newValue
             preference["server.url.edited"] = true
             APIManager.instance = APIManager(url: URL.qmobile)
+            DataSync.instance.apiManager = APIManager.instance
         }
     }
 
