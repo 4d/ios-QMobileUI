@@ -220,7 +220,7 @@ extension ApplicationFeedback: ApplicationService {
             feedback.type = type
             if attachLogs {
                 feedback.attach = { // attach log
-                    let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
+                    let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now())"
                     if !ApplicationLogger.compressAllLog(to: zipPath) {
                         logger.error("Failed to compress the logs")
                     }
@@ -374,7 +374,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
         // mailComposerVC.setPreferredSendingEmailAddress()
 
         if attachLog {
-            let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now()).zip"
+            let zipPath: Path = .userTemporary + "logs_\(DateFormatter.now())"
             if ApplicationLogger.compressAllLog(to: zipPath) {
                 let zipFile = File<Data>(path: zipPath)
                 do {
