@@ -134,12 +134,22 @@ extension DataSourceSearchable {
             if searchableFields.isEmpty {
                 assertionFailure("Configured field(s) to search '\(searchableField)' is not in table fields.\n Check search identifier list form storyboard for class \(self).\n Table: \((String(unwrappedDescrib: tableInfo)))")
             } else if searchableFields.count == 1, let searchableField = searchableFields.first {
-                predicate = NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
-            } else {
-                var orPredicate: NSPredicate = .false
-                for searchableField in searchableFields {
-                    orPredicate = orPredicate || NSPredicate(format: "\(searchableField) \(searchOperator)[\(searchSensitivity)] %@", searchText)
+                if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
+                    predicate = NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+                } else {
+                    predicate = NSPredicate(format: "(\(searchableField).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
                 }
+            } else {
+                let predicates: [NSPredicate] = searchableFields.map { field in
+                    if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
+                        return NSPredicate(format: "(\(field) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+                    } else {
+                        return NSPredicate(format: "(\(field).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+                    }
+                }
+
+                let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+
                 predicate = orPredicate
             }
         }
