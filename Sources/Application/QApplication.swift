@@ -96,6 +96,9 @@ open class QApplication: UIApplication {
         // x-callback-url
         services.register(ApplicationXCallbackURL.instance)
 
+        // Push notifications
+        services.register(ApplicationPushNotification.instance)
+
         // custom services?
         let customServices = ApplicationPreferences.instance.services
         for service in customServices {
