@@ -9,9 +9,10 @@
 import Foundation
 import UIKit
 
+import UserNotifications
+
 import Prephirences
 import QMobileAPI
-import UserNotifications
 
 class ApplicationPushNotification: NSObject {}
 
@@ -30,7 +31,7 @@ extension ApplicationPushNotification: ApplicationService {
         let notificationOption = launchOptions?[.remoteNotification]
         if let notification = notificationOption as? [String: AnyObject], let aps = notification["aps"] as? [String: AnyObject] {
             // A notification was received. Use data from 'aps' dictionary here
-            
+
         }
     }
 
@@ -47,7 +48,7 @@ extension ApplicationPushNotification: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Failed to register: \(error)")
+        logger.warning("Failed to register: \(error)")
     }
 }
 
@@ -56,19 +57,15 @@ extension ApplicationPushNotification {
     func registerForPushNotifications() {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-
-                print("Permission granted: \(granted)")
+                logger.info("Notification permission granted? \(granted)")
                 guard granted else { return }
 
                 self?.setActionableNotification()
 
                 /// Exclusively for testing on simulator
                 if Device.current.isSimulator {
-                    logger.info("Device token cannot be fetched on a simulator.")
-                    var simulatorDeviceToken = "booted"
-                    if let simulatorID = UIDevice.current.simulatorID {
-                        simulatorDeviceToken = simulatorID
-                    }
+                    let simulatorDeviceToken = UIDevice.current.simulatorID  ?? "booted"
+                    logger.info("Device token cannot be fetched on a simulator. Use simulator id \(simulatorDeviceToken)")
                     self?.sendDeviceTokenToServer(deviceToken: simulatorDeviceToken)
                 } else {
                     self?.getNotificationSettings()
@@ -78,7 +75,7 @@ extension ApplicationPushNotification {
 
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("Notification settings: \(settings)")
+            logger.debug("Notification settings: \(settings)")
             guard settings.authorizationStatus == .authorized else { return }
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
@@ -90,9 +87,9 @@ extension ApplicationPushNotification {
         _ = APIManager.instance.sendDeviceToken(deviceToken, callbackQueue: .background) { (result) in
             switch result {
             case .success(let value):
-                logger.debug("\(value)")
+                logger.debug("Device token send \(value)")
             case .failure(let error):
-                logger.debug("\(error)")
+                logger.debug("Device token send with error \(error)")
             }
         }
     }
