@@ -213,6 +213,7 @@
 		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
+		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
 		FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFF20AD95EF00B55336 /* CrashTarget.swift */; };
 /* End PBXBuildFile section */
@@ -430,6 +431,7 @@
 		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
+		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
 		FE655FFF20AD95EF00B55336 /* CrashTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashTarget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1016,6 +1018,7 @@
 				48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */,
 				48F321D920B3073900D39BAF /* ApplicationAuthenticate.swift */,
 				48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */,
+				C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1402,6 +1405,7 @@
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
 				FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
+				C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */,
 				4812B27E231FB99900A30947 /* UIMenu+ActionUI.swift in Sources */,
