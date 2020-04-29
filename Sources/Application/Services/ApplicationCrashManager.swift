@@ -343,23 +343,79 @@ func nsExceptionHandler(exception: NSException) {
     let arr = exception.callStackSymbols
     let reason = exception.reason
     let name = exception.name.rawValue
+    let userInfo = exception.userInfo
 
     logger.severe(exception)
     logger.severe(arr)
     logger.severe(reason)
 
     var crash = "Stack:\n"
-    crash += "\r\n\r\n name:\(name) \r\n reason:\(String(describing: reason)) \r\n \(arr.joined(separator: "\r\n")) \r\n\r\n"
+    crash = crash.appendingFormat("SlideAdress:0x%0x\r\n", slideAdress())
+    crash += "\r\n\r\n name:\(name) \r\n reason:\(String(describing: reason)) \r\n \(arr.joined(separator: "\r\n")) \r\n"
+    if let userInfo = userInfo {
+        crash += "userInfo: \(userInfo)\r\n"
+    }
+    crash += "\r\nAdresses: \( Thread.callStackReturnAddresses.map({String(format: "0x%0x", $0.intValue)}).joined(separator: ", ") )\r\n"
+
+    crash += "\r\nBinary:\r\n"
+    for (name, slide) in slideAdresses() where slide != 0 {
+        crash = crash.appendingFormat("0x%0x", slide)
+        crash = crash.appendingFormat(" - %@:", name)
+        crash += "\r\n"
+    }
+
     ApplicationCrashManager.save(crash: crash, ofType: .nsexception)
 }
 
 func signalHandler(signal: Int32) {
     var crash = "Signal:\(signal)\n"
     crash += "Stack:\n"
+    crash = crash.appendingFormat("SlideAdress:0x%0x\r\n", slideAdress())
     for symbol in Thread.callStackSymbols {
         crash = crash.appendingFormat("%@\r\n", symbol)
+    }
+    crash += "\r\nAdresses: \( Thread.callStackReturnAddresses.map({String(format: "0x%0x", $0.intValue)}).joined(separator: ", ") )\r\n"
+
+    crash += "\r\nBinary:\r\n"
+    for (name, slide) in slideAdresses() where slide != 0 {
+        crash = crash.appendingFormat("0x%0x", slide)
+        crash = crash.appendingFormat(" - %@:", name)
+        crash += "\r\n"
     }
 
     ApplicationCrashManager.save(crash: crash, ofType: .signal)
     exit(signal)
+}
+
+import MachO
+
+func slideAdress() -> Int64 {
+    var slide: Int64 = 0
+    for imageIndex in 0..<_dyld_image_count() {
+        let header = _dyld_get_image_header(imageIndex).pointee
+        if header.filetype == MH_EXECUTE {
+            slide = Int64(_dyld_get_image_vmaddr_slide(imageIndex))
+            break
+        }
+    }
+     return slide
+}
+
+func slideAdresses() -> [String: Int64] {
+    var slides: [String: Int64] = [:]
+    for imageIndex in 0..<_dyld_image_count() {
+        if /*let header = _dyld_get_image_header(i),*/ let imageNamePtr = _dyld_get_image_name(imageIndex) {
+            let imageName = String(cString: imageNamePtr)
+           /* switch Int32(header.pointee.filetype) {
+            case MH_EXECUTE:*/
+                slides[imageName] = Int64(_dyld_get_image_vmaddr_slide(imageIndex))
+            /*case MH_DYLIB:
+                slides[imageName] = Int64(_dyld_get_image_vmaddr_slide(i))
+            default:
+                slides[imageName] = Int64(_dyld_get_image_vmaddr_slide(i))
+                break
+            }*/
+        }
+    }
+    return slides
 }
