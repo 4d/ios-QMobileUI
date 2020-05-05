@@ -111,8 +111,4 @@ extension ApplicationService {
     static var preferences: MutablePreferencesType {
         return ApplicationPreferences.preferences
     }
-
-    var services: [String] {
-        return preferences.stringArray(forKey: "application.services") ?? []
-    }
 }

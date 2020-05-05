@@ -30,6 +30,7 @@ open class SettingURLForm: UITableViewController {
 
         // Set the default value ie. localhost with 4D port
         serverURLTextField.placeholder = URL.qmobileLocalhost.absoluteString
+        //serverURLTextField.isEditing = false
         onLoad()
     }
 

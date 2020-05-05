@@ -31,22 +31,18 @@ extension ApplicationAuthenticate: ApplicationService {
     // MARK: ApplicationService
     static var instance: ApplicationService = ApplicationAuthenticate()
 
-    var apiManager: APIManager {
-        return APIManager.instance
-    }
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        let apiManager = APIManager.instance
-
+        #if DEBUG
         // If logout at start remove token
         if Prephirences.Auth.Logout.atStart {
-            _ = apiManager.logout(token: Prephirences.Auth.Logout.token) { [weak self] _ in
+            _ = APIManager.instance.logout(token: Prephirences.Auth.Logout.token) { [weak self] _ in
                 Prephirences.Auth.Logout.token = nil
                 self?.login()
             }
-        } else {
-            autoLogin()
+            return
         }
+        #endif
+        autoLogin()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -73,22 +69,9 @@ extension ApplicationAuthenticate: ApplicationService {
         //   show touch id
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-
-    }
-
     func applicationWillTerminate(_ application: UIApplication) {
         // if application must disconnect when finish
         //   remove token
-    }
-
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // if application could verify a token to verify auth
-        //    do authentification with it
     }
 
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
@@ -101,10 +84,14 @@ extension ApplicationAuthenticate: ApplicationService {
 // MARK: login
 extension ApplicationAuthenticate {
 
+    static var hasLogin: Bool {
+        return Prephirences.Auth.Login.form
+    }
+
    /// If there is a valid token do nothinh, otherwise call login.
    fileprivate func autoLogin() {
-        if let authToken = apiManager.authToken, authToken.isValidToken {
-            logger.info("Application already logged with session \(authToken.id)")
+        if let token = APIManager.instance.authToken, token.isValidToken {
+            logger.info("Application already logged with session \(token.id)")
         } else {
             login()
         }
@@ -114,7 +101,7 @@ extension ApplicationAuthenticate {
     /// If application without auth do guest login,
     /// otherwise let transition to `LoginForm`
     fileprivate func login() {
-        if Prephirences.Auth.Login.Guest.enabled {
+        if !ApplicationAuthenticate.hasLogin {
             self.guestLogin()
         }
         // else login form must be displayed, show flow controller or main view controller
@@ -122,9 +109,9 @@ extension ApplicationAuthenticate {
 
     /// Login as guest (ie. without mail).
     fileprivate func guestLogin() {
-        assert(Prephirences.Auth.Login.Guest.enabled)
-        // login guest mode
+        assert(!ApplicationAuthenticate.hasLogin)
         let guestLogin = ""
+        let apiManager = APIManager.instance
         let url = apiManager.base.baseURL
         _ = apiManager.authentificate(login: guestLogin) { result in
             switch result {
@@ -230,10 +217,10 @@ extension ApplicationAuthenticate: LoginFormDelegate {
             case .failure(let error):
                 // XXX maybe manager this error management in DataReloadManager
                 let title = "Issue when reloading data"
-                if Prephirences.Auth.Login.Guest.enabled,
+                if !ApplicationAuthenticate.hasLogin,
                     error.mustRetry, self.tryCount < Prephirences.Auth.Login.Guest.maxRetry {
                     self.tryCount += 1
-                    let apiManager = self.apiManager
+                    let apiManager = APIManager.instance
                     _ = apiManager.logout { _ in
                         _ = apiManager.authentificate(login: "") { loginResult in
                             _ = self.didLogin(result: loginResult)
@@ -295,9 +282,6 @@ extension Prephirences {
             public struct Guest: Prephirencable { // swiftlint:disable:this nesting
                 public static let parent = Login.instance
                 static let maxRetry = instance["maxRetry"] as? Int ?? 2
-
-                // Guest mode is enabled if there is no login form
-                static let enabled: Bool = !Prephirences.Auth.Login.form
             }
         }
 

@@ -70,7 +70,7 @@ extension Main {
 
     /// Transition to perform
     var segue: Segue {
-        guard Prephirences.Auth.Login.form else {
+        guard ApplicationAuthenticate.hasLogin else {
             return .navigation // no login form
         }
         if !Prephirences.Auth.Logout.atStart, let token = APIManager.instance.authToken, token.isValidToken {

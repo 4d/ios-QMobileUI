@@ -60,12 +60,6 @@ open class QApplication: UIApplication {
         // Logger
         services.register(ApplicationLogger.instance)
 
-        // Feedback
-        services.register(ApplicationFeedback.instance)
-
-        // Launch option handler
-        services.register(ApplicationLaunchOptions.instance)
-
         // Load preferences
         services.register(ApplicationPreferences.instance)
 
@@ -75,11 +69,11 @@ open class QApplication: UIApplication {
         // Check reachability of network
         services.register(ApplicationReachability.instance)
 
-        // Manage authentification
-        services.register(ApplicationAuthenticate.instance)
-
         // Crash Manager
         services.register(ApplicationCrashManager.instance)
+
+        // Manage authentification
+        services.register(ApplicationAuthenticate.instance)
 
         // Load image cache
         services.register(ApplicationImageCache.instance)
@@ -96,11 +90,14 @@ open class QApplication: UIApplication {
         // x-callback-url
         services.register(ApplicationXCallbackURL.instance)
 
+        // Feedback
+        services.register(ApplicationFeedback.instance)
+
         // Push notifications
         services.register(ApplicationPushNotification.instance)
 
         // custom services?
-        let customServices = ApplicationPreferences.instance.services
+        let customServices = ApplicationPreferences.instance.preferences.stringArray(forKey: "application.services") ?? []
         for service in customServices {
             if let cls = NSClassFromString(service) {
                 if let value = cls.value(forKey: "instance") as? ApplicationService {

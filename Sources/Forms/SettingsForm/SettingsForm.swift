@@ -112,8 +112,6 @@ open class SettingsForm: UITableViewController, Storyboardable {
             let button = sender as? UIButton,
             let cell = button.parentCellView as? DialogFormDelegate {
             switch identifier {
-            case "confirmReload":
-                dialogForm.delegate = cell
             case "confirmLogOut":
                 dialogForm.delegate = cell
             default:
@@ -168,7 +166,7 @@ open class SettingsForm: UITableViewController, Storyboardable {
     // MARK: table view
 
     open override func numberOfSections(in tableView: UITableView) -> Int {
-        if Prephirences.Auth.Login.form {
+        if ApplicationAuthenticate.hasLogin {
             return Section.all.count
         }
         return Section.all.count - 1

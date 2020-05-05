@@ -99,7 +99,6 @@
 		48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* MainForm.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
-		4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496020AC548F008876B8 /* ServerStatusManager.swift */; };
 		4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496220AC5807008876B8 /* SettingURLCell.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
@@ -184,7 +183,6 @@
 		48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */; };
 		48E655E5229EB2D40060568B /* LocationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E4229EB2D40060568B /* LocationRow.swift */; };
 		48E655E7229EB2ED0060568B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655E6229EB2ED0060568B /* MapViewController.swift */; };
-		48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */; };
 		48E71DBE212AA475003D10BD /* UIStackVIew+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E71DBD212AA475003D10BD /* UIStackVIew+QMobile.swift */; };
 		48E71DC0212AA633003D10BD /* ApplicationOpenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */; };
 		48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */; };
@@ -328,7 +326,6 @@
 		48708B5C2195B36E005C9C4A /* MainForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainForm.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
-		4879496020AC548F008876B8 /* ServerStatusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStatusManager.swift; sourceTree = "<group>"; };
 		4879496220AC5807008876B8 /* SettingURLCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLCell.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
@@ -406,7 +403,6 @@
 		48E655E1229EA6A80060568B /* Eureka+ActionParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Eureka+ActionParameter.swift"; sourceTree = "<group>"; };
 		48E655E4229EB2D40060568B /* LocationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRow.swift; sourceTree = "<group>"; };
 		48E655E6229EB2ED0060568B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
-		48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLaunchOptions.swift; sourceTree = "<group>"; };
 		48E71DBD212AA475003D10BD /* UIStackVIew+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackVIew+QMobile.swift"; sourceTree = "<group>"; };
 		48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationOpenApp.swift; sourceTree = "<group>"; };
 		48ED34FB1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSource+UIPageViewControllerDataSource.swift"; sourceTree = "<group>"; };
@@ -766,7 +762,6 @@
 			children = (
 				48F8E2C11F7D0B23000080FB /* ServerStatus.swift */,
 				48F8E2C81F7D0F3E000080FB /* ServerStatus+Color.swift */,
-				4879496020AC548F008876B8 /* ServerStatusManager.swift */,
 			);
 			path = status;
 			sourceTree = "<group>";
@@ -1015,7 +1010,6 @@
 				48E49CE91EB9CA70002B60AF /* ApplicationValueTransformers.swift */,
 				4807DD3C1F67DF6B00DA924B /* ApplicationXCallbackURL.swift */,
 				48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */,
-				48E689FA20455586006A5987 /* ApplicationLaunchOptions.swift */,
 				48F321D920B3073900D39BAF /* ApplicationAuthenticate.swift */,
 				48E71DBF212AA633003D10BD /* ApplicationOpenApp.swift */,
 				C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */,
@@ -1445,7 +1439,6 @@
 				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
 				480392B61E929423008CF992 /* URL+QMobile.swift in Sources */,
 				480392CB1E92A181008CF992 /* NumberFormatter+QMobile.swift in Sources */,
-				48E689FB20455586006A5987 /* ApplicationLaunchOptions.swift in Sources */,
 				4867450C20221BD20029924D /* WebAreaForm.swift in Sources */,
 				48CC0331231CFD68007EF134 /* Storyboardable.swift in Sources */,
 				48B23D082231154C00F6D94C /* ActionUI.swift in Sources */,
@@ -1505,7 +1498,6 @@
 				48CC0333231CFDB8007EF134 /* UIStoryboardSegue+QMobile.swift in Sources */,
 				48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */,
 				483192562297F8F10041B41A /* ImagePickerController.swift in Sources */,
-				4879496120AC548F008876B8 /* ServerStatusManager.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
 				48D584831E783447006F56B5 /* TableDataSource.swift in Sources */,
 				48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */,

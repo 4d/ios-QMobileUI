@@ -49,7 +49,7 @@ extension ListForm {
         let dataSyncTask = dataSync { result in
             let title = "Issue when reloading data"
             if case .failure(let dataSyncError) = result, dataSyncError.mustRetry {
-                if Prephirences.Auth.Login.form {
+                if ApplicationAuthenticate.hasLogin {
                     // Display error before logout
                     SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
                                         message: dataSyncError.mustRetryMessage,

@@ -49,7 +49,7 @@ extension ApplicationDataSync: ApplicationService {
         dataSync.delegate = self
         starting = true
         // Start sync after data store loading
-        dataStoreListeners += [dataSync.dataStore.onLoad(queue: operationQueue) { [weak self] _ in
+        dataStoreListeners += [DataStore.onLoad(queue: operationQueue) { [weak self] _ in
             self?.startSyncAtStart()
             }]
         if dataSync.dataStore.isLoaded {
@@ -59,7 +59,7 @@ extension ApplicationDataSync: ApplicationService {
 
         if Prephirences.Auth.reloadData {
             // When logout, drop the data...
-            apiManagerListeners += [dataSync.apiManager.observe(APIManager.logout) { _ in
+            apiManagerListeners += [APIManager.observe(APIManager.logout) { _ in
                 let future = self.dataSync.drop()
                 future.onSuccess {
                     logger.info("Dropped data after logout")
@@ -99,9 +99,9 @@ extension ApplicationDataSync {
 
     fileprivate func unobserve() {
         dataSync.delegate = nil
-        dataSync.dataStore.unobserve(dataStoreListeners)
+        DataStore.unobserve(dataStoreListeners)
         dataStoreListeners = []
-        dataSync.apiManager.unobserve(apiManagerListeners)
+        APIManager.unobserve(apiManagerListeners)
         apiManagerListeners = []
     }
 
