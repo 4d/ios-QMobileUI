@@ -21,7 +21,7 @@ let package = Package(
         .package(url: "https://github.com/ArtSabintsev/Guitar.git", from: "1.1.0"),
         .package(url: "https://github.com/phimage/ValueTransformerKit.git", from: "1.2.3"),
         .package(url: "https://github.com/phimage/Prephirences.git", from: "5.1.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.8.1"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.13.4"),
 
 //         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "2.3.0"), // no mac support
         .package(url: "https://github.com/phimage/DeviceKit.git", .branch("feature/macos")), // https://github.com/devicekit/DeviceKit/pull/217
