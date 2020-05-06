@@ -105,14 +105,14 @@ extension ApplicationDataStore {
         let logDataStore: (Notification) -> Void = { notification in
             logger.debug("\(notification)")
         }
-        listeners += [DataStore.observe(.dataStoreWillMerge, using: logDataStore)]
-        listeners += [DataStore.observe(.dataStoreDidMerge, using: logDataStore)]
-        listeners += [DataStore.observe(.dataStoreWillPerformAction, using: logDataStore)]
-        listeners += [DataStore.observe(.dataStoreDidPerformAction, using: logDataStore)]
+        listeners += [DataStoreFactory.observe(.dataStoreWillMerge, using: logDataStore)]
+        listeners += [DataStoreFactory.observe(.dataStoreDidMerge, using: logDataStore)]
+        listeners += [DataStoreFactory.observe(.dataStoreWillPerformAction, using: logDataStore)]
+        listeners += [DataStoreFactory.observe(.dataStoreDidPerformAction, using: logDataStore)]
     }
 
     fileprivate func unregisterEvent(_ dataStore: DataStore) {
-        DataStore.unobserve(listeners)
+        DataStoreFactory.unobserve(listeners)
         listeners = []
     }
 

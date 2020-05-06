@@ -49,7 +49,7 @@ extension ApplicationDataSync: ApplicationService {
         dataSync.delegate = self
         starting = true
         // Start sync after data store loading
-        dataStoreListeners += [DataStore.onLoad(queue: operationQueue) { [weak self] _ in
+        dataStoreListeners += [DataStoreFactory.onLoad(queue: operationQueue) { [weak self] _ in
             self?.startSyncAtStart()
             }]
         if dataSync.dataStore.isLoaded {
@@ -99,7 +99,7 @@ extension ApplicationDataSync {
 
     fileprivate func unobserve() {
         dataSync.delegate = nil
-        DataStore.unobserve(dataStoreListeners)
+        DataStoreFactory.unobserve(dataStoreListeners)
         dataStoreListeners = []
         APIManager.unobserve(apiManagerListeners)
         apiManagerListeners = []
