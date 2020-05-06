@@ -147,114 +147,64 @@ public extension UIApplicationDelegate {
 
 }
 
-// Remap notifications to all services
-fileprivate extension Notification {
-    var application: UIApplication {
-        //swiftlint:disable:next force_cast
-        return self.object as! UIApplication
-    }
-}
-
 extension ApplicationServices {
     public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) {
-        services.forEach { service in
-            service.application(app, open: url, options: options)
-        }
+        services.application(app, open: url, options: options)
     }
 }
 
 private extension ApplicationServices {
 
     @objc func application(didFinishLaunching notification: Notification) {
-        services.forEach { service in
-            service.application(notification.application, didFinishLaunchingWithOptions: notification.userInfo as? [UIApplication.LaunchOptionsKey: Any])
-        }
+        services.application(didFinishLaunching: notification)
     }
 
     @objc func application(didEnterBackground notification: Notification) {
-        services.forEach { service in
-            service.applicationDidEnterBackground(notification.application)
-        }
+        services.application(didEnterBackground: notification)
     }
 
     @objc func application(willEnterForeground notification: Notification) {
-        services.forEach { service in
-            service.applicationWillEnterForeground(notification.application)
-        }
+        services.application(willEnterForeground: notification)
     }
 
     @objc func application(didBecomeActive notification: Notification) {
-        services.forEach { service in
-            service.applicationDidBecomeActive(notification.application)
-        }
+        services.application(didBecomeActive: notification)
     }
 
     @objc func application(willResignActive notification: Notification) {
-        services.forEach { service in
-            service.applicationWillResignActive(notification.application)
-        }
+        services.application(willResignActive: notification)
     }
 
     @objc func application(willTerminate notification: Notification) {
-        services.forEach { service in
-            service.applicationWillTerminate(notification.application)
-        }
+        services.application(willTerminate: notification)
     }
 
     @objc func application(didReceiveMemoryWarning notification: Notification) {
-        services.forEach { service in
-            service.applicationDidReceiveMemoryWarning(notification.application)
-        }
+        services.application(didReceiveMemoryWarning: notification)
     }
 
     @objc func application(openUrlWithOptions notification: Notification) {
-        guard let url = notification.userInfo?[ApplicationServiceUserInfoKey.openUrl] as? URL,
-            let options = notification.userInfo?[ApplicationServiceUserInfoKey.openUrlOptions] as? [UIApplication.OpenURLOptionsKey: Any] else {
-                return
-        }
-        application(notification.application, open: url, options: options)
+        services.application(openUrlWithOptions: notification)
     }
 
     @objc func application(didRegisterForRemoteWithDeviceToken notification: Notification) {
-        if let data = notification.userInfo?[ApplicationServiceUserInfoKey.deviceToken] as? Data {
-            services.forEach { service in
-                service.application(notification.application, didRegisterForRemoteNotificationsWithDeviceToken: data)
-            }
-        }
+        services.application(didRegisterForRemoteWithDeviceToken: notification)
     }
 
     @objc func application(continueUserActivity notification: Notification) {
-        if let userActivity = notification.userInfo?[ApplicationServiceUserInfoKey.userActivity] as? NSUserActivity,
-            let restorationHandler = notification.userInfo?[ApplicationServiceUserInfoKey.restorationHandler] as? (([Any]?) -> Void) {
-            services.forEach { service in
-                _ = service.application(notification.application, continue: userActivity, restorationHandler: restorationHandler)
-            }
-        }
+        services.application(continueUserActivity: notification)
     }
 
     @objc func application(willContinueUserActivity notification: Notification) {
-        if let userActivityType = notification.userInfo?[ApplicationServiceUserInfoKey.userActivity] as? String {
-            services.forEach { service in
-                _ = service.application(notification.application, willContinueUserActivityWithType: userActivityType)
-            }
-        }
+        services.application(willContinueUserActivity: notification)
     }
 
     @objc func application(didFailToContinueUserActivity notification: Notification) {
-        if let userActivityType = notification.userInfo?[ApplicationServiceUserInfoKey.userActivity] as? String,
-            let error = notification.userInfo?[ApplicationServiceUserInfoKey.error] as? Error {
-            services.forEach { service in
-                service.application(notification.application, didFailToContinueUserActivityWithType: userActivityType, error: error)
-            }
-        }
+        services.application(didFailToContinueUserActivity: notification)
     }
 
     @objc func application(didUpdateUserActivity notification: Notification) {
-        if let userActivity = notification.userInfo?[ApplicationServiceUserInfoKey.userActivity] as? NSUserActivity {
-            services.forEach { service in
-                service.application(notification.application, didUpdate: userActivity)
-            }
-        }
+        services.application(didUpdateUserActivity: notification)
     }
 
 }
