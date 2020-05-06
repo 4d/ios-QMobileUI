@@ -28,11 +28,9 @@ extension ApplicationDataStore: ApplicationService {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         var dataStore = self.dataStore
-        dataStore.delegate = self
-
+        //dataStore.delegate = self
         registerEvent(dataStore)
         self.load()
-
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -102,13 +100,15 @@ extension ApplicationDataStore {
         // Register to some event to log (XXX could be done by delegate some remove it and move the code)
         //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
         //listeners += [ds.onSave(queue: operationQueue) { _ in }]
-        let logDataStore: (Notification) -> Void = { notification in
-            logger.debug("\(notification)")
+        if logger.isEnabledFor(level: .debug) {
+            let logDataStore: (Notification) -> Void = { notification in
+                logger.debug("\(notification)")
+            }
+            listeners += [DataStoreFactory.observe(.dataStoreWillMerge, using: logDataStore)]
+            listeners += [DataStoreFactory.observe(.dataStoreDidMerge, using: logDataStore)]
+            listeners += [DataStoreFactory.observe(.dataStoreWillPerformAction, using: logDataStore)]
+            listeners += [DataStoreFactory.observe(.dataStoreDidPerformAction, using: logDataStore)]
         }
-        listeners += [DataStoreFactory.observe(.dataStoreWillMerge, using: logDataStore)]
-        listeners += [DataStoreFactory.observe(.dataStoreDidMerge, using: logDataStore)]
-        listeners += [DataStoreFactory.observe(.dataStoreWillPerformAction, using: logDataStore)]
-        listeners += [DataStoreFactory.observe(.dataStoreDidPerformAction, using: logDataStore)]
     }
 
     fileprivate func unregisterEvent(_ dataStore: DataStore) {
@@ -119,7 +119,7 @@ extension ApplicationDataStore {
 }
 
 // MARK: - DataStoreDelegate
-extension ApplicationDataStore: DataStoreDelegate {
+/*extension ApplicationDataStore: DataStoreDelegate {
 
     func dataStoreWillSave(_ dataStore: DataStore, context: DataStoreContext) {
     }
@@ -144,4 +144,4 @@ extension ApplicationDataStore: DataStoreDelegate {
 
     public func dataStoreAlreadyLoaded(_ dataStore: DataStore) {
     }
-}
+}*/
