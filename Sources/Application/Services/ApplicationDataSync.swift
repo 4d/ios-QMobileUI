@@ -338,5 +338,14 @@ extension Prephirences {
                 instance?.set(newValue, forKey: "kFactoryReset")
             }
         }
+
+        public static var serverAddress: Bool { // dynamic value, could be changed from setting, do not setore it
+            get {
+                return instance?["resetServerAddress"] as? Bool ?? false
+            }
+            set {
+                instance?.set(newValue, forKey: "resetServerAddress")
+            }
+        }
     }
 }
