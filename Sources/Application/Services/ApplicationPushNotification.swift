@@ -14,7 +14,11 @@ import UserNotifications
 import Prephirences
 import QMobileAPI
 
-class ApplicationPushNotification: NSObject {}
+class ApplicationPushNotification: NSObject {
+
+    var apiManagerObserver: NSObjectProtocol?
+
+}
 
 extension ApplicationPushNotification: ApplicationService {
 
@@ -25,13 +29,21 @@ extension ApplicationPushNotification: ApplicationService {
         UNUserNotificationCenter.current().delegate = self
 
         if let pushNotificationsEnabled = Prephirences.sharedInstance["pushNotification"] as? Bool, pushNotificationsEnabled {
-            registerForPushNotifications()
+
+            if Prephirences.Auth.Login.form {
+
+                startMonitoringAPIManager()
+
+            } else {
+
+                registerForPushNotifications()
+
+            }
         }
         // Check if app was launched from notification popup (ie. app was in background or not running)
         let notificationOption = launchOptions?[.remoteNotification]
         if let notification = notificationOption as? [String: AnyObject], let aps = notification["aps"] as? [String: AnyObject] {
             // A notification was received. Use data from 'aps' dictionary here
-
         }
     }
 
@@ -49,6 +61,12 @@ extension ApplicationPushNotification: ApplicationService {
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         logger.warning("Failed to register: \(error)")
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        if Prephirences.Auth.Login.form {
+            stopMonitoringAPIManager()
+        }
     }
 }
 
@@ -139,5 +157,22 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         }
         // completionHandler([.badge, .sound])
         completionHandler([.alert, .badge, .sound])
+    }
+}
+
+/// Being notified on successful login to start registering for push notifications
+extension ApplicationPushNotification {
+
+    fileprivate func startMonitoringAPIManager() {
+        apiManagerObserver = APIManager.observe(APIManager.loginSuccess) { _ in
+            self.registerForPushNotifications()
+        }
+    }
+
+    fileprivate func stopMonitoringAPIManager() {
+        if let apiManagerObserver = apiManagerObserver {
+            APIManager.unobserve(apiManagerObserver)
+        }
+        apiManagerObserver = nil
     }
 }
