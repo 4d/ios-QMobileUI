@@ -29,16 +29,7 @@ extension ApplicationPushNotification: ApplicationService {
         UNUserNotificationCenter.current().delegate = self
 
         if let pushNotificationsEnabled = Prephirences.sharedInstance["pushNotification"] as? Bool, pushNotificationsEnabled {
-
-            if Prephirences.Auth.Login.form {
-
-                startMonitoringAPIManager()
-
-            } else {
-
-                registerForPushNotifications()
-
-            }
+            startMonitoringAPIManager()
         }
         // Check if app was launched from notification popup (ie. app was in background or not running)
         let notificationOption = launchOptions?[.remoteNotification]
@@ -64,9 +55,7 @@ extension ApplicationPushNotification: ApplicationService {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        if Prephirences.Auth.Login.form {
-            stopMonitoringAPIManager()
-        }
+        stopMonitoringAPIManager()
     }
 }
 
