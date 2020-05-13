@@ -72,7 +72,9 @@ open class Main: UIViewController, Form {
     /// If logged, go to app, else go to login form.
     /// Override this method to deactivate the default transition.
     open func appearTransition() {
-        performTransition()
+        DispatchQueue.main.async {
+            self.performTransition()
+        }
     }
 
     @IBInspectable var style: String = "" {

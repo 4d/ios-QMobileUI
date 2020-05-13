@@ -33,6 +33,7 @@ class ApplicationDataSync: NSObject {
     /// keep terminate information
     fileprivate var applicationWillTerminate: Bool = false
 
+    /// Keep trace about starting state. Since iOS13 enterForeground is called also if starting app.
     fileprivate var starting: Bool = false
 
 }
@@ -45,9 +46,7 @@ extension ApplicationDataSync: ApplicationService {
 
     static let _instance = ApplicationDataSync() // swiftlint:disable:this identifier_name
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        dataSync.delegate = self
-        starting = true
+    fileprivate func dataSyncAfterDataLoad() {
         // Start sync after data store loading
         dataStoreListeners += [DataStoreFactory.onLoad(queue: operationQueue) { [weak self] _ in
             self?.startSyncAtStart()
@@ -56,6 +55,12 @@ extension ApplicationDataSync: ApplicationService {
             startSyncAtStart()
             assertionFailure("must not be loaded")
         }
+    }
+
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        dataSync.delegate = self
+        starting = true
+        dataSyncAfterDataLoad()
 
         if Prephirences.Auth.reloadData {
             // When logout, drop the data...
@@ -321,7 +326,7 @@ extension Prephirences {
         public struct Sync: Prephirencable { // swiftlint:disable:this nesting
             public static let parent = DataSync.instance
 
-            public static let atStart: Bool = instance["atStart"] as? Bool ?? true
+            public static let atStart: Bool = instance["atStart"] as? Bool ?? false
             public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
         }
 

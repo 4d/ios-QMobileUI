@@ -10,46 +10,47 @@ import UIKit
 
 import Prephirences
 import QMobileAPI
+import QMobileDataSync
+import DeviceKit
 
-open class SettingURLForm: UITableViewController {
-
-    public enum Section: Int {
-        case server
-    }
+open class SettingURLForm: UIViewController, Storyboardable {
 
     @IBOutlet open weak var serverURLTextField: UITextField!
+    @IBOutlet open weak var connectButton: UIButton!
+
+    fileprivate var status: ServerStatus = .unknown
+
+    /// Constaint for view at the bottom.
+    @IBOutlet weak open var bottomLayoutConstraint: NSLayoutConstraint!
 
     // MARK: events
     final public override func viewDidLoad() {
         super.viewDidLoad()
-        // Register a view for section footer
-        initHeaderFooter()
 
         // Listen to textfield change
         serverURLTextField.addTarget(self, action: #selector(onDataChanged(textField:)), for: .editingChanged)
-
-        // Set the default value ie. localhost with 4D port
-        serverURLTextField.placeholder = URL.qmobileLocalhost.absoluteString
-        //serverURLTextField.isEditing = false
         onLoad()
     }
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        ServerStatusManager.instance.checkStatus(2)
-
         onDidAppear(animated)
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        registerKeyboard()
+        ServerStatusManager.instance.add(listener: self)
+        serverURLTextField.becomeFirstResponder()
+        _ = checkClickable()
         onWillAppear(animated)
     }
 
     final public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        ServerStatusManager.instance.remove(listener: self)
         onWillDisappear(animated)
+        unresisterKeyboard()
+        super.viewWillDisappear(animated)
     }
 
     final public override func viewDidDisappear(_ animated: Bool) {
@@ -68,35 +69,125 @@ open class SettingURLForm: UITableViewController {
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
 
+    // MARK: - Notifications
+
+    func registerKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardChanged(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+
+    func unresisterKeyboard() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+    }
+
     @objc open func onDataChanged(textField: UITextField) {
-        Prephirences.serverURL = textField.text
+        // check connect button clickable
+        _ = checkClickable()
+        // remove error message
+        if var errorLabel = serverURLTextField as? ErrorMessageableTextField {
+            errorLabel.errorMessage = nil
+        }
+        // check status of server now
+        self.updateServerURL(save: false)
         ServerStatusManager.instance.checkStatus(2)
     }
-
-    // MARK: table section header and footer
-    private func initHeaderFooter() {
-        tableView.registerHeaderFooter(SettingsServerSectionFooter())
-    }
-    private var _serverStatusFooter: SettingsServerSectionFooter?
-    var serverStatusFooter: SettingsServerSectionFooter? {
-        if _serverStatusFooter == nil {
-            _serverStatusFooter = self.tableView.dequeueReusableHeaderFooterView(SettingsServerSectionFooter.self)
-
-            _serverStatusFooter?.detailLabel.isHidden = false
-        }
-        return _serverStatusFooter
+    /// Notification about keyboard. Allow to move graphic elements, for instance constraintes.
+    @objc open func keyboardChanged(_ notification: NSNotification) {
+        update(constraint: bottomLayoutConstraint, with: notification )
     }
 
-    override open func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if let section = Section(rawValue: section), case .server = section {
-            return serverStatusFooter
+    /// Animate bottom constraint when keyboard show or hide.
+    open func update(constraint: NSLayoutConstraint, with notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+            let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
+            let keyboardEndFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+                return
         }
-        return nil // default
+        let convertedKeyboardEndFrame = view.convert(keyboardEndFrame, from: view.window)
+
+        constraint.constant = view.bounds.maxY - convertedKeyboardEndFrame.minY + 20
+        let animationCurve = UIView.KeyframeAnimationOptions(rawValue: curve)
+
+        UIView.animateKeyframes(withDuration: animationDuration, delay: 0.0, options: animationCurve, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
 
     // MARK: action
-    @IBAction open func serverURLTextFieldEndEditing(_ sender: Any?) {
+    /*@IBAction open func serverURLTextFieldEndEditing(_ sender: Any?) {
         self.serverURLTextField.endEditing(true)
+    }*/
+
+    @IBAction open func connect(_ sender: Any?) {
+        startLoginUI()
+        Prephirences.Reset.serverAddress = false
+        DispatchQueue.main.async {
+            self.updateServerURL(save: true)
+            _ = APIManager.instance.status { [weak self] result in
+                self?.stopLoginUI {
+                    switch result {
+                    case .success:
+                        DispatchQueue.main.async {
+                            self?.presentingViewController?.dismiss(animated: false, completion: nil)
+                        }
+                    case .failure(let error):
+                        if var errorLabel = self?.serverURLTextField as? ErrorMessageableTextField {
+                            errorLabel.errorMessage = self?.status.message
+                        }
+                        logger.info("connection error \(error)")
+                    }
+                }
+            }
+        }
+    }
+
+    fileprivate var serverPrefererences: MutablePreferencesType {
+        return UserDefaults.standard
+    }
+
+    // MARK: server
+    open func checkClickable() -> Bool {
+        let value = isClickable
+        connectButton.isUserInteractionEnabled = value
+        return value
+    }
+
+    open var isClickable: Bool {
+        return !serverURL.isEmpty
+    }
+
+    var serverURL: String {
+        guard var value = self.serverURLTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else {
+            return ""
+        }
+        if !value.hasPrefix("http") {
+            value = "https://"+value
+        }
+        return value
+    }
+
+    fileprivate func updateServerURL(save: Bool = false) {
+        var preference = serverPrefererences
+        preference["server.url"] = self.serverURL
+        preference["server.url.edited"] = true
+        APIManager.instance = APIManager(url: URL.qmobile)
+        DataSync.instance.apiManager = APIManager.instance
+    }
+
+    // MARK: 
+    fileprivate func startLoginUI() {
+        (connectButton as? QAnimatableButton)?.startAnimation()
+        serverURLTextField.isEnabled = false
+    }
+
+    fileprivate func stopLoginUI(completion: @escaping () -> Void) {
+        onForeground {
+            (self.connectButton as? QAnimatableButton)?.stopAnimation {
+                self.serverURLTextField.isEnabled = true
+                self.serverURLTextField.becomeFirstResponder()
+                completion()
+            }
+        }
     }
 }
 
@@ -104,7 +195,7 @@ extension SettingURLForm: ServerStatusListener {
 
     public func onStatusChanged(status: ServerStatus) {
         onForeground {
-            self.forceUpdates()
+            self.status = status
         }
     }
 

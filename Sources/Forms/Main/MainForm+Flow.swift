@@ -46,14 +46,14 @@ extension Main {
         case login
         /// Go to the navigaton form.
         case navigation
+        /// Go to the setting url form.
+        case settingURL
 
         var identifier: String? { return self.rawValue }
         var description: String { return "\(self.rawValue)" }
         var kind: SegueKind? {
             switch self {
-            case .login:
-                return SegueKind(rawValue: "push")
-            case .navigation:
+            case .login, .navigation, .settingURL:
                 return SegueKind(rawValue: "push")
             }
         }
@@ -63,13 +63,18 @@ extension Main {
             case .login:
                 return LoginForm.instantiate()
             case .navigation:
-               return MainNavigation.instantiateInitialViewController()
+                return MainNavigation.instantiateInitialViewController()
+            case .settingURL:
+                return SettingURLForm.instantiateInitialViewController()
             }
         }
     }
 
     /// Transition to perform
     var segue: Segue {
+        if Prephirences.Reset.serverAddress {
+            return .settingURL
+        }
         guard ApplicationAuthenticate.hasLogin else {
             return .navigation // no login form
         }
