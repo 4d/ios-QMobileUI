@@ -26,7 +26,7 @@ public class ActionManager {
 
     public var handlers: [ActionResultHandler] = []
 
-    init() {
+    init() { //swiftlint:disable:this function_body_length
         // default handlers
 
         // Show log

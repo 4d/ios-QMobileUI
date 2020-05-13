@@ -101,7 +101,7 @@ extension UIImageView {
                 indicatorType = builder.indicatorType ?? .activity
             }
 
-            /// Check cache, bundle
+            // Check cache, bundle
             ApplicationImageCache.checkCached(imageResource)
 
             // Do the request

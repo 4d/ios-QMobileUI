@@ -27,7 +27,7 @@ extension ApplicationDataStore: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        var dataStore = self.dataStore
+        //var dataStore = self.dataStore
         //dataStore.delegate = self
         registerEvent(dataStore)
         self.load()

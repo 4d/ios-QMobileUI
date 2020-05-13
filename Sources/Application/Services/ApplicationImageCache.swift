@@ -336,7 +336,7 @@ struct PDFProcessor: ImageProcessor {
     let identifier = "com.4d.image"
 
     // Convert input data/image to target image and return it.
-    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         switch item {
         case .image(let image):
             return image

@@ -64,7 +64,7 @@ extension UIView: ActionContext {
         }
 
         // specific case for table and collection view cell which break the view hierarchy
-        if let provider = self.parentCellView?.parentView?.findActionContextProvider() { /// XXX maybe do it only at first level to optimize
+        if let provider = self.parentCellView?.parentView?.findActionContextProvider() { // XXX maybe do it only at first level to optimize
             return provider
         }
 

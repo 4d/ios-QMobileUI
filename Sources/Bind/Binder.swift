@@ -84,7 +84,7 @@ open class Binder: NSObject {
     open override func setValue(_ value: Any?, forUndefinedKey key: String) {
         if let viewKey = value as? String {
             #if TARGET_INTERFACE_BUILDER
-            if var attributable = binded as? IBAttributable {
+            if var attributable = view as? IBAttributable {
                 if attributable.ibAttritutable == nil {
                     attributable.ibAttritutable = "[]\(key)"
                 }
