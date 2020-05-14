@@ -169,9 +169,11 @@ open class SettingURLForm: UIViewController, Storyboardable {
     fileprivate func updateServerURL(save: Bool = false) {
         var preference = serverPrefererences
         preference["server.url"] = self.serverURL
-        preference["server.url.edited"] = true
-        APIManager.instance = APIManager(url: URL.qmobile)
-        DataSync.instance.apiManager = APIManager.instance
+        if save {
+            preference["server.url.edited"] = true
+            APIManager.instance = APIManager(url: URL.qmobile)
+            DataSync.instance.apiManager = APIManager.instance
+        }
     }
 
     // MARK: 
