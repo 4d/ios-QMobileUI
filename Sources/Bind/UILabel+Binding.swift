@@ -575,7 +575,9 @@ extension UILabel {
     }
 
     @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
-        let imageView = sender.view as! UIImageView
+        guard let imageView = sender.view as? UIImageView else {
+            return
+        }
         let newImageView = UIImageView(image: imageView.image)
         newImageView.frame = UIScreen.main.bounds
         newImageView.backgroundColor = .black
@@ -593,6 +595,46 @@ extension UILabel {
         self.owningViewController?.tabBarController?.tabBar.isHidden = false
         sender.view?.removeFromSuperview()
     }
+    /*
+     // + https://github.com/ergunemr/EEZoomableImageView/blob/master/EEZoomableImageView/EEZoomableImageView/EEZoomableImageView.swift// MARK: Actions of Gestures
+      func exitFullScreen () {
+          let imageV = bgView.subviews[0] as! UIImageView
+          
+          UIView.animate(withDuration: intDuration, animations: {
+                  imageV.frame = self.tempRect!
+                  self.bgView.alpha = 0
+              }, completion: { (bol) in
+                  self.bgView.removeFromSuperview()
+          })
+      }
+      
+      func popUpImageToFullScreen() {
+          
+          if let window = UIApplication.shared.delegate?.window {
+              let parentView = self.findParentViewController(self)!.view
+              
+              bgView = UIView(frame: UIScreen.main.bounds)
+              bgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CLImageViewPopup.exitFullScreen)))
+              bgView.alpha = 0
+              bgView.backgroundColor = UIColor.black
+              let imageV = UIImageView(image: self.image)
+              let point = self.convert(self.bounds, to: parentView)
+              imageV.frame = point
+              tempRect = point
+              imageV.contentMode = .scaleAspectFit
+              self.bgView.addSubview(imageV)
+              window?.addSubview(bgView)
+              
+              if animated {
+                  UIView.animate(withDuration: intDuration, animations: {
+                      self.bgView.alpha = 1
+                      imageV.frame = CGRect(x: 0, y: 0, width: (parentView?.frame.width)!, height: (parentView?.frame.width)!)
+                      imageV.center = (parentView?.center)!
+                  })
+              }
+          }
+      }
+     */
 
     fileprivate func cancelDownloadTask() {
         imageTask?.cancel()
