@@ -648,4 +648,4 @@ extension UILabel {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
-private var imageTaskKey: Void?
+private var imageTaskKey: Void? // swiftlint:disable:this file_length
