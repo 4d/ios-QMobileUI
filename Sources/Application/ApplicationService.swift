@@ -32,6 +32,7 @@ public protocol ApplicationService {
     // MARK: application receive url or token
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error)
 
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any])
 
@@ -89,6 +90,10 @@ extension ApplicationService {
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         services.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+    }
+
+    public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        services.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
     public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
@@ -161,6 +166,12 @@ extension Sequence where Element == ApplicationService {
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         self.forEach { service in
             service.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        }
+    }
+
+    public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        self.forEach { service in
+            service.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
         }
     }
 
@@ -253,6 +264,13 @@ extension Sequence where Element == ApplicationService {
         if let data = notification.userInfo?[ApplicationServiceUserInfoKey.deviceToken] as? Data {
             self.forEach { service in
                 service.application(notification.application, didRegisterForRemoteNotificationsWithDeviceToken: data)
+            }
+        }
+    }
+    public func application(didFailToRegisterForRemoteNotifications notification: Notification) {
+        if let error = notification.userInfo?[ApplicationServiceUserInfoKey.error] as? Error {
+            self.forEach { service in
+                service.application(notification.application, didFailToRegisterForRemoteNotificationsWithError: error)
             }
         }
     }

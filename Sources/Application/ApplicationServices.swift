@@ -54,6 +54,7 @@ fileprivate extension ApplicationServices {
 
         // receive info
         center.addObserver(self, selector: #selector(application(didRegisterForRemoteWithDeviceToken:)), name: UIApplication.didRegisterForRemoteWithDeviceTokenNotification, object: nil)
+        center.addObserver(self, selector: #selector(application(didFailToRegisterForRemoteNotifications:)), name: UIApplication.didFailToRegisterForRemoteNotifications, object: nil)
         center.addObserver(self, selector: #selector(application(openUrlWithOptions:)), name: UIApplication.openUrlWithOptionsNotification, object: nil)
         // activity
         center.addObserver(self, selector: #selector(application(didUpdateUserActivity:)), name: UIApplication.didUpdateUserActivityNotification, object: nil)
@@ -93,6 +94,7 @@ extension UIApplication {
     public static let openUrlWithOptionsNotification: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
     //swiftlint:disable:next identifier_name
     public static let didRegisterForRemoteWithDeviceTokenNotification: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
+    public static let didFailToRegisterForRemoteNotifications: NSNotification.Name = .init("UIApplicationDidFailToRegisterForRemoteNotifications")
 
     public static let didUpdateUserActivityNotification: NSNotification.Name = .init("UIApplicationDidUpdateUserActivity")
     //swiftlint:disable:next identifier_name
@@ -109,9 +111,10 @@ public extension UIApplicationDelegate {
                                                  userInfo: [ApplicationServiceUserInfoKey.deviceToken: deviceToken])
     }
 
-    /*func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        type(of: self).application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-    }*/ // not working anymore, code is put in generated project instead
+    static func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        ApplicationServices.instance.center.post(name: UIApplication.didFailToRegisterForRemoteNotifications, object: application,
+                                                 userInfo: [ApplicationServiceUserInfoKey.error: error])
+    }
 
     static func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         ApplicationServices.instance.center.post(name: UIApplication.openUrlWithOptionsNotification, object: app,
@@ -189,6 +192,10 @@ private extension ApplicationServices {
 
     @objc func application(didRegisterForRemoteWithDeviceToken notification: Notification) {
         services.application(didRegisterForRemoteWithDeviceToken: notification)
+    }
+
+    @objc func application(didFailToRegisterForRemoteNotifications notification: Notification) {
+        services.application(didFailToRegisterForRemoteNotifications: notification)
     }
 
     @objc func application(continueUserActivity notification: Notification) {
