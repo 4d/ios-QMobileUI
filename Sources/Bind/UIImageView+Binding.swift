@@ -114,6 +114,7 @@ extension UIImageView {
                     //self.setNeedsDisplay() // force refresh ??
                     let tap = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped))
                     self.addGestureRecognizer(tap)
+                    self.isUserInteractionEnabled = true
                 case .failure(let error):
                     ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
                     _ = self.kf.setImage(with: imageResource.bundleProvider,

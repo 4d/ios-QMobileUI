@@ -571,6 +571,7 @@ extension UILabel {
         self.attributedText = NSAttributedString(attachment: attachmentImage)
         let tap = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         self.addGestureRecognizer(tap)
+        self.isUserInteractionEnabled = true
     }
 
     @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
