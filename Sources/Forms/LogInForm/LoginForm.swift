@@ -227,7 +227,13 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     fileprivate func stopLoginUI(completion: @escaping () -> Void) {
         onForeground {
-            (self.loginButton as? QAnimatableButton)?.stopAnimation {
+            if let button = self.loginButton as? QAnimatableButton {
+                button.stopAnimation {
+                    self.loginTextField.isEnabled = true
+                    self.loginTextField.becomeFirstResponder()
+                    completion()
+                }
+            } else {
                 self.loginTextField.isEnabled = true
                 self.loginTextField.becomeFirstResponder()
                 completion()

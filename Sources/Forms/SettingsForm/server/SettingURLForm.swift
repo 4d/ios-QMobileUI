@@ -184,7 +184,13 @@ open class SettingURLForm: UIViewController, Storyboardable {
 
     fileprivate func stopLoginUI(completion: @escaping () -> Void) {
         onForeground {
-            (self.connectButton as? QAnimatableButton)?.stopAnimation {
+            if let button = self.connectButton as? QAnimatableButton {
+                button.stopAnimation {
+                    self.serverURLTextField.isEnabled = true
+                    self.serverURLTextField.becomeFirstResponder()
+                    completion()
+                }
+            } else {
                 self.serverURLTextField.isEnabled = true
                 self.serverURLTextField.becomeFirstResponder()
                 completion()
