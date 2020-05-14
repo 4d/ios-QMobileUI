@@ -112,6 +112,8 @@ extension UIImageView {
                     assert(ApplicationImageCache.isCached(imageResource)) // if failed maybe preprocessor
                     #endif
                     //self.setNeedsDisplay() // force refresh ??
+                    let tap = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped))
+                    self.addGestureRecognizer(tap)
                 case .failure(let error):
                     ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
                     _ = self.kf.setImage(with: imageResource.bundleProvider,
@@ -130,6 +132,26 @@ extension UIImageView {
                 progressBlock: nil,
                 completionHandler: completionHandler)
         }
+    }
+
+    @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
+        let imageView = sender.view as! UIImageView
+        let newImageView = UIImageView(image: imageView.image)
+        newImageView.frame = UIScreen.main.bounds
+        newImageView.backgroundColor = .black
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.addSubview(newImageView)
+        self.owningViewController?.navigationController?.isNavigationBarHidden = true
+        self.owningViewController?.tabBarController?.tabBar.isHidden = true
+    }
+
+    @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.owningViewController?.navigationController?.isNavigationBarHidden = false
+        self.owningViewController?.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
     }
 
     @objc dynamic public var imageData: Data? {

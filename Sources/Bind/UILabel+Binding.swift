@@ -569,6 +569,28 @@ extension UILabel {
         let attachmentImage = NSTextAttachment()
         attachmentImage.image = image
         self.attributedText = NSAttributedString(attachment: attachmentImage)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        self.addGestureRecognizer(tap)
+    }
+
+    @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
+        let imageView = sender.view as! UIImageView
+        let newImageView = UIImageView(image: imageView.image)
+        newImageView.frame = UIScreen.main.bounds
+        newImageView.backgroundColor = .black
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.addSubview(newImageView)
+        self.owningViewController?.navigationController?.isNavigationBarHidden = true
+        self.owningViewController?.tabBarController?.tabBar.isHidden = true
+    }
+
+    @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.owningViewController?.navigationController?.isNavigationBarHidden = false
+        self.owningViewController?.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
     }
 
     fileprivate func cancelDownloadTask() {
