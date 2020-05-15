@@ -65,7 +65,10 @@ extension ApplicationPushNotification {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
                 logger.info("Notification permission granted? \(granted)")
-                guard granted else { return }
+                guard granted else {
+                    logger.debug("Push Notifications permission is not granted")
+                    return
+                }
 
                 self?.setActionableNotification()
 
@@ -82,8 +85,11 @@ extension ApplicationPushNotification {
 
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            logger.debug("Notification settings: \(settings)")
-            guard settings.authorizationStatus == .authorized else { return }
+            guard settings.authorizationStatus == .authorized else {
+                logger.debug("Push Notifications permission is not granted")
+                return
+            }
+            logger.debug("Push Notifications permission is granted")
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
             }
@@ -91,12 +97,15 @@ extension ApplicationPushNotification {
     }
 
     func sendDeviceTokenToServer(deviceToken: String) {
+        logger.info("Will send deviceToken to server")
         _ = APIManager.instance.sendDeviceToken(deviceToken, callbackQueue: .background) { (result) in
             switch result {
             case .success(let value):
-                logger.debug("Device token send \(value)")
+                logger.info("DeviceToken successfully sent to server")
+                logger.debug("DeviceToken request response: \(value)")
             case .failure(let error):
-                logger.debug("Device token send with error \(error)")
+                logger.info("An error occurred while sending deviceToken to server")
+                logger.debug("DeviceToken request error: \(error)")
             }
         }
     }
