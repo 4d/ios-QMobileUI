@@ -16,7 +16,7 @@ import QMobileAPI
 
 class ApplicationPushNotification: NSObject {
 
-    var apiManagerObserver: NSObjectProtocol?
+    var apiManagerObservers: [NSObjectProtocol] = []
 
 }
 
@@ -29,7 +29,9 @@ extension ApplicationPushNotification: ApplicationService {
         UNUserNotificationCenter.current().delegate = self
 
         if let pushNotificationsEnabled = Prephirences.sharedInstance["pushNotification"] as? Bool, pushNotificationsEnabled {
-            startMonitoringAPIManager()
+            startLoginObserver()
+            startLogoutObserver()
+            getNotificationSettings()
         }
         // Check if app was launched from notification popup (ie. app was in background or not running)
         let notificationOption = launchOptions?[.remoteNotification]
@@ -63,23 +65,26 @@ extension ApplicationPushNotification {
 
     func registerForPushNotifications() {
         UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
                 logger.info("Notification permission granted? \(granted)")
                 guard granted else {
                     logger.debug("Push Notifications permission is not granted")
                     return
                 }
+                if let error = error {
+                    logger.warning("An error occurred while requesting remote notifications authorization : \(error)")
+                }
 
                 self?.setActionableNotification()
 
-                /// Exclusively for testing on simulator
-                if Device.current.isSimulator {
-                    let simulatorDeviceToken = UIDevice.current.simulatorID  ?? "booted"
-                    logger.info("Device token cannot be fetched on a simulator. Use simulator id \(simulatorDeviceToken)")
-                    self?.sendDeviceTokenToServer(deviceToken: simulatorDeviceToken)
-                } else {
-                    self?.getNotificationSettings()
-                }
+                self?.getNotificationSettings()
+        }
+    }
+
+    func unregisterForPushNotifications() {
+        logger.info("Will unregister for remote notifications")
+        DispatchQueue.main.async {
+            UIApplication.shared.unregisterForRemoteNotifications()
         }
     }
 
@@ -90,8 +95,24 @@ extension ApplicationPushNotification {
                 return
             }
             logger.debug("Push Notifications permission is granted")
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
+
+            /// Exclusively for testing on simulator
+            if Device.current.isSimulator {
+
+                let simulatorDeviceToken = UIDevice.current.simulatorID  ?? "booted"
+                logger.info("Device token cannot be fetched on a simulator. Use simulator id \(simulatorDeviceToken)")
+                self.sendDeviceTokenToServer(deviceToken: simulatorDeviceToken)
+
+            } else {
+
+                logger.info("Will register for remote notifications")
+                if !UIApplication.shared.isRegisteredForRemoteNotifications {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                } else {
+                    logger.info("Already registered for remote notifications")
+                }
             }
         }
     }
@@ -158,19 +179,26 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
     }
 }
 
-/// Being notified on successful login to start registering for push notifications
+/// Being notified on login / logout to start / stop registering for push notifications
 extension ApplicationPushNotification {
 
-    fileprivate func startMonitoringAPIManager() {
-        apiManagerObserver = APIManager.observe(APIManager.loginSuccess) { _ in
+    fileprivate func startLoginObserver() {
+        let loginObserver = APIManager.observe(APIManager.loginSuccess) { _ in
             self.registerForPushNotifications()
         }
+        apiManagerObservers += [loginObserver]
+    }
+
+    fileprivate func startLogoutObserver() {
+        let logoutObserver = APIManager.observe(APIManager.logout) { _ in
+            self.unregisterForPushNotifications()
+        }
+        apiManagerObservers += [logoutObserver]
     }
 
     fileprivate func stopMonitoringAPIManager() {
-        if let apiManagerObserver = apiManagerObserver {
-            APIManager.unobserve(apiManagerObserver)
+        for observer in apiManagerObservers {
+            APIManager.unobserve(observer)
         }
-        apiManagerObserver = nil
     }
 }
