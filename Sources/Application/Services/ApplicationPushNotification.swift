@@ -106,12 +106,8 @@ extension ApplicationPushNotification {
             } else {
 
                 logger.info("Will register for remote notifications")
-                if !UIApplication.shared.isRegisteredForRemoteNotifications {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
-                    }
-                } else {
-                    logger.info("Already registered for remote notifications")
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
                 }
             }
         }
