@@ -118,19 +118,35 @@ open class SettingURLForm: UIViewController, Storyboardable {
         self.serverURLTextField.endEditing(true)
     }*/
 
+    func message(_ message: String) {
+        logger.info(message)
+
+    }
+
     @IBAction open func connect(_ sender: Any?) {
         startLoginUI()
+        let startDate = Date() // keep start date
+
         Prephirences.Reset.serverAddress = false
         DispatchQueue.main.async {
             self.updateServerURL(save: true)
+            self.message("Checking server")
             _ = APIManager.instance.status { [weak self] result in
-                self?.stopLoginUI {
-                    switch result {
-                    case .success:
-                        DispatchQueue.main.async {
-                            self?.presentingViewController?.dismiss(animated: false, completion: nil)
+                Thread.sleep(until: startDate + 1) // allow to start animation if server respond to quickly
+                self?.message("Connected to server")
+                switch result {
+                case .success:
+                    self?.message("Creating initial data...")
+                    ApplicationDataStore.instance.dropAndLoad { // XXX maybe manage result
+                        self?.message("Data loaded")
+                        self?.stopLoginUI {
+                            DispatchQueue.main.async {
+                                self?.presentingViewController?.dismiss(animated: false, completion: nil)
+                            }
                         }
-                    case .failure(let error):
+                    }
+                case .failure(let error):
+                    self?.stopLoginUI {
                         if var errorLabel = self?.serverURLTextField as? ErrorMessageableTextField {
                             errorLabel.errorMessage = self?.status.message
                         }

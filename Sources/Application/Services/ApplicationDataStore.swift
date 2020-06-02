@@ -20,10 +20,14 @@ class ApplicationDataStore: NSObject {
 
 extension ApplicationDataStore: ApplicationService {
 
-    public static var instance: ApplicationService = ApplicationDataStore()
+    public static var instance: ApplicationDataStore = ApplicationDataStore()
 
     var dataStore: DataStore {
-        return DataStoreFactory.dataStore  // must use same in dataSync
+        get {
+            return DataStoreFactory.dataStore  // must use same in dataSync
+        } set {
+            DataStoreFactory.dataStore = newValue
+        }
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
@@ -88,6 +92,17 @@ extension ApplicationDataStore {
                 logger.info("Mobile database has been dropped")
             }
             handler?()
+        }
+    }
+
+    func dropAndLoad(handler: (() -> Void)? = nil) {
+        DataStoreFactory.dataStore.drop { result in
+            logger.info("drop \(result)")
+            DataStoreFactory.dataStore = CoreDataStore()
+            DataStoreFactory.dataStore.load { result in
+                logger.info("drop \(result)")
+                handler?()
+            }
         }
     }
 
