@@ -202,6 +202,7 @@ extension UIView {
             animation.delegate = AnimationDelegate(completion: completion)
         }
         layer.add(animation, forKey: "shrink")
+
     }
 
     public func expand(duration: CFTimeInterval = 0.3,

@@ -127,7 +127,6 @@ open class SettingURLForm: UIViewController, Storyboardable {
         startLoginUI()
         let startDate = Date() // keep start date
 
-        Prephirences.Reset.serverAddress = false
         DispatchQueue.main.async {
             self.updateServerURL(save: true)
             self.message("Checking server")
@@ -136,6 +135,7 @@ open class SettingURLForm: UIViewController, Storyboardable {
                 self?.message("Connected to server")
                 switch result {
                 case .success:
+                    Prephirences.Reset.serverAddress = false
                     self?.message("Creating initial data...")
                     ApplicationDataStore.instance.dropAndLoad { // XXX maybe manage result
                         self?.message("Data loaded")

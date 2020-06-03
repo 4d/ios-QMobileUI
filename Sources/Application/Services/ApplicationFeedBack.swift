@@ -48,7 +48,9 @@ extension ApplicationFeedback: ApplicationService {
 
     fileprivate func feedbackWhenGoToFront(application: UIApplication) {
         if ApplicationFeedback.showFeedback {
-            self.showFeedbackDialog(sender: application)
+            foreground {
+                self.showFeedbackDialog(sender: application)
+            }
         }
     }
 
@@ -112,7 +114,6 @@ extension ApplicationFeedback: ApplicationService {
         let alert = UIAlertController(title: "How can we help you?",
                                       message: tips,
                                       preferredStyle: .actionSheet)
-         _ = alert.checkPopUp(sender)
         let textColor = UIColor.label
         alert.view.tintColor = textColor
         let completion: (() -> Swift.Void) = {
@@ -190,6 +191,7 @@ extension ApplicationFeedback: ApplicationService {
             completion() // XXX find a way to listen to dismiss, and do not put in each action...
         }))
         foreground {
+            _ = alert.checkPopUp(sender)
             self.window = alert.presentOnTop(completion: presented)
         }
     }
