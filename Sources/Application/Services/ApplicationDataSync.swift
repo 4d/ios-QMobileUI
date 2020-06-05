@@ -79,9 +79,23 @@ extension ApplicationDataSync: ApplicationService {
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
         if !starting {
+            if Prephirences.Reset.serverAddress {
+                showServerAddressResetAlert()
+            }
             startSyncIfEnterForeground()
         }
         starting = false
+    }
+
+    func showServerAddressResetAlert() {
+        let alert = UIAlertController(title: "You need to restart the app to reset the server address", message: "Stop the application now?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: { _ in
+            exit(0)
+        }))
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { _ in
+           // self.window = nil
+        }))
+        alert.show()
     }
 
     public func applicationDidEnterBackground(_ application: UIApplication) {
