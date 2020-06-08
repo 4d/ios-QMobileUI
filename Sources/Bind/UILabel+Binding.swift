@@ -574,18 +574,33 @@ extension UILabel {
         self.isUserInteractionEnabled = true
     }
 
+    func firstImage(textStorage: NSAttributedString) -> UIImage? {
+        for idx in 0 ..< textStorage.string.count {
+            if let attr = textStorage.attribute(NSAttributedString.Key.attachment, at: idx, effectiveRange: nil),
+                let attachment = attr as? NSTextAttachment,
+                let image = attachment.image {
+                return image
+            }
+        }
+        return nil
+    }
+
     @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
-        guard let imageView = sender.view as? UIImageView else {
+        guard let label = sender.view as? UILabel, let attributedText = label.attributedText else {
             return
         }
-        let newImageView = UIImageView(image: imageView.image)
+        guard let image = firstImage(textStorage: attributedText) else {
+            logger.verbose("Cannot get image in text")
+            return
+        }
+        let newImageView = UIImageView(image: image)
         newImageView.frame = UIScreen.main.bounds
         newImageView.backgroundColor = .black
         newImageView.contentMode = .scaleAspectFit
         newImageView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
         newImageView.addGestureRecognizer(tap)
-        self.addSubview(newImageView)
+        self.owningViewController?.view.addSubview(newImageView)
         self.owningViewController?.navigationController?.isNavigationBarHidden = true
         self.owningViewController?.tabBarController?.tabBar.isHidden = true
     }

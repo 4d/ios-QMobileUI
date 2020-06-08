@@ -146,7 +146,7 @@ extension UIImageView {
         newImageView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
         newImageView.addGestureRecognizer(tap)
-        self.addSubview(newImageView)
+        self.owningViewController?.view.addSubview(newImageView)
 
         /*let pinchZoomHandler = PinchZoomHandler(usingSourceImageView: newImageView) // TODO memory retain*/
         self.owningViewController?.navigationController?.isNavigationBarHidden = true
