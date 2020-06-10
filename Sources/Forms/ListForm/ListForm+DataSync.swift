@@ -21,7 +21,7 @@ extension ListForm {
 
     /// Return information about current table using 4D table and field naming
     public var table: Table? {
-        let dataSync = ApplicationDataSync._instance.dataSync
+        let dataSync = ApplicationDataSync.instance.dataSync
         assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
 
         for (table, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
@@ -32,7 +32,7 @@ extension ListForm {
 
     /// Return information about current table using mobile database table and field naming
     public var tableInfo: DataStoreTableInfo? {
-        let dataSync = ApplicationDataSync._instance.dataSync
+        let dataSync = ApplicationDataSync.instance.dataSync
         //assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
 
         for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {

@@ -16,7 +16,7 @@ extension DetailsForm {
         guard let tableName = self.tableName else {
             return nil
         }
-        let dataSync = ApplicationDataSync._instance.dataSync
+        let dataSync = ApplicationDataSync.instance.dataSync
         assert(!dataSync.tablesInfoByTable.isEmpty) // not loaded...
         return dataSync.tables.filter { $0.name == tableName }.first
     }

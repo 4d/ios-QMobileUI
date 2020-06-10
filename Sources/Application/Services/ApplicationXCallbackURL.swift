@@ -24,7 +24,7 @@ extension ApplicationXCallbackURL: ApplicationService {
 
     static var instance: ApplicationService = ApplicationXCallbackURL()
     var dataSync: DataSync {
-        return ApplicationDataSync._instance.dataSync
+        return ApplicationDataSync.instance.dataSync
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
@@ -77,7 +77,7 @@ extension ApplicationXCallbackURL: ApplicationService {
             } else {
                 path = .userTemporary
             }
-            _ =  ApplicationDataSync._instance.dataSync.dump(to: path) {
+            _ =  ApplicationDataSync.instance.dataSync.dump(to: path) {
 
                 success(nil)
             }

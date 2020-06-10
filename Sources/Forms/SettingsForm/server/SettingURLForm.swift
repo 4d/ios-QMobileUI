@@ -137,8 +137,9 @@ open class SettingURLForm: UIViewController, Storyboardable {
                 case .success:
                     Prephirences.Reset.serverAddress = false
                     self?.message("Creating initial data...")
-                    ApplicationDataStore.instance.dropAndLoad { // XXX maybe manage result
+                    ApplicationDataStore.instance.dropAndLoad { newDataStore in
                         self?.message("Data loaded")
+                        ApplicationDataSync.instance.dataSync.dataStore = newDataStore
                         self?.stopLoginUI {
                             DispatchQueue.main.async {
                                 self?.presentingViewController?.dismiss(animated: false, completion: nil)

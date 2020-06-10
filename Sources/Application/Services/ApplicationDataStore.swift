@@ -95,13 +95,14 @@ extension ApplicationDataStore {
         }
     }
 
-    func dropAndLoad(handler: (() -> Void)? = nil) {
+    func dropAndLoad(handler: ((DataStore) -> Void)? = nil) {
         DataStoreFactory.dataStore.drop { result in
             logger.info("drop \(result)")
-            DataStoreFactory.dataStore = CoreDataStore()
-            DataStoreFactory.dataStore.load { result in
+            let newDataStore = CoreDataStore()
+            DataStoreFactory.dataStore = newDataStore
+            newDataStore.load { result in
                 logger.info("drop \(result)")
-                handler?()
+                handler?(newDataStore)
             }
         }
     }

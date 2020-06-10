@@ -40,11 +40,7 @@ class ApplicationDataSync: NSObject {
 
 extension ApplicationDataSync: ApplicationService {
 
-    public static var instance: ApplicationService {
-        return _instance
-    }
-
-    static let _instance = ApplicationDataSync() // swiftlint:disable:this identifier_name
+    static let instance = ApplicationDataSync()
 
     fileprivate func dataSyncAfterDataLoad() {
         // Start sync after data store loading
@@ -213,12 +209,12 @@ extension ApplicationDataSync {
 }
 
 public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
-    return ApplicationDataSync._instance.dataSync.sync(operation: operation, completionHandler)
+    return ApplicationDataSync.instance.dataSync.sync(operation: operation, completionHandler)
 }
 
 /// Get the last data sync date.
 public func dataLastSync() -> Foundation.Date? {
-    return ApplicationDataSync._instance.dataSync.dataStore.metadata?.lastSync
+    return ApplicationDataSync.instance.dataSync.dataStore.metadata?.lastSync
 }
 
 // MARK: - DataSyncDelegate
