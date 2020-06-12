@@ -136,6 +136,7 @@ open class SettingURLForm: UIViewController, Storyboardable {
                 switch result {
                 case .success:
                     Prephirences.Reset.serverAddress = false
+                    APIManager.instance.authToken = nil
                     self?.message("Creating initial data...")
                     ApplicationDataStore.instance.dropAndLoad { newDataStore in
                         self?.message("Data loaded")
