@@ -569,9 +569,7 @@ extension UILabel {
         let attachmentImage = NSTextAttachment()
         attachmentImage.image = image
         self.attributedText = NSAttributedString(attachment: attachmentImage)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-        self.addGestureRecognizer(tap)
-        self.isUserInteractionEnabled = true
+        attachmentImage.setImageHeight(94)
     }
 
     func firstImage(textStorage: NSAttributedString) -> UIImage? {
@@ -584,72 +582,6 @@ extension UILabel {
         }
         return nil
     }
-
-    @IBAction func imageTapped(_ sender: UITapGestureRecognizer) {
-        guard let label = sender.view as? UILabel, let attributedText = label.attributedText else {
-            return
-        }
-        guard let image = firstImage(textStorage: attributedText) else {
-            logger.verbose("Cannot get image in text")
-            return
-        }
-        let newImageView = UIImageView(image: image)
-        newImageView.frame = UIScreen.main.bounds
-        newImageView.backgroundColor = .black
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
-        newImageView.addGestureRecognizer(tap)
-        self.owningViewController?.view.addSubview(newImageView)
-        self.owningViewController?.navigationController?.isNavigationBarHidden = true
-        self.owningViewController?.tabBarController?.tabBar.isHidden = true
-    }
-
-    @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
-        self.owningViewController?.navigationController?.isNavigationBarHidden = false
-        self.owningViewController?.tabBarController?.tabBar.isHidden = false
-        sender.view?.removeFromSuperview()
-    }
-    /*
-     // + https://github.com/ergunemr/EEZoomableImageView/blob/master/EEZoomableImageView/EEZoomableImageView/EEZoomableImageView.swift// MARK: Actions of Gestures
-      func exitFullScreen () {
-          let imageV = bgView.subviews[0] as! UIImageView
-          
-          UIView.animate(withDuration: intDuration, animations: {
-                  imageV.frame = self.tempRect!
-                  self.bgView.alpha = 0
-              }, completion: { (bol) in
-                  self.bgView.removeFromSuperview()
-          })
-      }
-      
-      func popUpImageToFullScreen() {
-          
-          if let window = UIApplication.shared.delegate?.window {
-              let parentView = self.findParentViewController(self)!.view
-              
-              bgView = UIView(frame: UIScreen.main.bounds)
-              bgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CLImageViewPopup.exitFullScreen)))
-              bgView.alpha = 0
-              bgView.backgroundColor = UIColor.black
-              let imageV = UIImageView(image: self.image)
-              let point = self.convert(self.bounds, to: parentView)
-              imageV.frame = point
-              tempRect = point
-              imageV.contentMode = .scaleAspectFit
-              self.bgView.addSubview(imageV)
-              window?.addSubview(bgView)
-              
-              if animated {
-                  UIView.animate(withDuration: intDuration, animations: {
-                      self.bgView.alpha = 1
-                      imageV.frame = CGRect(x: 0, y: 0, width: (parentView?.frame.width)!, height: (parentView?.frame.width)!)
-                      imageV.center = (parentView?.center)!
-                  })
-              }
-          }
-      }
-     */
 
     fileprivate func cancelDownloadTask() {
         imageTask?.cancel()
@@ -664,3 +596,12 @@ extension UILabel {
     }
 }
 private var imageTaskKey: Void? // swiftlint:disable:this file_length
+
+extension NSTextAttachment {
+    func setImageHeight(_ height: CGFloat) {
+        guard let image = image else { return }
+        let ratio = image.size.width / image.size.height
+
+        bounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: ratio * height, height: height)
+    }
+}
