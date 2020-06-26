@@ -168,6 +168,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
             guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
                 else {
                     logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
+                    logger.warning("Current table info \(String(describing: listForm.tableInfo))")
                     return
             }
 
