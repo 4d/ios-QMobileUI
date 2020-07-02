@@ -172,12 +172,58 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         guard let entry = self.dataSource?.entry() else { return }
         entry.indexPath = indexPath
 
-        // pass to view controllers and views
-        segue.destination.prepare(with: entry)
-        segue.fix()
+        if segue.destination is DetailsForm { // If detail form of my ListForm
+            // pass to view controllers and views
+            segue.destination.prepare(with: entry)
+            segue.fix()
 
-        // listen to index path change, to scroll table to new selected record
-        entry.add(indexPathObserver: self)
+            // listen to index path change, to scroll table to new selected record
+            entry.add(indexPathObserver: self)
+        } else if let listForm = segue.destination as? ListForm {
+            // CLEAN: factorize code with DetailForm for relation segue
+            let record = entry.record as? Record
+            guard let recordID = record?.store.objectID else {
+                logger.warning("No record to check database relation")
+                return
+            }
+
+            guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
+                logger.warning("No information about the relation in UI")
+                return
+            }
+            guard listForm.dataSource == nil else {
+                logger.info(" data source \(String(describing: listForm.dataSource))")
+                assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
+                return
+            }
+            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
+                else {
+                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
+                    logger.warning("Current table info \(String(describing: listForm.tableInfo))")
+                    return
+            }
+
+            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
+
+            var previousTitle: String?
+            if let record = record,
+                let tableInfo = tableInfo,
+                let relationFormat = relationInfoUI.relationFormat,
+                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
+                previousTitle = formatter.format(record)
+            }
+            let predicatString = "(\(inverseRelationInfo.name) = %@)"
+            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
+                                               actionContext: actionContext(),
+                                               previousTitle: previousTitle,
+                                               relationName: relationOriginalName,
+                                               inverseRelationName: inverseRelationInfo.originalName)
+
+            if let record = record {
+                logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
+            }
+
+        }
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
