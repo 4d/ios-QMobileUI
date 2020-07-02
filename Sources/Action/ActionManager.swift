@@ -322,6 +322,16 @@ extension ActionManager: ActionResultHandler {
         for handler in handlers {
             handled = handler.handle(result: result, for: action, from: actionUI, in: context) || handled
         }
+        if let injectedHandler = UIApplication.shared.delegate as? ActionResultHandler {
+            handled = injectedHandler.handle(result: result, for: action, from: actionUI, in: context) || handled
+        }
+        if let app = UIApplication.shared as? QApplication {
+            for service in app.services.services {
+                if let injectedHandler = service as? ActionResultHandler {
+                    handled = injectedHandler.handle(result: result, for: action, from: actionUI, in: context) || handled
+                }
+            }
+        }
         return handled
     }
 }
