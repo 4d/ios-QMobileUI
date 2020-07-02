@@ -143,14 +143,31 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
         entry.indexPath = indexPath
 
         if segue.destination.firstController is DetailsForm { // If detail form of my ListForm
+            if let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName {
+                guard let record =  entry.record as? Record, let relationRecord = record[relationName] as? RecordBase else {
+                    logger.warning("Cannot display relation \(relationName)")
+                    return
+                }
+                guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
+                    logger.warning("Cannot get record attribute to make data source: \(relationRecord)")
+                    return
+                }
 
-            // pass to view controllers and views
-            segue.destination.prepare(with: entry)
-            segue.fix()
+                let entry = DataSourceEntry(dataSource: relationDataSource)
+                entry.indexPath = IndexPath(item: 0, section: 0)
+                segue.destination.prepare(with: entry)
 
-            // listen to index path change, to scroll table to new selected record
-            entry.add(indexPathObserver: self)
+                logger.debug("Will display relation \(relationName) of record \(record)")
+                logger.debug("Go to \(String(describing: entry.record))")
 
+            } else {
+                // pass to view controllers and views
+                segue.destination.prepare(with: entry)
+                segue.fix()
+
+                // listen to index path change, to scroll table to new selected record
+                entry.add(indexPathObserver: self)
+            }
         } else if let listForm = segue.destination.firstController as? ListForm {
             // CLEAN: factorize code with DetailForm for relation segue
             let record = entry.record as? Record
@@ -416,6 +433,8 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
         } else if let collection = cell as? UICollectionView {
             logger.warning("Expected a UICollectionViewCell but receive UICollectionView \(collection). Maybe segue is in wrong object")
             return nil
+        } else if let view = cell as? UIView, let cell = view.parentCellView as? UICollectionViewCell {
+            return self.collectionView?.indexPath(for: cell)
         }
         return nil
     }
