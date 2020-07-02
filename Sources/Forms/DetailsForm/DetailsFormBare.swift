@@ -155,7 +155,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
         }
 
         guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
-            logger.warning("No information about the relation in UI")
+            logger.warning("No information about the relation in UI. From form \(self)")
             return
         }
 

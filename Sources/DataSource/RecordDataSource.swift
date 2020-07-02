@@ -11,8 +11,11 @@ import QMobileDataStore
 
 class RecordDataSource: DataSource {
 
-    init?(record: RecordBase, dataStore: DataStore = DataStoreFactory.dataStore) {
-        let tableInfo = record.tableInfo
+    convenience init?(record: RecordBase, dataStore: DataStore = DataStoreFactory.dataStore) {
+        self.init(tableInfo: record.tableInfo, predicate: record.predicate, dataStore: dataStore)
+    }
+
+    init?(tableInfo: DataStoreTableInfo, predicate: NSPredicate, dataStore: DataStore = DataStoreFactory.dataStore) {
         let tableName = tableInfo.name
         guard let firstField = tableInfo.fields.filter({$0.type.isSortable}).first else {
             return nil
@@ -20,7 +23,7 @@ class RecordDataSource: DataSource {
         let sortDescriptors: [NSSortDescriptor]  = [firstField.sortDescriptor(ascending: true)]
 
         var fetchRequest = dataStore.fetchRequest(tableName: tableName, sortDescriptors: sortDescriptors)
-        fetchRequest.predicate = record.predicate
+        fetchRequest.predicate = predicate
 
         let fetchedResultsController = dataStore.fetchedResultsController(fetchRequest: fetchRequest)
         try? fetchedResultsController.performFetch()

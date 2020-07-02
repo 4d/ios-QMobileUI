@@ -172,14 +172,16 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         guard let entry = self.dataSource?.entry() else { return }
         entry.indexPath = indexPath
 
-        if segue.destination is DetailsForm { // If detail form of my ListForm
+        if segue.destination.firstController is DetailsForm { // If detail form of my ListForm
+
             // pass to view controllers and views
             segue.destination.prepare(with: entry)
             segue.fix()
 
             // listen to index path change, to scroll table to new selected record
             entry.add(indexPathObserver: self)
-        } else if let listForm = segue.destination as? ListForm {
+
+        } else if let listForm = segue.destination.firstController as? ListForm {
             // CLEAN: factorize code with DetailForm for relation segue
             let record = entry.record as? Record
             guard let recordID = record?.store.objectID else {
@@ -222,7 +224,6 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
             if let record = record {
                 logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
             }
-
         }
     }
 
