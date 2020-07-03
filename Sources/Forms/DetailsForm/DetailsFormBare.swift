@@ -149,11 +149,6 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination.firstController
 
-        guard let recordID = self.recordID else {
-            logger.warning("No record to check database relation")
-            return
-        }
-
         guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
             logger.warning("No information about the relation in UI. From form \(self)")
             return
@@ -165,23 +160,54 @@ open class DetailsFormBare: UIViewController, DetailsForm {
                 assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
                 return
             }
-            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
+
+            var relationToSeach = relationName
+            if let lastIndex = relationName.lastIndex(of: ".") {
+                relationToSeach = String(relationName[relationName.index(lastIndex, offsetBy: 1)...]) // CHECK: if more than one path, it will not work?
+            }
+
+            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationToSeach})
                 else {
                     logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                     logger.warning("Current table info \(String(describing: listForm.tableInfo))")
                     return
             }
 
-            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
+            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName // BUG check this value, with . too (why do not take from previsous search?)
+
+            var recordIDSearch: CVarArg?
+            var recordSearch: AnyObject?
+            if relationToSeach != relationName { // multilevel, we must find element instead of current record
+                if let lastIndex = relationName.lastIndex(of: ".") {
+                    if let intermediateRecord = record?.value(forKeyPath: String(relationName[..<lastIndex])) as? RecordBase {
+                        recordIDSearch = intermediateRecord.objectID
+                        recordSearch = intermediateRecord
+                    } else {
+                        logger.debug("No record to related for relation. no record linked for \(String(describing: self.record)) with relation \(relationName)")
+                    }
+                }// else must not occurs (asert?)
+            } else {
+                recordIDSearch = self.recordID
+                recordSearch = self.record
+            }
+
+            let relationTableInfo = (recordSearch as? RecordBase)?.tableInfo
 
             var previousTitle: String?
-            if let record = record,
-                let tableInfo = tableInfo,
-                let relationFormat = relationInfoUI.relationFormat,
-                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
+            if let relationFormat = relationInfoUI.relationFormat,
+                !relationFormat.isEmpty,
+                let record = recordSearch,
+                let tableInfo = relationTableInfo,
+                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
                 previousTitle = formatter.format(record)
             }
             let predicatString = "(\(inverseRelationInfo.name) = %@)"
+
+            guard let recordID = recordIDSearch else {
+                logger.warning("No record to check database relation")
+                return
+            }
+
             listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
                                                actionContext: actionContext(),
                                                previousTitle: previousTitle,
