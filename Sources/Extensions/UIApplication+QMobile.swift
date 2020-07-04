@@ -69,7 +69,7 @@ extension UIApplication {
     }
 
     open class var isLandscapeOrientation: Bool {
-        return UIApplication.shared.statusBarOrientation.isLandscape
+        return UIApplication.shared.topWindowScene?.interfaceOrientation.isLandscape ?? false
     }
 
     open class var isUserRegisteredForRemoteNotifications: Bool {
@@ -81,6 +81,18 @@ extension UIApplication {
         }
     }
 
+}
+
+extension UIInterfaceOrientation {
+
+    var isLandscape: Bool {
+        switch self {
+        case .landscapeLeft, .landscapeRight:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: responder
@@ -127,7 +139,7 @@ extension UIApplication {
 
     public var topWindow: UIWindow? {
         if #available(iOS 13.0, *) {
-            return self.topWindowScene?.windows.first ?? self.keyWindow
+            return self.topWindowScene?.windows.first
         } else {
             return self.keyWindow
         }
