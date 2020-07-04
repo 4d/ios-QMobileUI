@@ -10,6 +10,8 @@ import Foundation
 
 extension IndexPath {
 
+    static let zero = IndexPath(item: 0, section: 0)
+
     /// Is in first section
     var isFirstSection: Bool {
         return self.section == 0

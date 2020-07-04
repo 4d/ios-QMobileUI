@@ -166,82 +166,28 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     /// Prepare transition by providing selected record to detail form.
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // get current index
-        guard let indexPath = self.indexPath(for: sender) else { return }
-        // create a new entry to bind
-        guard let entry = self.dataSource?.entry() else { return }
-        entry.indexPath = indexPath
+        guard let indexPath = self.indexPath(for: sender) else {
+            if segue.identifier == selectedSegueIdentifier {
+                logger.warning("No collection index found for \(String(describing: sender)).")
+            }
+            return
+        }
+        let destination = segue.destination.firstController
 
-        if segue.destination.firstController is DetailsForm {
-            if let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName {
-                guard let record =  entry.record as? Record, let relationRecord = record[relationName] as? RecordBase else {
-                    logger.warning("Cannot display relation \(relationName)")
-                    return
-                }
-                guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
-                    logger.warning("Cannot get record attribute to make data source: \(relationRecord)")
-                    return
-                }
-
-                let entry = DataSourceEntry(dataSource: relationDataSource)
-                entry.indexPath = IndexPath(item: 0, section: 0)
-                segue.destination.prepare(with: entry)
-
-                logger.debug("Will display relation \(relationName) of record \(record)")
-                logger.debug("Go to \(String(describing: entry.record))")
+        if let destination = destination as? DetailsForm {
+            if let relationInfoUI = sender as? RelationInfoUI {
+                ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination, relationInfoUI: relationInfoUI)
             } else {
-                // If detail form of my ListForm
-                // pass to view controllers and views
-                segue.destination.prepare(with: entry)
-                segue.fix()
-
-                // listen to index path change, to scroll table to new selected record
-                entry.add(indexPathObserver: self)
+                ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination)
             }
-        } else if let listForm = segue.destination.firstController as? ListForm {
-            // CLEAN: factorize code with DetailForm for relation segue
-            let record = entry.record as? Record
-            guard let recordID = record?.store.objectID else {
-                logger.warning("No record to check database relation")
-                return
-            }
-
-            guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
+        } else if let destination = destination as? ListForm {
+            guard let relationInfoUI = sender as? RelationInfoUI else {
                 logger.warning("No information about the relation in UI")
                 return
             }
-            guard listForm.dataSource == nil else {
-                logger.info(" data source \(String(describing: listForm.dataSource))")
-                assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
-                return
-            }
-            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
-                else {
-                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
-                    logger.warning("Current table info \(String(describing: listForm.tableInfo))")
-                    return
-            }
-
-            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
-
-            var previousTitle: String?
-            if let record = record,
-                let tableInfo = tableInfo,
-                let relationFormat = relationInfoUI.relationFormat,
-                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
-                previousTitle = formatter.format(record)
-            }
-            let predicatString = "(\(inverseRelationInfo.name) = %@)"
-            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                               actionContext: actionContext(),
-                                               previousTitle: previousTitle,
-                                               relationName: relationOriginalName,
-                                               inverseRelationName: inverseRelationInfo.originalName)
-
-            if let record = record {
-                logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
-            }
+            ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination, relationInfoUI: relationInfoUI)
         }
+        segue.fix()
     }
 
     open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -590,11 +536,12 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 
 }
 
-extension ListFormTable: IndexPathObserver {
+// MARK: IndexPathObserver 
+extension ListFormTable {
 
-    func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    open func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
     }
-    func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    open func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
         if let indexPath = indexPath {
             self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         }

@@ -25,7 +25,7 @@ public struct FormContext {
 }
 
 /// A List form display a list of table data
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, ActionContextProvider, Form, Storyboardable {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObserver, ActionContextProvider, Form, Storyboardable {
 
     /// The table name displayed by this form.
     var tableName: String { get }

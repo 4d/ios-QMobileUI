@@ -149,92 +149,15 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination.firstController
 
-        guard let relationInfoUI = sender as? RelationInfoUI, let relationName = relationInfoUI.relationName else {
-            logger.warning("No information about the relation in UI. From form \(self)")
+        guard let relationInfoUI = sender as? RelationInfoUI else {
+            logger.error("No information about the relation in UI (button or label in user defined attribute. From form \(self)")
             return
         }
 
-        if let listForm = destination as? ListForm { // to Many relation
-            guard listForm.dataSource == nil else {
-                logger.info(" data source \(String(describing: listForm.dataSource))")
-                assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
-                return
-            }
-
-            var relationToSeach = relationName
-            if let lastIndex = relationName.lastIndex(of: ".") {
-                relationToSeach = String(relationName[relationName.index(lastIndex, offsetBy: 1)...]) // CHECK: if more than one path, it will not work?
-            }
-
-            guard let inverseRelationInfo = listForm.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationToSeach})
-                else {
-                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
-                    logger.warning("Current table info \(String(describing: listForm.tableInfo))")
-                    return
-            }
-
-            let relationOriginalName = listForm.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName // BUG check this value, with . too (why do not take from previsous search?)
-
-            var recordIDSearch: CVarArg?
-            var recordSearch: AnyObject?
-            if relationToSeach != relationName { // multilevel, we must find element instead of current record
-                if let lastIndex = relationName.lastIndex(of: ".") {
-                    if let intermediateRecord = record?.value(forKeyPath: String(relationName[..<lastIndex])) as? RecordBase {
-                        recordIDSearch = intermediateRecord.objectID
-                        recordSearch = intermediateRecord
-                    } else {
-                        logger.debug("No record to related for relation. no record linked for \(String(describing: self.record)) with relation \(relationName)")
-                    }
-                }// else must not occurs (asert?)
-            } else {
-                recordIDSearch = self.recordID
-                recordSearch = self.record
-            }
-
-            let relationTableInfo = (recordSearch as? RecordBase)?.tableInfo
-
-            var previousTitle: String?
-            if let relationFormat = relationInfoUI.relationFormat,
-                !relationFormat.isEmpty,
-                let record = recordSearch,
-                let tableInfo = relationTableInfo,
-                let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
-                previousTitle = formatter.format(record)
-            }
-            let predicatString = "(\(inverseRelationInfo.name) = %@)"
-
-            guard let recordID = recordIDSearch else {
-                logger.warning("No record to check database relation")
-                return
-            }
-
-            listForm.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                               actionContext: actionContext(),
-                                               previousTitle: previousTitle,
-                                               relationName: relationOriginalName,
-                                               inverseRelationName: inverseRelationInfo.originalName)
-
-            if let record = record {
-                logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
-            }
-        } else if destination is DetailsForm { // to 1 relation
-
-            guard let record = self._record, let relationRecord = record[relationName] as? RecordBase else {
-                logger.warning("Cannot display relation \(relationName)")
-                return
-            }
-
-            guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
-                logger.warning("Cannot get record attribute to make data source: \(relationRecord)")
-                return
-            }
-
-            let entry = DataSourceEntry(dataSource: relationDataSource)
-            entry.indexPath = IndexPath(item: 0, section: 0)
-            segue.destination.prepare(with: entry)
-
-            logger.debug("Will display relation \(relationName) of record \(record)")
-            logger.debug("Go to \(String(describing: entry.record))")
+        if let destination = destination as? ListForm { // 1 to Many relation
+            ApplicationCoordinator.transition(from: self, to: destination, relationInfoUI: relationInfoUI)
+        } else if let destination = destination as? DetailsForm { // 1 to 1 relation
+            ApplicationCoordinator.transition(from: self, to: destination, relationInfoUI: relationInfoUI)
         }
         segue.fix()
     }

@@ -420,8 +420,8 @@ private extension Array {
 // MARK: observer change on table
 extension Binder: IndexPathObserver {
 
-    func willChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?) {}
-    func didChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?) {
+    public func willChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?) {}
+    public func didChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?) {
         record = table?.record
     }
 }

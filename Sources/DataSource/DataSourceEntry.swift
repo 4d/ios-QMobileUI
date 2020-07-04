@@ -9,7 +9,7 @@
 import Foundation
 
 /// Interface for object which could listen to `IndexPath` change.
-protocol IndexPathObserver: NSObjectProtocol {
+public protocol IndexPathObserver: NSObjectProtocol {
 
     func willChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?)
     func didChangeIndexPath(from oldValue: IndexPath?, to newValue: IndexPath?)
@@ -161,14 +161,14 @@ extension DataSource {
 
 // MARK: UI
 import UIKit
-protocol DataSourceEntryUI {
+public protocol DataSourceEntryUI {
 
     /// Fill this UI with this entry data
     func prepare(with entry: DataSourceEntry)
 }
 
 extension UIViewController: DataSourceEntryUI {
-    func prepare(with entry: DataSourceEntry) {
+    public func prepare(with entry: DataSourceEntry) {
         if let navigation = self as? UINavigationController {
             navigation.navigationBar.table = entry
         }

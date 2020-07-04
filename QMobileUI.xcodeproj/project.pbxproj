@@ -207,6 +207,7 @@
 		48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */; };
 		48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
 		48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */; };
+		C40E40D524B0B56C0095E2FD /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */; };
 		C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */; };
 		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
@@ -423,6 +424,7 @@
 		48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QMobileDataStore.framework; path = Carthage/Build/iOS/QMobileDataStore.framework; sourceTree = "<group>"; };
+		C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashStatus.swift; sourceTree = "<group>"; };
 		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
@@ -999,6 +1001,7 @@
 			isa = PBXGroup;
 			children = (
 				48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */,
+				C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */,
 				4827B5D220FCE1C500570AC8 /* ApplicationFeedBack.swift */,
 				482FB4E7222FB75400D5A5FF /* ApplicationReachability.swift */,
 				48E49CE61EB9CA70002B60AF /* ApplicationStepLogging.swift */,
@@ -1427,6 +1430,7 @@
 				484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,
 				487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */,
+				C40E40D524B0B56C0095E2FD /* ApplicationCoordinator.swift in Sources */,
 				48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */,
 				48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */,
 				48BC8574226F0C8D00D548B2 /* UIAlertController+Picker.swift in Sources */,
