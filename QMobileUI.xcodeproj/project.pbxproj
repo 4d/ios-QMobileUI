@@ -62,6 +62,7 @@
 		483192562297F8F10041B41A /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483192532297F8000041B41A /* ImagePickerController.swift */; };
 		4832A7CD21A6E137000AC181 /* DataSource+IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */; };
 		483A964B21B04465009F2330 /* LoginForm+Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483A964A21B04465009F2330 /* LoginForm+Flow.swift */; };
+		483EE59024B24E270064EA0C /* UILabel+BindToRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483EE58F24B24E270064EA0C /* UILabel+BindToRelation.swift */; };
 		483FDA801E826C6F00FAF84B /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA7F1E826C6F00FAF84B /* Temp.swift */; };
 		483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA821E826C9900FAF84B /* UIView+QMobile.swift */; };
 		483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */; };
@@ -289,6 +290,7 @@
 		4832A7CC21A6E137000AC181 /* DataSource+IndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+IndexPath.swift"; sourceTree = "<group>"; };
 		483689E12385A0FB00A7C64A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		483A964A21B04465009F2330 /* LoginForm+Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LoginForm+Flow.swift"; sourceTree = "<group>"; };
+		483EE58F24B24E270064EA0C /* UILabel+BindToRelation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+BindToRelation.swift"; sourceTree = "<group>"; };
 		483FDA7F1E826C6F00FAF84B /* Temp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		483FDA821E826C9900FAF84B /* UIView+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+QMobile.swift"; sourceTree = "<group>"; };
 		483FDA841E82745200FAF84B /* IndexPath+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IndexPath+QMobile.swift"; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 				480392AD1E92930A008CF992 /* UIBarItem+BindTo.swift */,
 				48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */,
 				48F8855222E88A4000343CBD /* UIControl+BindToRelation.swift */,
+				483EE58F24B24E270064EA0C /* UILabel+BindToRelation.swift */,
 			);
 			path = Bind;
 			sourceTree = "<group>";
@@ -1449,6 +1452,7 @@
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
+				483EE59024B24E270064EA0C /* UILabel+BindToRelation.swift in Sources */,
 				48CC0335231CFE05007EF134 /* IBStoryboard.swift in Sources */,
 				489A68AB21B526AA00A90DC6 /* Form.swift in Sources */,
 				4846083D20AF07DD00EE4696 /* FloatingLabelTextField.swift in Sources */,
