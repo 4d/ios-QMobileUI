@@ -6,7 +6,7 @@
 //  Copyright © 2020 Eric Marchand. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 extension UILabel: RelationInfoUI {
 
