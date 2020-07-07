@@ -137,11 +137,6 @@ extension ApplicationPushNotification {
 /// Handling notification actions event
 extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
-    enum Identifiers {
-        static let customAction = "MY_CUSTOM_ACTION_IDENTIFIER"
-        static let customCategory = "MY_CUSTOM_CATEGORY_IDENTIFIER"
-    }
-
     /// Callback method when a notification alert is clicked
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
@@ -149,12 +144,22 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
         // Get notification content
         if let aps = userInfo["aps"] as? [String: AnyObject] {
-            // Check the action identifier
-            if response.actionIdentifier == Identifiers.customAction {
-                // Add custom behavior for your action 'customAction'
+            // TOOD here implement parsing of url or other meta data #118036
+            if let open = aps["open"] as? [String: AnyObject] {
+                if let table = open["table"] as? String {
+                    if let record = open["record"] {
+                        DispatchQueue.main.async {
+                            ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            ApplicationOpenAppBeta.open(tableName: table)
+                        }
+                    }
+
+                }
             }
         }
-
         completionHandler()
     }
 
