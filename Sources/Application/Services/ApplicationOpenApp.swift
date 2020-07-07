@@ -307,3 +307,97 @@ extension ApplicationOpenAppBeta: CNContactViewControllerDelegate {
 
 }
 */
+
+import QMobileDataStore
+import QMobileDataSync
+extension ApplicationOpenAppBeta {
+
+     public static func open(tableName: String) {
+        let storyboardName = "\(tableName)ListForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+
+        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+            logger.warning("Failed to present form for table '\(tableName)'")
+            return
+        }
+        guard let presenter = UIApplication.topViewController else {
+            logger.warning("Failed to get top form to present table '\(tableName)' form")
+            return
+        }
+        presenter.present(viewControllerToPresent, animated: true, completion: {
+            logger.debug("table '\(tableName)' form presented")
+        })
+    }
+
+     public static func open(tableName: String, primaryKeyValue: Any) {
+
+        let storyboardName = "\(tableName)DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+            logger.warning("Failed to present form for table '\(tableName)'")
+            return
+        }
+
+        let dataStore = ApplicationDataStore.instance.dataStore
+        _ = dataStore.perform(.background, wait: false, blockName: "Presenting \(tableName) record") { (context) in
+
+            guard let tableInfo = context.tableInfo(for: tableName) else {
+                logger.warning("Failed to get table info of table \(tableName) to present form")
+                return
+            }
+
+            //let predicate = tableInfo.api.predicate(for: primaryKeyValue)
+            guard let predicate  = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
+                logger.warning("Failed to request by predicate the \(tableName) with id \(primaryKeyValue) to present table '\(tableName)' form")
+                return
+            }
+
+            guard let relationDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore) else {
+                logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
+                return
+            }
+            let entry = DataSourceEntry(dataSource: relationDataSource)
+            entry.indexPath = IndexPath(item: 0, section: 0)
+
+            DispatchQueue.main.async {
+                guard let presenter = UIApplication.topViewController else {
+                    logger.warning("Failed to get top form to present table '\(tableName)' form")
+                    return
+                }
+                viewControllerToPresent.prepare(with: entry)
+
+                presenter.present(viewControllerToPresent, animated: true, completion: {
+                    logger.debug("table '\(tableName)' form presented")
+                })
+            }
+
+        }
+    }
+
+     public static func open(tableName: String, record: Record) {
+        let storyboardName = "\(tableName)DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+
+        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+            logger.warning("Failed to present form for table '\(tableName)'")
+            return
+        }
+        guard let presenter = UIApplication.topViewController else {
+            logger.warning("Failed to get top form to present table '\(tableName)' form")
+            return
+        }
+        guard let relationDataSource: DataSource = RecordDataSource(record: record.store) else {
+            logger.warning("Cannot get record attribute to make data source: \(record) when presenting form \(tableName)")
+            return
+        }
+        let entry = DataSourceEntry(dataSource: relationDataSource)
+        entry.indexPath = IndexPath(item: 0, section: 0)
+        viewControllerToPresent.prepare(with: entry)
+
+        presenter.present(viewControllerToPresent, animated: true, completion: {
+            logger.debug("table '\(tableName)' form presented")
+        })
+
+    }
+
+}
