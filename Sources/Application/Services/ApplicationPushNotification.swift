@@ -17,6 +17,7 @@ import QMobileAPI
 class ApplicationPushNotification: NSObject {
 
     var apiManagerObservers: [NSObjectProtocol] = []
+    var launchFromNotification = false
 
 }
 
@@ -36,7 +37,8 @@ extension ApplicationPushNotification: ApplicationService {
         // Check if app was launched from notification popup (ie. app was in background or not running)
         let notificationOption = launchOptions?[.remoteNotification]
         if let notification = notificationOption as? [String: AnyObject], let aps = notification["aps"] as? [String: AnyObject] {
-            // A notification was received. Use data from 'aps' dictionary here
+            logger.info("App launch with notification \(aps)")
+            launchFromNotification = true
         }
     }
 
@@ -74,10 +76,11 @@ extension ApplicationPushNotification {
                 if let error = error {
                     logger.warning("An error occurred while requesting remote notifications authorization : \(error)")
                 }
-
-                self?.setActionableNotification()
-
-                self?.getNotificationSettings()
+                guard let this = self else {
+                    logger.warning("Cannot retain in memory push notification authorization request")
+                    return
+                }
+                this.getNotificationSettings()
         }
     }
 
@@ -88,13 +91,16 @@ extension ApplicationPushNotification {
         }
     }
 
+    /// request notification setting
     func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.getNotificationSettings { settings in
             guard settings.authorizationStatus == .authorized else {
                 logger.debug("Push Notifications permission is not granted")
                 return
             }
             logger.debug("Push Notifications permission is granted")
+            self.setActionableNotification()
 
             /// Exclusively for testing on simulator
             if Device.current.isSimulator {
@@ -128,53 +134,106 @@ extension ApplicationPushNotification {
     }
 
     func setActionableNotification() {
-        let customAction = UNNotificationAction(identifier: Identifiers.customAction, title: "My custom action title", options: [.foreground])
-        let customCategory = UNNotificationCategory(identifier: Identifiers.customCategory, actions: [customAction], intentIdentifiers: [], options: [])
-        UNUserNotificationCenter.current().setNotificationCategories([customCategory])
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.setNotificationCategories([Action.open.unNotificationCategory])
     }
 }
 
 /// Handling notification actions event
 extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
-    /// Callback method when a notification alert is clicked
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    /// Enumeration of available action for notification
+    enum Action: String {
+        case open // open a form
+        case `default` = "com.apple.UNNotificationDefaultActionIdentifier" // UNNotificationDefaultActionIdentifier
+        /*case dismiss = "com.apple.UNNotificationDismissActionIdentifier" // UNNotificationDismissActionIdentifier*/
 
-        let userInfo = response.notification.request.content.userInfo
-
-        // Get notification content
-        if let aps = userInfo["aps"] as? [String: AnyObject] {
-            // TOOD here implement parsing of url or other meta data #118036
-            if let open = aps["open"] as? [String: AnyObject] {
-                if let table = open["table"] as? String {
-                    if let record = open["record"] {
-                        DispatchQueue.main.async {
-                            ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record)
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ApplicationOpenAppBeta.open(tableName: table)
-                        }
-                    }
-
-                }
+        var title: String {
+            switch self {
+            case .open, .default:
+                return "Open"//LOCALIZED
+            /*case .dismiss:
+                return "Dismiss"//LOCALIZED*/
             }
         }
-        completionHandler()
+
+        var category: String {
+            switch self {
+            case .open, .default:
+                return "OPEN_FORM"
+            /*case .dismiss:
+                return "Dismiss"*/
+            }
+        }
+
+        var unNotificationActions: [UNNotificationAction] {
+            switch self {
+            case .open:
+                return [UNNotificationAction(identifier: self.rawValue, title: self.title, options: [.foreground])]
+            default:
+                return []
+            }
+        }
+
+        var unNotificationCategory: UNNotificationCategory {
+            return UNNotificationCategory(identifier: self.category, actions: unNotificationActions, intentIdentifiers: [], options: [])
+        }
+
+        func execute(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
+            switch self {
+            case .open, .default:
+                if let table = userInfo["table"] as? String {
+                     onForeground {
+                        if let record = userInfo["record"] {
+                            ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in
+                                completionHandler()
+                            }
+                        } else {
+                            ApplicationOpenAppBeta.open(tableName: table) { _ in
+                                completionHandler()
+                            }
+                        }
+                    }
+                }
+            /*case .dismiss:
+                break*/
+            }
+        }
+    }
+
+    /// Callback method when a notification alert is clicked
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Get notification content
+        let userInfo = response.notification.request.content.userInfo
+        // check action to execute
+        if let action = Action(rawValue: response.actionIdentifier) {
+            let application = UIApplication.shared
+            logger.debug("Application state when receive notification: \(application.applicationState)")
+
+            if launchFromNotification {
+                /*DispatchQueue.userInitiated.after(10) {
+                    action.execute(userInfo, withCompletionHandler: completionHandler)
+                }*/
+            } else {
+                //action.execute(userInfo, withCompletionHandler: completionHandler)
+            }
+        } else {
+            completionHandler()
+        }
     }
 
     /// Notification signal is received while app is in foreground. This callback let you decide if you want to display an alert or just a badge, a sound, etc.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        let userInfo = notification.request.content.userInfo
+       // let userInfo = notification.request.content.userInfo
 
         // Get notification content
-        if let aps = userInfo["aps"] as? [String: AnyObject] {
+        /*if let aps = userInfo["aps"] as? [String: AnyObject] {
             // Check the action identifier
-            if let category = aps["category"] as? String, category == Identifiers.customAction {
+          /*  if let category = aps["category"] as? String, category == Identifiers.customAction {
                 // Add custom behavior for your action 'customAction'
-            }
-        }
+            }*/
+        }*/
         // completionHandler([.badge, .sound])
         completionHandler([.alert, .badge, .sound])
     }
