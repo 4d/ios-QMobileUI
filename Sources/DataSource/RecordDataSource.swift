@@ -15,7 +15,7 @@ class RecordDataSource: DataSource {
         self.init(tableInfo: record.tableInfo, predicate: record.predicate, dataStore: dataStore)
     }
 
-    init?(tableInfo: DataStoreTableInfo, predicate: NSPredicate, dataStore: DataStore = DataStoreFactory.dataStore) {
+    init?(tableInfo: DataStoreTableInfo, predicate: NSPredicate, dataStore: DataStore = DataStoreFactory.dataStore, context: DataStoreContext? = nil) {
         let tableName = tableInfo.name
         guard let firstField = tableInfo.fields.filter({$0.type.isSortable}).first else {
             return nil
@@ -25,7 +25,7 @@ class RecordDataSource: DataSource {
         var fetchRequest = dataStore.fetchRequest(tableName: tableName, sortDescriptors: sortDescriptors)
         fetchRequest.predicate = predicate
 
-        let fetchedResultsController = dataStore.fetchedResultsController(fetchRequest: fetchRequest)
+        let fetchedResultsController = dataStore.fetchedResultsController(fetchRequest: fetchRequest, sectionNameKeyPath: nil, context: context)
         try? fetchedResultsController.performFetch()
         super.init(fetchedResultsController: fetchedResultsController)
     }

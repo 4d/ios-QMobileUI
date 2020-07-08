@@ -342,7 +342,7 @@ extension ApplicationOpenAppBeta {
         }
 
         let dataStore = ApplicationDataStore.instance.dataStore
-        _ = dataStore.perform(.background, wait: false, blockName: "Presenting \(tableName) record") { (context) in
+        _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
             guard let tableInfo = context.tableInfo(for: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
@@ -351,7 +351,7 @@ extension ApplicationOpenAppBeta {
             }
 
             //let predicate = tableInfo.api.predicate(for: primaryKeyValue)
-            guard let predicate  = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
+            guard let predicate = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
                 logger.warning("Failed to request by predicate the \(tableName) with id \(primaryKeyValue) to present table '\(tableName)' form")
                 completion(false)
                 return
@@ -365,6 +365,12 @@ extension ApplicationOpenAppBeta {
             let entry = DataSourceEntry(dataSource: relationDataSource)
             entry.indexPath = IndexPath(item: 0, section: 0)
 
+            guard entry.record != nil else {
+                logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
+                completion(false)
+                return
+            }
+
             foreground {
                 guard let presenter = UIApplication.topViewController else {
                     logger.warning("Failed to get top form to present table '\(tableName)' form")
@@ -375,6 +381,104 @@ extension ApplicationOpenAppBeta {
 
                 presenter.present(viewControllerToPresent, animated: true, completion: {
                     logger.debug("table '\(tableName)' form presented")
+                    completion(true)
+                })
+            }
+
+        }
+    }
+
+    public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) {
+        let dataStore = ApplicationDataStore.instance.dataStore
+        _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
+
+            guard let tableInfo = context.tableInfo(for: tableName) else {
+                logger.warning("Failed to get table info of table \(tableName) to present form")
+                completion(false)
+                return
+            }
+
+            //let predicate = tableInfo.api.predicate(for: primaryKeyValue)
+            guard let predicate = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
+                logger.warning("Failed to request by predicate the \(tableName) with id \(primaryKeyValue) to present table '\(tableName)' form")
+                completion(false)
+                return
+            }
+
+            guard let relationDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore, context: context) else {
+                logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
+                completion(false)
+                return
+            }
+            let entry = DataSourceEntry(dataSource: relationDataSource)
+            entry.indexPath = .zero
+            guard let record = entry.record as? Record else {
+                logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
+                completion(false)
+                return
+            }
+
+            guard let relationShipInfo = tableInfo.relationshipsByName[relationName], let relationTable = relationShipInfo.destinationTable else {
+                logger.warning("Unknown \(relationName) for record \(tableName) \(primaryKeyValue)")
+                completion(false)
+                return
+            }
+
+            logger.info("Will display relation \(relationName) of record \(record)")
+
+            foreground {
+                let storyboardName = relationShipInfo.isToMany ? "\(relationTable.name)ListForm": "\(relationTable.name)DetailsForm"
+                let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+                guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+                    logger.warning("Failed to present form for table '\(tableName)'")
+                    completion(false)
+                    return
+                }
+
+                guard let presenter = UIApplication.topViewController else {
+                    logger.warning("Failed to get top form to present table '\(tableName)' form")
+                    completion(false)
+                    return
+                }
+
+                if relationShipInfo.isToMany {
+                    if let destination = viewControllerToPresent as? ListForm {
+                        assertionFailure("\(destination) could not be presented. Not implemented")
+                        /*let predicatString = "(\(inverseRelationInfo.name) = %@)"
+
+                        if let relationFormat = relationInfoUI.relationFormat,
+                            !relationFormat.isEmpty,
+                            let record = recordSearch,
+                            let tableInfo = recordSearch?.tableInfo,
+                            let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
+                            previousTitle = formatter.format(record)
+
+
+                            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
+                                                                  actionContext: source.actionContext(),
+                                                                  previousTitle: previousTitle,
+                                                                  relationName: relationOriginalName,
+                                                                  inverseRelationName: inverseRelationInfo.originalName)
+                        }*/
+
+                    } else {
+                        logger.warning("Failed to transition to relation \(relationName)")
+                        completion(false)
+                    }
+                } else {
+                    if let relationRecord = record[relationName] as? RecordBase, let relationDataSource = RecordDataSource(record: relationRecord) {
+                        let relationEntry = DataSourceEntry(dataSource: relationDataSource)
+                        relationEntry.indexPath = .zero
+                        viewControllerToPresent.prepare(with: relationEntry)
+                    } else {
+                        logger.warning("Failed to transition to relation \(relationName)")
+                        completion(false)
+                        return
+                    }
+                }
+
+                presenter.present(viewControllerToPresent, animated: true, completion: {
+                    logger.debug("table '\(String(describing: relationShipInfo.destinationTable?.name))' form presented")
                     completion(true)
                 })
             }
@@ -402,7 +506,7 @@ extension ApplicationOpenAppBeta {
             return
         }
         let entry = DataSourceEntry(dataSource: relationDataSource)
-        entry.indexPath = IndexPath(item: 0, section: 0)
+        entry.indexPath = .zero
         viewControllerToPresent.prepare(with: entry)
 
         presenter.present(viewControllerToPresent, animated: true, completion: {

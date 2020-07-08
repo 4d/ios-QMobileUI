@@ -185,8 +185,14 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
                 if let table = userInfo["table"] as? String {
                      onForeground {
                         if let record = userInfo["record"] {
-                            ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in
-                                completionHandler()
+                            if let relationName = userInfo["relation"] as? String {
+                                ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in
+                                    completionHandler()
+                                }
+                            } else {
+                                ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in
+                                    completionHandler()
+                                }
                             }
                         } else {
                             ApplicationOpenAppBeta.open(tableName: table) { _ in
@@ -194,6 +200,8 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
                             }
                         }
                     }
+                } else {
+                    completionHandler()
                 }
             /*case .dismiss:
                 break*/
@@ -210,6 +218,7 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
             let application = UIApplication.shared
             logger.debug("Application state when receive notification: \(application.applicationState)")
             if launchFromNotification {
+                // TODO register to app launched and logged before executing the action...
                 DispatchQueue.userInitiated.after(10) {
                     action.execute(userInfo, withCompletionHandler: completionHandler)
                 }
