@@ -209,13 +209,12 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         if let action = Action(rawValue: response.actionIdentifier) {
             let application = UIApplication.shared
             logger.debug("Application state when receive notification: \(application.applicationState)")
-
             if launchFromNotification {
-                /*DispatchQueue.userInitiated.after(10) {
+                DispatchQueue.userInitiated.after(10) {
                     action.execute(userInfo, withCompletionHandler: completionHandler)
-                }*/
+                }
             } else {
-                //action.execute(userInfo, withCompletionHandler: completionHandler)
+                action.execute(userInfo, withCompletionHandler: completionHandler)
             }
         } else {
             completionHandler()
