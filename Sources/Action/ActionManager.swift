@@ -111,6 +111,24 @@ public class ActionManager {
             return true
         }
 
+        append { result, _, _, _ in
+            guard let table = result.table else { return false }
+            logger.info("Want to show form of table \(table) after action")
+
+            foreground {
+                if let record = result.record {
+                    if let relationName = result.relation {
+                        ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in }
+                    } else {
+                        ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in }
+                    }
+                } else {
+                    ApplicationOpenAppBeta.open(tableName: table) { _ in }
+                }
+            }
+            return true
+        }
+
         #if DEBUG
         append { _, _, _, _ in
             /*if _ = result.goTo {
@@ -398,6 +416,16 @@ extension ActionResult {
         }
         return Action.decode(fromJSON: jsonString)
     }*/
+
+    fileprivate var table: String? {
+        return json["table"].string
+    }
+    fileprivate var record: Any? {
+        return json["record"].rawValue
+    }
+    fileprivate var relation: String? {
+        return json["relation"].string
+    }
 
     typealias Validation = (String?, ValidationError)
 
