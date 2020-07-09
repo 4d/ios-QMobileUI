@@ -186,16 +186,16 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
                      onForeground {
                         if let record = userInfo["record"] {
                             if let relationName = userInfo["relation"] as? String {
-                                ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in
+                                ApplicationOpenApp.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in
                                     completionHandler()
                                 }
                             } else {
-                                ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in
+                                ApplicationOpenApp.open(tableName: table, primaryKeyValue: record) { _ in
                                     completionHandler()
                                 }
                             }
                         } else {
-                            ApplicationOpenAppBeta.open(tableName: table) { _ in
+                            ApplicationOpenApp.open(tableName: table) { _ in
                                 completionHandler()
                             }
                         }

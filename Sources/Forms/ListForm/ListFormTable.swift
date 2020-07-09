@@ -176,16 +176,16 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
         if let destination = destination as? DetailsForm {
             if let relationInfoUI = sender as? RelationInfoUI {
-                ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination, relationInfoUI: relationInfoUI)
+                ApplicationCoordinator.prepare(from: self, at: indexPath, to: destination, relationInfoUI: relationInfoUI)
             } else {
-                ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination)
+                ApplicationCoordinator.prepare(from: self, at: indexPath, to: destination)
             }
         } else if let destination = destination as? ListForm {
             guard let relationInfoUI = sender as? RelationInfoUI else {
                 logger.warning("No information about the relation in UI")
                 return
             }
-            ApplicationCoordinator.transition(from: self, indexPath: indexPath, to: destination, relationInfoUI: relationInfoUI)
+            ApplicationCoordinator.prepare(from: self, at: indexPath, to: destination, relationInfoUI: relationInfoUI)
         }
         segue.fix()
     }

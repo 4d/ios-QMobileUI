@@ -11,7 +11,7 @@ import UIKit
 
 /// Open native app
 /// https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html
-open class ApplicationOpenAppBeta: NSObject {
+open class ApplicationOpenApp: NSObject {
 
     public static var window: UIWindow?
 
@@ -28,19 +28,19 @@ open class ApplicationOpenAppBeta: NSObject {
     public static func open(kind: Kind, string: String) {
         switch kind {
         case .safari:
-            ApplicationOpenAppBeta.openSafari(url: string)
+            ApplicationOpenApp.openSafari(url: string)
         case .map:
-            ApplicationOpenAppBeta.openMap(address: string)
+            ApplicationOpenApp.openMap(address: string)
         case .phone:
-            ApplicationOpenAppBeta.openPhone(phone: string)
+            ApplicationOpenApp.openPhone(phone: string)
         case .sms:
-            ApplicationOpenAppBeta.openSMS(phone: string)
+            ApplicationOpenApp.openSMS(phone: string)
         case .faceTime:
-            ApplicationOpenAppBeta.openFaceTime(call: string)
+            ApplicationOpenApp.openFaceTime(call: string)
         case .faceTimeAudio:
-            ApplicationOpenAppBeta.openFaceTimeAudio(call: string)
+            ApplicationOpenApp.openFaceTimeAudio(call: string)
         case .mail:
-            ApplicationOpenAppBeta.openMail(mailto: string)
+            ApplicationOpenApp.openMail(mailto: string)
         }
     }
 
@@ -140,14 +140,14 @@ extension String {
     }
 }
 
-extension ApplicationOpenAppBeta {
+extension ApplicationOpenApp {
 
     class ActionOpenTapGestureRecognizer: UITapGestureRecognizer {
 
         var text: String
-        var kind: ApplicationOpenAppBeta.Kind
+        var kind: ApplicationOpenApp.Kind
 
-        init?(text: String, kind: ApplicationOpenAppBeta.Kind) {
+        init?(text: String, kind: ApplicationOpenApp.Kind) {
             self.text = text
             self.kind = kind
             super.init(target: nil, action: nil)
@@ -158,17 +158,17 @@ extension ApplicationOpenAppBeta {
 
         @objc func tapURLFunction(_ sender: UITapGestureRecognizer) {
             if sender is ActionOpenTapGestureRecognizer {
-                ApplicationOpenAppBeta.open(kind: kind, string: text)
+                ApplicationOpenApp.open(kind: kind, string: text)
             }
         }
     }
 
-    public static func openActionTagGesture(text: String, kind: ApplicationOpenAppBeta.Kind) -> UITapGestureRecognizer? {
+    public static func openActionTagGesture(text: String, kind: ApplicationOpenApp.Kind) -> UITapGestureRecognizer? {
         return ActionOpenTapGestureRecognizer(text: text, kind: kind)
     }
 }
 
-extension ApplicationOpenAppBeta {
+extension ApplicationOpenApp {
 	fileprivate static func controller(_ title: String, _ message: String, _ actions: [UIAlertAction], _ sender: Any) -> UIAlertController {
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet).checkPopUp(sender)
 
@@ -192,11 +192,11 @@ extension ApplicationOpenAppBeta {
         var actions: [UIAlertAction] = []
 
         actions.append(UIAlertAction(title: "Get Directions", style: .default) { _ in
-            ApplicationOpenAppBeta.openMap(destination: address)
+            ApplicationOpenApp.openMap(destination: address)
             self.window = nil
         })
         actions.append(UIAlertAction(title: "Open in Maps", style: .default) { _ in
-            ApplicationOpenAppBeta.openMap(address: address)
+            ApplicationOpenApp.openMap(address: address)
             self.window = nil
         })
         /*actions.append(UIAlertAction(title: "Add to Contacts", style: .default) { _ in
@@ -219,15 +219,15 @@ extension ApplicationOpenAppBeta {
         var actions: [UIAlertAction] = []
 
         actions.append(UIAlertAction(title: "Call", style: .default) { _ in
-            ApplicationOpenAppBeta.openPhone(phone: phone)
+            ApplicationOpenApp.openPhone(phone: phone)
             self.window = nil
         })
         actions.append(UIAlertAction(title: "Message", style: .default) { _ in
-            ApplicationOpenAppBeta.openSMS(phone: phone)
+            ApplicationOpenApp.openSMS(phone: phone)
             self.window = nil
         })
         actions.append(UIAlertAction(title: "FaceTime", style: .default) { _ in
-            ApplicationOpenAppBeta.openFaceTime(call: phone)
+            ApplicationOpenApp.openFaceTime(call: phone)
             self.window = nil
         })
         actions.append(UIAlertAction(title: "Copy Phone Number", style: .default) { _ in
@@ -252,11 +252,11 @@ extension ApplicationOpenAppBeta {
 
 }
 
-extension ApplicationOpenAppBeta {
+extension ApplicationOpenApp {
 
     private class MenuActionOpenTapGestureRecognizer: ActionOpenTapGestureRecognizer {
 
-        override init?(text: String, kind: ApplicationOpenAppBeta.Kind) {
+        override init?(text: String, kind: ApplicationOpenApp.Kind) {
             super.init(text: text, kind: kind)
         }
 
@@ -274,11 +274,12 @@ extension ApplicationOpenAppBeta {
         }
     }
 
-    public static func openMenuActionTagGesture(text: String, kind: ApplicationOpenAppBeta.Kind) -> UITapGestureRecognizer? {
+    public static func openMenuActionTagGesture(text: String, kind: ApplicationOpenApp.Kind) -> UITapGestureRecognizer? {
         return MenuActionOpenTapGestureRecognizer(text: text, kind: kind)
     }
 }
 
+public typealias ApplicationOpenAppBeta = ApplicationOpenApp // for compatibility
 /*
 import Contacts
 import ContactsUI
@@ -310,7 +311,7 @@ extension ApplicationOpenAppBeta: CNContactViewControllerDelegate {
 
 import QMobileDataStore
 import QMobileDataSync
-extension ApplicationOpenAppBeta {
+extension ApplicationOpenApp {
 
     public static func open(tableName: String, completion: @escaping (Bool) -> Void) {
         let storyboardName = "\(tableName)ListForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data

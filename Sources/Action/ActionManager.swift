@@ -118,12 +118,12 @@ public class ActionManager {
             foreground {
                 if let record = result.record {
                     if let relationName = result.relation {
-                        ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in }
+                        ApplicationOpenApp.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in }
                     } else {
-                        ApplicationOpenAppBeta.open(tableName: table, primaryKeyValue: record) { _ in }
+                        ApplicationOpenApp.open(tableName: table, primaryKeyValue: record) { _ in }
                     }
                 } else {
-                    ApplicationOpenAppBeta.open(tableName: table) { _ in }
+                    ApplicationOpenApp.open(tableName: table) { _ in }
                 }
             }
             return true

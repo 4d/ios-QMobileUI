@@ -155,9 +155,9 @@ open class DetailsFormBare: UIViewController, DetailsForm {
         }
 
         if let destination = destination as? ListForm { // 1 to Many relation
-            ApplicationCoordinator.transition(from: self, to: destination, relationInfoUI: relationInfoUI)
+            ApplicationCoordinator.prepare(from: self, to: destination, relationInfoUI: relationInfoUI)
         } else if let destination = destination as? DetailsForm { // 1 to 1 relation
-            ApplicationCoordinator.transition(from: self, to: destination, relationInfoUI: relationInfoUI)
+            ApplicationCoordinator.prepare(from: self, to: destination, relationInfoUI: relationInfoUI)
         }
         segue.fix()
     }
