@@ -15,13 +15,11 @@ import QMobileAPI
 
 import XCGLogger
 import Prephirences
-import FileKit
-import ZIPFoundation
 import SwiftyJSON
 
-class ApplicationCoordinator: NSObject {
+open class ApplicationCoordinator: NSObject {
 
-    enum State {
+    public enum State {
         case main // onboarding?
         case mainNavigation
         case login
@@ -87,6 +85,28 @@ extension ApplicationCoordinator: ApplicationService {
             completion(true)
         }
     }
+
+    static func present(_ storyboard: UIStoryboard, completion: @escaping (Bool) -> Void) {
+        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+            logger.warning("Failed to present '\(storyboard)'. Cannot instantiate initial form.")
+            completion(false)
+            return
+        }
+
+        present(viewControllerToPresent, completion: completion)
+    }
+
+    fileprivate static func storyboardTableName(_ tableName: String) -> String {
+        var finalTableName = tableName
+        let dataStore = ApplicationDataStore.instance.dataStore // XXX this code will not work if core data not loaede yet...
+        _ = dataStore.perform(.foreground, wait: true, blockName: "GetOriginalName:\(tableName)") { context in
+            if let tableInfo = context.tableInfo(forOriginalName: tableName) {
+                finalTableName = tableInfo.name
+            }
+        }
+        return finalTableName
+    }
+
 }
 
 // MARK: - transition
@@ -321,7 +341,7 @@ extension ApplicationCoordinator {
 extension ApplicationCoordinator {
 
     public static func open(tableName: String, completion: @escaping (Bool) -> Void) {
-        let storyboardName = "\(tableName)ListForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboardName = "\(storyboardTableName(tableName))ListForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
         let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
 
         guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
@@ -337,7 +357,7 @@ extension ApplicationCoordinator {
     }
 
     public static func open(tableName: String, primaryKeyValue: Any, completion: @escaping (Bool) -> Void) {
-        let storyboardName = "\(tableName)DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboardName = "\(storyboardTableName(tableName))DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
         let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
         guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
             logger.warning("Failed to present form for table '\(tableName)'")
@@ -348,7 +368,7 @@ extension ApplicationCoordinator {
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
-            guard let tableInfo = context.tableInfo(for: tableName) else {
+            guard let tableInfo = context.tableInfo(forOriginalName: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
                 completion(false)
                 return
@@ -391,7 +411,7 @@ extension ApplicationCoordinator {
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
-            guard let tableInfo = context.tableInfo(for: tableName) else {
+            guard let tableInfo = context.tableInfo(forOriginalName: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
                 completion(false)
                 return
@@ -480,14 +500,8 @@ extension ApplicationCoordinator {
     }
 
     public static func open(tableName: String, record: Record, completion: @escaping (Bool) -> Void) {
-        let storyboardName = "\(tableName)DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
+        let storyboardName = "\(storyboardTableName(tableName))DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
         let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
-
-        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
-            logger.warning("Failed to present form for table '\(tableName)'")
-            completion(false)
-            return
-        }
 
         guard let relationDataSource: DataSource = RecordDataSource(record: record.store) else {
             logger.warning("Cannot get record attribute to make data source: \(record) when presenting form \(tableName)")
@@ -496,6 +510,12 @@ extension ApplicationCoordinator {
         }
         let entry = DataSourceEntry(dataSource: relationDataSource)
         entry.indexPath = .zero
+
+        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+            logger.warning("Failed to present form for table '\(tableName)'")
+            completion(false)
+            return
+        }
         viewControllerToPresent.prepare(with: entry)
 
         present(viewControllerToPresent) { presented in
@@ -504,16 +524,23 @@ extension ApplicationCoordinator {
         }
     }
 
+    public static func open<S: Storyboardable>(storyboardable: S.Type, completion: @escaping (Bool) -> Void) {
+        present(storyboardable.storyboard) { presented in
+            logger.debug("present '\(storyboardable)'")
+            completion(presented)
+        }
+    }
+
     public static func open(_ state: State, completion: @escaping (Bool) -> Void) {
         switch state {
         case .login:
-            break
+            self.open(storyboardable: LoginForm.self, completion: completion)
         case .main:
-            break
+            self.open(storyboardable: Main.self, completion: completion)
         case .settings:
-            break
+            self.open(storyboardable: SettingsForm.self, completion: completion)
         case .mainNavigation:
-            break
+            self.open(storyboardable: MainNavigation.self, completion: completion)
         case .table(let tableName):
             self.open(tableName: tableName, completion: completion)
         case .record(let tableName, let primaryKeyValue):
