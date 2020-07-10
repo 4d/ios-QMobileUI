@@ -112,19 +112,10 @@ public class ActionManager {
         }
 
         append { result, _, _, _ in
-            guard let table = result.table else { return false }
-            logger.info("Want to show form of table \(table) after action")
+            guard let state = result.coordinatorState else { return false }
 
             foreground {
-                if let record = result.record {
-                    if let relationName = result.relation {
-                        ApplicationOpenApp.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in }
-                    } else {
-                        ApplicationOpenApp.open(tableName: table, primaryKeyValue: record) { _ in }
-                    }
-                } else {
-                    ApplicationOpenApp.open(tableName: table) { _ in }
-                }
+                ApplicationCoordinator.open(state) { _ in }
             }
             return true
         }
@@ -417,14 +408,18 @@ extension ActionResult {
         return Action.decode(fromJSON: jsonString)
     }*/
 
-    fileprivate var table: String? {
-        return json["table"].string
-    }
-    fileprivate var record: Any? {
-        return json["record"].rawValue
-    }
-    fileprivate var relation: String? {
-        return json["relation"].string
+    fileprivate var coordinatorState: ApplicationCoordinator.State? {
+        if let table = json["table"].string {
+            if json["record"].exists() {
+                let record = json["record"].rawValue
+                if let relation = json["relation"].string {
+                    return .relation(table, record, relation)
+                }
+                return .record(table, record)
+            }
+            return .table(table)
+        }
+        return nil
     }
 
     typealias Validation = (String?, ValidationError)

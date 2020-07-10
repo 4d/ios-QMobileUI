@@ -182,29 +182,17 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         func execute(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
             switch self {
             case .open, .default:
-                if let table = userInfo["table"] as? String {
-                     onForeground {
-                        if let record = userInfo["record"] {
-                            if let relationName = userInfo["relation"] as? String {
-                                ApplicationOpenApp.open(tableName: table, primaryKeyValue: record, relationName: relationName) { _ in
-                                    completionHandler()
-                                }
-                            } else {
-                                ApplicationOpenApp.open(tableName: table, primaryKeyValue: record) { _ in
-                                    completionHandler()
-                                }
-                            }
-                        } else {
-                            ApplicationOpenApp.open(tableName: table) { _ in
-                                completionHandler()
-                            }
+                if let state = ApplicationCoordinator.State.from(userInfo) {
+                    onForeground {
+                        ApplicationCoordinator.open(state) { _ in
+                            completionHandler()
                         }
                     }
                 } else {
                     completionHandler()
                 }
-            /*case .dismiss:
-                break*/
+                /*case .dismiss:
+                 break*/
             }
         }
     }
