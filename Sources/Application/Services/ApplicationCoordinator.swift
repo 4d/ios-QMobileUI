@@ -17,6 +17,7 @@ import XCGLogger
 import Prephirences
 import FileKit
 import ZIPFoundation
+import SwiftyJSON
 
 class ApplicationCoordinator: NSObject {
 
@@ -48,6 +49,20 @@ class ApplicationCoordinator: NSObject {
              }*/
             return nil
         }
+
+        static func from(_ json: JSON) -> State? {
+            if let table = json["table"].string {
+                if json["record"].exists() {
+                    let record = json["record"].rawValue
+                    if let relation = json["relation"].string {
+                        return .relation(table, record, relation)
+                    }
+                    return .record(table, record)
+                }
+                return .table(table)
+            }
+             return nil
+         }
     }
 
 }

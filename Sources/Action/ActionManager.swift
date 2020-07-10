@@ -409,17 +409,7 @@ extension ActionResult {
     }*/
 
     fileprivate var coordinatorState: ApplicationCoordinator.State? {
-        if let table = json["table"].string {
-            if json["record"].exists() {
-                let record = json["record"].rawValue
-                if let relation = json["relation"].string {
-                    return .relation(table, record, relation)
-                }
-                return .record(table, record)
-            }
-            return .table(table)
-        }
-        return nil
+        return ApplicationCoordinator.State.from(json)
     }
 
     typealias Validation = (String?, ValidationError)
