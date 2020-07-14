@@ -182,9 +182,9 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         func execute(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
             switch self {
             case .open, .default:
-                if let state = ApplicationCoordinator.State.from(userInfo) {
+                if let deepLink = DeepLink.from(userInfo) {
                     onForeground {
-                        ApplicationCoordinator.open(state) { _ in
+                        ApplicationCoordinator.open(deepLink) { _ in
                             completionHandler()
                         }
                     }

@@ -17,64 +17,48 @@ import XCGLogger
 import Prephirences
 import SwiftyJSON
 
-open class ApplicationCoordinator: NSObject {
-
-    public enum State {
-        case main // onboarding?
-        case mainNavigation
-        case login
-        case settings
-        case table(String)
-        case record(String, Any)
-        case relation(String, Any, String)
-
-        // Return state from push notif informaton for instance
-        static func from(_ userInfo: [AnyHashable: Any]) -> State? {
-            if let table = userInfo["table"] as? String {
-                if let record = userInfo["record"] {
-                    if let relationName = userInfo["relation"] as? String {
-                        return .relation(table, record, relationName)
-                    } else {
-                        return .record(table, record)
-                    }
-                } else {
-                    return .table(table)
-                }
-            } else if let settings = userInfo["setting"] as? Bool, settings {
-                return .settings
-            } /*else if settings = userInfo["logout"] as? Bool, settings {
-             return .login // need more things to do like invalidate token etc...
-             }*/
-            return nil
-        }
-
-        static func from(_ json: JSON) -> State? {
-            if let table = json["table"].string {
-                if json["record"].exists() {
-                    let record = json["record"].rawValue
-                    if let relation = json["relation"].string {
-                        return .relation(table, record, relation)
-                    }
-                    return .record(table, record)
-                }
-                return .table(table)
-            }
-             return nil
-         }
-    }
-
-}
+open class ApplicationCoordinator: NSObject {}
 
 extension ApplicationCoordinator: ApplicationService {
 
     static var instance: ApplicationCoordinator = ApplicationCoordinator()
 
-    func register<M: Main>(_ main: M) {
-        if ApplicationAuthenticate.hasLogin {
-
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        guard let options = launchOptions,
+            /*let userActivtyDictionary = options[.userActivityDictionary] as? [UIApplication.LaunchOptionsKey: Any],
+             let userActivityType = userActivtyDictionary[.userActivityType] as? String, userActivityType == NSUserActivityTypeBrowsingWeb */
+            let url = options[.url] as? URL,
+            let state = DeepLink.from(url) else {
+                return
+        }
+        ApplicationCoordinator.open(state) { _ in
+            logger.info("Open \(state) from user activity \(url).")
         }
     }
 
+    public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
+        guard let state = DeepLink.from(url) else {
+            return
+        }
+        ApplicationCoordinator.open(state) { _ in
+            logger.info("Open \(state) from url.")
+        }
+    }
+
+    public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let url = userActivity.webpageURL,
+            let state = DeepLink.from(url) else {
+                return false
+        }
+        ApplicationCoordinator.open(state) { _ in
+            logger.info("Open \(state) from user activity \(url)")
+        }
+        return true
+    }
+}
+
+extension ApplicationCoordinator {
     static func present(_ viewControllerToPresent: UIViewController, completion: @escaping (Bool) -> Void) {
         guard let presenter = UIApplication.topViewController else {
             logger.warning("Failed to present \(viewControllerToPresent). No top controller.")
@@ -531,8 +515,8 @@ extension ApplicationCoordinator {
         }
     }
 
-    public static func open(_ state: State, completion: @escaping (Bool) -> Void) {
-        switch state {
+    public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        switch deepLink {
         case .login:
             self.open(storyboardable: LoginForm.self, completion: completion)
         case .main:

@@ -12,7 +12,7 @@ import UIKit
 import QMobileDataStore
 import QMobileAPI
 
-public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Form, Storyboardable {
+public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Form, Storyboardable, DeepLinkable {
 
     // the root view of form
     var view: UIView! {get set}
@@ -28,6 +28,14 @@ public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Fo
 }
 
 extension DetailsForm {
+
+    public var deepLink: DeepLink? {
+        guard let tableName = self.tableName,
+            let primaryKeyValue = self._record?.primaryKeyValue else {
+                return nil
+        }
+        return .record(tableName, primaryKeyValue) // TODO manage by relation deeplink, maybe as history
+    }
 
     // MARK: model info from DataSource
 

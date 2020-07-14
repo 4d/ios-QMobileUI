@@ -25,7 +25,7 @@ public struct FormContext {
 }
 
 /// A List form display a list of table data
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObserver, ActionContextProvider, Form, Storyboardable {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObserver, ActionContextProvider, Form, Storyboardable, DeepLinkable {
 
     /// The table name displayed by this form.
     var tableName: String { get }
@@ -41,6 +41,13 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObser
 }
 
 extension ListForm {
+
+    public var deepLink: DeepLink? {
+        /*if context = self.formContext {
+            // return .relation(T##String, T##Any, T##String) // TODO manage by relation deeplink
+        }*/
+        return .table(self.tableName)
+    }
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {
         // Give view information about records, let binding fill the UI components

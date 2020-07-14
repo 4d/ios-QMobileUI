@@ -112,10 +112,10 @@ public class ActionManager {
         }
 
         append { result, _, _, _ in
-            guard let state = result.coordinatorState else { return false }
+            guard let deepLink = result.deepLink else { return false }
 
             foreground {
-                ApplicationCoordinator.open(state) { _ in }
+                ApplicationCoordinator.open(deepLink) { _ in }
             }
             return true
         }
@@ -408,8 +408,8 @@ extension ActionResult {
         return Action.decode(fromJSON: jsonString)
     }*/
 
-    fileprivate var coordinatorState: ApplicationCoordinator.State? {
-        return ApplicationCoordinator.State.from(json)
+    fileprivate var deepLink: DeepLink? {
+        return DeepLink.from(json)
     }
 
     typealias Validation = (String?, ValidationError)

@@ -211,6 +211,7 @@
 		C40E40D524B0B56C0095E2FD /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */; };
 		C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */; };
 		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
+		C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46F7C6E24BE3271005CF355 /* DeepLink.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
@@ -429,6 +430,7 @@
 		C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashStatus.swift; sourceTree = "<group>"; };
 		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
+		C46F7C6E24BE3271005CF355 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
@@ -513,6 +515,7 @@
 				480392BC1E929524008CF992 /* QApplication.swift */,
 				48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */,
 				480392A81E92916E008CF992 /* ApplicationServices.swift */,
+				C46F7C6E24BE3271005CF355 /* DeepLink.swift */,
 				48F8C66022414C2B00F12922 /* Crash */,
 				48E49CE31EB9CA15002B60AF /* Services */,
 			);
@@ -1521,6 +1524,7 @@
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
 				48DCEAE3212C528A00473910 /* ValueTransformers.swift in Sources */,
+				C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */,
 				48016A6C22BB88A5005A7C65 /* TimeIntervalRow.swift in Sources */,
 				4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */,
 				4869D60B223BA4410042379F /* ActionManager.swift in Sources */,
