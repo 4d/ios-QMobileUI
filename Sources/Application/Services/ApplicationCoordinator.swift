@@ -452,14 +452,20 @@ extension ApplicationCoordinator {
                 }
 
                 if relationShipInfo.isToMany {
-                    if let destination = viewControllerToPresent.firstController as? ListForm, let inverseRelationShip = relationShipInfo.inverseRelationship {
-                        let predicatString = "(\(inverseRelationShip.name) = %@)"
+                    if let destination = viewControllerToPresent.firstController as? ListForm, let inverseRelationInfo = relationShipInfo.inverseRelationship {
+                        let predicatString = "(\(inverseRelationInfo.name) = %@)"
+                        let relationFormat: String? = nil //"%Raison_Sociale%" // TODO DEEP LINK WHERE TO TAKE IT?
+                        var previousTitle: String?
+                        if let relationFormat = relationFormat,
+                            let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
+                            previousTitle = formatter.format(record)
+                        }
 
                         destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, record.store.objectID),
-                                                              actionContext: nil,
-                                                              previousTitle: nil,
+                                                              actionContext: entry,
+                                                              previousTitle: previousTitle,
                                                               relationName: relationShipInfo.originalName,
-                                                              inverseRelationName: inverseRelationShip.originalName)
+                                                              inverseRelationName: inverseRelationInfo.originalName)
 
                     } else {
                         logger.warning("Failed to transition to relation \(relationName)")
