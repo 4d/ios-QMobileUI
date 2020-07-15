@@ -236,8 +236,6 @@ extension SettingsForm: ServerStatusListener {
 
 extension SettingsForm: DeepLinkable {
 
-    public var deepLink: DeepLink? {
-        return .settings
-    }
+    public var deepLink: DeepLink? { return .settings }
 
 }

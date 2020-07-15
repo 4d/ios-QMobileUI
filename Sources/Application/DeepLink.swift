@@ -183,3 +183,95 @@ extension DeepLink: Codable {
         }
     }
 }
+
+extension DeepLink: Equatable {
+
+    public static func == (lhs: DeepLink, rhs: DeepLink) -> Bool {
+        switch (lhs, rhs) {
+        case (.main, .main):
+            return true
+        case (.mainNavigation, .mainNavigation):
+            return true
+        case (.login, .login):
+            return true
+        case (.settings, .settings):
+            return true
+        case (let .table(table1), let .table(table2)):
+            return table1 == table2
+        case (let .record(table1, primary1), let .record(table2, primary2)):
+            guard table1 == table2 else {
+                return false
+            }
+            // suppose type of primary keys...
+            if let primary1 = primary1 as? String, let primary2 = primary2 as? String {
+                return primary1 == primary2
+            }
+            if let primary1 = primary1 as? Double, let primary2 = primary2 as? Double {
+                return primary1 == primary2
+            }
+            if let primary1 = primary1 as? Int, let primary2 = primary2 as? Int {
+                return primary1 == primary2
+            }
+            return false
+        case (let .relation(table1, primary1, relation1), let .relation(table2, primary2, relation2)):
+            guard table1 == table2 && relation1 == relation2 else {
+                return false
+            }
+            // suppose type of primary keys...
+            if let primary1 = primary1 as? String, let primary2 = primary2 as? String {
+                return primary1 == primary2
+            }
+            if let primary1 = primary1 as? Double, let primary2 = primary2 as? Double {
+                return primary1 == primary2
+            }
+            if let primary1 = primary1 as? Int, let primary2 = primary2 as? Int {
+                return primary1 == primary2
+            }
+            return false
+        default:
+            return false
+        }
+    }
+
+}
+
+extension DeepLink {
+
+    /// Expected previous deeplink page.
+    var parent: DeepLink? {
+        switch self {
+        case .login, .mainNavigation:
+            return .main
+        case .main:
+            return nil
+        case .settings:
+            return .mainNavigation
+        case .table:
+            return .mainNavigation
+        case .record(let table, _):
+            return .table(table)
+        case .relation(let table, let primaryKeyValue, _):
+            return .record(table, primaryKeyValue)
+        }
+    }
+
+    /// Expected hierarchy of deeplink page.
+    var hierarchy: [DeepLink] {
+        var hierarchy: [DeepLink] = []
+        var current = self.parent // or self?
+        while current != nil {
+            if let theCurrent = current {
+                hierarchy.append(theCurrent)
+                current = theCurrent.parent
+            }
+        }
+        return hierarchy
+    }
+
+}
+
+extension UIViewController {
+    var deepLinkHierarchy: [DeepLinkable]? {
+        return self.hierarchy?.compactMap { $0 as? DeepLinkable }
+    }
+}

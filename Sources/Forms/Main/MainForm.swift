@@ -87,6 +87,10 @@ open class Main: UIViewController, Form {
 
 }
 
+extension Main: DeepLinkable {
+    public var deepLink: DeepLink? { return .main }
+}
+
 extension Main {
     func setupAppareance() {
         updateStyle()

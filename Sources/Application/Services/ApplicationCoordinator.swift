@@ -558,12 +558,7 @@ struct MainNavigationCoordinator {
 
     var form: MainNavigationForm? {
         return UIApplication.topViewController?.hierarchy?.first(where: { $0 is MainNavigationForm }) as? MainNavigationForm
-
         //  self.form = MainNavigation.self.instantiateInitialViewController() as? MainNavigationForm // if we force build by coordinator
-    }
-
-    init() {
-
     }
 
     func follow(deepLink: DeepLink) -> Bool {
@@ -578,6 +573,12 @@ struct MainNavigationCoordinator {
             if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
                 self.form?.presentChildForm(foundForm)
                 return true // managed
+            }
+            return false
+        case .record(let tableName, _):
+            if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
+                self.form?.presentChildForm(foundForm)
+                return false // not managed yet, let open DetailForm? or here passe to a list coordinator, to pass data, make link on index path etc...
             }
             return false
         default:

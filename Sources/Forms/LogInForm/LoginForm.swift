@@ -409,6 +409,10 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
 }
 
+extension LoginForm: DeepLinkable {
+    public var deepLink: DeepLink? { return .login }
+}
+
 private let serverCertificateCodes: [URLError.Code] = [
     .serverCertificateHasBadDate,
     .serverCertificateHasUnknownRoot,

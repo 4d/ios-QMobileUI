@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 // A form which present children forms.
-public protocol MainNavigationForm {
+public protocol MainNavigationForm: DeepLinkable {
 
     var childrenForms: [UIViewController] { get }
 
@@ -32,4 +32,8 @@ extension MainNavigationForm where Self: UITabBarController {
         }
     }
 
+}
+
+extension MainNavigationForm {
+    public var deepLink: DeepLink? { return .mainNavigation }
 }
