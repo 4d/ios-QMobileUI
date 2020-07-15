@@ -22,7 +22,7 @@ open class ApplicationCoordinator: NSObject {}
 extension ApplicationCoordinator: ApplicationService {
 
     static var instance: ApplicationCoordinator = ApplicationCoordinator()
-    static var mainNavigationCoordinator = MainNavigationCoordinator()
+    static var mainCoordinator = MainCoordinator()
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let options = launchOptions,
@@ -452,28 +452,19 @@ extension ApplicationCoordinator {
                 }
 
                 if relationShipInfo.isToMany {
-                    if let destination = viewControllerToPresent as? ListForm {
-                        assertionFailure("\(destination) could not be presented. Not implemented")
-                        /*let predicatString = "(\(inverseRelationInfo.name) = %@)"
+                    if let destination = viewControllerToPresent.firstController as? ListForm, let inverseRelationShip = relationShipInfo.inverseRelationship {
+                        let predicatString = "(\(inverseRelationShip.name) = %@)"
 
-                        if let relationFormat = relationInfoUI.relationFormat,
-                            !relationFormat.isEmpty,
-                            let record = recordSearch,
-                            let tableInfo = recordSearch?.tableInfo,
-                            let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
-                            previousTitle = formatter.format(record)
-
-
-                            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                                                  actionContext: source.actionContext(),
-                                                                  previousTitle: previousTitle,
-                                                                  relationName: relationOriginalName,
-                                                                  inverseRelationName: inverseRelationInfo.originalName)
-                        }*/
+                        destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, record.store.objectID),
+                                                              actionContext: nil,
+                                                              previousTitle: nil,
+                                                              relationName: relationShipInfo.originalName,
+                                                              inverseRelationName: inverseRelationShip.originalName)
 
                     } else {
                         logger.warning("Failed to transition to relation \(relationName)")
                         completion(false)
+                        return
                     }
                 } else {
                     if let relationRecord = record[relationName] as? RecordBase, let relationDataSource = RecordDataSource(record: relationRecord) {
@@ -529,7 +520,7 @@ extension ApplicationCoordinator {
     }
 
     public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
-        mainNavigationCoordinator.follow(deepLink: deepLink) { managed in
+        mainCoordinator.follow(deepLink: deepLink) { managed in
             if managed {
                 completion(true)
             } else {
@@ -553,6 +544,21 @@ extension ApplicationCoordinator {
         }
     }
 
+}
+
+struct MainCoordinator {
+
+    var mainNavigationCoordinator = MainNavigationCoordinator()
+
+    var form: Main? {
+        return UIApplication.topViewController?.hierarchy?.first(where: { $0 is Main }) as? Main
+        //  self.form = Main.self.instantiateInitialViewController() as? Main // if we force build by coordinator
+    }
+
+    func follow(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        // #118062 Manage if logged or not
+        mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
+    }
 }
 
 struct MainNavigationCoordinator {
