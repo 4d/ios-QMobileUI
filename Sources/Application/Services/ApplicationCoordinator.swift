@@ -529,26 +529,27 @@ extension ApplicationCoordinator {
     }
 
     public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
-        if mainNavigationCoordinator.follow(deepLink: deepLink) {
-            completion(true)
-            return
-        }
-
-        switch deepLink {
-        case .login:
-            self.open(storyboardable: LoginForm.self, completion: completion)
-        case .main:
-            self.open(storyboardable: Main.self, completion: completion)
-        case .settings:
-            self.open(storyboardable: SettingsForm.self, completion: completion)
-        case .mainNavigation:
-            self.open(storyboardable: MainNavigation.self, completion: completion)
-        case .table(let tableName):
-            self.open(tableName: tableName, completion: completion)
-        case .record(let tableName, let primaryKeyValue):
-            self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
-        case .relation(let tableName, let primaryKeyValue, let relationName):
-            self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+        mainNavigationCoordinator.follow(deepLink: deepLink) { managed in
+            if managed {
+                completion(true)
+            } else {
+                switch deepLink {
+                case .login:
+                    self.open(storyboardable: LoginForm.self, completion: completion)
+                case .main:
+                    self.open(storyboardable: Main.self, completion: completion)
+                case .settings:
+                    self.open(storyboardable: SettingsForm.self, completion: completion)
+                case .mainNavigation:
+                    self.open(storyboardable: MainNavigation.self, completion: completion)
+                case .table(let tableName):
+                    self.open(tableName: tableName, completion: completion)
+                case .record(let tableName, let primaryKeyValue):
+                    self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
+                case .relation(let tableName, let primaryKeyValue, let relationName):
+                    self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+                }
+            }
         }
     }
 
@@ -561,28 +562,42 @@ struct MainNavigationCoordinator {
         //  self.form = MainNavigation.self.instantiateInitialViewController() as? MainNavigationForm // if we force build by coordinator
     }
 
-    func follow(deepLink: DeepLink) -> Bool {
+    func follow(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
         switch deepLink {
         case .settings:
             if let foundForm = self.form?.childrenForms.first(where: { $0.firstController is SettingsForm }) {
                 self.form?.presentChildForm(foundForm)
-                return true // managed
+                completion(true) // managed
+                return
             }
-            return false
+            completion(false)
         case .table(let tableName):
             if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
                 self.form?.presentChildForm(foundForm)
-                return true // managed
+                completion(true) // managed
+                return
             }
-            return false
+            completion(false)
         case .record(let tableName, _):
-            if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
-                self.form?.presentChildForm(foundForm)
-                return false // not managed yet, let open DetailForm? or here passe to a list coordinator, to pass data, make link on index path etc...
+            if self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) != nil { // present list form parent only if in tabs, otherwise just open as modal
+                if let tableParentLink = deepLink.parent {
+                    ApplicationCoordinator.open(tableParentLink) { _ in
+                        completion(false)
+                    }
+                    return
+                }
             }
-            return false
+            completion(false)
+        case .relation:
+            if let recordParentLink = deepLink.parent { // for relation always try to open parent record
+                ApplicationCoordinator.open(recordParentLink) { _ in
+                    completion(false)
+                }
+                return
+            }
+            completion(false)
         default:
-            return false
+            completion(false)
         }
     }
 
