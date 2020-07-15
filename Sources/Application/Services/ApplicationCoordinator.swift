@@ -22,37 +22,50 @@ open class ApplicationCoordinator: NSObject {}
 extension ApplicationCoordinator: ApplicationService {
 
     static var instance: ApplicationCoordinator = ApplicationCoordinator()
+    static var mainNavigationCoordinator = MainNavigationCoordinator()
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         guard let options = launchOptions,
             /*let userActivtyDictionary = options[.userActivityDictionary] as? [UIApplication.LaunchOptionsKey: Any],
              let userActivityType = userActivtyDictionary[.userActivityType] as? String, userActivityType == NSUserActivityTypeBrowsingWeb */
             let url = options[.url] as? URL,
-            let state = DeepLink.from(url) else {
+            let deepLink = DeepLink.from(url) else {
                 return
         }
-        ApplicationCoordinator.open(state) { _ in
-            logger.info("Open \(state) from user activity \(url).")
+        ApplicationCoordinator.open(deepLink) { presented in
+            if presented {
+                logger.info("Open \(deepLink) from user activity \(url).")
+            } else {
+                logger.warning("Failed to open \(deepLink) from user activity \(url)")
+            }
         }
     }
 
     public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) {
-        guard let state = DeepLink.from(url) else {
+        guard let deepLink = DeepLink.from(url) else {
             return
         }
-        ApplicationCoordinator.open(state) { _ in
-            logger.info("Open \(state) from url.")
+        ApplicationCoordinator.open(deepLink) { presented in
+            if presented {
+                logger.info("Open \(deepLink) from url.")
+            } else {
+                logger.warning("Failed to open \(deepLink) from url \(url)")
+            }
         }
     }
 
     public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
             let url = userActivity.webpageURL,
-            let state = DeepLink.from(url) else {
+            let deepLink = DeepLink.from(url) else {
                 return false
         }
-        ApplicationCoordinator.open(state) { _ in
-            logger.info("Open \(state) from user activity \(url)")
+        ApplicationCoordinator.open(deepLink) { presented in
+            if presented {
+                logger.info("Open \(deepLink) from user activity \(url)")
+            } else {
+                logger.warning("Failed to open \(deepLink) from user activity \(url)")
+            }
         }
         return true
     }
@@ -516,6 +529,11 @@ extension ApplicationCoordinator {
     }
 
     public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        if mainNavigationCoordinator.follow(deepLink: deepLink) {
+            completion(true)
+            return
+        }
+
         switch deepLink {
         case .login:
             self.open(storyboardable: LoginForm.self, completion: completion)
@@ -531,6 +549,39 @@ extension ApplicationCoordinator {
             self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
         case .relation(let tableName, let primaryKeyValue, let relationName):
             self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+        }
+    }
+
+}
+
+struct MainNavigationCoordinator {
+
+    var form: MainNavigationForm? {
+        return UIApplication.topViewController?.hierarchy?.first(where: { $0 is MainNavigationForm }) as? MainNavigationForm
+
+        //  self.form = MainNavigation.self.instantiateInitialViewController() as? MainNavigationForm // if we force build by coordinator
+    }
+
+    init() {
+
+    }
+
+    func follow(deepLink: DeepLink) -> Bool {
+        switch deepLink {
+        case .settings:
+            if let foundForm = self.form?.childrenForms.first(where: { $0.firstController is SettingsForm }) {
+                self.form?.presentChildForm(foundForm)
+                return true // managed
+            }
+            return false
+        case .table(let tableName):
+            if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
+                self.form?.presentChildForm(foundForm)
+                return true // managed
+            }
+            return false
+        default:
+            return false
         }
     }
 

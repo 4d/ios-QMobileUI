@@ -112,6 +112,7 @@
 		488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
+		489489F224BEF1F600D6D0C6 /* MainNavigationForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489489F124BEF1F600D6D0C6 /* MainNavigationForm.swift */; };
 		489A68AB21B526AA00A90DC6 /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A68AA21B526AA00A90DC6 /* Form.swift */; };
 		489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */; };
 		489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */; };
@@ -339,6 +340,7 @@
 		4888ACCF22EB083100219E63 /* NSSetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSSetTests.swift; sourceTree = "<group>"; };
 		4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailHighlightedRow.swift; sourceTree = "<group>"; };
 		488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Action.swift"; sourceTree = "<group>"; };
+		489489F124BEF1F600D6D0C6 /* MainNavigationForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigationForm.swift; sourceTree = "<group>"; };
 		489A68AA21B526AA00A90DC6 /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
 		489B736A1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCrashManager.swift; sourceTree = "<group>"; };
 		489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ListForm+DataSync.swift"; sourceTree = "<group>"; };
@@ -795,6 +797,7 @@
 			isa = PBXGroup;
 			children = (
 				489C3F8721AEDD810018664B /* MainNavigation.swift */,
+				489489F124BEF1F600D6D0C6 /* MainNavigationForm.swift */,
 			);
 			path = MainNavigation;
 			sourceTree = "<group>";
@@ -1439,6 +1442,7 @@
 				C40E40D524B0B56C0095E2FD /* ApplicationCoordinator.swift in Sources */,
 				48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */,
 				48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */,
+				489489F224BEF1F600D6D0C6 /* MainNavigationForm.swift in Sources */,
 				48BC8574226F0C8D00D548B2 /* UIAlertController+Picker.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */,
