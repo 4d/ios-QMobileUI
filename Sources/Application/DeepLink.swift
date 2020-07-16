@@ -85,12 +85,10 @@ public enum DeepLink {
     }
 
     static func from(_ shortcutItem: UIApplicationShortcutItem) -> DeepLink? {
-        /* if let data = shortcutItem.userInfo?["deeplink"] as? Data {
-         // JSON decode? or decpdabme if done with
-         let deeplinkData = try? JSONEncoder().encode(mydeeplinkInstance)
-         UIMutableApplicationShortcutItem(type:...., userInfo: ["deeplink": deeplinkData as NSSecureCoding])
-         -> put in UIApplication.shared.shortcutItems
-         }*/
+        if let data = shortcutItem.userInfo?["deeplink"] as? Data {
+            return try? JSONDecoder().decode(DeepLink.self, from: data)
+            // UIMutableApplicationShortcutItem(type:...., userInfo: ["deeplink": deeplinkData as NSSecureCoding])   -> put in UIApplication.shared.shortcutItems
+        }
         return nil
     }
 }

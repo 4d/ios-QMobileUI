@@ -72,6 +72,9 @@ open class QApplication: UIApplication {
         // Crash Manager
         services.register(ApplicationCrashManager.instance)
 
+        // Coordinator
+        services.register(ApplicationCoordinator.instance)
+
         // Manage authentification
         services.register(ApplicationAuthenticate.instance)
 
