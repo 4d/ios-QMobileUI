@@ -454,7 +454,7 @@ extension ApplicationCoordinator {
                 if relationShipInfo.isToMany {
                     if let destination = viewControllerToPresent.firstController as? ListForm, let inverseRelationInfo = relationShipInfo.inverseRelationship {
                         let predicatString = "(\(inverseRelationInfo.name) = %@)"
-                        let relationFormat: String? = nil //"%Raison_Sociale%" // TODO DEEP LINK WHERE TO TAKE IT?
+                        let relationFormat = relationShipInfo.format
                         var previousTitle: String?
                         if let relationFormat = relationFormat,
                             let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
