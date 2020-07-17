@@ -13,6 +13,7 @@ import SwiftMessages
 import Prephirences
 import Eureka
 import BrightFutures
+import Alamofire
 
 import QMobileAPI
 
@@ -120,35 +121,63 @@ public class ActionManager {
             return true
         }
 
-        #if DEBUG
-        append { _, _, _, _ in
-            /*if _ = result.goTo {
-             // Open internal
-             }*/
-            return false
+        append { result, _, actionUI, _ in
+            guard let share = result.share else { return false }
+            let activityItems: [Any] = share.compactMap { item in
+                if let itemInfo = item.dictionary, let value = itemInfo["value"] {
+                    if let type = itemInfo["type"]?.string {
+                        switch type {
+                        case "url":
+                            return URL(string: value.stringValue)
+                        case "image":
+                            if let url = URL(string: value.stringValue) {
+                                if let data = try? Data(contentsOf: url) {
+                                    return UIImage(data: data)
+                                }
+                                return url
+                            }
+                            return value.rawValue
+                        default:
+                            return value.rawValue
+                        }
+                    } else {
+                        return value.rawValue
+                    }
+                } else {
+                    return item.rawValue
+                }
+            }
+
+            foreground {
+
+                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                activityViewController.checkPopUp(actionUI)
+
+                activityViewController.show(animated: true) {
+                    logger.info("Share activity presented")
+                }
+            }
+
+            return true
         }
 
-        append { result, _, _, _ in
-            guard result.share else { return false }
-            // Remote could send from server
-            // * some text
-            // * some url
-            // * data of image -> convert to image and share
-            // * data of file -> write to tmp dir and share
-            //
-            // then could also specify local db data
-            // * some text or number field to share as string
-            // * some picture field to share (must be downloaded before)
-            // * some text field to share as url
+        append { result, _, actionUI, _ in
+            guard let urlString = result.downloadURL, let url = URL(string: urlString) else { return false }
+            logger.info("Download url \(urlString)")
 
-            // URL (http url or file url), UIImage, String
-            /*let activityItems: [Any] = ["Hello, world!"]
-             // , UIImage(named: "tableMore") ?? nil
-             let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
-             activityViewController.show()*/
-            return false
+            AF.request(url).responseData { response in
+                if let fileData = response.data {
+                    foreground {
+                        let activityViewController = UIActivityViewController(activityItems: [url.lastPathComponent, fileData], applicationActivities: nil)
+                        activityViewController.checkPopUp(actionUI)
+                        activityViewController.show(animated: true) {
+                            logger.info("End to download \(url)")
+                        }
+                    }
+                }
+            }
+            return true
         }
-        #endif
     }
 
     public func append(_ block: @escaping ActionResultHandler.Block) {
@@ -370,8 +399,11 @@ extension ActionResult {
     fileprivate var openURL: String? {
         return json["openURL"].string
     }
-    fileprivate var share: Bool {
-        return json["share"].boolValue
+    fileprivate var downloadURL: String? {
+         return json["downloadURL"].string
+     }
+    fileprivate var share: [JSON]? {
+        return json["share"].array
     }
     fileprivate var pasteboard: String? {
         return json["pasteboard"].string
