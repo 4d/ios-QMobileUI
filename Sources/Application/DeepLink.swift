@@ -20,8 +20,8 @@ public enum DeepLink {
 
     // Return state from push notif informaton for instance
     static func from(_ userInfo: [AnyHashable: Any]) -> DeepLink? {
-        if let table = userInfo["table"] as? String {
-            if let record = userInfo["record"] {
+        if let table = userInfo["dataClass"] as? String ?? userInfo["table"] as? String {
+            if let record = userInfo["record"] ?? ((userInfo["entity"] as? [String: Any])?["primaryKey"]) {
                 if let relationName = userInfo["relation"] as? String {
                     return .relation(table, record, relationName)
                 } else {
@@ -39,9 +39,15 @@ public enum DeepLink {
     }
 
     static func from(_ json: JSON) -> DeepLink? {
-        if let table = json["table"].string {
+        if let table = json["dataClass"].string ?? json["table"].string {
             if json["record"].exists() {
                 let record = json["record"].rawValue
+                if let relation = json["relation"].string {
+                    return .relation(table, record, relation)
+                }
+                return .record(table, record)
+            } else if json["entity"].exists() {
+                let record = json["entity"]["primaryKey"].rawValue
                 if let relation = json["relation"].string {
                     return .relation(table, record, relation)
                 }
@@ -71,10 +77,10 @@ public enum DeepLink {
             guard let queryItems = components.queryItems else {
                 return nil
             }
-            guard let tableItem = queryItems.first(where: { $0.name == "table" }), let table = tableItem.value else {
+            guard let tableItem = queryItems.first(where: { $0.name == "table" || $0.name == "dataClass" }), let table = tableItem.value else {
                 return nil
             }
-            if let recordItem = queryItems.first(where: { $0.name == "record" }), let record = recordItem.value {
+            if let recordItem = queryItems.first(where: { $0.name == "record" || $0.name == "entity.primaryKey" }), let record = recordItem.value {
                 return .record(table, record)
             } else {
                 return .table(table)
