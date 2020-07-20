@@ -341,7 +341,7 @@ extension Prephirences {
             public static let parent = DataSync.instance
 
             public static let atStart: Bool = instance["atStart"] as? Bool ?? false
-            public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? true
+            public static let ifEnterForeground: Bool = instance["ifEnterForeground"] as? Bool ?? false
         }
 
     }
