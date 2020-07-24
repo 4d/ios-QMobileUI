@@ -147,8 +147,12 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
 
     override open var inputView: UIView? {
         if let value = row.value {
-            let date = Date(timeInterval: value)
-            datePicker.setDate(date, animated: row is CountDownTimeRow)
+            if row is CountDownTimeRow {
+                datePicker.countDownDuration = TimeInterval(value)
+            } else {
+                let date = Date(timeInterval: value)
+                datePicker.setDate(date, animated: false)
+            }
         }
         return datePicker
     }
