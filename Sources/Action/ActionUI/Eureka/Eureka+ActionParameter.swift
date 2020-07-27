@@ -314,7 +314,14 @@ extension BaseRow {
             }
         case .regex(let regExpr):
             if let rowOf = row as? RowOf<String> {
-                rowOf.add(rule: RuleRegExp(regExpr: regExpr))
+                if let terminationIndex = regExpr.lastIndex(of: "$"), regExpr[regExpr.index(terminationIndex, offsetBy: -1)] != "\\" {
+                    let nextIndex = regExpr.index(terminationIndex, offsetBy: 1)
+                    let newRegexExpr = String(regExpr[..<nextIndex])
+                    let msg = String(regExpr[nextIndex...])
+                    rowOf.add(rule: RuleRegExp(regExpr: newRegexExpr, msg: msg))
+                } else {
+                    rowOf.add(rule: RuleRegExp(regExpr: regExpr))
+                }
             }
         }
     }
