@@ -134,6 +134,10 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
         datePicker.maximumDate = (row as? TimeIntervalPickerRowProtocol)?.maximumDate
         if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
             datePicker.minuteInterval = minuteIntervalValue
+
+            if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
+                datePicker.countDownDuration = TimeInterval(minuteIntervalValue * 60)
+            }
         }
         if row.isHighlighted {
             textLabel?.textColor = tintColor
@@ -148,7 +152,14 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
     override open var inputView: UIView? {
         if let value = row.value {
             if row is CountDownTimeRow {
-                datePicker.countDownDuration = TimeInterval(value)
+                datePicker.countDownDuration = TimeInterval(900)
+
+                if value == 0 {
+                    if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
+                        datePicker.countDownDuration = TimeInterval(minuteIntervalValue * 60)
+                        row.value = TimeInterval(minuteIntervalValue * 60)
+                    }
+                }
             } else {
                 let date = Date(timeInterval: value)
                 datePicker.setDate(date, animated: false)

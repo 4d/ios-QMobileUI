@@ -271,7 +271,7 @@ extension ActionParameterFormat {
 // MARK: - Rules
 
 extension BaseRow {
-    fileprivate func applyRule(_ rule: ActionParameterRule) {
+    fileprivate func applyRule(_ rule: ActionParameterRule) { // swiftlint:disable:this function_body_length
         let row = self
         switch rule {
         case .mandatory:
@@ -281,22 +281,34 @@ extension BaseRow {
         case .min(let min):
             if let rowOf = row as? RowOfComparable {
                 rowOf.setGreaterOrEqual(than: min)
+                if let timeRow = row as? _TimeIntervalFieldRow {
+                    timeRow.minimumTime = min
+                }
             } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
                 rowOf.setGreaterOrEqual(than: Int(min))
             } else if let rowOf = row as? DecimalRow {
                 rowOf.setGreaterOrEqual(than: min)
+            } else if let rowOf = row as? _TimeIntervalFieldRow {
+                rowOf.setGreaterOrEqual(than: min)
+                rowOf.minimumTime = min
             } else {
                 logger.warning("Rule min(\(min) applyed to non comparable data \(row)")
             }
         case .max(let max):
             if let rowOf = row as? RowOfComparable {
                 rowOf.setSmallerOrEqual(than: max)
+                if let timeRow = row as? _TimeIntervalFieldRow {
+                    timeRow.maximumTime = max
+                }
             } else if let rowOf = row as? IntRow {
                 rowOf.setSmallerOrEqual(than: Int(max))
             } else if let rowOf = row as? DecimalRow {
                 rowOf.setSmallerOrEqual(than: max)
             } else if let rowOf = row as? RatingRow {
                 rowOf.cosmosSettings.totalStars = Int(max)
+            } else if let rowOf = row as? _TimeIntervalFieldRow {
+                rowOf.setSmallerOrEqual(than: max)
+                rowOf.maximumTime = max
             } else {
                 logger.warning("Rule max(\(max) applyed to non comparable data \(row)")
             }
@@ -323,6 +335,23 @@ extension BaseRow {
                     rowOf.add(rule: RuleRegExp(regExpr: regExpr))
                 }
             }
+        case .isMultipleOf(let divideBy):
+            if let rowOf = row as? RowOfIsMultipleOf {
+                if let timeRow = row as? _TimeIntervalFieldRow {
+                    timeRow.minuteInterval = Int(divideBy / 60)
+                    rowOf.setMultiple(of: divideBy, msg: "Field value must be a multiple of \(divideBy/60) minutes")
+                } else {
+                    rowOf.setMultiple(of: divideBy, msg: nil)
+                }
+            } else if let rowOf = row as? IntRow { // not clean to do all this cast... maybe no more necessary
+                rowOf.setMultiple(of: divideBy, msg: nil)
+            } else if let rowOf = row as? DecimalRow {
+                rowOf.setMultiple(of: divideBy, msg: nil)
+            } else if let rowOf = row as? _TimeIntervalFieldRow {
+                rowOf.setMultiple(of: divideBy, msg: nil)
+            } else {
+                logger.warning("Rule isMultipleOf(\(divideBy) applyed to non dividable data \(row)")
+            }
         }
     }
 }
@@ -340,6 +369,14 @@ extension Sequence where Element == ActionParameterRule {
     var max: Double? {
         for rule in self {
             if case let ActionParameterRule.max(value) = rule {
+                return value
+            }
+        }
+        return nil
+    }
+    var multipleOf: Double? {
+        for rule in self {
+            if case let ActionParameterRule.isMultipleOf(value) = rule {
                 return value
             }
         }

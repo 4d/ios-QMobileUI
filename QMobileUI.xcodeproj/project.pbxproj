@@ -147,6 +147,8 @@
 		48CC0331231CFD68007EF134 /* Storyboardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CC0330231CFD68007EF134 /* Storyboardable.swift */; };
 		48CC0333231CFDB8007EF134 /* UIStoryboardSegue+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CC0332231CFDB8007EF134 /* UIStoryboardSegue+QMobile.swift */; };
 		48CC0335231CFE05007EF134 /* IBStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CC0334231CFE05007EF134 /* IBStoryboard.swift */; };
+		48CE63DC24D0229300C39E1E /* RuleIsMultipleOf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CE63DB24D0229300C39E1E /* RuleIsMultipleOf.swift */; };
+		48CE63DE24D02B2700C39E1E /* RowOfIsMultipleOf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CE63DD24D02B2700C39E1E /* RowOfIsMultipleOf.swift */; };
 		48CEAE6C239E47C6001B9073 /* MultipleImageRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CEAE6B239E47C6001B9073 /* MultipleImageRow.swift */; };
 		48CEAE6E239E7528001B9073 /* MultipleImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CEAE6D239E7528001B9073 /* MultipleImagePickerController.swift */; };
 		48D3F9901F7D178D00B96947 /* DetailsForm+DataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */; };
@@ -376,6 +378,8 @@
 		48CC0330231CFD68007EF134 /* Storyboardable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storyboardable.swift; sourceTree = "<group>"; };
 		48CC0332231CFDB8007EF134 /* UIStoryboardSegue+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStoryboardSegue+QMobile.swift"; sourceTree = "<group>"; };
 		48CC0334231CFE05007EF134 /* IBStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IBStoryboard.swift; sourceTree = "<group>"; };
+		48CE63DB24D0229300C39E1E /* RuleIsMultipleOf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleIsMultipleOf.swift; sourceTree = "<group>"; };
+		48CE63DD24D02B2700C39E1E /* RowOfIsMultipleOf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowOfIsMultipleOf.swift; sourceTree = "<group>"; };
 		48CEAE6B239E47C6001B9073 /* MultipleImageRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleImageRow.swift; sourceTree = "<group>"; };
 		48CEAE6D239E7528001B9073 /* MultipleImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleImagePickerController.swift; sourceTree = "<group>"; };
 		48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DetailsForm+DataSync.swift"; sourceTree = "<group>"; };
@@ -665,6 +669,7 @@
 				48087E4E22C4F5F90008A3D6 /* AnyWrapped.swift */,
 				480B785422CA01900037C1D8 /* TapOutsideTableView.swift */,
 				480B785622CA01E90037C1D8 /* ActionFormSettings.swift */,
+				48CE63DB24D0229300C39E1E /* RuleIsMultipleOf.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -936,6 +941,7 @@
 				48D43CEE22CE48160013432C /* RowOfComparable.swift */,
 				480B785822CA02160037C1D8 /* RowInitializable.swift */,
 				4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */,
+				48CE63DD24D02B2700C39E1E /* RowOfIsMultipleOf.swift */,
 			);
 			path = RowType;
 			sourceTree = "<group>";
@@ -1487,6 +1493,7 @@
 				480392CD1E92A19E008CF992 /* DateFormatter+QMobile.swift in Sources */,
 				FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */,
 				48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */,
+				48CE63DE24D02B2700C39E1E /* RowOfIsMultipleOf.swift in Sources */,
 				48D584821E783447006F56B5 /* CollectionDataSource.swift in Sources */,
 				48E655E0229EA6770060568B /* RowOfEquatable.swift in Sources */,
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
@@ -1546,6 +1553,7 @@
 				483190E92297E2250041B41A /* ActionParametersUI.swift in Sources */,
 				4888E4D222CCA24D002C7BBE /* DetailHighlightedRow.swift in Sources */,
 				48CEAE6E239E7528001B9073 /* MultipleImagePickerController.swift in Sources */,
+				48CE63DC24D0229300C39E1E /* RuleIsMultipleOf.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
