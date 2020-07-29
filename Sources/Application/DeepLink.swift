@@ -73,7 +73,7 @@ public enum DeepLink {
         switch pathComponents.removeFirst() {
         case "settings":
             return .settings
-        case "show":
+        default:
             guard let queryItems = components.queryItems else {
                 return nil
             }
@@ -85,8 +85,6 @@ public enum DeepLink {
             } else {
                 return .table(table)
             }
-        default:
-            return nil
         }
     }
 
