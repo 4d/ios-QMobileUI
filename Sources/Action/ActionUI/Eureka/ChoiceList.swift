@@ -21,15 +21,32 @@ struct ChoiceList {
         if let choiceArray = choiceList.value as? [Any] {
             options = choiceArray.enumerated().map { (arg) -> ChoiceListItem in
                 let (key, value) = arg
-                switch type {
-                case .bool, .boolean:
-                    return ChoiceListItem(key: key == 1, value: value)
-                case .string:
-                    return ChoiceListItem(key: "\(key)", value: value)
-                case .number:
-                    return ChoiceListItem(key: Double(key), value: value)
-                default:
-                    return ChoiceListItem(key: key, value: value)
+                if let entry = value as? [String: Any], let key = entry["key"], let value = entry["value"] {
+                    if let string = key as? String {
+                        switch type {
+                        case .bool, .boolean:
+                            return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
+                        case .integer:
+                            return ChoiceListItem(key: Int(string) as Any, value: value)
+                        case .number:
+                            return ChoiceListItem(key: Double(string) as Any, value: value)
+                        default:
+                            return ChoiceListItem(key: key, value: value)
+                        }
+                    } else {
+                        return ChoiceListItem(key: key, value: value)
+                    }
+                } else {
+                    switch type {
+                    case .bool, .boolean:
+                        return ChoiceListItem(key: key == 1, value: value)
+                    case .string:
+                        return ChoiceListItem(key: "\(key)", value: value)
+                    case .number:
+                        return ChoiceListItem(key: Double(key), value: value)
+                    default:
+                        return ChoiceListItem(key: key, value: value)
+                    }
                 }
             }
         } else if let choiceDictionary = choiceList.value as? [AnyHashable: Any] {
