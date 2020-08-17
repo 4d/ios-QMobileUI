@@ -27,7 +27,7 @@ extension ApplicationXCallbackURL: ApplicationService {
         return ApplicationDataSync.instance.dataSync
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) { // swiftlint:disable:this function_body_length
         guard let scheme = preferences.string(forKey: "com.4d.qa.urlScheme"),
             let urlSchemes = Manager.urlSchemes, urlSchemes.contains(scheme) else {
                 return
@@ -41,7 +41,14 @@ extension ApplicationXCallbackURL: ApplicationService {
                 /* let cancellable */ _ = self?.dataSync.sync { result in
                     switch result {
                     case .success:
-                        success(nil)
+                        var data: [String: String] = [:]
+                        if let stampStorage = self?.dataSync.dataStore.metadata?.stampStorage {
+                            data["globalStamp"] = String(stampStorage.globalStamp)
+                            if let date = stampStorage.lastSync {
+                                data["lastSync"] = DateFormatter.iso8601.string(from: date)
+                            }
+                        }
+                        success(data)
                     case .failure(let error):
                         if case .cancel = error {
                             cancel()
@@ -77,9 +84,13 @@ extension ApplicationXCallbackURL: ApplicationService {
             } else {
                 path = .userTemporary
             }
-            _ =  ApplicationDataSync.instance.dataSync.dump(to: path) {
-
-                success(nil)
+            _ =  ApplicationDataSync.instance.dataSync.dump(to: path) { result in
+                switch result {
+                case .success:
+                    success(["path": path.rawValue])
+                case .failure(let error):
+                    failure(error)
+                }
             }
         }
 
