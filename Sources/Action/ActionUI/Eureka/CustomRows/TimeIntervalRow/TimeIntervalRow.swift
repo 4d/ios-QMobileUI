@@ -134,8 +134,7 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
         datePicker.maximumDate = (row as? TimeIntervalPickerRowProtocol)?.maximumDate
         if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
             datePicker.minuteInterval = minuteIntervalValue
-
-            if let minuteIntervalValue = (row as? TimeIntervalPickerRowProtocol)?.minuteInterval {
+            if row is CountDownTimeRow {
                 datePicker.countDownDuration = TimeInterval(minuteIntervalValue * 60)
             }
         }
