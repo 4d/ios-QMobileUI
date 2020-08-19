@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData // TODO break dependences?; instance of ?
 
 /// Protocol to provide info on relation
 public protocol RelationInfoUI {
@@ -57,15 +58,7 @@ extension UIControl: RelationInfoUI {
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    @objc dynamic open var relation: Any? {
-        get {
-            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation)
-        }
-        set {
-            // self.isEnabled = newValue != nil // Feature deactivate button if no relations?
-            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-        }
-    }
+
     @objc dynamic open var relationName: String? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName) as? String
@@ -98,6 +91,43 @@ extension UIControl: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
+    @objc dynamic open var relation: Any? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation)
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+            if let newValue = newValue {
+                self.isEnabled = true
+
+                if let record = newValue as? NSManagedObject { // -> 1 (not working if not data...)
+                    //print("\(newValue)")
+
+                    if let relationFormat = self.relationFormat,
+                        !relationFormat.isEmpty,
+                        let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+
+                        if let button = self as? UIButton { // bad case of...
+                             button.setTitle(formatter.format(record), for: .normal)
+                        }
+                    }
+
+                } else { // -> N
+                     //print("\(newValue)")
+                }
+           } else {
+                self.isEnabled = false
+
+                 if let button = self as? UIButton { // bad case of...
+                      if false { // ->1 // No info ...
+                           button.setTitle("", for: .normal)
+                      }
+                 }
+           }
+        }
+    }
+
     #endif
 
     @objc func relationSegue(sender: UIControl!) {
