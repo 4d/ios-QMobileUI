@@ -114,7 +114,7 @@ public class ActionManager {
 
         append { result, _, _, _ in
             guard let deepLink = result.deepLink else { return false }
-
+            logger.info("Deeplink from action: \(deepLink)")
             foreground {
                 ApplicationCoordinator.open(deepLink) { _ in }
             }
@@ -288,6 +288,7 @@ public class ActionManager {
 
     /// Show error has status text.
     func showError(_ error: APIError) {
+        logger.warning("Error when managing action response \(error.errorDescription ?? ""): \(error)")
         // Try to display the best error message...
         if let statusText = error.restErrors?.statusText { // dev message
             SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
