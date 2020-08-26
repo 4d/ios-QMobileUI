@@ -373,12 +373,22 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     // MARK: IBAction
 
+     open func manageDeepLinkParameters(_ parameters: ([String: String?])) {
+        if let email = parameters["email"] as? String {
+            self.loginTextField.text = email
+        }
+    }
+
     /// Login action linked to the login button.
     @IBAction open func login(_ sender: Any!) {
+        if let deepLink = sender as? DeepLink {
+            if case .login(let parameters) = deepLink {
+                manageDeepLinkParameters(parameters)
+            }
+        }
         guard couldLogin() else {
             return
         }
-
         doLogin(sender)
     }
 
@@ -410,7 +420,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 }
 
 extension LoginForm: DeepLinkable {
-    public var deepLink: DeepLink? { return .login }
+    public var deepLink: DeepLink? { return .login(["email": self.loginTextField.text]) }
 }
 
 private let serverCertificateCodes: [URLError.Code] = [

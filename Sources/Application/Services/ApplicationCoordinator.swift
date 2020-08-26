@@ -318,7 +318,7 @@ extension ApplicationCoordinator {
             return
         }
         guard let relationRecord = record[relationName] as? RecordBase else {
-            logger.warning("Cannot display relation \(relationName) of record \(record) in \(source) ")
+            logger.warning("Cannot display relation \(relationName) of record \(record) in \(source). Maybe no one is associated.")
             return
         }
         guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
@@ -555,6 +555,7 @@ extension ApplicationCoordinator {
 struct MainCoordinator {
 
     var mainNavigationCoordinator = MainNavigationCoordinator()
+    var loginCoordinator = LoginCoordinator()
 
     var form: Main? {
         return UIApplication.topViewController?.hierarchy?.first(where: { $0 is Main }) as? Main
@@ -562,8 +563,29 @@ struct MainCoordinator {
     }
 
     func follow(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        switch deepLink {
+        case .login:
+            loginCoordinator.follow(deepLink: deepLink, completion: completion)
+        default:
+            mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
+        }
         // #118062 Manage if logged or not
-        mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
+    }
+}
+
+struct LoginCoordinator {
+
+    var form: LoginForm? {
+        if let topVC = UIApplication.topViewController as? LoginForm {
+            return topVC
+        }
+        return UIApplication.topViewController?.hierarchy?.first(where: { $0 is LoginForm }) as? LoginForm
+    }
+
+    func follow(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        if let form = form {
+            form.login(deepLink)
+        }
     }
 }
 

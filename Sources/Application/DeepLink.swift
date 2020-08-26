@@ -12,7 +12,7 @@ import SwiftyJSON
 public enum DeepLink {
     case main // onboarding?
     case mainNavigation
-    case login
+    case login([String: String?])
     case settings
     case table(String)
     case record(String, Any)
@@ -73,6 +73,12 @@ public enum DeepLink {
         switch pathComponents.removeFirst() {
         case "settings":
             return .settings
+        case "login":
+            var parameters: [String: String?] = [:]
+            for queryItem in components.queryItems ?? [] {
+                parameters[queryItem.name] = queryItem.value
+            }
+            return .login(parameters)
         default:
             guard let queryItems = components.queryItems else {
                 return nil
@@ -120,7 +126,7 @@ extension DeepLink: Codable {
         case .settings:
             self = .settings
         case .login:
-            self = .login
+            self = .login([:]) // TODO propert decoding/encoding of login deep linking, or consider that must not be save
         case .table:
             var nestedContainer = try container.nestedUnkeyedContainer(forKey: .table)
             let tableName = try nestedContainer.decode(String.self)
