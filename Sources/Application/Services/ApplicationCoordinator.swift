@@ -25,7 +25,7 @@ extension ApplicationCoordinator: ApplicationService {
     static var mainCoordinator = MainCoordinator()
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        _ = UIViewController.enableCoordinatorSegues
+        //_ = UIViewController.enableCoordinatorSegues
         guard let options = launchOptions,
             /*let userActivtyDictionary = options[.userActivityDictionary] as? [UIApplication.LaunchOptionsKey: Any],
              let userActivityType = userActivtyDictionary[.userActivityType] as? String, userActivityType == NSUserActivityTypeBrowsingWeb */
