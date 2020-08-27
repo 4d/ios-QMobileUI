@@ -35,5 +35,5 @@ extension MainNavigationForm where Self: UITabBarController {
 }
 
 extension MainNavigationForm {
-    public var deepLink: DeepLink? { return .mainNavigation }
+    public var deepLink: DeepLink? { return .navigation }
 }

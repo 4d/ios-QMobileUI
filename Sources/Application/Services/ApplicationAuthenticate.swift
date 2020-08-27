@@ -51,7 +51,7 @@ extension ApplicationAuthenticate: ApplicationService {
             ApplicationPreferences.resetSettings()
         }
         foreground {
-            if let token = APIManager.instance.authToken, token.isValidToken {
+            if APIManager.isSignIn {
                 logger.debug("Enter in foreground and already logged")
             } else {
                 logger.debug("Enter in foreground and delogged")

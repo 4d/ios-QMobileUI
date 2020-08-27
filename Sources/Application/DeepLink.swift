@@ -11,7 +11,7 @@ import SwiftyJSON
 
 public enum DeepLink {
     case main // onboarding?
-    case mainNavigation
+    case navigation
     case login([String: String?])
     case settings
     case table(String)
@@ -112,7 +112,7 @@ import QMobileAPI // for AnyCodable
 extension DeepLink: Codable {
 
     enum CodingKeys: CodingKey {
-        case main, mainNavigation, login, settings, table, record, relation
+        case main, navigation, login, settings, table, record, relation
     }
 
     public init(from decoder: Decoder) throws {
@@ -121,8 +121,8 @@ extension DeepLink: Codable {
         switch key {
         case .main:
             self = .main
-        case .mainNavigation:
-            self = .mainNavigation
+        case .navigation:
+            self = .navigation
         case .settings:
             self = .settings
         case .login:
@@ -171,8 +171,8 @@ extension DeepLink: Codable {
         switch self {
         case .main:
             try container.encode(true, forKey: .main)
-        case .mainNavigation:
-            try container.encode(true, forKey: .mainNavigation)
+        case .navigation:
+            try container.encode(true, forKey: .navigation)
         case .settings:
             try container.encode(true, forKey: .settings)
         case .login:
@@ -198,7 +198,7 @@ extension DeepLink: Equatable {
         switch (lhs, rhs) {
         case (.main, .main):
             return true
-        case (.mainNavigation, .mainNavigation):
+        case (.navigation, .navigation):
             return true
         case (.login, .login):
             return true
@@ -248,14 +248,14 @@ extension DeepLink {
     /// Expected previous deeplink page.
     var parent: DeepLink? {
         switch self {
-        case .login, .mainNavigation:
+        case .login, .navigation:
             return .main
         case .main:
             return nil
         case .settings:
-            return .mainNavigation
+            return .navigation
         case .table:
-            return .mainNavigation
+            return .navigation
         case .record(let table, _):
             return .table(table)
         case .relation(let table, let primaryKeyValue, _):

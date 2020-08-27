@@ -52,6 +52,7 @@ public protocol IdentifiableProtocol: Equatable {
 // MARK: - SegueProtocol
 public protocol SegueProtocol {
     var identifier: String? { get }
+    var destination: UIViewController { get }
 }
 
 public func ==<T: SegueProtocol, U: SegueProtocol>(lhs: T, rhs: U) -> Bool {

@@ -21,22 +21,8 @@ extension Main {
     /// If logged, go to app, else go to login form.
     public final func performTransition(_ sender: Any? = nil) {
         foreground { [weak self] in
-            guard let source = self else { return }
-            let segue = source.segue
-
-            if source.performSegue {
-                // just perform the segue
-                source.perform(segue: segue, sender: sender)
-            } else {
-                if let destination = segue.destination {
-                    // prepare destination like done with segue
-                    source.prepare(for: UIStoryboardSegue(identifier: segue.identifier, source: source, destination: destination), sender: sender)
-                    // and present it
-                    source.present(destination, animated: true) {
-                        logger.debug("\(destination) presented by \(source)")
-                    }
-                }
-            }
+            guard let this = self else { return }
+            ApplicationCoordinator.instance.mainTransition(this, sender)
         }
     }
 
@@ -58,30 +44,68 @@ extension Main {
             }
         }
 
-        var destination: UIViewController? {
+        var destination: UIViewController {
             switch self {
             case .login:
-                return LoginForm.instantiate()
+                return LoginForm.instantiate()!//swiftlint:disable:this force_cast
             case .navigation:
-                return MainNavigation.instantiateInitialViewController()
+                return MainNavigation.instantiateInitialViewController()!//swiftlint:disable:this force_cast
             case .settingURL:
-                return SettingURLForm.instantiateInitialViewController()
+                return SettingURLForm.instantiateInitialViewController()!//swiftlint:disable:this force_cast
             }
         }
     }
 
     /// Transition to perform
-    var segue: Segue {
-        if Prephirences.Reset.serverAddress {
+    func segue(for deepLink: DeepLink) -> Segue {
+        switch deepLink {
+        case .settings:
             return .settingURL
+        case .navigation:
+            return .navigation
+        case .login:
+            return .login
+        default:
+            return .login // need login
         }
-        guard ApplicationAuthenticate.hasLogin else {
-            return .navigation // no login form
-        }
-        if !Prephirences.Auth.Logout.atStart, let token = APIManager.instance.authToken, token.isValidToken {
-            return .navigation // direct login
-        }
-        return .login // need login
     }
 
+}
+
+extension ApplicationCoordinator {
+
+    func mainTransitionDeepLink() -> DeepLink {
+        if Prephirences.Reset.serverAddress {
+            return .settings // not really settings url but...
+        }
+        if !ApplicationAuthenticate.hasLogin {
+            return .navigation // direct login
+        }
+        if !Prephirences.Auth.Logout.atStart, !APIManager.isSignIn {
+            return .login([:]) // need login (app start info here?)
+        }
+        return .navigation
+    }
+
+    func mainTransition(_ source: Main, _ sender: Any? = nil) {
+        let segue = source.segue(for: self.mainTransitionDeepLink())
+        performSegue(source, segue, source.performSegue, sender)
+    }
+
+    func performSegue<T: SegueProtocol>(_ source: UIViewController, _ segue: T, _ withSegue: Bool, _ sender: Any?) {
+        if withSegue {
+            // just perform the segue
+            // according to app state we
+            source.perform(segue: segue, sender: sender)
+        } else {
+            // if not segue, create storyboard from destination definition and segue
+            let destination = segue.destination
+            // prepare destination like done with segue
+            source.prepare(for: UIStoryboardSegue(identifier: segue.identifier, source: source, destination: destination), sender: sender)
+            // and present it
+            source.present(destination, animated: true) {
+                logger.debug("\(destination) presented by \(source)")
+            }
+        }
+    }
 }

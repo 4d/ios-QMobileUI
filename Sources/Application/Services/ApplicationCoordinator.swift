@@ -25,6 +25,7 @@ extension ApplicationCoordinator: ApplicationService {
     static var mainCoordinator = MainCoordinator()
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        _ = UIViewController.enableCoordinatorSegues
         guard let options = launchOptions,
             /*let userActivtyDictionary = options[.userActivityDictionary] as? [UIApplication.LaunchOptionsKey: Any],
              let userActivityType = userActivtyDictionary[.userActivityType] as? String, userActivityType == NSUserActivityTypeBrowsingWeb */
@@ -530,21 +531,23 @@ extension ApplicationCoordinator {
             if managed {
                 completion(true)
             } else {
-                switch deepLink {
-                case .login:
-                    self.open(storyboardable: LoginForm.self, completion: completion)
-                case .main:
-                    self.open(storyboardable: Main.self, completion: completion)
-                case .settings:
-                    self.open(storyboardable: SettingsForm.self, completion: completion)
-                case .mainNavigation:
-                    self.open(storyboardable: MainNavigation.self, completion: completion)
-                case .table(let tableName):
-                    self.open(tableName: tableName, completion: completion)
-                case .record(let tableName, let primaryKeyValue):
-                    self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
-                case .relation(let tableName, let primaryKeyValue, let relationName):
-                    self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+                foreground { // post pone to let other transition be done in main thread
+                    switch deepLink {
+                    case .login:
+                        self.open(storyboardable: LoginForm.self, completion: completion)
+                    case .main:
+                        self.open(storyboardable: Main.self, completion: completion)
+                    case .settings:
+                        self.open(storyboardable: SettingsForm.self, completion: completion)
+                    case .navigation:
+                        self.open(storyboardable: MainNavigation.self, completion: completion)
+                    case .table(let tableName):
+                        self.open(tableName: tableName, completion: completion)
+                    case .record(let tableName, let primaryKeyValue):
+                        self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
+                    case .relation(let tableName, let primaryKeyValue, let relationName):
+                        self.open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+                    }
                 }
             }
         }
@@ -552,7 +555,7 @@ extension ApplicationCoordinator {
 
 }
 
-struct MainCoordinator {
+class MainCoordinator {
 
     var mainNavigationCoordinator = MainNavigationCoordinator()
     var loginCoordinator = LoginCoordinator()
@@ -567,13 +570,17 @@ struct MainCoordinator {
         case .login:
             loginCoordinator.follow(deepLink: deepLink, completion: completion)
         default:
-            mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
+            if APIManager.isSignIn {
+                mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
+            } else { // #118062 Manage if logged or not
+                loginCoordinator.afterLogin(deepLink: deepLink, completion: completion)
+            }
         }
-        // #118062 Manage if logged or not
     }
 }
 
-struct LoginCoordinator {
+class LoginCoordinator {
+    var apiManagerObservers: [NSObjectProtocol] = []
 
     var form: LoginForm? {
         if let topVC = UIApplication.topViewController as? LoginForm {
@@ -587,6 +594,24 @@ struct LoginCoordinator {
             form.login(deepLink)
         }
     }
+
+    func afterLogin(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        let loginObserver = APIManager.observe(APIManager.loginSuccess) { _ in
+            logger.debug("After loggin try to open deep link")
+            self.stopMonitoringAPIManager()
+            foreground {
+                ApplicationCoordinator.open(deepLink, completion: completion)
+            }
+        }
+        apiManagerObservers += [loginObserver]
+    }
+
+    fileprivate func stopMonitoringAPIManager() {
+        for observer in apiManagerObservers {
+            APIManager.unobserve(observer)
+        }
+    }
+
 }
 
 struct MainNavigationCoordinator {
@@ -636,3 +661,51 @@ struct MainNavigationCoordinator {
     }
 
 }
+/*
+private var segueBoxRef = "segueBoxRef"
+
+fileprivate extension UIViewController {
+    static let enableCoordinatorSegues: Void = {
+        swizzle(UIViewController.self, #selector(prepare(for:sender:)), #selector(swizzled_prepare(for:sender:)))
+    }()
+    @objc func swizzled_prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let sender = sender as? SegueBox {
+            sender.configure(segue.destination)
+        }
+        swizzled_prepare(for: segue, sender: sender)
+    }
+
+    var segueBox: SegueBox? {
+        get { return objc_getAssociatedObject(self, &segueBoxRef) as? SegueBox }
+        set { objc_setAssociatedObject(self, &segueBoxRef, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+
+private class SegueBox {
+    let configure: (UIViewController) -> Void
+
+    init(configure: @escaping (UIViewController) -> Void) {
+        self.configure = configure
+    }
+}
+
+private func swizzle(_ `class`: AnyClass, _ originalSelector: Selector, _ swizzledSelector: Selector) {
+    let originalMethod = class_getInstanceMethod(`class`, originalSelector)!
+    let swizzledMethod = class_getInstanceMethod(`class`, swizzledSelector)!
+
+    let didAdd = class_addMethod(
+        `class`, originalSelector,
+        method_getImplementation(swizzledMethod),
+        method_getTypeEncoding(swizzledMethod)
+    )
+
+    if didAdd {
+        class_replaceMethod(
+            `class`, swizzledSelector,
+            method_getImplementation(originalMethod),
+            method_getTypeEncoding(originalMethod)
+        )
+    } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}*/ // swiftlint:disable:this file_length // TODO cut this coordiantor file

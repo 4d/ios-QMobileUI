@@ -16,20 +16,7 @@ extension LoginForm {
     open func performTransition(_ sender: Any? = nil) {
         foreground { [weak self] in
             guard let source = self else { return }
-            let segue = source.segue
-            if source.performSegue {
-                // just perform the segue
-                source.perform(segue: segue, sender: sender)
-            } else {
-                if let destination = segue.destination {
-                    // prepare destination like done with segue
-                    source.prepare(for: UIStoryboardSegue(identifier: segue.identifier, source: source, destination: destination), sender: sender)
-                    // and present it
-                    source.present(destination, animated: true) {
-                        logger.debug("\(destination) presented by \(source)")
-                    }
-                }
-            }
+            ApplicationCoordinator.instance.loginTransition(source, sender) // try here to cut segue model, and use coordinator
         }
     }
 
@@ -42,10 +29,10 @@ extension LoginForm {
         var identifier: String? { return self.rawValue }
         var description: String { return "\(self.rawValue)" }
 
-        var destination: UIViewController? {
+        var destination: UIViewController {
             switch self {
             case .logged:
-                return MainNavigation.instantiateInitialViewController()
+                return MainNavigation.instantiateInitialViewController()!//swiftlint:disable:this force_cast
             }
         }
     }
@@ -55,4 +42,12 @@ extension LoginForm {
         return .logged
     }
 
+}
+
+extension ApplicationCoordinator {
+
+    func loginTransition(_ source: LoginForm, _ sender: Any? = nil) {
+        let segue = source.segue
+        performSegue(source, segue, source.performSegue, sender)
+    }
 }
