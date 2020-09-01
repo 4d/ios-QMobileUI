@@ -35,9 +35,23 @@ extension ApplicationCoordinator: ApplicationService {
         }
         ApplicationCoordinator.open(deepLink) { presented in
             if presented {
-                logger.info("Open \(deepLink) from user activity \(url).")
+                logger.info("Open \(deepLink) from launchOptions \(url).")
             } else {
-                logger.warning("Failed to open \(deepLink) from user activity \(url)")
+                logger.warning("Failed to open \(deepLink) from launchOptions \(url)")
+            }
+        }
+    }
+
+    public static func manageConnectionOptions(_ connectionOptions: UIScene.ConnectionOptions) {
+        // if scene launchOptions could be nil
+        guard let url = connectionOptions.urlContexts.first?.url, let deepLink = DeepLink.from(url) else {
+            return
+        }
+        ApplicationCoordinator.open(deepLink) { presented in
+            if presented {
+                logger.info("Open \(deepLink) from scene connection options \(url).")
+            } else {
+                logger.warning("Failed to open \(deepLink) from scene connection options \(url)")
             }
         }
     }
