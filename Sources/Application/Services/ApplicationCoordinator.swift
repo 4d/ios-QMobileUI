@@ -575,11 +575,17 @@ class MainCoordinator {
     var loginCoordinator = LoginCoordinator()
 
     var form: Main? {
-        return UIApplication.topViewController?.hierarchy?.first(where: { $0 is Main }) as? Main
-        //  self.form = Main.self.instantiateInitialViewController() as? Main // if we force build by coordinator
+        return UIApplication.topViewController as? Main
     }
 
     func follow(deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        if self.form != nil {
+            // postpone if too soon
+            DispatchQueue.main.after(1) {
+                self.follow(deepLink: deepLink, completion: completion)
+            }
+            return
+        }
         switch deepLink {
         case .login:
             loginCoordinator.follow(deepLink: deepLink, completion: completion)
