@@ -204,10 +204,9 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         // check action to execute
         if let action = Action(rawValue: response.actionIdentifier) {
             let application = UIApplication.shared
-            logger.debug("Application state when receive notification: \(application.applicationState)")
+            logger.debug("Application state when receive notification: \(application.applicationState). \(launchFromNotification)")
             if launchFromNotification {
-                // TODO register to app launched and logged before executing the action...
-                DispatchQueue.userInitiated.after(10) {
+                DispatchQueue.userInitiated.after(2) {
                     action.execute(userInfo, withCompletionHandler: completionHandler)
                 }
             } else {
