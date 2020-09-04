@@ -184,11 +184,13 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
             case .open, .default:
                 if let deepLink = DeepLink.from(userInfo) {
                     onForeground {
-                        ApplicationCoordinator.open(deepLink) { _ in
+                        ApplicationCoordinator.open(deepLink) { result in
+                            logger.debug("Deep link \(deepLink) opened with result \(result)")
                             completionHandler()
                         }
                     }
                 } else {
+                    logger.debug("No deep link with \(userInfo)")
                     completionHandler()
                 }
                 /*case .dismiss:
@@ -204,7 +206,8 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         // check action to execute
         if let action = Action(rawValue: response.actionIdentifier) {
             let application = UIApplication.shared
-            logger.debug("Application state when receive notification: \(application.applicationState). \(launchFromNotification)")
+            logger.debug("Application state when receive notification: \(response.notification) \(application.applicationState.rawValue). \(launchFromNotification)")
+            logger.debug("Extracted userInfo: \(userInfo)")
             if launchFromNotification {
                 DispatchQueue.userInitiated.after(2) {
                     action.execute(userInfo, withCompletionHandler: completionHandler)
