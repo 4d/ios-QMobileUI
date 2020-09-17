@@ -96,9 +96,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
         logger.info("ListForm for '\(self.tableName)' table loaded.")
 
         self.dataSource?.performFetch()
-        logger.verbose {
+        logger.verbose({
             return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
-        }
+        })
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
