@@ -81,11 +81,11 @@ struct ChoiceList {
         for option in options where option.key == key {
             return option
         }
-        if logger.isEnabledFor(level: .debug) {
+        /*if logger.isEnabledFor(level: .debug) {
             logger.debug("Default value \(key) not found in \(options.map { $0.key }) for action parameters")
             logger.verbose("Default value type \(type(of: key.value))")
             logger.verbose("Options types \(options.map { type(of: $0.key) })")
-        }
+        }*/
         return nil
     }
 
