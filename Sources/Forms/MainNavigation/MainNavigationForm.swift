@@ -14,7 +14,7 @@ public protocol MainNavigationForm: DeepLinkable {
 
     var childrenForms: [UIViewController] { get }
 
-    func presentChildForm(_ form: UIViewController)
+    func presentChildForm(_ form: UIViewController, completion: () -> Void)
 }
 
 extension MainNavigationForm where Self: UITabBarController {
@@ -23,12 +23,14 @@ extension MainNavigationForm where Self: UITabBarController {
         return self.viewControllers ?? [] // TODO : check if more view controller self.moreNavigationController.children ??
     }
 
-    public func presentChildForm(_ form: UIViewController) { // TODO callback completion generic?
+    public func presentChildForm(_ form: UIViewController, completion: () -> Void) {
         self.selectedViewController = form
 
         // dismiss controllers if not direct children in hierarchy
         if UIApplication.topViewController?.parent != self {
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true) {
+                completion()
+            }
         }
     }
 

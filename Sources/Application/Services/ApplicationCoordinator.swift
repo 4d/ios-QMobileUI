@@ -645,15 +645,17 @@ struct MainNavigationCoordinator {
         switch deepLink {
         case .settings:
             if let foundForm = self.form?.childrenForms.first(where: { $0.firstController is SettingsForm }) {
-                self.form?.presentChildForm(foundForm)
-                completion(true) // managed
+                self.form?.presentChildForm(foundForm) {
+                    completion(true) // managed
+                }
                 return
             }
             completion(false)
         case .table(let tableName):
             if let foundForm = self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) {
-                self.form?.presentChildForm(foundForm)
-                completion(true) // managed
+                self.form?.presentChildForm(foundForm) {
+                    completion(true) // managed
+                }
                 return
             }
             completion(false)
