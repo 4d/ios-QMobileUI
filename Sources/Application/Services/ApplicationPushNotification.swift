@@ -183,7 +183,7 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
             switch self {
             case .open, .default:
                 if let deepLink = DeepLink.from(userInfo) {
-                    onForeground {
+                    foreground {
                         ApplicationCoordinator.open(deepLink) { result in
                             logger.debug("Deep link \(deepLink) opened with result \(result)")
                             completionHandler()
