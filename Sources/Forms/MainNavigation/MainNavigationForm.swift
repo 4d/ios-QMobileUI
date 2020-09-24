@@ -25,9 +25,10 @@ extension MainNavigationForm where Self: UITabBarController {
 
     public func presentChildForm(_ form: UIViewController, completion: @escaping () -> Void) {
         self.selectedViewController = form
-
+        logger.info("Select in nav bar a new form \(form)")
         // dismiss controllers if not direct children in hierarchy
-        if UIApplication.topViewController?.parent != self {
+        if let topVC = UIApplication.topViewController, topVC.parent != self {
+            logger.info("Dismiss \(topVC) with parent \(String(describing: topVC.parent)) because not in root nav form")
             self.dismiss(animated: true) {
                 completion()
             }
