@@ -33,11 +33,13 @@ extension ApplicationCoordinator: ApplicationService {
             let deepLink = DeepLink.from(url) else {
                 return
         }
-        ApplicationCoordinator.open(deepLink) { presented in
-            if presented {
-                logger.info("Open \(deepLink) from launchOptions \(url).")
-            } else {
-                logger.warning("Failed to open \(deepLink) from launchOptions \(url)")
+        DispatchQueue.main.async {
+            ApplicationCoordinator.open(deepLink) { presented in
+                if presented {
+                    logger.info("Open \(deepLink) from launchOptions \(url).")
+                } else {
+                    logger.warning("Failed to open \(deepLink) from launchOptions \(url)")
+                }
             }
         }
     }
@@ -47,11 +49,13 @@ extension ApplicationCoordinator: ApplicationService {
         guard let url = connectionOptions.urlContexts.first?.url, let deepLink = DeepLink.from(url) else {
             return
         }
-        ApplicationCoordinator.open(deepLink) { presented in
-            if presented {
-                logger.info("Open \(deepLink) from scene connection options \(url).")
-            } else {
-                logger.warning("Failed to open \(deepLink) from scene connection options \(url)")
+        DispatchQueue.main.async {
+            ApplicationCoordinator.open(deepLink) { presented in
+                if presented {
+                    logger.info("Open \(deepLink) from scene connection options \(url).")
+                } else {
+                    logger.warning("Failed to open \(deepLink) from scene connection options \(url)")
+                }
             }
         }
     }
@@ -60,11 +64,13 @@ extension ApplicationCoordinator: ApplicationService {
         guard let deepLink = DeepLink.from(url) else {
             return
         }
-        ApplicationCoordinator.open(deepLink) { presented in
-            if presented {
-                logger.info("Open \(deepLink) from url.")
-            } else {
-                logger.warning("Failed to open \(deepLink) from url \(url)")
+        DispatchQueue.main.async {
+            ApplicationCoordinator.open(deepLink) { presented in
+                if presented {
+                    logger.info("Open \(deepLink) from url.")
+                } else {
+                    logger.warning("Failed to open \(deepLink) from url \(url)")
+                }
             }
         }
     }
@@ -75,11 +81,13 @@ extension ApplicationCoordinator: ApplicationService {
             let deepLink = DeepLink.from(url) else {
                 return false
         }
-        ApplicationCoordinator.open(deepLink) { presented in
-            if presented {
-                logger.info("Open \(deepLink) from user activity \(url)")
-            } else {
-                logger.warning("Failed to open \(deepLink) from user activity \(url)")
+        DispatchQueue.main.async {
+            ApplicationCoordinator.open(deepLink) { presented in
+                if presented {
+                    logger.info("Open \(deepLink) from user activity \(url)")
+                } else {
+                    logger.warning("Failed to open \(deepLink) from user activity \(url)")
+                }
             }
         }
         return true
