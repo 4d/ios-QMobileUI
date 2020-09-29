@@ -183,6 +183,7 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
             switch self {
             case .open, .default:
                 if let deepLink = DeepLink.from(userInfo) {
+                    logger.debug("Deep link notification \(userInfo): \(deepLink)")
                     foreground {
                         ApplicationCoordinator.open(deepLink) { result in
                             logger.debug("Deep link \(deepLink) opened with result \(result)")
@@ -223,17 +224,20 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
     /// Notification signal is received while app is in foreground. This callback let you decide if you want to display an alert or just a badge, a sound, etc.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-       // let userInfo = notification.request.content.userInfo
+        // let userInfo = notification.request.content.userInfo
 
         // Get notification content
         /*if let aps = userInfo["aps"] as? [String: AnyObject] {
             // Check the action identifier
           /*  if let category = aps["category"] as? String, category == Identifiers.customAction {
                 // Add custom behavior for your action 'customAction'
-            }*/
-        }*/
-        // completionHandler([.badge, .sound])
-        completionHandler([.alert, .badge, .sound])
+         }*/
+         }*/
+        if #available(iOS 14.0, *) {
+            completionHandler([.list, .badge, .sound])
+        } else {
+            completionHandler([.alert, .badge, .sound])
+        }
     }
 }
 

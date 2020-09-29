@@ -52,6 +52,12 @@ public enum DeepLink {
                     return .relation(table, record, relation)
                 }
                 return .record(table, record)
+            } else if json["entity.primaryKey"].exists() {
+                let record = json["entity.primaryKey"].rawValue
+                if let relation = json["relation"].string {
+                    return .relation(table, record, relation)
+                }
+                return .record(table, record)
             }
             return .table(table)
         }

@@ -35,9 +35,11 @@ extension MainNavigationForm where Self: UITabBarController {
                 }
             } else {
                 logger.debug("No dismiss of \(topVC) with parent \(String(describing: topVC.parent)) because topVC already has nav form for parent")
+                completion()
             }
         } else {
             logger.debug("Cannot get top view controller")
+            completion()
         }
     }
 

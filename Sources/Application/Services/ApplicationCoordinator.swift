@@ -598,7 +598,7 @@ class MainCoordinator {
         case .login:
             loginCoordinator.follow(deepLink: deepLink, completion: completion)
         default:
-            if APIManager.isSignIn {
+            if APIManager.isSignIn || !ApplicationAuthenticate.hasLogin {
                 mainNavigationCoordinator.follow(deepLink: deepLink, completion: completion)
             } else { // #118062 Manage if logged or not
                 loginCoordinator.afterLogin(deepLink: deepLink, completion: completion)
