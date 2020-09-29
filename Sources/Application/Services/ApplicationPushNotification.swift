@@ -234,7 +234,7 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
          }*/
          }*/
         if #available(iOS 14.0, *) {
-            completionHandler([.list, .badge, .sound])
+            completionHandler([.banner, .badge, .sound])
         } else {
             completionHandler([.alert, .badge, .sound])
         }
