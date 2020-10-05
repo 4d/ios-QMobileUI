@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import CoreData // TODO break dependences?; instance of ?
+import QMobileDataStore // TODO break dependences?; instance of ?
 
 /// Protocol to provide info on relation
 public protocol RelationInfoUI {
@@ -81,6 +81,7 @@ extension UIControl: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            checkRelationFormat()
         }
     }
     @objc dynamic open var addRelationSegueAction: Bool {
@@ -97,34 +98,37 @@ extension UIControl: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            checkRelationFormat()
+        }
+    }
 
-            if let newValue = newValue {
-                self.isEnabled = true
+    func checkRelationFormat() {
+        if let newValue = self.relation {
+            self.isEnabled = true
 
-                if let record = newValue as? NSManagedObject { // -> 1 (not working if not data...)
-                    //print("\(newValue)")
+            if let record = newValue as? RecordBase { // -> 1 (not working if not data...)
+                //print("\(newValue)")
 
-                    if let relationFormat = self.relationFormat,
-                        !relationFormat.isEmpty,
-                        let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+                if let relationFormat = self.relationFormat,
+                   !relationFormat.isEmpty,
+                   let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
 
-                        if let button = self as? UIButton { // bad case of...
-                             button.setTitle(formatter.format(record), for: .normal)
-                        }
+                    if let button = self as? UIButton { // bad case of...
+                        button.setTitle(formatter.format(record), for: .normal)
                     }
-
-                } else { // -> N
-                     //print("\(newValue)")
                 }
-           } else {
-                self.isEnabled = false
 
-                 if let button = self as? UIButton { // bad case of...
-                      if false { // ->1 // No info ...
-                           button.setTitle("", for: .normal)
-                      }
-                 }
-           }
+            } else { // -> N
+                //print("\(newValue)")
+            }
+        } else {
+            self.isEnabled = false
+
+            if let button = self as? UIButton { // bad case of...
+                if false { // ->1 // No info ...
+                    button.setTitle("", for: .normal)
+                }
+            }
         }
     }
 

@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import QMobileDataStore
 
 extension UILabel: RelationInfoUI {
 
-   #if TARGET_INTERFACE_BUILDER
+    #if TARGET_INTERFACE_BUILDER
     // To prevent storyboard issue with xcode do less using storyboard
     @objc dynamic open var relation: Any? {
         get { return nil }
@@ -38,18 +39,31 @@ extension UILabel: RelationInfoUI {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation)
         }
         set {
-            // self.isEnabled = newValue != nil // Feature deactivate button if no relations?
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            checkRelationFormat()
         }
     }
+
     @objc dynamic open var relationFormat: String? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat) as? String
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            checkRelationFormat()
         }
     }
+
+    func checkRelationFormat() {
+        if let record = self.relation as? RecordBase {
+            if let relationFormat = relationFormat,
+               !relationFormat.isEmpty,
+               let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+                self.text = formatter.format(record)
+            }
+        }
+    }
+
     @objc dynamic open var addRelationSegueAction: Bool {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction) as? Bool ?? true
@@ -60,7 +74,7 @@ extension UILabel: RelationInfoUI {
     }
     @objc public var relationName: String? {
         get {
-        return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName) as? String
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName) as? String
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
