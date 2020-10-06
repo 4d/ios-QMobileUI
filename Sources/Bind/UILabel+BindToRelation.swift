@@ -33,6 +33,10 @@ extension UILabel: RelationInfoUI {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    @objc dynamic open var relationTapGesture: UITapGestureRecognizer? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     #else
     @objc dynamic open var relation: Any? {
         get {
@@ -54,24 +58,12 @@ extension UILabel: RelationInfoUI {
         }
     }
 
-    func checkRelationFormat() {
-        if let record = self.relation as? RecordBase { // To One and not empty
-            if let relationFormat = relationFormat,
-               !relationFormat.isEmpty,
-               let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
-                self.text = formatter.format(record)
-            }
-        } else if self.relation is NSMutableSet { // to Many
-            if let relationFormat = relationFormat,
-               !relationFormat.isEmpty {
-                self.text = relationFormat
-            } else {
-                let attachmentImage = NSTextAttachment()
-                attachmentImage.image = UIImage.disclosureRelationImage
-                self.attributedText = NSAttributedString(attachment: attachmentImage)
-            }
-        } else { // To One and empty
-            self.text = ""
+    @objc dynamic open var relationTapGesture: UITapGestureRecognizer? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationTapGesture) as? UITapGestureRecognizer
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationTapGesture, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
 
@@ -83,19 +75,13 @@ extension UILabel: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
+
     @objc public var relationName: String? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName) as? String
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-
-            if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
-                self.isUserInteractionEnabled = true
-                let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
-                self.addGestureRecognizer(gestureRecognizer)
-                self.textColor = .relationLink
-            }
         }
     }
 
@@ -111,7 +97,48 @@ extension UILabel: RelationInfoUI {
         // only solution ask currentViewController to do the job?, same a performSegue code
         currentViewController.performSegue(withIdentifier: relationName, sender: self)
     }
+
     #endif
+
+    fileprivate func addRelationSegue() {
+        if addRelationSegueAction && self.relationTapGesture == nil { // to deactivate set addRelationSegueAction before relationName
+            self.isUserInteractionEnabled = true
+            let gesture = UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
+            self.relationTapGesture = gesture
+            self.addGestureRecognizer(gesture)
+            self.textColor = .relationLink
+        }
+    }
+
+    fileprivate func removeRelationSegue() {
+        if let relationTapGesture = self.relationTapGesture {
+            self.removeGestureRecognizer(relationTapGesture)
+        }
+    }
+
+    func checkRelationFormat() {
+        if let record = self.relation as? RecordBase { // To One and not empty
+            if let relationFormat = relationFormat,
+               !relationFormat.isEmpty,
+               let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+                self.text = formatter.format(record)
+            }
+            addRelationSegue()
+        } else if self.relation is NSMutableSet { // to Many
+            if let relationFormat = relationFormat,
+               !relationFormat.isEmpty {
+                self.text = relationFormat
+            } else {
+                let attachmentImage = NSTextAttachment()
+                attachmentImage.image = UIImage.disclosureRelationImage
+                self.attributedText = NSAttributedString(attachment: attachmentImage)
+            }
+            addRelationSegue()
+        } else { // To One and empty
+            self.text = ""
+            removeRelationSegue()
+        }
+    }
 }
 
 extension UIColor {

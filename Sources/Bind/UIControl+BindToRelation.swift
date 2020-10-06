@@ -31,6 +31,7 @@ struct RelationInfoUIAssociatedKeys {
     static var relationFormat = "RelationInfoUI.relationFormat"
     //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
+    static var relationTapGesture = "RelationInfoUI.relationTapGesture"
 }
 
 extension UIControl: RelationInfoUI {
@@ -57,24 +58,19 @@ extension UIControl: RelationInfoUI {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
     }
+
     #else
 
-    @objc dynamic open var relationName: String? {
+    @objc dynamic open  var relationName: String? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName) as? String
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 
-            if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
-                self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
-
-                // For buttons animation?
-                self.addTarget(self, action: #selector(self.touchDown(sender:)), for: .touchDown)
-                self.addTarget(self, action: #selector(self.touchUp(sender:)), for: .touchUpOutside)
-            }
         }
     }
+
     @objc dynamic open var relationFormat: String? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat) as? String
@@ -87,6 +83,7 @@ extension UIControl: RelationInfoUI {
             checkRelationFormat()
         }
     }
+
     @objc dynamic open var addRelationSegueAction: Bool {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction) as? Bool ?? true
@@ -95,6 +92,7 @@ extension UIControl: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
+
     @objc dynamic open var relation: Any? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation)
@@ -103,6 +101,22 @@ extension UIControl: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relation, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             checkRelationFormat()
         }
+    }
+
+    #endif
+
+    fileprivate func addRelationSegue() {
+        if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
+            self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
+
+            // For buttons animation?
+            self.addTarget(self, action: #selector(self.touchDown(sender:)), for: .touchDown)
+            self.addTarget(self, action: #selector(self.touchUp(sender:)), for: .touchUpOutside)
+        }
+    }
+
+    fileprivate func removeRelationSegue() {
+        //self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
     }
 
     func checkRelationFormat() {
@@ -118,6 +132,7 @@ extension UIControl: RelationInfoUI {
                         button.setTitle(formatter.format(record), for: .normal)
                     }
                 }
+                addRelationSegue()
             } else  /* is mutable set */ { // -> N
                 if let relationFormat = relationFormat,
                    !relationFormat.isEmpty {
@@ -130,6 +145,7 @@ extension UIControl: RelationInfoUI {
                         button.setImage(UIImage.disclosureRelationImage, for: .normal)
                     }
                 }
+                addRelationSegue()
             }
         } else { // to one but null or to many but not already created...
             self.isEnabled = false
@@ -142,10 +158,9 @@ extension UIControl: RelationInfoUI {
                 }
                 button.setTitle("", for: .normal)
             }
+            removeRelationSegue()
         }
     }
-
-    #endif
 
     @objc func relationSegue(sender: UIControl!) {
         touchUp(sender: sender)

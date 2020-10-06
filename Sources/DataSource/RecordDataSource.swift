@@ -33,4 +33,11 @@ class RecordDataSource: DataSource {
         super.init(fetchedResultsController: fetchedResultsController)
     }
 
+    override func beginUpdates() {
+    }
+    override func endUpdates() {
+    }
+    override func didChangeRecord(_ record: Record, at indexPath: IndexPath?, for type: FetchedResultsChangeType, _ newIndexPath: IndexPath?) {
+    }
+
 }
