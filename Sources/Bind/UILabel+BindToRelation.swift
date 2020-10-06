@@ -55,12 +55,23 @@ extension UILabel: RelationInfoUI {
     }
 
     func checkRelationFormat() {
-        if let record = self.relation as? RecordBase {
+        if let record = self.relation as? RecordBase { // To One and not empty
             if let relationFormat = relationFormat,
                !relationFormat.isEmpty,
                let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
                 self.text = formatter.format(record)
             }
+        } else if self.relation is NSMutableSet { // to Many
+            if let relationFormat = relationFormat,
+               !relationFormat.isEmpty {
+                self.text = relationFormat
+            } else {
+                let attachmentImage = NSTextAttachment()
+                attachmentImage.image = UIImage.disclosureRelationImage
+                self.attributedText = NSAttributedString(attachment: attachmentImage)
+            }
+        } else { // To One and empty
+            self.text = ""
         }
     }
 
@@ -81,7 +92,7 @@ extension UILabel: RelationInfoUI {
 
             if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
                 self.isUserInteractionEnabled = true
-                let gestureRecognizer =  UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
+                let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
                 self.addGestureRecognizer(gestureRecognizer)
                 self.textColor = .relationLink
             }
@@ -108,4 +119,11 @@ extension UIColor {
     static var relationLink: UIColor = {
         return UIColor(named: "relationLink") ?? .link
     }()
+}
+
+extension UIImage {
+    /// image when we are not able to know the label for relation widget ... use by default system  "arrow.right.circle" but could be overrided by asset image named "disclosureRelation"
+    static var disclosureRelationImage: UIImage? {
+        return UIImage(named: "disclosureRelation") ?? UIImage(systemName: "arrow.right.circle")?.withRenderingMode(.alwaysTemplate)
+    }
 }

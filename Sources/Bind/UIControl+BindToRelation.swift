@@ -80,7 +80,10 @@ extension UIControl: RelationInfoUI {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat) as? String
         }
         set {
-            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            let format = newValue ?? ""
+            if !format.isEmpty {
+                objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
             checkRelationFormat()
         }
     }
@@ -107,8 +110,6 @@ extension UIControl: RelationInfoUI {
             self.isEnabled = true
 
             if let record = newValue as? RecordBase { // -> 1 (not working if not data...)
-                //print("\(newValue)")
-
                 if let relationFormat = self.relationFormat,
                    !relationFormat.isEmpty,
                    let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
@@ -117,17 +118,29 @@ extension UIControl: RelationInfoUI {
                         button.setTitle(formatter.format(record), for: .normal)
                     }
                 }
-
-            } else { // -> N
-                //print("\(newValue)")
-            }
-        } else {
-            self.isEnabled = false
-
-            if let button = self as? UIButton { // bad case of...
-                if false { // ->1 // No info ...
-                    button.setTitle("", for: .normal)
+            } else  /* is mutable set */ { // -> N
+                if let relationFormat = relationFormat,
+                   !relationFormat.isEmpty {
+                    if let button = self as? UIButton { // bad case of...
+                        button.setTitle(relationFormat, for: .normal)
+                    }
+                } else {
+                    if let button = self as? UIButton { // bad case of...
+                        button.setTitle("", for: .normal)
+                        button.setImage(UIImage.disclosureRelationImage, for: .normal)
+                    }
                 }
+            }
+        } else { // to one but null or to many but not already created...
+            self.isEnabled = false
+            if let button = self as? UIButton { // bad case of...
+                if relationFormat?.isEmpty ?? true {
+                    let title = button.title(for: .normal) ?? ""
+                    if !title.isEmpty {
+                        self.relationFormat = button.title(for: .normal) // keep label in format
+                    }
+                }
+                button.setTitle("", for: .normal)
             }
         }
     }
