@@ -196,6 +196,9 @@ public typealias ErrorMessageableTextField = UITextField & ErrorMessageable
     }
 
     override open var isSecureTextEntry: Bool {
+        get {
+            return super.isSecureTextEntry
+        }
         set {
             super.isSecureTextEntry = newValue
             // Fix caret position.
@@ -203,9 +206,6 @@ public typealias ErrorMessageableTextField = UITextField & ErrorMessageable
             selectedTextRange = textRange(from: beginning, to: beginning)
             let end = endOfDocument
             selectedTextRange = textRange(from: end, to: end)
-        }
-        get {
-            return super.isSecureTextEntry
         }
     }
 

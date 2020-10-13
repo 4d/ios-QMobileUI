@@ -216,6 +216,7 @@
 		C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */; };
 		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
 		C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46F7C6E24BE3271005CF355 /* DeepLink.swift */; };
+		C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
@@ -439,6 +440,7 @@
 		C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashStatus.swift; sourceTree = "<group>"; };
 		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
 		C46F7C6E24BE3271005CF355 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
+		C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionParameter+KeyboardType.swift"; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
@@ -852,6 +854,7 @@
 				488D40382236BF1500F0E0B2 /* Binding */,
 				4869D609223BA4200042379F /* ActionContext */,
 				48BC8568226EF61200D548B2 /* Alert */,
+				C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */,
 			);
 			path = Action;
 			sourceTree = "<group>";
@@ -1529,6 +1532,7 @@
 				48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */,
 				48BC856E226F0B9300D548B2 /* UIAlertController+DataPicker.swift in Sources */,
 				483FDA801E826C6F00FAF84B /* Temp.swift in Sources */,
+				C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */,
 				489C3F8321AECE990018664B /* MainForm+Flow.swift in Sources */,
 				4806A64523F53E8C008F9AA7 /* RecordDataSource.swift in Sources */,
 				483FDA8B1E82842000FAF84B /* DetailsFormBare.swift in Sources */,

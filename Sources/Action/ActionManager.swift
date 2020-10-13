@@ -17,17 +17,37 @@ import Alamofire
 
 import QMobileAPI
 
-/// Class to execute actions.
+/// Class to execute actions and manage result.
+///
+/// # Workflow
+///
+/// An `Action` with context and user parameters are executed by requesting the server. This is the request.
+///
+/// Then when the server respond a result is decoded. According to result content, handlers could exectute code like login, show alert message, launch data synchro.
+///
+/// ## Customs action result handler
+///
+/// To inject custom action result handler you have two way. Make your `AppDelegate` implement `ActionResultHandler` or inject an app service which implement `ActionResultHandler`
+///
 public class ActionManager {
 
+    /// Singleton for the app.
     public static let instance = ActionManager()
 
-    // XXX to remove
-    private let oldWayParametersNotIndexed = Prephirences.sharedInstance["action.context.merged"] as? Bool ?? false
+    /// Manage action one by one (see if we can parallelize later by group of concern)
+    //public let operationQueue = OperationQueue(underlyingQueue: .background /*.userInitiated*/, maxConcurrentOperationCount: 1)
 
+    init() {
+        setupDefaultHandler()
+    }
+
+    // MARK: handlers
+
+    /// List of avaiable handlers
     public var handlers: [ActionResultHandler] = []
 
-    init() { //swiftlint:disable:this function_body_length
+    fileprivate func setupDefaultHandler() { //swiftlint:disable:this function_body_length
+        //swiftlint:disable:this function_body_length
         // default handlers
 
         // Show log
@@ -180,6 +200,7 @@ public class ActionManager {
         }
 
         onForeground {
+            /// Code to inject custom handlers.
             if let injectedHandler = UIApplication.shared.delegate as? ActionResultHandler {
                 self.handlers.append(injectedHandler)
             }
@@ -197,8 +218,9 @@ public class ActionManager {
         handlers.append(ActionResultHandlerBlock(block))
     }
 
-    /// Execute the action.
-    /// If there is parameters show a form.
+    // MARK: - Action execution
+
+    /// Execute the action or if there is at least one parameter show a form.
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
             // Execute action without any parameters
@@ -221,7 +243,7 @@ public class ActionManager {
     typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> Future<ActionResult, APIError>)
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
 
-    /// Execute action if success.
+    /// Execute action if success (ie. no error in form validatiion
     func executeAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
         switch result {
         case .success(let context):
@@ -238,61 +260,66 @@ public class ActionManager {
         // For the moment merge all parameters...
         var parameters: ActionParameters = [:]
         if let actionParameters = actionParameters {
-            if oldWayParametersNotIndexed {
-                parameters = actionParameters // old way
-            } else {
-                parameters["parameters"] = actionParameters // new way #107204
-            }
+            parameters["parameters"] = actionParameters
         }
         if let contextParameters = context.actionParameters(action: action) {
-            if oldWayParametersNotIndexed {
-                parameters.merge(contextParameters, uniquingKeysWith: { $1 })
-            } else {
-                parameters["context"] = contextParameters
-            }
+            parameters["context"] = contextParameters
         }
+
+        let request = action.newRequest(parameters: parameters)
+        executeActionRequest(request, actionUI, context, completionHandler)
+    }
+
+    // TODO remove ui and context?
+    func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
-            logger.info("Launch action \(action.name) with context and parameters: \(parameters)")
-            _ = APIManager.instance.action(action, parameters: parameters, callbackQueue: .background) { (result) in
-                // Display result or do some actions (incremental etc...)
-                switch result {
-                case .failure(let error):
-                    logger.warning("Action error: \(error)")
+            logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+            request.lastDate = Date()
+            _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
+                self.onActionResult(request, actionUI, context, result, completionHandler)
+            }
+        }
+    }
 
-                    if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
-                        ApplicationAuthenticate.retryGuestLogin { authResult in
-                            switch authResult {
-                            case .success:
-                                // XXX do not do infinite retry
-                                self.executeAction(action, actionUI, context, actionParameters, completionHandler)
-                            case .failure(let authError):
-                                self.showError(authError)
-                               _ = completionHandler?(.failure(error))
-                            }
-                        }
-                        return
+    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, APIError>, _ completionHandler: ActionExecutionCompletionHandler?) {
+        request.result = result
+        // Display result or do some actions (incremental etc...)
+        switch result {
+        case .failure(let error):
+            logger.warning("Action error: \(error)")
+
+            if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
+                ApplicationAuthenticate.retryGuestLogin { authResult in
+                    switch authResult {
+                    case .success:
+                        // XXX do not do infinite retry
+                        self.executeActionRequest(request, actionUI, context, completionHandler)
+                    case .failure(let authError):
+                        self.showError(authError)
+                       _ = completionHandler?(.failure(error))
                     }
-                    self.showError(error)
-                    _ = completionHandler?(.failure(error))
-                case .success(let value):
-                    logger.debug("\(value)")
-                    if let completionHandler = completionHandler {
-                        let future = completionHandler(.success(value))
-                        // delay handle action result, after form finish with it
-                        future.onComplete { result in
-                            onForeground {
-                                background {
-                                    _ = self.handle(result: value, for: action, from: actionUI, in: context)
-                                }
-                            }
+                }
+                return
+            }
+            self.showError(error)
+            _ = completionHandler?(.failure(error))
+        case .success(let value):
+            logger.debug("\(value)")
+            if let completionHandler = completionHandler {
+                let future = completionHandler(.success(value))
+                // delay handle action result, after form finish with it
+                future.onComplete { result in
+                    onForeground {
+                        background {
+                            _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
                         }
-                    } else {
-                        onForeground {
-                            background {
-                                _ = self.handle(result: value, for: action, from: actionUI, in: context)
-                            }
-                        }
+                    }
+                }
+            } else {
+                onForeground {
+                    background {
+                        _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
                     }
                 }
             }
@@ -318,51 +345,6 @@ public class ActionManager {
         }
     }
 
-}
-
-extension UITextField {
-
-    func from(actionParameter: ActionParameter, context: ActionContext) {
-        self.placeholder = actionParameter.placeholder
-        if let defaultValue = actionParameter.defaultValue(with: context) {
-            self.text = "\(defaultValue)"
-        }
-        self.keyboardType = actionParameter.keyboardType(with: context)
-    }
-
-}
-
-extension ActionParameter {
-
-    func keyboardType(with context: ActionContext) -> UIKeyboardType {
-        if let format = self.format {
-            switch format {
-            case .email/* .emailAddress*/:
-                return .emailAddress
-            case .url:
-                return .URL
-            case .phone:
-                return .phonePad
-            default:
-                break
-            }
-        }
-        switch self.type {
-        case .string, .text:
-            return .default
-        case .real, .number:
-            return .decimalPad
-        case .integer:
-            return .numberPad
-        default:
-            return .default
-        }
-    }
-
-}
-
-extension Action {
-    static let dummy =  Action(name: "")
 }
 
 // MARK: ActionResultHandler
