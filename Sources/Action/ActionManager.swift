@@ -37,6 +37,9 @@ public class ActionManager {
     /// Manage action one by one (see if we can parallelize later by group of concern)
     //public let operationQueue = OperationQueue(underlyingQueue: .background /*.userInitiated*/, maxConcurrentOperationCount: 1)
 
+    /// List of requests
+    public var requests: [ActionRequest] = []
+
     init() {
         setupDefaultHandler()
     }
@@ -223,7 +226,7 @@ public class ActionManager {
     /// Execute the action or if there is at least one parameter show a form.
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
-            // Execute action without any parameters
+            // Execute action without any parameters immedialtely
             executeAction(action, actionUI, context, nil /*without parameters*/, nil)
         } else {
             // Create UI according to action parameters
@@ -250,7 +253,7 @@ public class ActionManager {
             executeAction(context.0, context.1, context.2, context.3, context.4)
         case .failure(let error):
             if error.isUserRequested {
-                logger.info("Action not performed: \(error)")
+                logger.info("Action not performed: \(error)") // cancel
             } else {
                 logger.warning("Action not performed: \(error)")
             }
@@ -259,15 +262,34 @@ public class ActionManager {
 
     /// Execute the network call for action.
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
-       // self.lastContext = context // keep as last context
 
-        let contextParameters: ActionParameters? = context.actionContextParameters(action: action)
+        let contextParameters: ActionParameters? = context.actionContextParameters()
         let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
         executeActionRequest(request, actionUI, context, completionHandler)
     }
 
+    func openUI(_ request: ActionRequest, _ actionUI: ActionUI) {
+        let action = request.action
+        if action.parameters.isEmpty {
+            return
+        }
+        let context = request
+        // Create UI according to action parameters
+        var control: ActionParametersUIControl?
+        if ActionFormSettings.alertIfOneField {
+            control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
+        }
+
+        if control == nil {
+            let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
+            control = type.build(action, actionUI, context, self.executeActionUICallback)
+        }
+        control?.showActionParameters()
+    }
+
     // TODO remove ui and context?
     func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
+        self.requests.append(request)
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
@@ -339,6 +361,19 @@ public class ActionManager {
                 SwiftMessages.error(title: error.errorDescription ?? "", message: "")
             }
         }
+    }
+
+}
+
+// Implement context to be able to reopen UI with data from request
+extension ActionRequest: ActionContext {
+
+    public func actionContextParameters() -> ActionParameters? {
+        return self.contextParameters // a copy of original context parameter
+    }
+
+    public func actionParameterValue(for field: String) -> Any? {
+        return self.actionParameters?[field] // this context will return parameter form already filled by user, it do not have record to complete more field
     }
 
 }

@@ -14,15 +14,15 @@ import QMobileDataSync
 
 extension DataSource: ActionContext {
     /// DataSource provide table as context.
-    public func actionContextParameters(action: Action) -> ActionParameters? {
+    public func actionContextParameters() -> ActionParameters? {
         return [ActionParametersKey.table: tableName]
     }
 }
 
 extension DataSourceEntry: ActionContext {
     /// DataSourceEntry provide table and record primary key as context.
-    public func actionContextParameters(action: Action) -> ActionParameters? {
-        var parameters = self.dataSource.actionContextParameters(action: action)
+    public func actionContextParameters() -> ActionParameters? {
+        var parameters = self.dataSource.actionContextParameters()
         if let record = self.record as? Record, let primaryKeyValue = record.primaryKeyValue {
             parameters?[ActionParametersKey.record] = [ActionParametersKey.primaryKey: primaryKeyValue]
         }
@@ -40,13 +40,13 @@ extension DataSourceEntry: ActionContext {
 extension DataSourceParentEntry: ActionContext {
 
     /// DataSourceParentEntry provide table and parent record primary key and its data class and also relationName  as context.
-    public func actionContextParameters(action: Action) -> ActionParameters? {
-        guard var parameters = self.actionContext?.actionContextParameters(action: action) else {
+    public func actionContextParameters() -> ActionParameters? {
+        guard var parameters = self.actionContext?.actionContextParameters() else {
             return nil
         }
 
         if let parentContext = self.formContext.actionContext,
-            let parentContextParameters = parentContext.actionContextParameters(action: action),
+            let parentContextParameters = parentContext.actionContextParameters(),
             let record = parentContextParameters[ActionParametersKey.record] as? [String: Any] {
 
             var parent: [String: Any] = record
