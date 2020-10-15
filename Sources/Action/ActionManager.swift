@@ -229,12 +229,12 @@ public class ActionManager {
             // Create UI according to action parameters
             var control: ActionParametersUIControl?
             if ActionFormSettings.alertIfOneField {
-                control = UIAlertController.build(action, actionUI, context, self.executeAction) // could return nil if not managed
+                control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
             }
 
             if control == nil {
                 let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-                control = type.build(action, actionUI, context, self.executeAction)
+                control = type.build(action, actionUI, context, self.executeActionUICallback)
             }
             control?.showActionParameters()
         }
@@ -244,29 +244,25 @@ public class ActionManager {
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
 
     /// Execute action if success (ie. no error in form validatiion
-    func executeAction(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
+    func executeActionUICallback(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
         switch result {
         case .success(let context):
             executeAction(context.0, context.1, context.2, context.3, context.4)
         case .failure(let error):
-            logger.warning("Action not performed: \(error)")
+            if error.isUserRequested {
+                logger.info("Action not performed: \(error)")
+            } else {
+                logger.warning("Action not performed: \(error)")
+            }
         }
     }
 
     /// Execute the network call for action.
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
        // self.lastContext = context // keep as last context
-        // execute the network action
-        // For the moment merge all parameters...
-        var parameters: ActionParameters = [:]
-        if let actionParameters = actionParameters {
-            parameters["parameters"] = actionParameters
-        }
-        if let contextParameters = context.actionParameters(action: action) {
-            parameters["context"] = contextParameters
-        }
 
-        let request = action.newRequest(parameters: parameters)
+        let contextParameters: ActionParameters? = context.actionParameters(action: action)
+        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
         executeActionRequest(request, actionUI, context, completionHandler)
     }
 

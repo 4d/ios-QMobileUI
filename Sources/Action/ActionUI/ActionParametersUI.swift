@@ -60,6 +60,15 @@ enum ActionParametersUIError: Error {
     case noParameters
     case wrongNumberOfParameters
     case userCancel
+
+    var isUserRequested: Bool {
+        switch self {
+        case .userCancel:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 /// Custom implementation
