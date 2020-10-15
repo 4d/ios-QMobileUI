@@ -35,7 +35,7 @@ extension UIView: ActionContext {
         if let context = self.bindTo.table {
             return context
         } /*else if let parentCellView = self.parentCellView as? UIView, let context = parentCellView.bindTo.table {
-             parameters = context.actionParameters(action: action)
+             parameters = context.actionContextParameters(action: action)
          }*/ else if let provider = self.findActionContextProvider(), let context = provider.actionContext() {
             return context
         }
@@ -44,8 +44,8 @@ extension UIView: ActionContext {
     }
 
     // A view try to find action context according to the view hierarchy
-    public func actionParameters(action: Action) -> ActionParameters? {
-        return self.innerContext?.actionParameters(action: action)
+    public func actionContextParameters(action: Action) -> ActionParameters? {
+        return self.innerContext?.actionContextParameters(action: action)
     }
 
     public func actionParameterValue(for field: String) -> Any? {

@@ -14,7 +14,7 @@ import QMobileAPI
 public protocol ActionContext {
 
     /// Provide parameters for the action.
-    func actionParameters(action: Action) -> ActionParameters?
+    func actionContextParameters(action: Action) -> ActionParameters?
 
     /// Provide value for a field.
     func actionParameterValue(for field: String) -> Any?

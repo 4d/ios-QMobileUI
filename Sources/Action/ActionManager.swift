@@ -261,7 +261,7 @@ public class ActionManager {
     func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
        // self.lastContext = context // keep as last context
 
-        let contextParameters: ActionParameters? = context.actionParameters(action: action)
+        let contextParameters: ActionParameters? = context.actionContextParameters(action: action)
         let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
         executeActionRequest(request, actionUI, context, completionHandler)
     }
