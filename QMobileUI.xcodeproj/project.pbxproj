@@ -218,6 +218,7 @@
 		C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46F7C6E24BE3271005CF355 /* DeepLink.swift */; };
 		C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
+		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
@@ -442,6 +443,7 @@
 		C46F7C6E24BE3271005CF355 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionParameter+KeyboardType.swift"; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
+		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
@@ -679,6 +681,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				C4D6A481253F1BBA000CD742 /* BarcodeScannerRow */,
 				48016A6A22BB8885005A7C65 /* TimeIntervalRow */,
 				48E655E3229EB2CC0060568B /* LocationRow */,
 				482C6544229D1BB10045E1CE /* RatingRow */,
@@ -1140,6 +1143,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C4D6A481253F1BBA000CD742 /* BarcodeScannerRow */ = {
+			isa = PBXGroup;
+			children = (
+				C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */,
+			);
+			path = BarcodeScannerRow;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1418,6 +1429,7 @@
 				480B43511E84225C007C90DD /* UISwitch+QMobile.swift in Sources */,
 				483FDAB71E82DD0A00FAF84B /* DispatchQueue+QMobile.swift in Sources */,
 				4853BD622105A948004B2467 /* NSAttributedString+QMobile.swift in Sources */,
+				C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */,
 				4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */,
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
