@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import SwiftUI
+import Combine
 
 import SwiftMessages
 import Prephirences
@@ -29,7 +31,7 @@ import QMobileAPI
 ///
 /// To inject custom action result handler you have two way. Make your `AppDelegate` implement `ActionResultHandler` or inject an app service which implement `ActionResultHandler`
 ///
-public class ActionManager {
+public class ActionManager: ObservableObject {
 
     /// Singleton for the app.
     public static let instance = ActionManager()
@@ -38,10 +40,21 @@ public class ActionManager {
     //public let operationQueue = OperationQueue(underlyingQueue: .background /*.userInitiated*/, maxConcurrentOperationCount: 1)
 
     /// List of requests
-    public var requests: [ActionRequest] = []
+    @Published public var requests: [ActionRequest] = []
+
+    public var offlineAction: Bool = false
+
+    private var bag = Set<AnyCancellable>()
 
     init() {
         setupDefaultHandler()
+        if offlineAction {
+            loadActionRequests()
+            $requests.sink { [weak self] in
+                print("new request \($0)")
+                self?.saveActionRequests()
+            }.store(in: &bag)
+        }
     }
 
     // MARK: handlers
@@ -243,7 +256,7 @@ public class ActionManager {
         }
     }
 
-    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> Future<ActionResult, APIError>)
+    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> BrightFutures.Future<ActionResult, APIError>)
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
 
     /// Execute action if success (ie. no error in form validatiion
@@ -287,9 +300,27 @@ public class ActionManager {
         control?.showActionParameters()
     }
 
+    func loadActionRequests() {
+        if let requests = Prephirences.sharedInstance["requests"] as? [ActionRequest] {
+            for request in requests {
+                self.requests.append(request)
+            }
+        }
+        // TODO check if must relaunch?
+    }
+
+    func saveActionRequests() {
+        // if possible call it when list published change (and any element)
+        var store = Prephirences.sharedMutableInstance
+        store?["requests"] = self.requests
+    }
+
     // TODO remove ui and context?
     func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
-        self.requests.append(request)
+
+        if offlineAction {
+            self.requests.append(request)
+        }
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
@@ -302,6 +333,10 @@ public class ActionManager {
 
     func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, APIError>, _ completionHandler: ActionExecutionCompletionHandler?) {
         request.result = result
+
+        if offlineAction {
+            saveActionRequests() // TODO check if sink call on element change?
+        }
         // Display result or do some actions (incremental etc...)
         switch result {
         case .failure(let error):
@@ -431,7 +466,7 @@ extension ActionResult {
     fileprivate var goBack: Bool {
         return json["goBack"].boolValue
     }
-    fileprivate var actionSheet: ActionSheet? {
+    fileprivate var actionSheet: QMobileAPI.ActionSheet? {
         if json["actions"].isEmpty {
             return nil
         }
