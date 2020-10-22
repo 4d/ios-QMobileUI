@@ -42,7 +42,8 @@ public class ActionManager: ObservableObject {
     /// List of requests
     @Published public var requests: [ActionRequest] = []
 
-    public var offlineAction: Bool = false
+    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? false
+    public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
 
     private var bag = Set<AnyCancellable>()
 
@@ -61,6 +62,212 @@ public class ActionManager: ObservableObject {
 
     /// List of avaiable handlers
     public var handlers: [ActionResultHandler] = []
+
+    // MARK: - Action execution
+
+    /// Execute the action or if there is at least one parameter show a form.
+    public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
+        if action.parameters.isEmpty {
+            // Execute action without any parameters immedialtely
+            executeAction(action, actionUI, context, nil /*without parameters*/, nil)
+        } else {
+            // Create UI according to action parameters
+            var control: ActionParametersUIControl?
+            if ActionFormSettings.alertIfOneField {
+                control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
+            }
+
+            if control == nil {
+                let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
+                control = type.build(action, actionUI, context, self.executeActionUICallback)
+            }
+            control?.showActionParameters()
+        }
+    }
+
+    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> BrightFutures.Future<ActionResult, APIError>)
+    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
+
+    /// Execute action if success (ie. no error in form validatiion
+    func executeActionUICallback(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
+        switch result {
+        case .success(let context):
+            executeAction(context.0, context.1, context.2, context.3, context.4)
+        case .failure(let error):
+            if error.isUserRequested {
+                logger.info("Action not performed: \(error)") // cancel
+            } else {
+                logger.warning("Action not performed: \(error)")
+            }
+        }
+    }
+
+    /// Execute the network call for action.
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
+
+        let contextParameters: ActionParameters? = context.actionContextParameters()
+        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
+        executeActionRequest(request, actionUI, context, completionHandler)
+    }
+
+    func openUI(_ request: ActionRequest, _ actionUI: ActionUI) {
+        let action = request.action
+        if action.parameters.isEmpty {
+            return
+        }
+        let context = request
+        // Create UI according to action parameters
+        var control: ActionParametersUIControl?
+        if ActionFormSettings.alertIfOneField {
+            control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
+        }
+
+        if control == nil {
+            let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
+            control = type.build(action, actionUI, context, self.executeActionUICallback)
+        }
+        control?.showActionParameters()
+    }
+
+    func loadActionRequests() {
+        let store: PreferencesType = Prephirences.sharedInstance
+        do {
+            if let requests: [ActionRequest] = try? store.decodable([ActionRequest].self, forKey: "action.requests") {
+                for request in requests {
+                    self.requests.append(request)
+                }
+            }
+            checkHistory()
+        } catch {
+            logger.warning("Failed to load actions history and draft \(error)")
+            // TODO check if must relaunch?
+        }
+    }
+
+    func checkHistory() {
+
+        // TODO remove from requests older requests if finished and more than offlineActionHistoryMax
+    }
+
+    func saveActionRequests() {
+        // if possible call it when list published change (and any element)
+        let store: MutablePreferencesType? = Prephirences.sharedMutableInstance
+        do {
+            try store?.set(encodable: self.requests, forKey: "action.requests")
+        } catch {
+            logger.warning("Failed to save actions history and draft \(error)")
+        }
+    }
+
+    // TODO remove ui and context?
+    func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
+
+        if offlineAction {
+            self.requests.append(request)
+        }
+        let actionQueue: DispatchQueue = .background
+        actionQueue.async {
+            logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+            request.lastDate = Date()
+            _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
+                self.onActionResult(request, actionUI, context, result, completionHandler)
+            }
+        }
+    }
+
+    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, APIError>, _ completionHandler: ActionExecutionCompletionHandler?) {
+        request.result = result
+
+        if offlineAction {
+            saveActionRequests() // TODO check if sink call on element change?
+        }
+        // Display result or do some actions (incremental etc...)
+        switch result {
+        case .failure(let error):
+            logger.warning("Action error: \(error)")
+
+            if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
+                ApplicationAuthenticate.retryGuestLogin { authResult in
+                    switch authResult {
+                    case .success:
+                        // XXX do not do infinite retry
+                        self.executeActionRequest(request, actionUI, context, completionHandler)
+                    case .failure(let authError):
+                        self.showError(authError)
+                       _ = completionHandler?(.failure(error))
+                    }
+                }
+                return
+            }
+            self.showError(error)
+            _ = completionHandler?(.failure(error))
+        case .success(let value):
+            logger.debug("\(value)")
+            if let completionHandler = completionHandler {
+                let future = completionHandler(.success(value))
+                // delay handle action result, after form finish with it
+                future.onComplete { result in
+                    onForeground {
+                        background {
+                            _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
+                        }
+                    }
+                }
+            } else {
+                onForeground {
+                    background {
+                        _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Show error has status text.
+    func showError(_ error: APIError) {
+        logger.warning("Error when managing action response \(error.errorDescription ?? ""): \(error)")
+        // Try to display the best error message...
+        if let statusText = error.restErrors?.statusText { // dev message
+            SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
+        } else { /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
+            if !ApplicationReachability.isReachable { // so check reachability status
+                SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
+            } else if case .sessionTaskFailed(let urlError) = error.afError {
+                SwiftMessages.warning(urlError.localizedDescription)
+            } else if let failureReason = error.failureReason {
+                SwiftMessages.warning(failureReason)
+            } else {
+                SwiftMessages.error(title: error.errorDescription ?? "", message: "")
+            }
+        }
+    }
+
+}
+
+// Implement context to be able to reopen UI with data from request
+extension ActionRequest: ActionContext {
+
+    public func actionContextParameters() -> ActionParameters? {
+        return self.contextParameters // a copy of original context parameter
+    }
+
+    public func actionParameterValue(for field: String) -> Any? {
+        return self.actionParameters?[field] // this context will return parameter form already filled by user, it do not have record to complete more field
+    }
+
+}
+
+// MARK: ActionResultHandler
+
+extension ActionManager: ActionResultHandler {
+
+    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI, in context: ActionContext) -> Bool {
+        var handled = false
+        for handler in handlers {
+            handled = handler.handle(result: result, for: action, from: actionUI, in: context) || handled
+        }
+        return handled
+    }
 
     fileprivate func setupDefaultHandler() { //swiftlint:disable:this function_body_length
         //swiftlint:disable:this function_body_length
@@ -232,197 +439,6 @@ public class ActionManager: ObservableObject {
 
     public func append(_ block: @escaping ActionResultHandler.Block) {
         handlers.append(ActionResultHandlerBlock(block))
-    }
-
-    // MARK: - Action execution
-
-    /// Execute the action or if there is at least one parameter show a form.
-    public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
-        if action.parameters.isEmpty {
-            // Execute action without any parameters immedialtely
-            executeAction(action, actionUI, context, nil /*without parameters*/, nil)
-        } else {
-            // Create UI according to action parameters
-            var control: ActionParametersUIControl?
-            if ActionFormSettings.alertIfOneField {
-                control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
-            }
-
-            if control == nil {
-                let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-                control = type.build(action, actionUI, context, self.executeActionUICallback)
-            }
-            control?.showActionParameters()
-        }
-    }
-
-    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> BrightFutures.Future<ActionResult, APIError>)
-    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
-
-    /// Execute action if success (ie. no error in form validatiion
-    func executeActionUICallback(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
-        switch result {
-        case .success(let context):
-            executeAction(context.0, context.1, context.2, context.3, context.4)
-        case .failure(let error):
-            if error.isUserRequested {
-                logger.info("Action not performed: \(error)") // cancel
-            } else {
-                logger.warning("Action not performed: \(error)")
-            }
-        }
-    }
-
-    /// Execute the network call for action.
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
-
-        let contextParameters: ActionParameters? = context.actionContextParameters()
-        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
-        executeActionRequest(request, actionUI, context, completionHandler)
-    }
-
-    func openUI(_ request: ActionRequest, _ actionUI: ActionUI) {
-        let action = request.action
-        if action.parameters.isEmpty {
-            return
-        }
-        let context = request
-        // Create UI according to action parameters
-        var control: ActionParametersUIControl?
-        if ActionFormSettings.alertIfOneField {
-            control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
-        }
-
-        if control == nil {
-            let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-            control = type.build(action, actionUI, context, self.executeActionUICallback)
-        }
-        control?.showActionParameters()
-    }
-
-    func loadActionRequests() {
-        if let requests = Prephirences.sharedInstance["requests"] as? [ActionRequest] {
-            for request in requests {
-                self.requests.append(request)
-            }
-        }
-        // TODO check if must relaunch?
-    }
-
-    func saveActionRequests() {
-        // if possible call it when list published change (and any element)
-        var store = Prephirences.sharedMutableInstance
-        store?["requests"] = self.requests
-    }
-
-    // TODO remove ui and context?
-    func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
-
-        if offlineAction {
-            self.requests.append(request)
-        }
-        let actionQueue: DispatchQueue = .background
-        actionQueue.async {
-            logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
-            request.lastDate = Date()
-            _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
-                self.onActionResult(request, actionUI, context, result, completionHandler)
-            }
-        }
-    }
-
-    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, APIError>, _ completionHandler: ActionExecutionCompletionHandler?) {
-        request.result = result
-
-        if offlineAction {
-            saveActionRequests() // TODO check if sink call on element change?
-        }
-        // Display result or do some actions (incremental etc...)
-        switch result {
-        case .failure(let error):
-            logger.warning("Action error: \(error)")
-
-            if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
-                ApplicationAuthenticate.retryGuestLogin { authResult in
-                    switch authResult {
-                    case .success:
-                        // XXX do not do infinite retry
-                        self.executeActionRequest(request, actionUI, context, completionHandler)
-                    case .failure(let authError):
-                        self.showError(authError)
-                       _ = completionHandler?(.failure(error))
-                    }
-                }
-                return
-            }
-            self.showError(error)
-            _ = completionHandler?(.failure(error))
-        case .success(let value):
-            logger.debug("\(value)")
-            if let completionHandler = completionHandler {
-                let future = completionHandler(.success(value))
-                // delay handle action result, after form finish with it
-                future.onComplete { result in
-                    onForeground {
-                        background {
-                            _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
-                        }
-                    }
-                }
-            } else {
-                onForeground {
-                    background {
-                        _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
-                    }
-                }
-            }
-        }
-    }
-
-    /// Show error has status text.
-    func showError(_ error: APIError) {
-        logger.warning("Error when managing action response \(error.errorDescription ?? ""): \(error)")
-        // Try to display the best error message...
-        if let statusText = error.restErrors?.statusText { // dev message
-            SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
-        } else { /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
-            if !ApplicationReachability.isReachable { // so check reachability status
-                SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
-            } else if case .sessionTaskFailed(let urlError) = error.afError {
-                SwiftMessages.warning(urlError.localizedDescription)
-            } else if let failureReason = error.failureReason {
-                SwiftMessages.warning(failureReason)
-            } else {
-                SwiftMessages.error(title: error.errorDescription ?? "", message: "")
-            }
-        }
-    }
-
-}
-
-// Implement context to be able to reopen UI with data from request
-extension ActionRequest: ActionContext {
-
-    public func actionContextParameters() -> ActionParameters? {
-        return self.contextParameters // a copy of original context parameter
-    }
-
-    public func actionParameterValue(for field: String) -> Any? {
-        return self.actionParameters?[field] // this context will return parameter form already filled by user, it do not have record to complete more field
-    }
-
-}
-
-// MARK: ActionResultHandler
-
-extension ActionManager: ActionResultHandler {
-
-    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI, in context: ActionContext) -> Bool {
-        var handled = false
-        for handler in handlers {
-            handled = handler.handle(result: result, for: action, from: actionUI, in: context) || handled
-        }
-        return handled
     }
 }
 
