@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import Eureka
+import SwiftMessages
 
 public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, PresenterRowType, RowType {
 
@@ -46,6 +47,14 @@ public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, Pres
         onPresentCallback?(cell.formViewController()!, rowVC)
         rowVC.row = self
     }
+
+    public override func customUpdateCell() {
+        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        imageView.image = UIImage(systemName: "barcode.viewfinder")?.withRenderingMode(.alwaysTemplate)
+        imageView.contentMode = .scaleAspectFit
+        cell.accessoryView = imageView
+   }
+
 }
 
 public class BarcodeScannerViewController: UIViewController, TypedRowControllerType {
@@ -55,7 +64,7 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
 
     var captureSession = AVCaptureSession()
     var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    var qrCodeFrameView: UIView?
+    var qrCodeFrameView: UIView!
 
     private let supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
 
@@ -64,6 +73,10 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
 
         guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
             logger.warning("Failed to get the camera device. Maybe forbidden by user or simulator.")
+            SwiftMessages.warning("No camera accessible to scan")
+            foreground {
+                self.onDismissCallback?(self)
+            }
             return
         }
 
@@ -92,12 +105,10 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
 
         qrCodeFrameView = UIView()
 
-        if let qrCodeFrameView = qrCodeFrameView {
-            qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
-            qrCodeFrameView.layer.borderWidth = 2
-            view.addSubview(qrCodeFrameView)
-            view.bringSubviewToFront(qrCodeFrameView)
-        }
+        qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
+        qrCodeFrameView.layer.borderWidth = 2
+        view.addSubview(qrCodeFrameView)
+        view.bringSubviewToFront(qrCodeFrameView)
     }
 
 }
@@ -105,19 +116,19 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
 extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
 
     public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-
         if metadataObjects.isEmpty {
-            qrCodeFrameView?.frame = CGRect.zero
+            qrCodeFrameView.frame = CGRect.zero
             return
         }
 
         if let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject, supportedCodeTypes.contains(metadataObj.type) {
 
-            let barCodeObject = videoPreviewLayer?.transformedMetadataObject(for: metadataObj)
-            qrCodeFrameView?.frame = barCodeObject!.bounds
+            if let barCodeObject = videoPreviewLayer?.transformedMetadataObject(for: metadataObj) {
+                qrCodeFrameView.frame = barCodeObject.bounds
+            }
 
-            if metadataObj.stringValue != nil {
-                row.value = metadataObj.stringValue
+            if let value = metadataObj.stringValue {
+                row.value = value
                 onDismissCallback?(self)
             }
         }
