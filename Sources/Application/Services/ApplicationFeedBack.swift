@@ -85,9 +85,9 @@ extension ApplicationFeedback: ApplicationService {
                 }
                 if !strongSelf.inShake {
                     strongSelf.inShake = true
-                    strongSelf.showDialog(tips: "💡 Shake the device to display this dialog again.", sender: notification) {
+                    strongSelf.showDialog(tips: "💡 Shake the device to display this dialog again.", sender: notification, completion:  {
                         strongSelf.inShake = false
-                    }
+                    })
                 }
             }
        /* case .screenshot:

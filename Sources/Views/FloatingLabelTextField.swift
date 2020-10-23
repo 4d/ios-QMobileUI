@@ -33,12 +33,12 @@ public typealias ErrorMessageableTextField = UITextField & ErrorMessageable
     fileprivate var cachedTextColor: UIColor?
 
     @IBInspectable override open var textColor: UIColor? {
+        get {
+            return cachedTextColor
+        }
         set {
             cachedTextColor = newValue
             configureControl(false)
-        }
-        get {
-            return cachedTextColor
         }
     }
 
