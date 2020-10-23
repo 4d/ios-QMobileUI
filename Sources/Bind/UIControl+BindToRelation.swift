@@ -51,12 +51,20 @@ extension UIControl: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    @objc dynamic open var relationLabel: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     /*@objc dynamic open var inverseRelationName: String? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }*/
     @objc dynamic open var addRelationSegueAction: Bool {
         get { return false }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var relationLabel: String? {
+        get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
 
