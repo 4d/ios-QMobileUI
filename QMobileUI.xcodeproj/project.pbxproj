@@ -219,6 +219,8 @@
 		C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
+		C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F2208C254357020063653A /* SignatureViewRow.swift */; };
+		C4F22091254357480063653A /* SignatureViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C4F22090254357480063653A /* SignatureViewCell.xib */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
@@ -444,6 +446,8 @@
 		C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionParameter+KeyboardType.swift"; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
+		C4F2208C254357020063653A /* SignatureViewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewRow.swift; sourceTree = "<group>"; };
+		C4F22090254357480063653A /* SignatureViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignatureViewCell.xib; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
@@ -681,6 +685,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				C4F2208B254356F70063653A /* SignatureViewRow */,
 				C4D6A481253F1BBA000CD742 /* BarcodeScannerRow */,
 				48016A6A22BB8885005A7C65 /* TimeIntervalRow */,
 				48E655E3229EB2CC0060568B /* LocationRow */,
@@ -1151,6 +1156,15 @@
 			path = BarcodeScannerRow;
 			sourceTree = "<group>";
 		};
+		C4F2208B254356F70063653A /* SignatureViewRow */ = {
+			isa = PBXGroup;
+			children = (
+				C4F22090254357480063653A /* SignatureViewCell.xib */,
+				C4F2208C254357020063653A /* SignatureViewRow.swift */,
+			);
+			path = SignatureViewRow;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1313,6 +1327,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4810B01F20FF38AD0049F31D /* LogForm.storyboard in Resources */,
+				C4F22091254357480063653A /* SignatureViewCell.xib in Resources */,
 				4853BD652105ACDC004B2467 /* FeedbackForm.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1439,6 +1454,7 @@
 				C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */,
+				C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */,
 				4812B27E231FB99900A30947 /* UIMenu+ActionUI.swift in Sources */,
 				482FB4E8222FB75400D5A5FF /* ApplicationReachability.swift in Sources */,
 				480B435B1E8425E3007C90DD /* UIStoryboard+QMobile.swift in Sources */,
