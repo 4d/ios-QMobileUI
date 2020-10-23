@@ -57,13 +57,13 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
     var videoPreviewLayer: AVCaptureVideoPreviewLayer?
     var qrCodeFrameView: UIView?
 
-    private let supportedCodeTypes = [AVMetadataObject.ObjectType.code128, AVMetadataObject.ObjectType.qr]
+    private let supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
 
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
-            logger.warning("Failed to get the camera device")
+            logger.warning("Failed to get the camera device. Maybe forbidden by user or simulator.")
             return
         }
 
