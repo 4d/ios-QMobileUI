@@ -51,13 +51,22 @@ extension UIViewController {
                 } else {
                     // default behaviour: if clicked create a ui alert controller on button
                     if self.navigationController?.navigationBar != nil {
+
                         let button = UIButton(type: .custom)
                         button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32)) // XXX get correct size
                         button.setImage(.moreImage, for: .normal)
 
                         button.actionSheet = actionSheet // XXX button will be used as context by massing it. Maybe pass current controller as context...
 
-                        let barButton = UIBarButtonItem(customView: button)
+                        let barButton: UIBarButtonItem
+                        if ActionFormSettings.userMenu {
+                            let actionContext: ActionContext = button // XXx maybe find better context and see if it works
+                            let menu = UIMenu.build(from: actionSheet, context: actionContext, handler: ActionManager.instance.prepareAndExecuteAction)
+                            barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
+                        } else {
+                            barButton = UIBarButtonItem(customView: button)
+                        }
+
                         self.navigationItem.add(where: .right, item: barButton, at: 0)
                     } else {
                         logger.warning("Could not install automatically actions into \(self) because there is no navigation bar")

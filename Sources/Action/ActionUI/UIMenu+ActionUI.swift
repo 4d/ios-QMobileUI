@@ -27,7 +27,7 @@ extension UIAction: ActionUI {
         let actionUI = UIAction(
             title: action.label ?? action.name,
             image: ActionUIBuilder.actionImage(for: action),
-            identifier: nil,
+            identifier: .none,
             attributes: UIMenuElement.Attributes.from(actionStyle: action.style),
             state: .on) { actionUI in
                 handler(action, actionUI, context)
@@ -50,6 +50,14 @@ extension UIMenuElement.Attributes {
         case .custom: // hidden, disabled?
             return empty
         }
+    }
+}
+
+extension UIMenu {
+    static func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> UIMenu {
+        let menuItem = actionSheet.actions.compactMap { UIAction.build(from: $0, context: context, handler: handler) as? UIMenuElement }
+        // TODO maybe force destructive if one menu item has destructive
+        return UIMenu(title: actionSheet.title ?? "", image: nil, identifier: nil, options: [], children: menuItem)
     }
 }
 
