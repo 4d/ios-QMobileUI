@@ -29,6 +29,7 @@ struct RelationInfoUIAssociatedKeys {
     static var relation = "RelationInfoUI.relation"
     static var relationName = "RelationInfoUI.relationName"
     static var relationFormat = "RelationInfoUI.relationFormat"
+    static var relationLabel = "RelationInfoUI.relationLabel"
     //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
     static var relationTapGesture = "RelationInfoUI.relationTapGesture"
@@ -84,6 +85,16 @@ extension UIControl: RelationInfoUI {
         }
     }
 
+    @objc dynamic open var relationLabel: String? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+        }
+    }
+
     @objc dynamic open var addRelationSegueAction: Bool {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.addRelationSegueAction) as? Bool ?? true
@@ -134,7 +145,7 @@ extension UIControl: RelationInfoUI {
                 }
                 addRelationSegue()
             } else  /* is mutable set */ { // -> N
-                if let relationFormat = relationFormat,
+                if let relationFormat = relationLabel ?? relationFormat,
                    !relationFormat.isEmpty {
                     if let button = self as? UIButton { // bad case of...
                         button.setTitle(relationFormat, for: .normal)
@@ -150,11 +161,10 @@ extension UIControl: RelationInfoUI {
         } else { // to one but null or to many but not already created...
             self.isEnabled = false
             if let button = self as? UIButton { // bad case of...
-                if relationFormat?.isEmpty ?? true {
-                    let title = button.title(for: .normal) ?? ""
-                    if !title.isEmpty {
-                        self.relationFormat = button.title(for: .normal) // keep label in format
-                    }
+                // CLEAN here we do not know yet if many or to one relation (if we inject this info or get from datastore it will be more clean
+                let title = button.title(for: .normal) ?? ""
+                if !title.isEmpty {
+                    self.relationLabel = button.title(for: .normal) //Backup to restore it for to many relation
                 }
                 button.setTitle("", for: .normal)
             }

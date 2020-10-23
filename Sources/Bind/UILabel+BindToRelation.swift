@@ -58,6 +58,16 @@ extension UILabel: RelationInfoUI {
         }
     }
 
+    @objc dynamic open var relationLabel: String? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+        }
+    }
+
     @objc dynamic open var relationTapGesture: UITapGestureRecognizer? {
         get {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationTapGesture) as? UITapGestureRecognizer
@@ -125,9 +135,16 @@ extension UILabel: RelationInfoUI {
             }
             addRelationSegue()
         } else if self.relation is NSMutableSet { // to Many
-            if let relationFormat = relationFormat,
+            /*if relationLabel?.isTemplateString ?? false {
+                relationLabel = relationFormat
+            }*/
+            if let relationFormat = relationLabel ?? relationFormat,
                !relationFormat.isEmpty {
-                self.text = relationFormat
+                if let record = self.bindTo.record as? Record, let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+                    self.text = formatter.format(record)
+                } else {
+                    self.text = relationFormat
+                }
             } else {
                 let attachmentImage = NSTextAttachment()
                 attachmentImage.image = UIImage.disclosureRelationImage
@@ -135,9 +152,18 @@ extension UILabel: RelationInfoUI {
             }
             addRelationSegue()
         } else { // To One and empty
+            if !self.text.isEmpty {
+                self.relationLabel = self.text
+            }
             self.text = ""
             removeRelationSegue()
         }
+    }
+}
+
+extension String {
+    var isTemplateString: Bool {
+        return self.first == "<" && self.last == ">"
     }
 }
 
