@@ -38,6 +38,7 @@ open class ImagePickerController: UIImagePickerController, TypedRowControllerTyp
     open override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
+        self.allowsEditing = true
     }
 
     open func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
