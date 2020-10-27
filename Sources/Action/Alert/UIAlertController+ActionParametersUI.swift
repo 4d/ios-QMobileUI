@@ -96,7 +96,7 @@ extension UIAlertController: ActionParametersUI {
             let builder = ActionParametersUIBuilder(action, actionUI, context, completionHandler)
             builder.success(with: actionParametersValue) { result in
                 // let general done
-                let promise = Promise<ActionResult, APIError>()
+                let promise = Promise<ActionResult, ActionRequest.Error>()
                 promise.complete(result)
                 return promise.future
             }

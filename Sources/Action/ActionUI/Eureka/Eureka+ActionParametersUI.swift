@@ -388,10 +388,10 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     /// Send action to server, and manage result
-    func send(completionHandler: @escaping (Result<ActionResult, APIError>) -> Void) {
+    func send(completionHandler: @escaping (Result<ActionResult, ActionRequest.Error>) -> Void) {
         formValues { values in
             self.builder?.success(with: values) { result in
-                let promise = Promise<ActionResult, APIError>()
+                let promise = Promise<ActionResult, ActionRequest.Error>()
                 completionHandler(result)
                 switch result {
                 case .success(let actionResult):

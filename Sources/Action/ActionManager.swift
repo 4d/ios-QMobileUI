@@ -85,7 +85,7 @@ public class ActionManager: ObservableObject {
         }
     }
 
-    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, APIError>) -> BrightFutures.Future<ActionResult, APIError>)
+    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, ActionRequest.Error>) -> BrightFutures.Future<ActionResult, ActionRequest.Error>)
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
 
     /// Execute action if success (ie. no error in form validatiion
@@ -132,7 +132,7 @@ public class ActionManager: ObservableObject {
     func loadActionRequests() {
         let store: PreferencesType = Prephirences.sharedInstance
         do {
-            if let requests: [ActionRequest] = try? store.decodable([ActionRequest].self, forKey: "action.requests") {
+            if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
                 for request in requests {
                     self.requests.append(request)
                 }
@@ -163,19 +163,21 @@ public class ActionManager: ObservableObject {
     func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
 
         if offlineAction {
+            request.state = .inQueue
             self.requests.append(request)
         }
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+            request.state = .inProgress
             request.lastDate = Date()
             _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
-                self.onActionResult(request, actionUI, context, result, completionHandler)
+                self.onActionResult(request, actionUI, context, result.mapError { ActionRequest.Error($0) }, completionHandler)
             }
         }
     }
 
-    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, APIError>, _ completionHandler: ActionExecutionCompletionHandler?) {
+    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutionCompletionHandler?) {
         request.result = result
 
         if offlineAction {
@@ -186,22 +188,30 @@ public class ActionManager: ObservableObject {
         case .failure(let error):
             logger.warning("Action error: \(error)")
 
-            if !Prephirences.Auth.Login.form, error.isHTTPResponseWith(code: .unauthorized) {
+            if !Prephirences.Auth.Login.form, error.isUnauthorized {
                 ApplicationAuthenticate.retryGuestLogin { authResult in
                     switch authResult {
                     case .success:
                         // XXX do not do infinite retry
                         self.executeActionRequest(request, actionUI, context, completionHandler)
                     case .failure(let authError):
-                        self.showError(authError)
+                        SwiftMessages.showError(ActionRequest.Error(authError))
                        _ = completionHandler?(.failure(error))
                     }
                 }
                 return
             }
-            self.showError(error)
+            // tempo code to see diff between task to relaunch or not
+            if error.mustRetry {
+                request.state = .pending
+            } else {
+                request.state = .complete // with error
+            }
+
+            SwiftMessages.showError(error)
             _ = completionHandler?(.failure(error))
         case .success(let value):
+            request.state = .complete
             logger.debug("\(value)")
             if let completionHandler = completionHandler {
                 let future = completionHandler(.success(value))
@@ -223,25 +233,25 @@ public class ActionManager: ObservableObject {
         }
     }
 
-    /// Show error has status text.
-    func showError(_ error: APIError) {
-        logger.warning("Error when managing action response \(error.errorDescription ?? ""): \(error)")
+}
+
+extension SwiftMessages {
+
+    static func showError(_ error: ActionRequest.Error) {
+        logger.warning("Error when managing action response \(error.errorDescription): \(error)")
         // Try to display the best error message...
-        if let statusText = error.restErrors?.statusText { // dev message
-            SwiftMessages.error(title: error.errorDescription ?? "", message: statusText)
+        if let statusText = error.statusText { // dev message
+            SwiftMessages.error(title: error.errorDescription, message: statusText)
         } else { /*if apiError.isRequestCase(.connectionLost) ||  apiError.isRequestCase(.notConnectedToInternet) {*/ // not working always
             if !ApplicationReachability.isReachable { // so check reachability status
                 SwiftMessages.error(title: "", message: "Please check your network settings and data cover...") // CLEAN factorize with data sync error message...
-            } else if case .sessionTaskFailed(let urlError) = error.afError {
-                SwiftMessages.warning(urlError.localizedDescription)
             } else if let failureReason = error.failureReason {
                 SwiftMessages.warning(failureReason)
             } else {
-                SwiftMessages.error(title: error.errorDescription ?? "", message: "")
+                SwiftMessages.error(title: error.errorDescription, message: "")
             }
         }
     }
-
 }
 
 // Implement context to be able to reopen UI with data from request

@@ -159,7 +159,7 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     @objc func doneAction(sender: UIButton!) {
         self.builder?.success(with: self.actionParametersValue) { result in
-            let promise = Promise<ActionResult, APIError>()
+            let promise = Promise<ActionResult, ActionRequest.Error>()
             switch result {
             case .success:
                 onForeground {
