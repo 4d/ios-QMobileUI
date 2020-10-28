@@ -20,7 +20,8 @@ public protocol RelationInfoUI {
     var relationFormat: String? { get }
     /// The inverse relation name.
     //var inverseRelationName: String? { get } // CLEAN to remove
-
+    /// Is relation to many.
+    var relationIsToMany: Bool { get }
     /// Add action to launch segue.
     var addRelationSegueAction: Bool { get }
 }
@@ -30,6 +31,7 @@ struct RelationInfoUIAssociatedKeys {
     static var relationName = "RelationInfoUI.relationName"
     static var relationFormat = "RelationInfoUI.relationFormat"
     static var relationLabel = "RelationInfoUI.relationLabel"
+    static var relationIsToMany = "RelationInfoUI.relationIsToMany"
     //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
     static var relationTapGesture = "RelationInfoUI.relationTapGesture"
@@ -53,6 +55,10 @@ extension UIControl: RelationInfoUI {
     }
     @objc dynamic open var relationLabel: String? {
         get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var relationIsToMany: Bool {
+        get { return false }
         set {} // swiftlint:disable:this unused_setter_value
     }
     /*@objc dynamic open var inverseRelationName: String? {
@@ -99,6 +105,16 @@ extension UIControl: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+        }
+    }
+
+    @objc dynamic open var relationIsToMany: Bool {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationIsToMany) as? Bool ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationIsToMany, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 
         }
     }

@@ -29,6 +29,10 @@ extension UILabel: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    @objc dynamic open var relationIsToMany: Bool {
+        get { return false }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     /*@objc dynamic open var inverseRelationName: String? {
      get { return nil }
      set {} // swiftlint:disable:this unused_setter_value
@@ -68,6 +72,16 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+
+        }
+    }
+
+    @objc dynamic open var relationIsToMany: Bool {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationIsToMany) as? Bool ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationIsToMany, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 
         }
     }
@@ -156,7 +170,7 @@ extension UILabel: RelationInfoUI {
             }
             addRelationSegue()
         } else { // To One and empty
-            if !self.text.isEmpty {
+            if !self.text.isEmpty && (self.relationLabel?.isEmpty ?? true) {
                 self.relationLabel = self.text
             }
             self.text = ""
