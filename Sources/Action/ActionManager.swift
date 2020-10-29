@@ -42,6 +42,10 @@ public class ActionManager: ObservableObject {
     /// List of requests
     @Published public var requests: [ActionRequest] = []
 
+    /// Operation queue.
+    public let queue = OperationQueue(underlyingQueue: DispatchQueue.userInitiated, maxConcurrentOperationCount: 1)
+    // XXX could create alternatively a DispatchGroup with a critical section : enter/leave
+
     public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? false
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
 
@@ -163,13 +167,13 @@ public class ActionManager: ObservableObject {
     func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
 
         if offlineAction {
-            request.state = .inQueue
+            request.state = .ready
             self.requests.append(request)
         }
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
-            request.state = .inProgress
+            request.state = .executing
             request.lastDate = Date()
             _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
                 self.onActionResult(request, actionUI, context, result.mapError { ActionRequest.Error($0) }, completionHandler)
@@ -205,13 +209,13 @@ public class ActionManager: ObservableObject {
             if error.mustRetry {
                 request.state = .pending
             } else {
-                request.state = .complete // with error
+                request.state = .finished // with error
             }
 
             SwiftMessages.showError(error)
             _ = completionHandler?(.failure(error))
         case .success(let value):
-            request.state = .complete
+            request.state = .finished
             logger.debug("\(value)")
             if let completionHandler = completionHandler {
                 let future = completionHandler(.success(value))
@@ -539,5 +543,16 @@ extension ActionResult {
             }
             return nil
         }
+    }
+}
+
+class ActionOperation: Operation {
+    var actionRequest: ActionRequest
+    init(_ actionRequest: ActionRequest) {
+        self.actionRequest = actionRequest
+    }
+
+    override func main () {
+
     }
 }
