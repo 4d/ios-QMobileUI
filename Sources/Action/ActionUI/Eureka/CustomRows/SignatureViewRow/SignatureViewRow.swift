@@ -58,7 +58,7 @@ public final class SignatureViewRow: Row<SignatureViewCell>, RowType {
     }
 }
 
-public protocol SignatureViewDelegate {
+public protocol SignatureViewDelegate: NSObjectProtocol {
     func signatureUpdated(_ image: UIImage?)
 }
 public protocol SignatureViewProtocol {
@@ -215,7 +215,7 @@ class LegacySignatureView: UIView, SignatureViewProtocol {
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let point = touches.first?.location(in: self) {
-            self.control = self.control + 1
+            self.control += 1
             points[self.control] = point
             if self.control == 4 {
                 points[3] = CGPoint(x: (points[2].x + points[4].x)/2.0, y: (points[2].y + points[4].y)/2.0)
