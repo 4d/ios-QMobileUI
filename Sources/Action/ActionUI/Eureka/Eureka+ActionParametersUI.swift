@@ -11,7 +11,7 @@ import UIKit
 
 import Eureka
 import SwiftMessages
-import BrightFutures
+import Combine
 
 import QMobileAPI
 
@@ -391,28 +391,52 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     func send(completionHandler: @escaping (Result<ActionResult, ActionRequest.Error>) -> Void) {
         formValues { values in
             self.builder?.success(with: values) { result in
-                let promise = Promise<ActionResult, ActionRequest.Error>()
-                completionHandler(result)
-                switch result {
-                case .success(let actionResult):
-                    if actionResult.success || actionResult.close {
-                        onForeground {
-                            self.dismiss(animated: true) {
-                                logger.debug("Action parameters form dismissed")
-                                promise.complete(result)
-                            }
-                        }
-                    } else {
-                        if let errors = actionResult.errors {
-                            var errorsByComponents: [String: [String]] = [:]
-                            for error in errors {
-                                if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
-                                    if errorsByComponents[tag] == nil {
-                                        errorsByComponents[tag] = []
-                                    }
-                                    errorsByComponents[tag]?.append(message)
+                return Future<ActionResult, ActionRequest.Error> { promise in
+                    completionHandler(result)
+                    switch result {
+                    case .success(let actionResult):
+                        if actionResult.success || actionResult.close {
+                            onForeground {
+                                self.dismiss(animated: true) {
+                                    logger.debug("Action parameters form dismissed")
+                                    promise(result)
                                 }
                             }
+                        } else {
+                            if let errors = actionResult.errors {
+                                var errorsByComponents: [String: [String]] = [:]
+                                for error in errors {
+                                    if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
+                                        if errorsByComponents[tag] == nil {
+                                            errorsByComponents[tag] = []
+                                        }
+                                        errorsByComponents[tag]?.append(message)
+                                    }
+                                }
+
+                                for (key, restErrors) in errorsByComponents {
+                                    if let row = self.form.rowBy(tag: key) {
+                                        row.remoteErrorsString = restErrors
+                                    } else {
+                                        logger.warning("Unknown field returned \(key) to display associated errors")
+                                    }
+                                }
+                                self.refreshToDisplayErrors()
+                            } else {
+                                logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
+                            }
+                            promise(result)
+                        }
+                    case .failure(let error):
+                        logger.debug("Errors from 4d server")
+                        if let restErrors = error.restErrors {
+                            /*if let statusText = restErrors.statusText {
+
+                             }*/
+
+                            let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+                                return [error.componentSignature: error.message]
+                            })
 
                             for (key, restErrors) in errorsByComponents {
                                 if let row = self.form.rowBy(tag: key) {
@@ -422,34 +446,10 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                                 }
                             }
                             self.refreshToDisplayErrors()
-                        } else {
-                            logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
                         }
-                        promise.complete(result)
+                        promise(result)
                     }
-                case .failure(let error):
-                    logger.debug("Errors from 4d server")
-                    if let restErrors = error.restErrors {
-                        /*if let statusText = restErrors.statusText {
-
-                         }*/
-
-                        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
-                            return [error.componentSignature: error.message]
-                        })
-
-                        for (key, restErrors) in errorsByComponents {
-                            if let row = self.form.rowBy(tag: key) {
-                                row.remoteErrorsString = restErrors
-                            } else {
-                                logger.warning("Unknown field returned \(key) to display associated errors")
-                            }
-                        }
-                        self.refreshToDisplayErrors()
-                    }
-                    promise.complete(result)
                 }
-                return promise.future
             }
         }
     }

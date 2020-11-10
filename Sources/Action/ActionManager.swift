@@ -9,12 +9,11 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 
 import SwiftMessages
 import Prephirences
 import Eureka
-import BrightFutures
+import Combine
 import Alamofire
 
 import QMobileAPI
@@ -31,7 +30,7 @@ import QMobileAPI
 ///
 /// To inject custom action result handler you have two way. Make your `AppDelegate` implement `ActionResultHandler` or inject an app service which implement `ActionResultHandler`
 ///
-public class ActionManager: ObservableObject {
+public class ActionManager: NSObject, ObservableObject {
 
     /// Singleton for the app.
     public static let instance = ActionManager()
@@ -51,7 +50,8 @@ public class ActionManager: ObservableObject {
 
     private var bag = Set<AnyCancellable>()
 
-    init() {
+    override init() {
+        super.init()
         setupDefaultHandler()
         if offlineAction {
             loadActionRequests()
@@ -59,6 +59,7 @@ public class ActionManager: ObservableObject {
                 print("new request \($0)")
                 self?.saveActionRequests()
             }.store(in: &bag)
+            ApplicationReachability._instance.add(listener: self)
         }
     }
 
@@ -89,7 +90,7 @@ public class ActionManager: ObservableObject {
         }
     }
 
-    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, ActionRequest.Error>) -> BrightFutures.Future<ActionResult, ActionRequest.Error>)
+    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, ActionRequest.Error>) -> Future<ActionResult, ActionRequest.Error>)
     typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
 
     /// Execute action if success (ie. no error in form validatiion
@@ -200,7 +201,7 @@ public class ActionManager: ObservableObject {
                         self.executeActionRequest(request, actionUI, context, completionHandler)
                     case .failure(let authError):
                         SwiftMessages.showError(ActionRequest.Error(authError))
-                       _ = completionHandler?(.failure(error))
+                        _ = completionHandler?(.failure(error))
                     }
                 }
                 return
@@ -226,7 +227,8 @@ public class ActionManager: ObservableObject {
                             _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
                         }
                     }
-                }
+                }.sink()
+                .store(in: &self.bag)
             } else {
                 onForeground {
                     background {
@@ -255,6 +257,12 @@ extension SwiftMessages {
                 SwiftMessages.error(title: error.errorDescription, message: "")
             }
         }
+    }
+}
+
+extension ActionManager: ReachabilityListener {
+    public func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
+        // TODO if change try to relaunch action drag
     }
 }
 
@@ -482,8 +490,8 @@ extension ActionResult {
         return json["openURL"].string
     }
     fileprivate var downloadURL: String? {
-         return json["downloadURL"].string
-     }
+        return json["downloadURL"].string
+    }
     fileprivate var share: [JSON]? {
         return json["share"].array
     }
@@ -516,11 +524,11 @@ extension ActionResult {
         return Action.decode(fromJSON: jsonString)
     }
     /*fileprivate var action: Action? {
-        guard let jsonString = json["action"].rawString(options: []) else {
-            return nil
-        }
-        return Action.decode(fromJSON: jsonString)
-    }*/
+     guard let jsonString = json["action"].rawString(options: []) else {
+     return nil
+     }
+     return Action.decode(fromJSON: jsonString)
+     }*/
 
     fileprivate var deepLink: DeepLink? {
         return DeepLink.from(json)
@@ -537,8 +545,8 @@ extension ActionResult {
             if let message = object as? String {
                 return (nil, ValidationError(msg: message))
             } else if let dictionary = object as? [String: String],
-                let message = dictionary["message"],
-                let field = dictionary["field"] {
+                      let message = dictionary["message"],
+                      let field = dictionary["field"] {
                 return (field, ValidationError(msg: message))
             }
             return nil

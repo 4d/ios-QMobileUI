@@ -7,27 +7,45 @@
 //
 
 import Foundation
+import Combine
 import UIKit
 
 import Moya
 import class Alamofire.NetworkReachabilityManager
 import Prephirences
-import BrightFutures
 
 import QMobileAPI
 import QMobileDataSync
 
-/// Service to chek network avaibility and also configured server.
+/// Service to check network avaibility and also configured server.
 class ApplicationReachability: NSObject {
 
-    var reachabilityTask: Cancellable?
-    var reachabilityStatus: NetworkReachabilityStatus = .unknown
+    var reachabilityTask: Moya.Cancellable?
+    var reachabilityStatus: NetworkReachabilityStatus = .unknown {
+        didSet {
+            notifyReachabilityChanged(status: reachabilityStatus, old: oldValue)
+        }
+    }
+    var listeners: [ReachabilityListener] = []
 
     var apiManagerObserver: NSObjectProtocol?
-    var serverInfoTask: Cancellable?
+    var serverInfoTask: Moya.Cancellable?
     var serverInfo: WebTestInfo?
-    var serverStatusTask: Cancellable?
+    var serverStatusTask: Moya.Cancellable?
     var serverStatus: Status?
+
+    open func add(listener: ReachabilityListener) {
+        self.listeners.append(listener)
+    }
+    func notifyReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
+        for listener in listeners {
+            listener.onReachabilityChanged(status: status, old: old)
+        }
+    }
+}
+
+public protocol ReachabilityListener: NSObjectProtocol {
+    func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus)
 }
 
 // MARK: service
@@ -146,6 +164,7 @@ open class ServerStatusManager {
     static let instance = ServerStatusManager()
 
     var listeners: [ServerStatusListener] = []
+    var bag = Set<AnyCancellable>()
 
     /// Queue for checking
     public let queue: OperationQueue = {
@@ -199,29 +218,33 @@ open class ServerStatusManager {
 
         // Cancel all previous checking status
         queue.cancelAllOperations()
+        self.bag.removeAll()
         // queue.waitUntilAllOperationsAreFinished() // bad, do not wait on main thread
 
         // Start checking in a new task
 
         let checkingUUID = UUID()
-        self.queue.addOperation {
+        /*self.queue.addOperation {
             //logger.verbose("Checking status \(checkingUUID). sleep start")
             //Thread.sleep(forTimeInterval: delay)
             //logger.verbose("Checking status \(checkingUUID). sleep end")
-        }
+        }*/
         self.queue.addOperation {
             self.serverStatus(.checking)
             logger.debug("Checking server status \(url) \(checkingUUID) start")
             let apiManager = APIManager(url: url)
 
             let checkstatus = apiManager.status()
-            let context = self.queue.context
-            checkstatus.onComplete(context) { [weak self] result in
-                self?.serverStatus(.done(result))
-                logger.debug("Checking status \(url) \(checkingUUID) end: \(result)")
-                APIManager.instance = apiManager
-                DataSync.instance.apiManager = apiManager
+            checkstatus.onComplete { [weak self] result in
+                self?.queue.addOperation {
+                    self?.serverStatus(.done(result))
+                    logger.debug("Checking status \(url) \(checkingUUID) end: \(result)")
+                    APIManager.instance = apiManager
+                    DataSync.instance.apiManager = apiManager
+                }
             }
+            .sink()
+            .store(in: &self.bag)
         }
     }
 

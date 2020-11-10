@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 import UIKit
 
 import Prephirences
@@ -27,6 +28,7 @@ class ApplicationDataSync: NSObject {
     fileprivate let operationQueue = OperationQueue(underlyingQueue: .background)
     fileprivate var dataStoreListeners: [NSObjectProtocol] = []
     fileprivate var apiManagerListeners: [NSObjectProtocol] = []
+    var bag = Set<AnyCancellable>()
 
     /// To prevent doing two times, keep info about sync at start
     fileprivate var syncAtStartDone: Bool = false
@@ -66,9 +68,11 @@ extension ApplicationDataSync: ApplicationService {
                     logger.info("Dropped data after logout")
                    // Prephirences.DataSync.firstSync = true // reload from files
                 }
-                future.onFailure { error in
+                .onFailure { error in
                     logger.error("Dropped data after logout failed \(error)")
                 }
+                .sink()
+                .store(in: &self.bag)
                 }]
         }
     }
@@ -130,7 +134,7 @@ extension ApplicationDataSync {
         if Prephirences.Reset.appData {
             Prephirences.Reset.appData = false // consumed
             ApplicationPreferences.resetSettings()
-            let future: DataSync.SyncFuture = dataSync.drop()
+            let future: DataSync.SyncFuture = dataSync.drop().eraseToAnyPublisher()
 
             if Prephirences.DataSync.Sync.ifEnterForeground {
                 future.onSuccess { _ in
@@ -139,30 +143,38 @@ extension ApplicationDataSync {
                     future.onSuccess { _ in
                         logger.info("Data synchronized after resetting and entering in foreground")
                     }
-                    future.onFailure { error in
+                    .onFailure { error in
                         logger.warning("Failed to synchronize data after resetting and entering in foreground - \(error)")
                     }
+                    .sink()
+                    .store(in: &self.bag)
                 }
-                future.onFailure { error in
+                .onFailure { error in
                     logger.warning("Failed to synchronize data after resetting and entering in foreground - \(error)")
                 }
+                .sink()
+                .store(in: &self.bag)
             } else {
                 future.onSuccess { _ in
                     logger.info("Data resetted after entering in foreground")
                 }
-                future.onFailure { error in
+                .onFailure { error in
                     logger.warning("Failed to reset data after entering in foreground - \(error)")
                 }
+                .sink()
+                .store(in: &self.bag)
             }
         } else {
             if Prephirences.DataSync.Sync.ifEnterForeground {
-                let future: DataSync.SyncFuture = dataSync.sync()
+                let future: DataSync.SyncFuture = dataSync.sync().eraseToAnyPublisher()
                 future.onSuccess {
                     logger.info("Data synchronized after entering in foreground")
                 }
-                future.onFailure { error in
+                .onFailure { error in
                     logger.warning("Failed to synchronize data after entering in foreground - \(error)")
                 }
+                .sink()
+                .store(in: &self.bag)
 
             }
         }
@@ -179,40 +191,46 @@ extension ApplicationDataSync {
             Prephirences.Reset.appData = false // consumed
             ApplicationPreferences.resetSettings()
 
-            let future: DataSync.SyncFuture = dataSync.drop()
+            let future: DataSync.SyncFuture = dataSync.drop().eraseToAnyPublisher()
             future.onSuccess {
                 logger.info("Data initiliazed and resetted after launching the app")
 
                 if Prephirences.DataSync.Sync.atStart {
-                    let future: DataSync.SyncFuture = dataSync.sync()
+                    let future: DataSync.SyncFuture = dataSync.sync().eraseToAnyPublisher()
                     future.onSuccess {
                         logger.info("Data synchronized after launching the app and resetting")
                     }
-                    future.onFailure { error in
+                    .onFailure { error in
                         logger.warning("Failed to synchronized data after launching the app and resetting: \(error)")
                     }
+                    .sink()
+                    .store(in: &self.bag)
                 }
             }
-            future.onFailure { error in
+            .onFailure { error in
                 logger.warning("Failed to reset data after launching the app \(error)")
                 // XXX recreate the db?
             }
+            .sink()
+            .store(in: &self.bag)
         } else {
             if Prephirences.DataSync.Sync.atStart {
-                let future: DataSync.SyncFuture = dataSync.sync()
+                let future: DataSync.SyncFuture = dataSync.sync().eraseToAnyPublisher()
                 future.onSuccess {
                     logger.info("Data synchronized after launching the app")
                 }
-                future.onFailure { error in
+                .onFailure { error in
                     logger.warning("Failed to synchronized data after launching the app: \(error)")
                 }
+                .sink()
+                .store(in: &self.bag)
             }
         }
     }
 
 }
 
-public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Cancellable? {
+public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Moya.Cancellable? {
     return ApplicationDataSync.instance.dataSync.sync(operation: operation, completionHandler)
 }
 
@@ -232,7 +250,7 @@ extension ApplicationDataSync: DataSyncDelegate {
         SwiftMessages.debug("Data has been loaded from embedded data")
     }
 
-    public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Cancellable) {
+    public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Moya.Cancellable) {
         SwiftMessages.debug("Data \(operation) will begin")
     }
     public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
@@ -272,7 +290,7 @@ extension ApplicationDataSync: DataSyncDelegate {
                 }
                 return
             }
-            if let bindedRecord = detailForm.view?.bindTo.record as? Record, formRecord != bindedRecord.store {
+            if let bindedRecord = detailForm.view?.bindTo.record as? QMobileDataStore.Record, formRecord != bindedRecord.store {
                 detailForm.dismiss(animated: true) {
                     logger.info("Close form with record deleted")
                 }

@@ -131,8 +131,6 @@
 		48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */; };
 		48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */; };
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
-		48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
-		48AE2C631F4577A40013FDEE /* BrightFutures.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AE2C611F4577A40013FDEE /* BrightFutures.framework */; };
 		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
 		48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */; };
 		48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */; };
@@ -465,7 +463,6 @@
 				48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF41EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
-				48AE2C621F4577A40013FDEE /* BrightFutures.framework in Frameworks */,
 				48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */,
 				48E49CFA1EB9DC33002B60AF /* Moya.framework in Frameworks */,
 				48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */,
@@ -489,7 +486,6 @@
 				48E49CF91EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
 				48FB2CE31E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF21EB9D293002B60AF /* QMobileDataSync.framework in Frameworks */,
-				48AE2C631F4577A40013FDEE /* BrightFutures.framework in Frameworks */,
 				48E49CF51EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
 				48FB2CE61E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48E49CFB1EB9DC33002B60AF /* Moya.framework in Frameworks */,

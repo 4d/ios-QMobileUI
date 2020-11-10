@@ -8,7 +8,7 @@
 
 import UIKit
 import QMobileAPI
-import BrightFutures
+import Combine
 
 extension UIAlertController: ActionParametersUI {
 
@@ -96,9 +96,9 @@ extension UIAlertController: ActionParametersUI {
             let builder = ActionParametersUIBuilder(action, actionUI, context, completionHandler)
             builder.success(with: actionParametersValue) { result in
                 // let general done
-                let promise = Promise<ActionResult, ActionRequest.Error>()
-                promise.complete(result)
-                return promise.future
+                return Future<ActionResult, ActionRequest.Error> { promise in
+                    promise(result)
+                }
             }
         }
         alertController.addAction(validateAction)
