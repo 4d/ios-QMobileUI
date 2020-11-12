@@ -42,8 +42,7 @@ public class ActionManager: NSObject, ObservableObject {
     @Published public var requests: [ActionRequest] = []
 
     /// Operation queue.
-    public let queue = OperationQueue(underlyingQueue: DispatchQueue.userInitiated, maxConcurrentOperationCount: 1)
-    // XXX could create alternatively a DispatchGroup with a critical section : enter/leave
+    fileprivate let queue = ActionRequestQueue()
 
     public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? false
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
@@ -59,7 +58,18 @@ public class ActionManager: NSObject, ObservableObject {
                 print("new request \($0)")
                 self?.saveActionRequests()
             }.store(in: &bag)
-            ApplicationReachability._instance.add(listener: self)
+            registerListener()
+
+            /*$requests.sink(receiveValue: { requests in
+                print("\(requests.map({ $0.action.name }))")
+               // self.queue.addRequests(requests) // each time so total , not by packet
+            })
+            .store(in: &subscriptions)*/
+            /*requests.publisher.sink { completion in
+                print("\(completion)")
+            } receiveValue: { request in
+                self.queue.addRequest(request)
+            }.store(in: &bag)*/
         }
     }
 
@@ -170,14 +180,17 @@ public class ActionManager: NSObject, ObservableObject {
         if offlineAction {
             request.state = .ready
             self.requests.append(request)
-        }
-        let actionQueue: DispatchQueue = .background
-        actionQueue.async {
-            logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
-            request.state = .executing
-            request.lastDate = Date()
-            _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
-                self.onActionResult(request, actionUI, context, result.mapError { ActionRequest.Error($0) }, completionHandler)
+            self.queue.addRequests(requests)
+
+        } else {
+            let actionQueue: DispatchQueue = .background
+            actionQueue.async {
+                logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+                request.state = .executing
+                request.lastDate = Date()
+                _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
+                    self.onActionResult(request, actionUI, context, result.mapError { ActionRequest.Error($0) }, completionHandler)
+                }
             }
         }
     }
@@ -239,6 +252,23 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - queue based
+
+    fileprivate var isSuspended: Bool {
+        get {
+            return self.queue.isSuspended
+        }
+        set {
+            self.queue.isSuspended = newValue
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
+        }
+    }
+
+    fileprivate func waitUntilAllOperationsAreFinished() {
+        self.queue.waitUntilAllOperationsAreFinished()
+    }
 }
 
 extension SwiftMessages {
@@ -260,9 +290,26 @@ extension SwiftMessages {
     }
 }
 
+// MARK: manage reachability to suspend operation
+
 extension ActionManager: ReachabilityListener {
+
+    fileprivate func registerListener() {
+        ApplicationReachability._instance.add(listener: self)
+    }
+
     public func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
-        // TODO if change try to relaunch action drag
+        checkSuspend()
+    }
+
+    fileprivate func checkSuspend() {
+        guard let serverStatus = ApplicationReachability._instance.serverStatus else {
+            self.isSuspended = true
+            return
+        }
+        // could have other criteria like manual pause or ???
+        self.isSuspended = !serverStatus.ok
+
     }
 }
 
