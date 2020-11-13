@@ -45,6 +45,7 @@ extension UILabel: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+
     #else
     @objc dynamic open var relation: Any? {
         get {
@@ -112,6 +113,7 @@ extension UILabel: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
+    #endif
 
     @objc open func relationTapped(_ sender: UITapGestureRecognizer) {
         guard let currentViewController = self.owningViewController else { // break MVC paradigm...
@@ -125,8 +127,6 @@ extension UILabel: RelationInfoUI {
         // only solution ask currentViewController to do the job?, same a performSegue code
         currentViewController.performSegue(withIdentifier: relationName, sender: self)
     }
-
-    #endif
 
     fileprivate func addRelationSegue() {
         if addRelationSegueAction && self.relationTapGesture == nil { // to deactivate set addRelationSegueAction before relationName

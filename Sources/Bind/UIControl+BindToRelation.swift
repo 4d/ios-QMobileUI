@@ -69,10 +69,6 @@ extension UIControl: RelationInfoUI {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
     }
-    @objc dynamic open var relationLabel: String? {
-        get { return nil }
-        set {} // swiftlint:disable:this unused_setter_value
-    }
 
     #else
 
