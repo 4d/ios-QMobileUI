@@ -110,7 +110,7 @@ extension ActionParameter {
 // MARK: Manage row event
 
 /// Eureka row event
-enum RowEvent {
+public enum RowEvent {
     case onChange
     case onCellSelection
     case onCellHighlightChanged
@@ -118,9 +118,9 @@ enum RowEvent {
     case cellUpdate, cellSetup
 }
 
-typealias OnRowEventCallback = (BaseCell?, BaseRow, RowEvent) -> Void
+public typealias OnRowEventCallback = (BaseCell?, BaseRow, RowEvent) -> Void
 
-extension RowType where Self: Eureka.BaseRow {
+public extension RowType where Self: Eureka.BaseRow {
     /// Map all callback into one with event. Allow to pass generic code to BaseRow.
     func onRowEvent(_ callback: @escaping OnRowEventCallback) -> BaseRow {
         return self
@@ -204,8 +204,43 @@ extension ActionParameterFormat {
             return DecimalRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
         case .longDate, .shortDate, .mediumDate, .fullDate:
             return DateRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
+        case .custom(let string):
+            if let builder = UIApplication.shared.delegate as? ActionParameterCustomFormatRowBuilder {
+                if let row = builder.buildActionParameterCustomFormatRow(key: key, format: string, onRowEvent: eventCallback) {
+                    return row
+                }
+            }
+            if let app = UIApplication.shared as? QApplication {
+                for service in app.services.services {
+                    if let builder = service as? ActionParameterCustomFormatRowBuilder {
+                        if let row = builder.buildActionParameterCustomFormatRow(key: key, format: string, onRowEvent: eventCallback) {
+                            return row
+                        }
+                    }
+                }
+            }
+            return TextRow(key).onRowEvent(eventCallback)
         }
     }
+
+}
+
+/// base type of custom row
+public typealias ActionParameterCustomFormatRowType = BaseRow
+
+/// Protocol that could be implemented by AppDelegate or one ApplicationService to create custom action parameter format row.
+public protocol ActionParameterCustomFormatRowBuilder {
+
+    /**
+     * Build a row according to format name.
+     *
+     * @param key : data key, ie. field name
+     * @param format: the custom format name
+     * @param onRowEvent: a callback that you must call on each row you build. If your row is RowType, then you could do `.onRowEvent(eventCallback)`
+     *
+     * @return the row or nil if format not taken into account.
+     */
+    func buildActionParameterCustomFormatRow(key: String, format: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> ActionParameterCustomFormatRowType?
 }
 
 // MARK: ActionParameterFormat
