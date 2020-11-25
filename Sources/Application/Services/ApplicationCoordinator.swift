@@ -195,7 +195,7 @@ extension ApplicationCoordinator {
             relationToSeach = String(relationName[relationName.index(lastIndex, offsetBy: 1)...]) // CHECK: if more than one path, it will not work?
         }
 
-        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationToSeach})
+        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationToSeach && $0.destinationTable?.name == source.tableName })
             else {
                 logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                 logger.warning("Current table info \(String(describing: destination.tableInfo))")
@@ -262,7 +262,7 @@ extension ApplicationCoordinator {
             assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
             return
         }
-        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName})
+        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName && $0.destinationTable?.name == source.tableName })
             else {
                 logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                 logger.warning("Current table info \(String(describing: destination.tableInfo))")
