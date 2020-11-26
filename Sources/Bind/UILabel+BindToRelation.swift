@@ -8,6 +8,7 @@
 
 import UIKit
 import QMobileDataStore
+import QMobileAPI // emptyable protocol
 
 extension UILabel: RelationInfoUI {
 
@@ -145,32 +146,31 @@ extension UILabel: RelationInfoUI {
     }
 
     func checkRelationFormat() {
-        if let record = self.relation as? RecordBase { // To One and not empty
-            if let relationFormat = relationFormat,
-               !relationFormat.isEmpty,
-               let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
-                self.text = formatter.format(record)
-            }
-            addRelationSegue()
-        } else if self.relation is NSMutableSet { // to Many
-            /*if relationLabel?.isTemplateString ?? false {
-                relationLabel = relationFormat
-            }*/
-            if let relationFormat = relationLabel ?? relationFormat,
-               !relationFormat.isEmpty {
-                if let record = self.bindTo.record as? Record, let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+        if let newValue = self.relation {
+            if let record = newValue as? RecordBase { // -> 1
+                if let relationFormat = relationFormat,
+                   !relationFormat.isEmpty,
+                   let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
                     self.text = formatter.format(record)
                 } else {
-                    self.text = relationFormat
+                    self.text = relationLabel
                 }
-            } else {
-                let attachmentImage = NSTextAttachment()
-                attachmentImage.image = UIImage.disclosureRelationImage
-                self.attributedText = NSAttributedString(attachment: attachmentImage)
+            } else if let set = newValue as? NSMutableSet { // -> N
+                if var relationLabel = relationLabel, !relationLabel.isEmpty {
+                    relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
+                    self.text = relationLabel
+                } else {
+                    // we have no label, no info
+                    assertionFailure("Why relation label is empty? see storyboard metadata")
+                    let attachmentImage = NSTextAttachment()
+                    attachmentImage.image = UIImage.disclosureRelationImage
+                    self.attributedText = NSAttributedString(attachment: attachmentImage)
+                }
             }
             addRelationSegue()
-        } else { // To One and empty
-            if !self.text.isEmpty && (self.relationLabel?.isEmpty ?? true) {
+        } else {
+            // If no data to bind, empty the widget (this is done one time before binding)
+            if self.relationLabel.isEmpty, !self.text.isEmpty {
                 self.relationLabel = self.text
             }
             self.text = ""

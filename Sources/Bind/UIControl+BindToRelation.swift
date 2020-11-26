@@ -6,9 +6,9 @@
 //  Copyright © 2019 Eric Marchand. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import QMobileDataStore // TODO break dependences?; instance of ?
+import QMobileAPI // emptyable protocol
 
 /// Protocol to provide info on relation
 public protocol RelationInfoUI {
@@ -147,47 +147,47 @@ extension UIControl: RelationInfoUI {
     }
 
     fileprivate func removeRelationSegue() {
-        //self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
+        if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
+            self.removeTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
+
+            self.removeTarget(self, action: #selector(self.touchDown(sender:)), for: .touchDown)
+            self.removeTarget(self, action: #selector(self.touchUp(sender:)), for: .touchUpOutside)
+        }
     }
 
     func checkRelationFormat() {
+        guard let button = self as? UIButton else {
+            // we manage only button now
+            return
+        }
         if let newValue = self.relation {
             self.isEnabled = true
-
-            if let record = newValue as? RecordBase { // -> 1 (not working if not data...)
+            if let record = newValue as? RecordBase { // -> 1
                 if let relationFormat = self.relationFormat,
                    !relationFormat.isEmpty,
                    let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
 
-                    if let button = self as? UIButton { // bad case of...
-                        button.setTitle(formatter.format(record), for: .normal)
-                    }
+                    button.setTitle(formatter.format(record), for: .normal)
                 }
-                addRelationSegue()
-            } else  /* is mutable set */ { // -> N
-                if let relationFormat = relationLabel ?? relationFormat,
-                   !relationFormat.isEmpty {
-                    if let button = self as? UIButton { // bad case of...
-                        button.setTitle(relationFormat, for: .normal)
-                    }
+            } else if let set = self.relation as? NSMutableSet { // -> N
+                if var relationLabel = relationLabel, !relationLabel.isEmpty {
+                    relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
+                    button.setTitle(relationLabel, for: .normal)
                 } else {
-                    if let button = self as? UIButton { // bad case of...
-                        button.setTitle("", for: .normal)
-                        button.setImage(UIImage.disclosureRelationImage, for: .normal)
-                    }
+                    // we have no label, no info
+                    assertionFailure("Why relation label is empty? see storyboard metadata")
+                    button.setTitle("", for: .normal)
+                    button.setImage(UIImage.disclosureRelationImage, for: .normal)
                 }
-                addRelationSegue()
             }
-        } else { // to one but null or to many but not already created...
+            addRelationSegue()
+        } else {
+            // If no data to bind, empty the widget (this is done one time before binding)
             self.isEnabled = false
-            if let button = self as? UIButton { // bad case of...
-                // CLEAN here we do not know yet if many or to one relation (if we inject this info or get from datastore it will be more clean
-                let title = button.title(for: .normal) ?? ""
-                if !title.isEmpty {
-                    self.relationLabel = button.title(for: .normal) //Backup to restore it for to many relation
-                }
-                button.setTitle("", for: .normal)
+            if self.relationLabel.isEmpty, let title = button.title(for: .normal), !title.isEmpty {
+                self.relationLabel = title //Backup to restore it
             }
+            button.setTitle("", for: .normal)
             removeRelationSegue()
         }
     }
