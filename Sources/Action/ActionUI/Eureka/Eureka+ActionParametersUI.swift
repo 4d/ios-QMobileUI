@@ -72,7 +72,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
     fileprivate func initDefaultValues() {
         guard let context = self.builder?.context else { return }
-        guard let parameters = self.builder?.action.parameters else { return }
+        guard let action = self.builder?.action else { return }
+        guard let parameters = action.parameters else { return }
         var values: [String: Any?] = [:]
         for parameter in parameters {
             values[parameter.name] = parameter.defaultValue(with: context)
@@ -82,7 +83,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     fileprivate func initRows() {
-        guard let parameters = self.builder?.action.parameters else { return }
+        guard let action = self.builder?.action else { return }
+        guard let parameters = action.parameters else { return }
         if !settings.useSection {
             assertionFailure("No more tested")
             var section = Section()
