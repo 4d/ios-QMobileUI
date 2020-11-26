@@ -9,13 +9,14 @@
 import UIKit
 
 import QMobileAPI
+import Prephirences
 
 // MARK: settings
 
 struct ActionFormSettings { // XXX use settings
     // forms
     static let alertIfOneField = true // use an alert if one field
-    static let userMenu = false // use menu instead of alert
+    static let useMenu = Prephirences.sharedInstance["action.useMenu"] as? Bool ?? true // use menu instead of alert
 
     // ui
     var useSection = true // Use one section (if false one section by fields)

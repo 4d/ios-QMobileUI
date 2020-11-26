@@ -59,7 +59,7 @@ extension UIViewController {
                         button.actionSheet = actionSheet // XXX button will be used as context by massing it. Maybe pass current controller as context...
 
                         let barButton: UIBarButtonItem
-                        if ActionFormSettings.userMenu {
+                        if ActionFormSettings.useMenu {
                             let actionContext: ActionContext = button // XXx maybe find better context and see if it works
                             let menu = UIMenu.build(from: actionSheet, context: actionContext, handler: ActionManager.instance.prepareAndExecuteAction)
                             barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)

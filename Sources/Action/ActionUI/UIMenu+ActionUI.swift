@@ -27,9 +27,8 @@ extension UIAction: ActionUI {
         let actionUI = UIAction(
             title: action.label ?? action.name,
             image: ActionUIBuilder.actionImage(for: action),
-            identifier: .none,
-            attributes: UIMenuElement.Attributes.from(actionStyle: action.style),
-            state: .on) { actionUI in
+            identifier: UIAction.Identifier(rawValue: action.name),
+            attributes: UIMenuElement.Attributes.from(actionStyle: action.style)) { actionUI in
                 handler(action, actionUI, context)
         }
         return actionUI
