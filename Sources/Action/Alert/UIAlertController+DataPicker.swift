@@ -4,8 +4,8 @@ import UIKit
 
 extension UIAlertController {
 
-    func addDatePicker(mode: UIDatePicker.Mode, date: Date?, minimumDate: Date? = nil, maximumDate: Date? = nil, action: DatePickerViewController.Action?) {
-        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, action: action)
+    func addDatePicker(mode: UIDatePicker.Mode, date: Date?, minimumDate: Date? = nil, maximumDate: Date? = nil, style: UIDatePickerStyle = .wheels, action: DatePickerViewController.Action?) {
+        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, style: style, action: action)
         set(viewController: datePicker, height: 217)
     }
 }
@@ -23,12 +23,13 @@ final class DatePickerViewController: UIViewController {
         return $0
     }(UIDatePicker())
 
-    required init(mode: UIDatePicker.Mode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, action: Action?) {
+    required init(mode: UIDatePicker.Mode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, style: UIDatePickerStyle, action: Action?) {
         super.init(nibName: nil, bundle: nil)
         datePicker.datePickerMode = mode
         datePicker.date = date ?? Date()
         datePicker.minimumDate = minimumDate
         datePicker.maximumDate = maximumDate
+        datePicker.preferredDatePickerStyle = style
         self.action = action
     }
 
