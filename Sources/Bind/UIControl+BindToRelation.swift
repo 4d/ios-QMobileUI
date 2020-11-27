@@ -168,7 +168,7 @@ extension UIControl: RelationInfoUI {
                    let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
 
                     button.setTitle(formatter.format(record), for: .normal)
-                } else let relationLabel = relationLabel {
+                } else if let relationLabel = relationLabel {
                     button.setTitle(relationLabel, for: .normal)
                 }
             } else if let set = self.relation as? NSMutableSet { // -> N
