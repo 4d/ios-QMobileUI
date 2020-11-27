@@ -254,7 +254,7 @@ extension ApplicationCrashManager {
 
     fileprivate func zipCrashFile(pathCrash source: Path, zipPath: Path) -> Bool {
         do {
-            try source.zip(to: zipPath)
+            try source.zip(to: zipPath, shouldKeepParent: false)
             return true
         } catch {
             logger.warning("Failed to zip crash file \(error.localizedDescription)")
