@@ -13,14 +13,14 @@ import SwiftMessages
 
 public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, PresenterRowType, RowType {
 
-    public typealias PresenterRow =  BarcodeScannerViewController
+    public typealias PresenterRow =  BarcodeScannerRowViewController
 
     public var presentationMode: PresentationMode<PresenterRow>?
     public var onPresentCallback: ((FormViewController, PresenterRow) -> Void)?
 
     public required init(tag: String?) {
         super.init(tag: tag)
-        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return BarcodeScannerViewController() }, onDismiss: { [weak self] viewController in
+        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return BarcodeScannerRowViewController() }, onDismiss: { [weak self] viewController in
             self?.select()
             viewController.dismiss(animated: true)
             })
@@ -57,20 +57,21 @@ public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, Pres
 
 }
 
-public class BarcodeScannerViewController: UIViewController, TypedRowControllerType {
+open class BarcodeScannerViewController: UIViewController {
 
-    public var row: RowOf<String>!
-    public var onDismissCallback: ((UIViewController) -> Void)?
+    open var onDismissCallback: ((UIViewController) -> Void)?
+    open func onMetaDataOutput(_ metadata: String) {
+        assertionFailure("Must be override")
+    }
 
-    var captureSession = AVCaptureSession()
-    var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    var qrCodeFrameView: UIView!
+    open var captureSession = AVCaptureSession()
+    open var videoPreviewLayer: AVCaptureVideoPreviewLayer!
+    open var qrCodeFrameView: UIView!
 
-    private let supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
+    open var supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
         guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
             logger.warning("Failed to get the camera device. Maybe forbidden by user or simulator.")
             SwiftMessages.warning("No camera accessible to scan")
@@ -79,7 +80,6 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
             }
             return
         }
-
         do {
             let input = try AVCaptureDeviceInput(device: captureDevice)
 
@@ -97,8 +97,8 @@ public class BarcodeScannerViewController: UIViewController, TypedRowControllerT
         }
 
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        videoPreviewLayer?.frame = view.layer.bounds
+        videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        videoPreviewLayer.frame = view.layer.bounds
         view.layer.addSublayer(videoPreviewLayer!)
 
         captureSession.startRunning()
@@ -117,21 +117,28 @@ extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
 
     public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         if metadataObjects.isEmpty {
-            qrCodeFrameView.frame = CGRect.zero
-            return
-        }
+            qrCodeFrameView.frame = .zero
+        } else if let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject, supportedCodeTypes.contains(metadataObj.type) {
 
-        if let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject, supportedCodeTypes.contains(metadataObj.type) {
-
-            if let barCodeObject = videoPreviewLayer?.transformedMetadataObject(for: metadataObj) {
+            if let barCodeObject = videoPreviewLayer.transformedMetadataObject(for: metadataObj) {
                 qrCodeFrameView.frame = barCodeObject.bounds
             }
 
             if let value = metadataObj.stringValue {
-                row.value = value
+                onMetaDataOutput(value)
                 onDismissCallback?(self)
             }
         }
+    }
+
+}
+
+public class BarcodeScannerRowViewController: BarcodeScannerViewController, TypedRowControllerType {
+
+    public var row: RowOf<String>!
+
+    override open func onMetaDataOutput(_ metadata: String) {
+        row.value = metadata
     }
 
 }

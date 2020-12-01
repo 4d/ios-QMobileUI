@@ -151,11 +151,14 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
     var searchableWhenScrolling: Bool { get }
     /// Hide navigation bar when searching (only if searchableAsTitle = false)
     var searchableHideNavigation: Bool { get }
+    /// Activate search with code scanner
+    var searchableUsingCodeScanner: Bool { get }
 
     func onSearchBegin()
     func onSearchButtonClicked()
     func onSearchFetching()
     func onSearchCancel()
+    func onSearchCodeScanClicked()
 }
 
 extension ListFormSearchable where Self: UIViewController {
@@ -217,6 +220,11 @@ extension ListFormSearchable where Self: UIViewController {
         if isSearchBarMustBeHidden {
             searchBar?.isHidden = true
         }
+
+        if self.searchableUsingCodeScanner {
+            self.searchBar?.showsBookmarkButton = true
+            self.searchBar?.setImage(UIImage(systemName: "qrcode"), for: .bookmark, state: .normal)
+        }
     }
 
     func performSearch(_ searchText: String) {
@@ -257,12 +265,45 @@ extension ListFormSearchable where Self: UIViewController {
         onSearchCancel()
     }
 
+    func do_searchBarBookmarkButtonClicked(for searchBar: UISearchBar) {
+       onSearchCodeScanClicked()
+    }
+
     func do_updateSearchResults(for searchController: UISearchController) {
         //let searchBar = searchController.searchBar
         //if let searchText = searchBar.text {
         //performSearch(searchText) // already done by search bar listener
         //}
     }
+
+}
+
+extension ListFormSearchable where Self: UIViewController {
+
+    // by default open a sesssion to scan
+    func showCodeScanController() {
+        let controller = BarcodeScannerSearchBarViewController()
+        controller.searchBar = self.searchBar
+        controller.onDismissCallback = { dismissedController in
+            dismissedController.dismiss(animated: true) {
+                logger.debug("Search with bar code dismissed")
+            }
+        }
+        self.present(controller, animated: true) {
+            logger.debug("Search with bar code presented")
+        }
+    }
+
+}
+
+public class BarcodeScannerSearchBarViewController: BarcodeScannerViewController {
+
+    public var searchBar: UISearchBar!
+
+    override open func onMetaDataOutput(_ metadata: String) {
+        searchBar.text = metadata
+    }
+
 }
 
 // MARK: navigation menu controller

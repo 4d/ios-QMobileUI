@@ -15,7 +15,7 @@ import Prephirences
 
 struct ActionFormSettings { // XXX use settings
     // forms
-    static let alertIfOneField = true // use an alert if one field
+    static let alertIfOneField = Prephirences.sharedInstance["action.alertIfOneField"] as? Bool ?? true  // use an alert if one field
     static let useMenu = Prephirences.sharedInstance["action.useMenu"] as? Bool ?? true // use menu instead of alert
 
     // ui

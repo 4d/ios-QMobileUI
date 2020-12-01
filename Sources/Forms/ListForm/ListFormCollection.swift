@@ -45,6 +45,8 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     @IBInspectable open var searchableWhenScrolling: Bool = true
     /// Hide navigation bar when searching (default: `true`) - only if `searchableAsTitle` is `false`
     @IBInspectable open var searchableHideNavigation: Bool = true
+    /// Activate search with code scanner
+    @IBInspectable open var searchableUsingCodeScanner: Bool = true
     /// When there is no more things to search, apply still a predicate (default: nil)
     open var defaultSearchPredicate: NSPredicate?
 
@@ -221,6 +223,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     open func onSearchButtonClicked() {}
     open func onSearchCancel() {}
     open func onSearchFetching() {}
+    open func onSearchCodeScanClicked() {
+        showCodeScanController()
+    }
 
     /// Called after a clicked on a record.
     /// Will not be call if you override tableView(, didSelectRow) or change tableView delegate.
