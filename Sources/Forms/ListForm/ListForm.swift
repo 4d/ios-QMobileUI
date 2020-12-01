@@ -152,7 +152,7 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
     /// Hide navigation bar when searching (only if searchableAsTitle = false)
     var searchableHideNavigation: Bool { get }
     /// Activate search with code scanner
-    var searchableUsingCodeScanner: Bool { get }
+    var searchUsingCodeScanner: Bool { get }
 
     func onSearchBegin()
     func onSearchButtonClicked()
@@ -221,7 +221,7 @@ extension ListFormSearchable where Self: UIViewController {
             searchBar?.isHidden = true
         }
 
-        if self.searchableUsingCodeScanner {
+        if self.searchUsingCodeScanner {
             self.searchBar?.showsBookmarkButton = true
             self.searchBar?.setImage(UIImage(systemName: "qrcode"), for: .bookmark, state: .normal)
         }
