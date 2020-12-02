@@ -64,14 +64,16 @@ open class BarcodeScannerViewController: UIViewController {
         assertionFailure("Must be override")
     }
 
-    open var captureSession = AVCaptureSession()
+    open var captureSession: AVCaptureSession!
     open var videoPreviewLayer: AVCaptureVideoPreviewLayer!
     open var qrCodeFrameView: UIView!
+    open var cancelButton: UIButton!
 
     open var supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        // Get camera
         guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             logger.warning("Failed to get the camera device. Maybe forbidden by user or simulator.")
             SwiftMessages.warning("No camera accessible to scan")
@@ -80,18 +82,23 @@ open class BarcodeScannerViewController: UIViewController {
             }
             return
         }
+        // launch a capture session
         do {
-            let input = try AVCaptureDeviceInput(device: captureDevice)
+            captureSession = AVCaptureSession()
+            //captureSession.beginConfiguration()
+           // captureSession.connections.first?.videoOrientation = .landscapeLeft
 
+            // with camera as input
+            let input = try AVCaptureDeviceInput(device: captureDevice)
             captureSession.addInput(input)
 
+            // and code type detector has output
             let captureMetadataOutput = AVCaptureMetadataOutput()
             captureSession.addOutput(captureMetadataOutput)
-
             captureMetadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             captureMetadataOutput.metadataObjectTypes = supportedCodeTypes
-
         } catch {
+            captureSession = nil
             logger.error("Error when try to capture \(error)")
             return
         }
@@ -104,13 +111,87 @@ open class BarcodeScannerViewController: UIViewController {
         captureSession.startRunning()
 
         qrCodeFrameView = UIView()
-
         qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
         qrCodeFrameView.layer.borderWidth = 2
         view.addSubview(qrCodeFrameView)
         view.bringSubviewToFront(qrCodeFrameView)
+
+        cancelButton = UIButton(frame: CGRect(x: self.view.bounds.width - 80, y: self.view.bounds.height - 80, width: 50, height: 50))
+        cancelButton.backgroundColor = UIColor.clear
+        cancelButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        cancelButton.setImage(UIImage(systemName: "xmark"), for: .highlighted)
+        cancelButton.tintColor = UIColor.white.withAlphaComponent(0.8)
+        cancelButton.layer.borderColor = cancelButton.tintColor.cgColor
+        cancelButton.layer.borderWidth = 1
+        cancelButton.layer.cornerRadius = 25
+        cancelButton.layer.masksToBounds = true
+        cancelButton.addTarget(self, action: #selector(self.onCancelButton(_:)), for: .touchUpInside)
+        view.addSubview(cancelButton)
+
+        DispatchQueue.main.async {
+            // self.initiateOrientation
+            self.setVideoOrientation()
+        }
     }
 
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        // CLEAN replace with constraints
+        videoPreviewLayer.frame = view.layer.bounds
+        cancelButton.frame = CGRect(x: self.view.bounds.width - 80, y: self.view.bounds.height - 80, width: 50, height: 50)
+        self.setVideoOrientation()
+    }
+
+    func initiateOrientation() {
+        if let connection = self.videoPreviewLayer?.connection, connection.isVideoOrientationSupported {
+            let windowOrientation = self.view.window?.windowScene?.interfaceOrientation ?? .unknown
+            if let videoOrientation = AVCaptureVideoOrientation(interfaceOrientation: windowOrientation) {
+                connection.videoOrientation = videoOrientation
+            }
+        }
+    }
+
+    fileprivate func setVideoOrientation() {
+        if let connection = self.videoPreviewLayer?.connection, connection.isVideoOrientationSupported {
+            let deviceOrientation = UIDevice.current.orientation
+            if let newVideoOrientation = AVCaptureVideoOrientation(deviceOrientation: deviceOrientation) {
+                logger.debug("Camera will set orientation \(newVideoOrientation) according to device orientation \(deviceOrientation)")
+                connection.videoOrientation = newVideoOrientation
+            }
+        }
+    }
+
+    @objc func onCancelButton(_ sender: UIButton) {
+        endSession()
+    }
+
+    fileprivate func endSession() {
+        self.captureSession?.stopRunning()
+        self.captureSession = nil
+        self.onDismissCallback?(self)
+    }
+}
+
+extension AVCaptureVideoOrientation {
+    init?(deviceOrientation: UIDeviceOrientation) {
+        switch deviceOrientation {
+        case .portrait: self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft: self = .landscapeRight
+        case .landscapeRight: self = .landscapeLeft
+        default: return nil
+        }
+    }
+
+    init?(interfaceOrientation: UIInterfaceOrientation) {
+        switch interfaceOrientation {
+        case .portrait: self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft: self = .landscapeLeft
+        case .landscapeRight: self = .landscapeRight
+        default: return nil
+        }
+    }
 }
 
 extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
@@ -126,7 +207,9 @@ extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
 
             if let value = metadataObj.stringValue {
                 onMetaDataOutput(value)
-                onDismissCallback?(self)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { // add a delay to let user see the detection effect
+                    self.endSession()
+                }
             }
         }
     }

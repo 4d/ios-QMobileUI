@@ -294,6 +294,7 @@ extension ListFormSearchable where Self: UIViewController {
                 logger.debug("Search with bar code dismissed")
             }
         }
+        controller.modalPresentationStyle = .fullScreen
         self.present(controller, animated: true) {
             logger.debug("Search with bar code presented")
         }
