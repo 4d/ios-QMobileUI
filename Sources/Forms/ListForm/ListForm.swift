@@ -284,6 +284,11 @@ extension ListFormSearchable where Self: UIViewController {
     func showCodeScanController() {
         let controller = BarcodeScannerSearchBarViewController()
         controller.searchBar = self.searchBar
+        controller.callback = { metadata in
+            foreground {
+                self.performSearch(metadata)
+            }
+        }
         controller.onDismissCallback = { dismissedController in
             dismissedController.dismiss(animated: true) {
                 logger.debug("Search with bar code dismissed")
@@ -299,9 +304,13 @@ extension ListFormSearchable where Self: UIViewController {
 public class BarcodeScannerSearchBarViewController: BarcodeScannerViewController {
 
     public var searchBar: UISearchBar!
+    public var callback: ((String) -> Void)?
 
     override open func onMetaDataOutput(_ metadata: String) {
-        searchBar.text = metadata
+        if searchBar.text != metadata {
+            searchBar.text = metadata
+            callback?(metadata)
+        }
     }
 
 }
