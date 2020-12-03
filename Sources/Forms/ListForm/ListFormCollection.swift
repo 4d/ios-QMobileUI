@@ -47,6 +47,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     @IBInspectable open var searchableHideNavigation: Bool = true
     /// Activate search with code scanner
     @IBInspectable open var searchUsingCodeScanner: Bool = false
+    /// Open detail form if search result in one record
+    @IBInspectable open var searchOpenIfOne: Bool = false
+    var searchOpenIfOneRestoreValue: Bool = false
     /// When there is no more things to search, apply still a predicate (default: nil)
     open var defaultSearchPredicate: NSPredicate?
 
@@ -222,7 +225,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     open func onSearchBegin() {}
     open func onSearchButtonClicked() {}
     open func onSearchCancel() {}
-    open func onSearchFetching() {}
+    open func onSearchFetching() {
+        checkIfOpenFirstResult()
+    }
     open func onSearchCodeScanClicked() {
         showCodeScanController()
     }
@@ -323,6 +328,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
 
     open func installSearchBar() {
         doInstallSearchBar()
+        self.searchOpenIfOneRestoreValue=self.searchOpenIfOne
     }
 
     open func installBackButton() {
@@ -367,8 +373,21 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     //@objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
 
     open func dataSourceDidChangeContent(_ dataSource: DataSource) {
-        DispatchQueue.main.async {
+        /*DispatchQueue.main.async {
             //self.loadingView?.removeFromSuperview()
+        }*/
+    }
+
+    func checkIfOpenFirstResult() {
+        if self.searchOpenIfOne {
+            foreground {
+                if self.dataSource?.fetchedRecords.count == 1/*, let record = self.dataSource?.fetchedRecords.first*/ {
+                    //self.collectionView.selectRow(at: .zero, animated: false, scrollPosition: .none)
+                    //self.collectionView(self.collectionView, didSelectRowAt: .zero)
+                    self.performSegue(withIdentifier: self.selectedSegueIdentifier, sender: self.collectionView.visibleCells.first)
+                }
+                self.searchOpenIfOne = self.searchOpenIfOneRestoreValue
+            }
         }
     }
 

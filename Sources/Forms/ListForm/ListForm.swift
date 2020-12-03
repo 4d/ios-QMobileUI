@@ -153,6 +153,7 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
     var searchableHideNavigation: Bool { get }
     /// Activate search with code scanner
     var searchUsingCodeScanner: Bool { get }
+    var searchOpenIfOne: Bool { get set }
 
     func onSearchBegin()
     func onSearchButtonClicked()
@@ -286,6 +287,7 @@ extension ListFormSearchable where Self: UIViewController {
         controller.searchBar = self.searchBar
         controller.callback = { metadata in
             foreground {
+                self.searchOpenIfOne = true
                 self.performSearch(metadata)
             }
         }
