@@ -137,9 +137,11 @@ open class BarcodeScannerViewController: UIViewController {
     open override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         // CLEAN replace with constraints
-        videoPreviewLayer.frame = view.layer.bounds
-        cancelButton.frame = CGRect(x: self.view.bounds.width - 80, y: self.view.bounds.height - 80, width: 50, height: 50)
-        self.setVideoOrientation()
+        if let videoPreviewLayer = videoPreviewLayer {
+            videoPreviewLayer.frame = view.layer.bounds
+            cancelButton?.frame = CGRect(x: self.view.bounds.width - 80, y: self.view.bounds.height - 80, width: 50, height: 50)
+            self.setVideoOrientation()
+        }
     }
 
     func initiateOrientation() {
