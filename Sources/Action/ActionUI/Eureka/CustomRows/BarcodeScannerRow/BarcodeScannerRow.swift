@@ -13,14 +13,19 @@ import SwiftMessages
 
 public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, PresenterRowType, RowType {
 
-    public typealias PresenterRow =  BarcodeScannerRowViewController
+    public typealias PresenterRow = BarcodeScannerRowViewController
 
     public var presentationMode: PresentationMode<PresenterRow>?
     public var onPresentCallback: ((FormViewController, PresenterRow) -> Void)?
 
     public required init(tag: String?) {
         super.init(tag: tag)
-        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return BarcodeScannerRowViewController() }, onDismiss: { [weak self] viewController in
+        let controllerProvider: ControllerProvider<PresenterRow> = ControllerProvider.callback {
+            let controller = BarcodeScannerRowViewController()
+            controller.modalPresentationStyle = .fullScreen
+            return controller
+        }
+        presentationMode = .presentModally(controllerProvider: controllerProvider, onDismiss: { [weak self] viewController in
             self?.select()
             viewController.dismiss(animated: true)
             })
@@ -100,6 +105,10 @@ open class BarcodeScannerViewController: UIViewController {
         } catch {
             captureSession = nil
             logger.error("Error when try to capture \(error)")
+            SwiftMessages.warning("Please authorize camera")
+            foreground {
+                self.onDismissCallback?(self)
+            }
             return
         }
 
