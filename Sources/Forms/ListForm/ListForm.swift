@@ -205,26 +205,22 @@ extension ListFormSearchable where Self: UIViewController {
                 }
             }
         }
-        if let subview = searchBar?.subviews.first {
-            let textFields = subview.allSubviews.compactMap({$0 as? UITextField })
-            if let searchTextField = textFields.first {
-                //if !searchableAsTitle {
-                    if let navigationBarColor = self.navigationController?.navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor {
-                        searchTextField.textColor = navigationBarColor
-                    }
-                //}
-                searchTextField.tintColor = searchTextField.textColor // the |
-            }
+        if self.searchUsingCodeScanner {
+            self.searchBar?.showsBookmarkButton = true
+            self.searchBar?.setImage(UIImage(systemName: "qrcode"), for: .bookmark, state: .normal)
+        }
+        if let searchTextField = searchBar?.searchTextField, let navigationBarColor = self.navigationController?.navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor ?? searchTextField.textColor {
+            //if !searchableAsTitle {
+            searchTextField.textColor = navigationBarColor
+            //}
+            searchTextField.tintColor = navigationBarColor
+            searchTextField.leftView?.tintColor = navigationBarColor
+            searchTextField.rightView?.tintColor = navigationBarColor
         }
         searchBar?.delegate = self
 
         if isSearchBarMustBeHidden {
             searchBar?.isHidden = true
-        }
-
-        if self.searchUsingCodeScanner {
-            self.searchBar?.showsBookmarkButton = true
-            self.searchBar?.setImage(UIImage(systemName: "qrcode"), for: .bookmark, state: .normal)
         }
     }
 
