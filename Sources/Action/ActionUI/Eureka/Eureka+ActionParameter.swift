@@ -188,6 +188,8 @@ extension ActionParameterFormat {
             return BarcodeScannerRow(key).onRowEvent(eventCallback)
         case .signature:
             return SignatureViewRow(key).onRowEvent(eventCallback)
+        case .location:
+            return LocationRow(key).onRowEvent(eventCallback)
         case .stepper:
             return StepperRow(key).onRowEvent(eventCallback)
         case .slider:

@@ -24,7 +24,7 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
 
     lazy var pinView: UIImageView = { [unowned self] in
         let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        view.image = UIImage(named: "map_pin", in: Bundle(for: MapViewController.self), compatibleWith: nil)
+        view.image = UIImage(systemName: "mappin.and.ellipse")
         view.image = view.image?.withRenderingMode(.alwaysTemplate)
         view.tintColor = self.view.tintColor
         view.backgroundColor = .clear

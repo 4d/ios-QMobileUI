@@ -78,6 +78,7 @@ open class BarcodeScannerViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        // XXX could use witch AVCaptureDevice.authorizationStatus(for: .video) { if necessary
         // Get camera
         guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             logger.warning("Failed to get the camera device. Maybe forbidden by user or simulator.")
