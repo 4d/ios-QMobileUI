@@ -13,7 +13,7 @@ import Eureka
 
 // MARK: LocationRow
 
-public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<CLLocation>>, PresenterRowType, RowType {
+public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<Coordinate>>, PresenterRowType, RowType {
 
     public typealias PresenterRow = MapViewController
 
@@ -29,13 +29,9 @@ public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<CLLocation>>,
 
         displayValueFor = {
             guard let location = $0 else { return "" }
-            let fmt = NumberFormatter()
-            fmt.maximumFractionDigits = 4
-            fmt.minimumFractionDigits = 4
-            let latitude = fmt.string(from: NSNumber(value: location.coordinate.latitude))!
-            let longitude = fmt.string(from: NSNumber(value: location.coordinate.longitude))!
-            return  "\(latitude), \(longitude)"
+            return location.stringValue
         }
+        self.cell?.accessoryView = UIImageView(image: UIImage(systemName: "map"))
     }
 
     /**
@@ -64,5 +60,36 @@ public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<CLLocation>>,
         rowVC.onDismissCallback = presentationMode?.onDismissCallback ?? rowVC.onDismissCallback
         onPresentCallback?(cell.formViewController()!, rowVC)
         rowVC.row = self
+    }
+}
+
+import QMobileAPI
+
+public struct Coordinate: Equatable {
+    public var latitude: Double
+    public var longitude: Double
+
+    public static func == (left: Coordinate, right: Coordinate) -> Bool {
+        return left.latitude == right.latitude && left.longitude == right.longitude
+    }
+}
+
+extension Coordinate: ActionParameterEncodable {
+
+    public func encodeForActionParameter() -> Any {
+        return stringValue
+    }
+
+    var stringValue: String {
+        let fmt = NumberFormatter()
+        fmt.maximumFractionDigits = 4
+        fmt.minimumFractionDigits = 4
+        let latitude = fmt.string(from: NSNumber(value: self.latitude))!
+        let longitude = fmt.string(from: NSNumber(value: self.longitude))!
+        return "\(latitude), \(longitude)"
+    }
+
+    var coordinate: CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }
 }

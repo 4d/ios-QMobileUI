@@ -13,7 +13,7 @@ import Eureka
 
 public class MapViewController: UIViewController, TypedRowControllerType, MKMapViewDelegate {
 
-    public var row: RowOf<CLLocation>!
+    public var row: RowOf<Coordinate>!
     public var onDismissCallback: ((UIViewController) -> Void)?
 
     lazy var mapView: MKMapView = { [unowned self] in
@@ -103,7 +103,7 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
 
     @objc func tappedDone(_ sender: UIBarButtonItem) {
         let target = mapView.convert(ellipsisLayer.position, toCoordinateFrom: mapView)
-        row.value = CLLocation(latitude: target.latitude, longitude: target.longitude)
+        row.value = Coordinate(latitude: target.latitude, longitude: target.longitude)
         onDismissCallback?(self)
     }
 
