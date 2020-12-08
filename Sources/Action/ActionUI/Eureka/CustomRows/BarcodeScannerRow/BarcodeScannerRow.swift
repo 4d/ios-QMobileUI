@@ -218,9 +218,9 @@ extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
             }
 
             if let value = metadataObj.stringValue {
-                onMetaDataOutput(value)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { // add a delay to let user see the detection effect
                     self.endSession()
+                    self.onMetaDataOutput(value)
                 }
             }
         }

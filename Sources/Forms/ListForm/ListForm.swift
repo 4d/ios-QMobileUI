@@ -307,11 +307,48 @@ public class BarcodeScannerSearchBarViewController: BarcodeScannerViewController
 
     override open func onMetaDataOutput(_ metadata: String) {
         if searchBar.text != metadata {
-            searchBar.text = metadata
-            callback?(metadata)
+            if let url = URL(string: metadata), url.isAppURL {
+                UIApplication.shared.open(url, options: [:]) { _ in
+                    logger.debug("Open url \(url) get from qr code")
+                }
+
+            } else {
+                searchBar.text = metadata
+                callback?(metadata)
+            }
         }
     }
 
+}
+
+extension URL {
+    /// True if url must open this app through url scheme or universal link mecanism
+    var isAppURL: Bool {
+        if let scheme = self.scheme, let urlSchemes = UIApplication.urlSchemes, urlSchemes.contains(scheme) {
+            return true
+        }
+        if let associatedDomains = UIApplication.associatedDomains {
+            let path = self.absoluteString
+            if associatedDomains.contains(where: { path.hasPrefix($0) }) {
+                return true
+            }
+        }
+        return false
+    }
+}
+
+// some urls info about app (if necessary could be cached)
+extension UIApplication {
+    fileprivate static var urlSchemes: [String]? {
+        guard let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [[String: AnyObject]] else {
+            return nil
+        }
+        let result: [String] = urlTypes.compactMap({ $0["CFBundleURLSchemes"] as? [String]}).flatMap({$0})
+        return result.isEmpty ? nil : result
+    }
+    fileprivate static var associatedDomains: [String]? {
+        return Bundle.main.infoDictionary?["com.apple.developer.associated-domains"] as? [String]
+    }
 }
 
 // MARK: navigation menu controller
