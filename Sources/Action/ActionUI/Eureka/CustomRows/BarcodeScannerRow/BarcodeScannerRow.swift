@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import Eureka
 import SwiftMessages
+import Prephirences
 
 public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, PresenterRowType, RowType {
 
@@ -72,7 +73,17 @@ open class BarcodeScannerViewController: UIViewController {
     open var cancelButton: UIButton!
     open var metadata: String?
 
-    open var supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
+    static var defaultSupportedCodeTypes: [AVMetadataObject.ObjectType] {
+        let types = Prephirences.sharedInstance["barcode.types"]
+        if let types = types as? [String] {
+            return types.flatMap({  AVMetadataObject.ObjectType.from($0)})
+        } else if let types = types as? String {
+            return AVMetadataObject.ObjectType.from(types)
+        }
+        return [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce, .pdf417]
+    }
+
+    open var supportedCodeTypes: [AVMetadataObject.ObjectType] = BarcodeScannerViewController.defaultSupportedCodeTypes
 
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -183,6 +194,42 @@ open class BarcodeScannerViewController: UIViewController {
 
     open func onMetaDataOutput(_ metadata: String) {
         self.metadata = metadata
+    }
+}
+
+extension AVMetadataObject.ObjectType {
+
+    static func from(_ string: String) -> [AVMetadataObject.ObjectType] {
+        var result: [AVMetadataObject.ObjectType] = []
+        for codeString in string.split(separator: ",") {
+            switch string.trimmed {
+            case "ean8":
+                result.append(.ean8)
+            case "ean13":
+                result.append(.ean13)
+            case "ean":
+                result.append(contentsOf: [.ean13, .ean8])
+            case "code39":
+                result.append(.code39)
+            case "code93":
+                result.append(.code93)
+            case "code128":
+                result.append(.code128)
+            case "code":
+                result.append(contentsOf: [.code39, .code93, .code128])
+            case "qr":
+                result.append(.qr)
+            case "upce":
+                result.append(.upce)
+            case "aztec":
+                result.append(.aztec)
+            case "pdf417":
+                result.append(.pdf417)
+            default:
+                break
+            }
+        }
+        return result
     }
 }
 
