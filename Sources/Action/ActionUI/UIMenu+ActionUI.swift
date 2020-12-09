@@ -26,7 +26,7 @@ extension UIAction: ActionUI {
     public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = UIAction(
             title: action.label ?? action.name,
-            image: ActionUIBuilder.actionImage(for: action),
+            image: ActionUIBuilder.actionImage(for: action)?.withRenderingMode(.alwaysTemplate),
             identifier: UIAction.Identifier(rawValue: action.name),
             attributes: UIMenuElement.Attributes.from(actionStyle: action.style)) { actionUI in
                 handler(action, actionUI, context)

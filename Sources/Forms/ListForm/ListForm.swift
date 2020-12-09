@@ -279,17 +279,11 @@ extension ListFormSearchable where Self: UIViewController {
 
     // by default open a sesssion to scan
     func showCodeScanController() {
-        let controller = BarcodeScannerSearchBarViewController()
-        controller.searchBar = self.searchBar
-        controller.callback = { metadata in
-            foreground {
-                self.searchOpenIfOne = true
-                self.performSearch(metadata)
-            }
-        }
+        let controller = BarcodeScannerViewController()
+
         controller.onDismissCallback = { dismissedController in
             dismissedController.dismiss(animated: true) {
-                logger.debug("Search with bar code dismissed")
+                self.onBarcodeScannerDismiss(controller)
             }
         }
         controller.modalPresentationStyle = .fullScreen
@@ -298,23 +292,21 @@ extension ListFormSearchable where Self: UIViewController {
         }
     }
 
-}
+    private func onBarcodeScannerDismiss(_ controller: BarcodeScannerViewController) {
+        logger.debug("Search with bar code dismissed")
+        guard let metadata = controller.metadata else { return } // nothing scanned
+        guard searchBar.text != metadata else { return } // nothing changed
 
-public class BarcodeScannerSearchBarViewController: BarcodeScannerViewController {
+        if let url = URL(string: metadata), url.isAppURL {
+            UIApplication.shared.open(url, options: [:]) { _ in
+                logger.debug("Open url \(url) get from qr code")
+            }
 
-    public var searchBar: UISearchBar!
-    public var callback: ((String) -> Void)?
-
-    override open func onMetaDataOutput(_ metadata: String) {
-        if searchBar.text != metadata {
-            if let url = URL(string: metadata), url.isAppURL {
-                UIApplication.shared.open(url, options: [:]) { _ in
-                    logger.debug("Open url \(url) get from qr code")
-                }
-
-            } else {
-                searchBar.text = metadata
-                callback?(metadata)
+        } else {
+            searchBar.text = metadata
+            foreground {
+                self.searchOpenIfOne = true
+                self.performSearch(metadata)
             }
         }
     }

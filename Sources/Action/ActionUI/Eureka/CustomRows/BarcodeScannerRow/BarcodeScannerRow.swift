@@ -65,14 +65,12 @@ public final class BarcodeScannerRow: OptionsRow<PushSelectorCell<String>>, Pres
 open class BarcodeScannerViewController: UIViewController {
 
     open var onDismissCallback: ((UIViewController) -> Void)?
-    open func onMetaDataOutput(_ metadata: String) {
-        assertionFailure("Must be override")
-    }
 
     open var captureSession: AVCaptureSession!
     open var videoPreviewLayer: AVCaptureVideoPreviewLayer!
     open var qrCodeFrameView: UIView!
     open var cancelButton: UIButton!
+    open var metadata: String?
 
     open var supportedCodeTypes: [AVMetadataObject.ObjectType] = [.ean8, .ean13, .code39, .code93, .code128, .qr, .upce]
 
@@ -175,12 +173,16 @@ open class BarcodeScannerViewController: UIViewController {
 
     @objc func onCancelButton(_ sender: UIButton) {
         endSession()
+        self.onDismissCallback?(self)
     }
 
     fileprivate func endSession() {
         self.captureSession?.stopRunning()
         self.captureSession = nil
-        self.onDismissCallback?(self)
+    }
+
+    open func onMetaDataOutput(_ metadata: String) {
+        self.metadata = metadata
     }
 }
 
@@ -218,9 +220,10 @@ extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
             }
 
             if let value = metadataObj.stringValue {
+                self.endSession()
+                self.onMetaDataOutput(value)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { // add a delay to let user see the detection effect
-                    self.endSession()
-                    self.onMetaDataOutput(value)
+                    self.onDismissCallback?(self)
                 }
             }
         }
@@ -233,6 +236,7 @@ public class BarcodeScannerRowViewController: BarcodeScannerViewController, Type
     public var row: RowOf<String>!
 
     override open func onMetaDataOutput(_ metadata: String) {
+        super.onMetaDataOutput(metadata)
         row.value = metadata
     }
 
