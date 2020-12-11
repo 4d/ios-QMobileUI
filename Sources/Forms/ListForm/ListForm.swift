@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+import Prephirences
+
 import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
@@ -319,11 +321,8 @@ extension URL {
         if let scheme = self.scheme, let urlSchemes = UIApplication.urlSchemes, urlSchemes.contains(scheme) {
             return true
         }
-        if let associatedDomains = UIApplication.associatedDomains {
-            let path = self.absoluteString
-            if associatedDomains.contains(where: { path.hasPrefix($0) }) {
-                return true
-            }
+        if let associatedDomain = UIApplication.associatedDomain, self.host == associatedDomain {
+           return true
         }
         return false
     }
@@ -338,8 +337,11 @@ extension UIApplication {
         let result: [String] = urlTypes.compactMap({ $0["CFBundleURLSchemes"] as? [String]}).flatMap({$0})
         return result.isEmpty ? nil : result
     }
-    fileprivate static var associatedDomains: [String]? {
-        return Bundle.main.infoDictionary?["com.apple.developer.associated-domains"] as? [String]
+    fileprivate static var associatedDomain: String? {
+        guard let entitlements = Prephirences.sharedInstance["entitlements"] as? [String: AnyObject] else {
+            return nil
+        }
+        return entitlements["associatedDomain"] as? String
     }
 }
 
