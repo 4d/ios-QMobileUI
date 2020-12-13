@@ -11,10 +11,12 @@ import MapKit
 
 import Eureka
 
-public class MapViewController: UIViewController, TypedRowControllerType, MKMapViewDelegate {
+public class MapViewController: UIViewController, TypedRowControllerType, MKMapViewDelegate, CLLocationManagerDelegate {
 
     public var row: RowOf<Coordinate>!
     public var onDismissCallback: ((UIViewController) -> Void)?
+    let locationManager = CLLocationManager()
+    var resultSearchController: UISearchController?
 
     lazy var mapView: MKMapView = { [unowned self] in
         let view = MKMapView(frame: self.view.bounds)
@@ -83,16 +85,54 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
         button.title = "Done"
         navigationItem.rightBarButtonItem = button
 
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+
         if let value = row.value {
             let region = MKCoordinateRegion(center: value.coordinate, latitudinalMeters: 400, longitudinalMeters: 400)
             mapView.setRegion(region, animated: true)
         } else {
             mapView.showsUserLocation = true
+            if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways,
+               let coordinate  = locationManager.location?.coordinate {
+                let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 400, longitudinalMeters: 400)
+                mapView.setRegion(region, animated: true)
+            }
         }
+
+        if let locationSearchTable = UIStoryboard(name: "LocationSearchTable", bundle: Bundle(for: MapViewController.self)).instantiateViewController(withIdentifier: "LocationSearchTable") as? LocationSearchTable {
+            resultSearchController = UISearchController(searchResultsController: locationSearchTable)
+        } else {
+            assertionFailure("Cannot instanciate location search")
+        }
+
         updateTitle()
 
-    }
+        let myLocationButton = UIButton(frame: CGRect(x: self.view.bounds.width - 80, y: self.view.bounds.height - 80, width: 50, height: 50))
+        myLocationButton.backgroundColor = UIColor.clear
+        myLocationButton.setImage(UIImage(systemName: "paperplane"), for: .normal)
+        myLocationButton.setImage(UIImage(systemName: "paperplane"), for: .highlighted)
+        myLocationButton.tintColor = UIColor.white.withAlphaComponent(0.8)
+        myLocationButton.layer.borderColor = myLocationButton.tintColor.cgColor
+        myLocationButton.layer.borderWidth = 1
+        myLocationButton.layer.cornerRadius = 25
+        myLocationButton.layer.masksToBounds = true
+        myLocationButton.addTarget(self, action: #selector(self.onCancelButton(_:)), for: .touchUpInside)
+        mapView.addSubview(myLocationButton)
 
+    }
+    @objc func onCancelButton(_ sender: UIButton) {
+        // TODO maybe a request here
+        locationManager.requestLocation()
+        guard let location = locationManager.location else {
+            return
+        }
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        let region = MKCoordinateRegion(center: location.coordinate, span: span)
+        mapView.setRegion(region, animated: true)
+    }
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -103,7 +143,7 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
 
     @objc func tappedDone(_ sender: UIBarButtonItem) {
         let target = mapView.convert(ellipsisLayer.position, toCoordinateFrom: mapView)
-        row.value = Coordinate(latitude: target.latitude, longitude: target.longitude)
+        row.value = target.toStruct()
         onDismissCallback?(self)
     }
 
@@ -129,5 +169,85 @@ public class MapViewController: UIViewController, TypedRowControllerType, MKMapV
             self?.pinView.center = CGPoint(x: self!.pinView.center.x, y: self!.pinView.center.y + 10)
         })
         updateTitle()
+    }
+
+    // MARK: - delegate
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            locationManager.requestLocation()
+        }
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            print("location:: \(location)")
+            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            let region = MKCoordinateRegion(center: location.coordinate, span: span)
+            mapView.setRegion(region, animated: true)
+        }
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("error:: (error)")
+    }
+}
+class LocationSearchTable: UITableViewController {
+    var matchingItems: [MKMapItem] = []
+    var mapView: MKMapView?
+
+    func parseAddress(selectedItem: MKPlacemark) -> String {
+        // put a space between "4" and "Melrose Place"
+        let firstSpace = (selectedItem.subThoroughfare != nil && selectedItem.thoroughfare != nil) ? " " : ""
+        // put a comma between street and city/state
+        let comma = (selectedItem.subThoroughfare != nil || selectedItem.thoroughfare != nil) && (selectedItem.subAdministrativeArea != nil || selectedItem.administrativeArea != nil) ? ", " : ""
+        // put a space between "Washington" and "DC"
+        let secondSpace = (selectedItem.subAdministrativeArea != nil && selectedItem.administrativeArea != nil) ? " " : ""
+        let addressLine = String(
+            format: "%@%@%@%@%@%@%@",
+            // street number
+            selectedItem.subThoroughfare ?? "",
+            firstSpace,
+            // street name
+            selectedItem.thoroughfare ?? "",
+            comma,
+            // city
+            selectedItem.locality ?? "",
+            secondSpace,
+            // state
+            selectedItem.administrativeArea ?? ""
+        )
+        return addressLine
+    }
+}
+
+extension LocationSearchTable: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let mapView = mapView,
+            let searchBarText = searchController.searchBar.text else { return }
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = searchBarText
+        request.region = mapView.region
+        let search = MKLocalSearch(request: request)
+        search.start { response, _ in
+            guard let response = response else {
+                return
+            }
+            self.matchingItems = response.mapItems
+            self.tableView.reloadData()
+        }
+    }
+}
+
+extension LocationSearchTable {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return matchingItems.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
+        let selectedItem = matchingItems[indexPath.row].placemark
+        cell.textLabel?.text = selectedItem.name
+        cell.detailTextLabel?.text = parseAddress(selectedItem: selectedItem)
+        return cell
     }
 }

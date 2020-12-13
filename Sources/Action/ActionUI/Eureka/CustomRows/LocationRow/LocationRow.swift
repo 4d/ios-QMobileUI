@@ -27,8 +27,10 @@ public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<Coordinate>>,
         super.init(tag: tag)
         presentationMode = .show(controllerProvider: ControllerProvider.callback { return MapViewController { _ in } }, onDismiss: { viewController in _ = viewController.navigationController?.popViewController(animated: true) })
 
-        displayValueFor = {
-            guard let location = $0 else { return "" }
+        displayValueFor = { value in
+            guard let location = value else {
+                return ""
+            }
             return location.stringValue
         }
         self.cell?.accessoryView = UIImageView(image: UIImage(systemName: "map"))
@@ -63,6 +65,15 @@ public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<Coordinate>>,
     }
 }
 
+extension LocationRow: RowInitializable {
+    func rowInitialize() {
+        let locationManager = CLLocationManager()
+        if locationManager.authorizationStatus == .authorizedWhenInUse||locationManager.authorizationStatus == .authorizedAlways {
+            self.value = locationManager.location?.coordinate.toStruct()
+        }
+    }
+}
+
 import QMobileAPI
 
 public struct Coordinate: Equatable {
@@ -91,5 +102,11 @@ extension Coordinate: ActionParameterEncodable {
 
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+    }
+}
+
+extension CLLocationCoordinate2D {
+    func toStruct() -> Coordinate {
+        return Coordinate(latitude: self.latitude, longitude: self.longitude)
     }
 }

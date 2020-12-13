@@ -219,9 +219,11 @@
 		C489F5BB255D203300EED0C1 /* ActionRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */; };
 		C489F5BD255D203300EED0C1 /* ActionRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
+		C4B6AD30258407CC003DAAD2 /* ListFormSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */; };
 		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
 		C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F2208C254357020063653A /* SignatureViewRow.swift */; };
 		C4F22091254357480063653A /* SignatureViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C4F22090254357480063653A /* SignatureViewCell.xib */; };
+		C4F9C318257EBB25002C622E /* LocationSearchTable.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4F9C317257EBB24002C622E /* LocationSearchTable.storyboard */; };
 		C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */; };
 		C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */; };
 		FE655FFC20AD928B00B55336 /* Path+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE655FFB20AD928900B55336 /* Path+Zip.swift */; };
@@ -449,9 +451,11 @@
 		C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestQueue.swift; sourceTree = "<group>"; };
 		C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestOperation.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
+		C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFormSearchable.swift; sourceTree = "<group>"; };
 		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
 		C4F2208C254357020063653A /* SignatureViewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewRow.swift; sourceTree = "<group>"; };
 		C4F22090254357480063653A /* SignatureViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignatureViewCell.xib; sourceTree = "<group>"; };
+		C4F9C317257EBB24002C622E /* LocationSearchTable.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LocationSearchTable.storyboard; sourceTree = "<group>"; };
 		C5CC6058234619220055E1E7 /* DataSourceParentEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceParentEntry.swift; sourceTree = "<group>"; };
 		C5CE5BDF243E167D00C008C7 /* ApplicationPushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationPushNotification.swift; sourceTree = "<group>"; };
 		FE655FFB20AD928900B55336 /* Path+Zip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Path+Zip.swift"; sourceTree = "<group>"; };
@@ -1055,6 +1059,7 @@
 		48E655E3229EB2CC0060568B /* LocationRow */ = {
 			isa = PBXGroup;
 			children = (
+				C4F9C317257EBB24002C622E /* LocationSearchTable.storyboard */,
 				48E655E4229EB2D40060568B /* LocationRow.swift */,
 				48E655E6229EB2ED0060568B /* MapViewController.swift */,
 			);
@@ -1113,6 +1118,7 @@
 			isa = PBXGroup;
 			children = (
 				48EE07851E7AEF1A00A8546E /* ListForm.swift */,
+				C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */,
 				48EE077D1E7AED4200A8546E /* ListFormTable.swift */,
 				48EE077F1E7AED7100A8546E /* ListFormCollection.swift */,
 				489C15D31F3A18B7004844F3 /* ListForm+DataSync.swift */,
@@ -1342,6 +1348,7 @@
 				4810B01F20FF38AD0049F31D /* LogForm.storyboard in Resources */,
 				C4F22091254357480063653A /* SignatureViewCell.xib in Resources */,
 				4853BD652105ACDC004B2467 /* FeedbackForm.storyboard in Resources */,
+				C4F9C318257EBB25002C622E /* LocationSearchTable.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1551,6 +1558,7 @@
 				480B43531E842289007C90DD /* UIDevice+QMobile.swift in Sources */,
 				480392AE1E92930A008CF992 /* UIBarItem+BindTo.swift in Sources */,
 				483190EB2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift in Sources */,
+				C4B6AD30258407CC003DAAD2 /* ListFormSearchable.swift in Sources */,
 				48D584801E783447006F56B5 /* DataSource.swift in Sources */,
 				48D584811E783447006F56B5 /* DataSource+FetchedResultsControllerDelegate.swift in Sources */,
 				4869D60D223BA47F0042379F /* UIView+ActionContext.swift in Sources */,
