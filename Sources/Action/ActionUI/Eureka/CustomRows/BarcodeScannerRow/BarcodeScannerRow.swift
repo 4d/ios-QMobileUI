@@ -202,7 +202,7 @@ extension AVMetadataObject.ObjectType {
     static func from(_ string: String) -> [AVMetadataObject.ObjectType] {
         var result: [AVMetadataObject.ObjectType] = []
         for codeString in string.split(separator: ",") {
-            switch string.trimmed {
+            switch codeString.trimmed {
             case "ean8":
                 result.append(.ean8)
             case "ean13":
