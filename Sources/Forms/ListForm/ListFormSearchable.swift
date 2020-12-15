@@ -171,30 +171,47 @@ extension ListFormSearchable where Self: UIViewController {
         guard let metadata = controller.metadata else { return } // nothing scanned
         guard searchBar.text != metadata else { return } // nothing changed
 
-        if let url = URL(string: metadata), url.isAppURL {
-            UIApplication.shared.open(url, options: [:]) { _ in
-                logger.debug("Open url \(url) get from qr code")
+        if let url = URL(string: metadata) {
+            if url.hasAppUserScheme {
+                UIApplication.shared.open(url, options: [:]) { _ in
+                    logger.debug("Open url \(url) get from qr code")
+                }
+            } else if url.matchAppAssociatedDomain, let deepLink = DeepLink.from(url) {
+                foreground {
+                    ApplicationCoordinator.open(deepLink) {_ in
+                        logger.debug("Open url \(url) get from qr code")
+                    }
+                }
+            } else {
+                barcodeSearch(with: metadata)
             }
-
         } else {
-            searchBar.text = metadata
-            foreground {
-                self.searchOpenIfOne = true
-                self.performSearch(metadata)
-            }
+            barcodeSearch(with: metadata)
+        }
+    }
+
+    private func barcodeSearch(with metadata: String) {
+        searchBar.text = metadata
+        foreground {
+            self.searchOpenIfOne = true
+            self.performSearch(metadata)
         }
     }
 
 }
 
 extension URL {
-    /// True if url must open this app through url scheme or universal link mecanism
-    var isAppURL: Bool {
-        if let scheme = self.scheme, let urlSchemes = UIApplication.urlSchemes, urlSchemes.contains(scheme) {
-            return true
+    /// True if url must open this app through url scheme
+    fileprivate var hasAppUserScheme: Bool {
+        if let scheme = self.scheme, let urlSchemes = UIApplication.urlSchemes {
+            return urlSchemes.contains(scheme)
         }
-        if let associatedDomain = UIApplication.associatedDomain, self.host == associatedDomain {
-           return true
+        return false
+    }
+    /// True if url must open this app through url scheme
+    fileprivate var matchAppAssociatedDomain: Bool {
+        if let associatedDomain = UIApplication.associatedDomain {
+           return self.host == associatedDomain
         }
         return false
     }
