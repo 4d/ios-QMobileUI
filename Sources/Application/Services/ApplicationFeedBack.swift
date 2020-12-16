@@ -338,7 +338,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
 
     func showSendMailErrorAlert(toRecipient: String) {
         let message: String
-        if Device.current.isSimulator {
+        if Device.current.isSimulatorCase {
             message = "Email could not be set up using simulator."
         } else {
             message = "Make sure that you have at least one email account set up."
@@ -346,7 +346,7 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
         let alert = UIAlertController(title: "Could Not Send Email",
                                       message: message,
                                       preferredStyle: .alert)
-        if !Device.current.isSimulator {
+        if !Device.current.isSimulatorCase {
             alert.addAction(UIAlertAction(title: "📧 Open Mail app", style: .default, handler: { _ in
                 if let url = URL(string: "mailto:\(toRecipient)") {
                     UIApplication.shared.open(url)

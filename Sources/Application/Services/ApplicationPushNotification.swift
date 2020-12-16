@@ -100,10 +100,10 @@ extension ApplicationPushNotification {
                 return
             }
             logger.debug("Push Notifications permission is granted")
-            self.setActionableNotification()
+            self.registerCategory()
 
             /// Exclusively for testing on simulator
-            if Device.current.isSimulator {
+            if Device.current.isSimulatorCase {
 
                 let simulatorDeviceToken = UIDevice.current.simulatorID  ?? "booted"
                 logger.info("Device token cannot be fetched on a simulator. Use simulator id \(simulatorDeviceToken)")
@@ -133,9 +133,13 @@ extension ApplicationPushNotification {
         }
     }
 
-    func setActionableNotification() {
+    func registerCategory() {
         let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.setNotificationCategories([Action.open.unNotificationCategory])
+
+        let categories: [UNNotificationCategory] = Action.allCases.compactMap({ $0.unNotificationCategory})
+        if !categories.isEmpty {
+            notificationCenter.setNotificationCategories(Set(categories))
+        }
     }
 }
 
@@ -143,59 +147,72 @@ extension ApplicationPushNotification {
 extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
     /// Enumeration of available action for notification
-    enum Action: String {
-        case open // open a form
-        case `default` = "com.apple.UNNotificationDefaultActionIdentifier" // UNNotificationDefaultActionIdentifier
+    enum Action: String, CaseIterable {
+        case `default` = "com.apple.UNNotificationDefaultActionIdentifier" // UNNotificationDefaultActionIdentifie, default click on notif
         /*case dismiss = "com.apple.UNNotificationDismissActionIdentifier" // UNNotificationDismissActionIdentifier*/
+        // here could add enum case to provide action button on notification using "category" mecanism
 
-        var title: String {
+        fileprivate init?(_ response: UNNotificationResponse) {
+            self.init(rawValue: response.actionIdentifier)
+        }
+
+        private var title: String {
             switch self {
-            case .open, .default:
-                return "Open"//LOCALIZED
+            case .default:
+                return ""
             /*case .dismiss:
                 return "Dismiss"//LOCALIZED*/
             }
         }
 
-        var category: String {
+        private var category: String {
             switch self {
-            case .open, .default:
+            case .default:
                 return "OPEN_FORM"
             /*case .dismiss:
                 return "Dismiss"*/
             }
         }
 
-        var unNotificationActions: [UNNotificationAction] {
+        private var unNotificationActions: [UNNotificationAction]? {
             switch self {
-            case .open:
-                return [UNNotificationAction(identifier: self.rawValue, title: self.title, options: [.foreground])]
+            /*case .open:
+                return [UNNotificationAction(identifier: self.rawValue, title: self.title, options: [.foreground])]*/
             default:
-                return []
+                return nil
             }
         }
 
-        var unNotificationCategory: UNNotificationCategory {
+        var unNotificationCategory: UNNotificationCategory? {
+            guard let unNotificationActions = unNotificationActions, !unNotificationActions.isEmpty else {
+                return nil
+            }
             return UNNotificationCategory(identifier: self.category, actions: unNotificationActions, intentIdentifiers: [], options: [])
         }
 
-        func execute(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
-            switch self {
-            case .open, .default:
-                if let deepLink = DeepLink.from(userInfo) {
-                    logger.debug("Deep link notification \(userInfo): \(deepLink)")
-                    foreground {
-                        ApplicationCoordinator.open(deepLink) { result in
-                            logger.debug("Deep link \(deepLink) opened with result \(result)")
-                            completionHandler()
-                        }
+        fileprivate func executeDefault(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
+            /*if let dataSynchro = userInfo["dataSynchro"] as? Bool, dataSynchro {
+
+
+            }
+            else */if let deepLink = DeepLink.from(userInfo) {
+                logger.debug("Deep link notification \(userInfo): \(deepLink)")
+                foreground {
+                    ApplicationCoordinator.open(deepLink) { result in
+                        logger.debug("Deep link \(deepLink) opened with result \(result)")
+                        completionHandler()
                     }
-                } else {
-                    logger.debug("No deep link with \(userInfo)")
-                    completionHandler()
                 }
-                /*case .dismiss:
-                 break*/
+            } else {
+                logger.debug("No deep link with \(userInfo)")
+                completionHandler()
+            }
+        }
+
+        fileprivate func execute(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
+            switch self {
+            case .default:
+                executeDefault(userInfo, withCompletionHandler: completionHandler)
             }
         }
     }
@@ -203,12 +220,11 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
     /// Callback method when a notification alert is clicked
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // Get notification content
-        let userInfo = response.notification.request.content.userInfo
         // check action to execute
-        if let action = Action(rawValue: response.actionIdentifier) {
-            let application = UIApplication.shared
-            logger.debug("Application state when receive notification: \(response.notification) \(application.applicationState.rawValue). \(launchFromNotification)")
-            logger.debug("Extracted userInfo: \(userInfo)")
+        if let action = Action(response) {
+            logger.debug("Application state when receive notification: \(response.notification) \(UIApplication.shared.applicationState.rawValue). \(launchFromNotification)")
+            let userInfo = response.notification.request.content.userInfo
+            logger.verbose("Extracted userInfo: \(response.notification.request.content.userInfo)")
             if launchFromNotification {
                 DispatchQueue.userInitiated.after(2) {
                     action.execute(userInfo, withCompletionHandler: completionHandler)
@@ -223,16 +239,6 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
     /// Notification signal is received while app is in foreground. This callback let you decide if you want to display an alert or just a badge, a sound, etc.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-
-        // let userInfo = notification.request.content.userInfo
-
-        // Get notification content
-        /*if let aps = userInfo["aps"] as? [String: AnyObject] {
-            // Check the action identifier
-          /*  if let category = aps["category"] as? String, category == Identifiers.customAction {
-                // Add custom behavior for your action 'customAction'
-         }*/
-         }*/
         if #available(iOS 14.0, *) {
             completionHandler([.banner, .badge, .sound])
         } else {
