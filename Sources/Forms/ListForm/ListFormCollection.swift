@@ -349,9 +349,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
         }
         switch notification.name {
         case .dataSyncForTableBegin:
-            break
+            self.showProgressBar()
         case .dataSyncForTableSuccess, .dataSyncForTableFailed:
-            break
+            self.hideProgressBar()
         default:
             return
         }
