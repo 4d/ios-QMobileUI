@@ -133,10 +133,7 @@ extension ListForm {
             if let failureReason = error.failureReason {
                 SwiftMessages.warning(failureReason)
             } else if let recoverySuggestion = error.recoverySuggestion {
-                SwiftMessages.warning(error.errorDescription ?? title) { view, config in
-                    view.configureContent(title: title, body: recoverySuggestion)
-                    return config
-                }
+                SwiftMessages.warning((error.errorDescription ?? title)+"\n"+recoverySuggestion)
             } else if let errorDescription = error.errorDescription {
                 SwiftMessages.error(title: "", message: errorDescription)
             } else {

@@ -216,7 +216,7 @@ extension SwiftMessages {
         }
     }
 
-    public static func loading(_ message: String) {
+    public static func loading(_ message: String = "") {
         onForeground {
             //swiftlint:disable:next force_try
             let view: LoadingView = try! SwiftMessages.viewFromNib()
