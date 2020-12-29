@@ -12,6 +12,8 @@ import UIKit
 import UserNotifications
 
 import Prephirences
+import SwiftMessages
+
 import QMobileAPI
 
 class ApplicationPushNotification: NSObject {
@@ -191,11 +193,67 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
         }
 
         fileprivate func executeDefault(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
-            /*if let dataSynchro = userInfo["dataSynchro"] as? Bool, dataSynchro {
+            if let dataSynchro = userInfo["dataSynchro"] as? Bool, dataSynchro {
+                logger.info("Data synchronization requested by push notification")
 
+                let dataSyncInstance = ApplicationDataSync.instance.dataSync
+                let dataStore = dataSyncInstance.dataStore // CLEAN better way to get it(singleton is ...)
 
+                if let deepLink = DeepLink.from(userInfo),
+                   case DeepLink.record(let tableName, let primaryKeyValue) = deepLink,
+                   let table = dataSyncInstance.tables.filter({$0.name == tableName}).first,
+                   let tableInfo = dataSyncInstance.tablesInfoByTable[table],
+                   let matchingPredicated = tableInfo.primaryKeyPredicate(value: primaryKeyValue) {
+
+                    let willPerform = dataStore.perform(.foreground) { context in
+                        let records = try? context.get(in: tableInfo, matching: matchingPredicated) ?? []
+                        let notExists = records.isEmpty
+                        let alwaysRefresh = true
+                        if notExists || alwaysRefresh {
+                           // let loading = UIApplication.topViewController?.showLoading()
+                            SwiftMessages.loading()
+                            _ = dataSyncInstance.sync(operation: .record(tableName, primaryKeyValue), in: context.type) { recordResult in
+                                // TODO #123012 if notExists and failed, -> error cannot display
+                                logger.debug("Record \(deepLink) synchronised after push notfification: \(recordResult)")
+                                DispatchQueue.main.after(1) { // XXX instead of 1, check if time already superior to one
+                                    SwiftMessages.hide()
+                                    if case .failure(let error) = recordResult {
+                                        switch error {
+                                        case .apiError(let apiError):
+                                            SwiftMessages.showError(ActionRequest.Error(apiError)) // CLEAN have a central method for api error
+                                        default:
+                                            break
+                                        }
+                                    }
+                                }
+                                DispatchQueue.userInitiated.async {
+                                    executeDefault0(userInfo, withCompletionHandler: completionHandler)
+                                    _ = dataSync { _ in } // try fullscreen event if first one failed?
+                                }
+                            }
+                        } else {
+                            executeDefault0(userInfo, withCompletionHandler: completionHandler)
+                            _ = dataSync { _ in }
+                        }
+                    }
+                    if !willPerform {
+                        logger.info("Data store not ready to be requested by a push notification")
+                        // TODO relaunch later or on data store load event
+                        DispatchQueue.userInitiated.after(10) {
+                            executeDefault(userInfo, withCompletionHandler: completionHandler)
+                        }
+                    }
+                } else {
+                    executeDefault0(userInfo, withCompletionHandler: completionHandler)
+                    _ = dataSync { _ in }
+                }
+            } else {
+                executeDefault0(userInfo, withCompletionHandler: completionHandler)
             }
-            else */if let deepLink = DeepLink.from(userInfo) {
+        }
+
+        fileprivate func executeDefault0(_ userInfo: [AnyHashable: Any], withCompletionHandler completionHandler: @escaping () -> Void) {
+            if let deepLink = DeepLink.from(userInfo) {
                 logger.debug("Deep link notification \(userInfo): \(deepLink)")
                 foreground {
                     ApplicationCoordinator.open(deepLink) { result in

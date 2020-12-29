@@ -370,8 +370,10 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         }
         switch notification.name {
         case .dataSyncForTableBegin:
+            self.showProgressBar()
             break
         case .dataSyncForTableSuccess, .dataSyncForTableFailed:
+            self.hideProgressBar()
             break
         default:
             return
