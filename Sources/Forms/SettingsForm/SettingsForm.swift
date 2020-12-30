@@ -155,6 +155,20 @@ open class SettingsForm: UITableViewController, Storyboardable {
 
     open func initNavigationBar() {
         applyScrollEdgeAppareance()
+        if case .setting = ApplicationFeedback.instance.feedbackEvent {
+            let tap = UITapGestureRecognizer(target: self, action: #selector(didTapNavBar(_:)))
+            self.navigationController?.navigationBar.addGestureRecognizer(tap)
+        }
+    }
+
+    var tapNavBarCount = 0
+    @objc open func didTapNavBar(_ sender: Any) {
+        tapNavBarCount += 1
+
+        if tapNavBarCount > 9 {
+            tapNavBarCount = 0
+            ApplicationFeedback.instance.showFeedbackDialog(sender: sender)
+        }
     }
 
     // init section

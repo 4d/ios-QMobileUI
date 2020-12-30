@@ -27,7 +27,7 @@ class ApplicationFeedback: NSObject {
 
 extension ApplicationFeedback: ApplicationService {
 
-    static var instance: ApplicationService = ApplicationFeedback()
+    static var instance: ApplicationFeedback = ApplicationFeedback()
 
     static var pref: MutablePreferencesType {
         return MutableProxyPreferences(preferences: preferences, key: "feedback.")
@@ -54,7 +54,7 @@ extension ApplicationFeedback: ApplicationService {
         }
     }
 
-    fileprivate func showFeedbackDialog(sender: Any) {
+    func showFeedbackDialog(sender: Any) {
          self.showDialog(tips: "Feedback activated by setting",
                          sender: sender,
                          presented: { ApplicationFeedback.showFeedback = false },
@@ -62,23 +62,24 @@ extension ApplicationFeedback: ApplicationService {
          )
      }
 
-    // swiftlint:disable:next function_body_length
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+    var feedbackEvent: FeedbackEvent {
         let pref = ApplicationFeedback.pref
-
         let eventPref: Preference<FeedbackEvent> = pref.preference(forKey: "event")
         #if DEBUG
-        let event = eventPref.value ?? .shake
+        let event = eventPref.value ?? .setting
         #else
-        let event = eventPref.value ?? .none
+        let event = eventPref.value ?? .setting
         #endif
+        return event
+    }
 
+    // swiftlint:disable:next function_body_length
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         // MARK: register to event
-        let center = NotificationCenter.default
-
-        switch event {
+        switch self.feedbackEvent {
         case .shake:
             application.applicationSupportsShakeToEdit = true
+            let center = NotificationCenter.default
             shakeListener = center.addObserver(forName: .motionShakeEnd, object: nil, queue: .main) { [weak self] notification in
                 guard let strongSelf = self else {
                     return
@@ -94,6 +95,8 @@ extension ApplicationFeedback: ApplicationService {
             shakeListener = center.addObserver(forName: .UIApplicationUserDidTakeScreenshot, object: nil, queue: .main) { [weak self] _ in
              self?.showLogSendDialog()
              }*/
+        case .setting:
+            logger.info("Feedback activated using setting nav bar.")
         case .none:
             logger.info("Feedback not activated by automatic action.")
         }
@@ -440,6 +443,7 @@ enum FeedbackEvent: String {
      case floatingButton
      case twoFindersSwipeLeft, rightEdgePan // some gestures
      */
+    case setting
     case none
 }
 
