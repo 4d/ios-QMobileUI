@@ -219,7 +219,6 @@
 		C489F5BB255D203300EED0C1 /* ActionRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */; };
 		C489F5BD255D203300EED0C1 /* ActionRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */; };
 		C4AF29BA259B7D7500E9FC19 /* LinearProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AF29B8259B7D7400E9FC19 /* LinearProgressBar.swift */; };
-		C4AF29BB259B7D7500E9FC19 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AF29B9259B7D7400E9FC19 /* ProgressBar.swift */; };
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C4B6AD30258407CC003DAAD2 /* ListFormSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */; };
 		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
@@ -453,7 +452,6 @@
 		C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestQueue.swift; sourceTree = "<group>"; };
 		C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestOperation.swift; sourceTree = "<group>"; };
 		C4AF29B8259B7D7400E9FC19 /* LinearProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearProgressBar.swift; sourceTree = "<group>"; };
-		C4AF29B9259B7D7400E9FC19 /* ProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFormSearchable.swift; sourceTree = "<group>"; };
 		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
@@ -739,7 +737,6 @@
 			isa = PBXGroup;
 			children = (
 				C4AF29B8259B7D7400E9FC19 /* LinearProgressBar.swift */,
-				C4AF29B9259B7D7400E9FC19 /* ProgressBar.swift */,
 				4846084020AF07FB00EE4696 /* IconLabel.swift */,
 				4846083E20AF07F600EE4696 /* CircleProgressBar.swift */,
 				4846083B20AF07DD00EE4696 /* FloatingLabelTextField.swift */,
@@ -1495,7 +1492,6 @@
 				4859D95D1F827E6800C8A020 /* SettingsServerSectionFooter.swift in Sources */,
 				4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */,
 				C5CC6059234619220055E1E7 /* DataSourceParentEntry.swift in Sources */,
-				C4AF29BB259B7D7500E9FC19 /* ProgressBar.swift in Sources */,
 				48F8E2CD1F7D0FB6000080FB /* UINibable.swift in Sources */,
 				48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */,
 				48BC8571226F0C1500D548B2 /* UIAlertController+ImagePicker.swift in Sources */,

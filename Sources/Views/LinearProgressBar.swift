@@ -15,57 +15,51 @@ public enum LinearProgressBarState {
 
 open class LinearProgressBar: UIView {
 
+    static let progressBarViewTag = 45071692
+
     private let firstProgressComponent = CAShapeLayer()
     private let secondProgressComponent = CAShapeLayer()
     private lazy var progressComponents = [firstProgressComponent, secondProgressComponent]
-    
+
     private(set) var isAnimating = false
     open private(set) var state: LinearProgressBarState = .indeterminate
     var animationDuration: TimeInterval = 2.5
-    
+
     open var progressBarWidth: CGFloat = 2.0 {
         didSet {
             updateProgressBarWidth()
         }
     }
-    
-    open var progressBarColor: UIColor = .systemBlue {
+
+    open var progressBarColor: UIColor = UIColor(named: "progress") ?? UIColor(named: "BackgroundColor") ?? .systemBlue {
         didSet {
             updateProgressBarColor()
         }
     }
-    
+
     open var cornerRadius: CGFloat = 0 {
         didSet {
             updateCornerRadius()
         }
     }
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
-        prepare()
-        prepareLines()
+        setup()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
-        prepare()
-        prepareLines()
+        setup()
     }
-    
+
     override open func layoutSubviews() {
-        super.layoutSubviews()
-        
         updateLineLayers()
+        super.layoutSubviews()
     }
-    
-    private func prepare() {
+
+    private func setup() {
         clipsToBounds = true
-    }
-    
-    func prepareLines() {
         progressComponents.forEach {
             $0.fillColor = progressBarColor.cgColor
             $0.lineWidth = progressBarWidth
@@ -74,9 +68,11 @@ open class LinearProgressBar: UIView {
             $0.strokeEnd = 0
             layer.addSublayer($0)
         }
+        updateLineLayers()
     }
-    
+
     private func updateLineLayers() {
+        let bounds = self.bounds
         frame = CGRect(x: frame.minX, y: frame.minY, width: bounds.width, height: progressBarWidth)
 
         let linePath = UIBezierPath()
@@ -87,45 +83,44 @@ open class LinearProgressBar: UIView {
             $0.path = linePath.cgPath
             $0.frame = bounds
         }
-
     }
-    
+
     private func updateProgressBarColor() {
         progressComponents.forEach {
             $0.fillColor = progressBarColor.cgColor
             $0.strokeColor = progressBarColor.cgColor
         }
     }
-    
+
     private func updateProgressBarWidth() {
         progressComponents.forEach {
             $0.lineWidth = progressBarWidth
         }
         updateLineLayers()
     }
-    
+
     private func updateCornerRadius() {
         layer.cornerRadius = cornerRadius
     }
-    
+
     func forceBeginRefreshing() {
         isAnimating = false
         startAnimating()
     }
-    
+
     open func startAnimating() {
         guard !isAnimating else { return }
         isAnimating = true
         applyProgressAnimations()
     }
-    
+
     open func stopAnimating(completion: (() -> Void)? = nil) {
         guard isAnimating else { return }
         isAnimating = false
         removeProgressAnimations()
         completion?()
     }
-    
+
     // MARK: - Private
 
     private func applyProgressAnimations() {
@@ -181,4 +176,35 @@ open class LinearProgressBar: UIView {
         progressComponents.forEach { $0.removeAllAnimations() }
     }
 
+    fileprivate func attachToTop(of superview: UIView) {
+        let view = self
+        superview.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let guide = superview.safeAreaLayoutGuide
+
+        view.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
+        view.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
+        view.heightAnchor.constraint(equalToConstant: progressBarWidth).isActive = true
+    }
+
+    @discardableResult
+    open class func showProgressBar(_ parentView: UIView) -> UIView {
+        let progressBar = LinearProgressBar(frame: parentView.frame)
+        progressBar.tag = progressBarViewTag
+        progressBar.attachToTop(of: parentView)
+        progressBar.startAnimating()
+        return progressBar
+    }
+
+    open class func removeAllProgressBars(_ parentView: UIView) {
+        parentView.subviews
+            .filter { $0.tag == progressBarViewTag }
+            .forEach { view in
+                guard let view = view as? LinearProgressBar else { return }
+                view.stopAnimating {
+                    view.removeFromSuperview()
+                }
+        }
+    }
 }

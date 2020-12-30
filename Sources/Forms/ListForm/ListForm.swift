@@ -38,6 +38,11 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObser
     var originalParent: UIViewController? { get set }
     /// A scroll view used to fix navigation bar scrolling position..
     var scrollView: UIScrollView? { get }
+
+    var inDataSync: Bool { get set }
+    var isViewVisible: Bool { get set }
+    var isScrolling: Bool { get set }
+
 }
 
 extension ListForm {
@@ -141,6 +146,60 @@ extension ListForm where Self: UIViewController {
         }
     }
 
+}
+
+extension ListForm where Self: UIViewController {
+
+    var dataSyncEventObject: Any? {
+        return nil // ApplicationDataSync.dataSync{
+    }
+    var dataSyncEvents: [Notification.Name] {
+        // let names: [Notification.Name] = [.dataSyncForTableBegin, .dataSyncForTableSuccess, .dataSyncForTableFailed]
+        let names: [Notification.Name] = [.dataSyncWillBegin, .dataSyncSuccess, .dataSyncFailed]
+        return names
+    }
+    func installObservers(_ selector: Selector) {
+        removeObservers()
+        let object: Any? = dataSyncEventObject
+        let center: NotificationCenter = .default
+        for name in dataSyncEvents {
+            center.addObserver(self, selector: selector, name: name, object: object)
+        }
+    }
+    func removeObservers() {
+        let object: Any? = dataSyncEventObject
+        let center: NotificationCenter = .default
+        for name in dataSyncEvents {
+            center.removeObserver(self, name: name, object: object)
+        }
+    }
+    func dataSyncEvent(_ notification: Notification) {
+        /*guard let table = notification.userInfo?["table"] as? Table, self.table == table else {
+            return
+        }*/
+        switch notification.name {
+        case .dataSyncForTableBegin, .dataSyncWillBegin:
+            inDataSync = true
+        case .dataSyncForTableSuccess, .dataSyncForTableFailed, .dataSyncSuccess, .dataSyncFailed:
+            inDataSync = false
+        default:
+            return
+        }
+    }
+    func updateProgressBar() { // CLEAN Change with combine of 3 bool events?
+        if inDataSync && isViewVisible && !isScrolling {
+            foreground {
+                // if UIApplication.topViewController?.firstController == self {
+                LinearProgressBar.removeAllProgressBars(self.view)
+                LinearProgressBar.showProgressBar(self.view) // DO not show animated bar in not visible controller, 100%cpu
+                //}
+            }
+        } else {
+            foreground {
+                LinearProgressBar.removeAllProgressBars(self.view)
+            }
+        }
+    }
 }
 
 // MARK: navigation menu controller

@@ -88,6 +88,23 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         return self.tableView
     }
 
+    public var inDataSync: Bool = false {
+        didSet {
+            updateProgressBar()
+        }
+    }
+    public var isViewVisible: Bool = false {
+        didSet {
+            updateProgressBar()
+        }
+    }
+
+    public var isScrolling: Bool = false {
+        didSet {
+            updateProgressBar()
+        }
+    }
+
     // MARK: - override
 
     final public override func viewDidLoad() {
@@ -101,6 +118,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         logger.verbose({
             return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
         })
+
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -112,12 +130,15 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        isViewVisible = true
+        inDataSync = !ApplicationDataSync.instance.dataSync.isCancelled
         onDidAppear(animated)
     }
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.unitRefreshControll()
+        isViewVisible = false
         onWillDisappear(animated)
     }
 
@@ -212,6 +233,14 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 
+    public override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.isScrolling = true
+    }
+
+    public override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        self.isScrolling = false
+    }
+
     // MARK: - Events
 
     /// Called after the view has been loaded. Default does nothing
@@ -285,7 +314,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         self.installDataEmptyView()
         self.installSearchBar()
         self.installDataSourcePrefetching()
-        //self.installObservers()
+        self.installObservers(#selector(self.onDataSyncEvent(_:))) // pass selector because protocol not objc
         if let previousTitle = self.formContext?.previousTitle {
             self.navigationItem.title = previousTitle
         }
@@ -358,24 +387,8 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     // MARK: QMobile Event
 
-    func installObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableBegin, object: ApplicationDataSync.dataSync)
-        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableSuccess, object: ApplicationDataSync.dataSync)
-        NotificationCenter.default.addObserver(self, selector: #selector(dataSyncEvent(_:)), name: .dataSyncForTableFailed, object: ApplicationDataSync.dataSync)
-    }
-
-    @objc func dataSyncEvent(_ notification: Notification) {
-        guard let table = notification.userInfo?["table"] as? Table, self.table == table else {
-            return
-        }
-        switch notification.name {
-        case .dataSyncForTableBegin:
-            self.showProgressBar()
-        case .dataSyncForTableSuccess, .dataSyncForTableFailed:
-            self.hideProgressBar()
-        default:
-            return
-        }
+    @objc open func onDataSyncEvent(_ notification: Notification) {
+        dataSyncEvent(notification)
     }
 
     open func dataSourceWillChangeContent(_ dataSource: DataSource) {
