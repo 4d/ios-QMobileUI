@@ -51,7 +51,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         super.viewDidLoad()
 
         initLoginInformation()
-        loginTextField.delegate = self
+        loginTextField?.delegate = self
         _ = checkLoginClickable()
         onLoad()
     }
@@ -69,7 +69,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
         _ = checkLoginClickable()
 
         // login field is selected
-        loginTextField.becomeFirstResponder()
+        loginTextField?.becomeFirstResponder()
         onDidAppear(animated)
     }
 
@@ -106,7 +106,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     open func couldLogin() -> Bool {
         guard email.isValidEmail else {
             displayInputError(message: "Invalid Email")
-            self.loginTextField.shake()
+            self.loginTextField?.shake()
             return false
         }
         return true
@@ -123,6 +123,9 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// Notification about keyboard. Allow to move graphic elements, for instance constraintes.
     @objc open func keyboardChanged(_ notification: NSNotification) {
+        guard let bottomLayoutConstraint = self.bottomLayoutConstraint else {
+            return
+        }
         update(constraint: bottomLayoutConstraint, with: notification )
     }
 
@@ -148,7 +151,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// Return the email, by default from `loginTextField`.
     open var email: String {
-        return self.loginTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return self.loginTextField?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
     /// Return any custom informations that must be send when authenticate.
@@ -185,7 +188,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// Could override to store other parameters.
     open func initLoginInformation() {
         if let email = Prephirences.Auth.Login.email {
-            loginTextField.text = email
+            loginTextField?.text = email
         }
     }
 
@@ -207,7 +210,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     /// If `false` the button interaction is disabled.
     open func checkLoginClickable() -> Bool {
         let value = isLoginClickable
-        loginButton.isUserInteractionEnabled = value
+        loginButton?.isUserInteractionEnabled = value
         return value
     }
 
@@ -222,20 +225,20 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     fileprivate func startLoginUI() {
         (loginButton as? QAnimatableButton)?.startAnimation()
-        loginTextField.isEnabled = false
+        loginTextField?.isEnabled = false
     }
 
     fileprivate func stopLoginUI(completion: @escaping () -> Void) {
         onForeground {
             if let button = self.loginButton as? QAnimatableButton {
                 button.stopAnimation {
-                    self.loginTextField.isEnabled = true
-                    self.loginTextField.becomeFirstResponder()
+                    self.loginTextField?.isEnabled = true
+                    self.loginTextField?.becomeFirstResponder()
                     completion()
                 }
             } else {
-                self.loginTextField.isEnabled = true
-                self.loginTextField.becomeFirstResponder()
+                self.loginTextField?.isEnabled = true
+                self.loginTextField?.becomeFirstResponder()
                 completion()
             }
         }
@@ -248,7 +251,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
             } else {
                 SwiftMessages.warning("You are not allowed to connect.")
             }
-            self.loginTextField.shake()
+            self.loginTextField?.shake()
         } else if let error = error.urlError {
 
             if error.isServerCertificateError {
@@ -375,7 +378,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
      open func manageDeepLinkParameters(_ parameters: ([String: String?])) {
         if let email = parameters["email"] as? String {
-            self.loginTextField.text = email
+            self.loginTextField?.text = email
         }
     }
 
@@ -420,7 +423,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 }
 
 extension LoginForm: DeepLinkable {
-    public var deepLink: DeepLink? { return .login(["email": self.loginTextField.text]) }
+    public var deepLink: DeepLink? { return .login(["email": self.email]) }
 }
 
 private let serverCertificateCodes: [URLError.Code] = [
