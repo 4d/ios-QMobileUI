@@ -127,7 +127,7 @@ open class BarcodeScannerViewController: UIViewController {
         videoPreviewLayer.frame = view.layer.bounds
         view.layer.addSublayer(videoPreviewLayer!)
 
-        captureSession.startRunning()
+        beginSession()
 
         qrCodeFrameView = UIView()
         qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
@@ -182,18 +182,49 @@ open class BarcodeScannerViewController: UIViewController {
         }
     }
 
+    /// Hide all interface elements on camera
+    open func hideInterface() {
+        self.cancelButton?.isHidden = true
+    }
+
     @objc func onCancelButton(_ sender: UIButton) {
         endSession()
         self.onDismissCallback?(self)
     }
 
-    fileprivate func endSession() {
+    /// Begin capture session
+    open func beginSession() {
+        if !captureSession.isRunning {
+            captureSession.startRunning()
+            captureFrameReset()
+        }
+    }
+
+    /// Pause the capture session
+    open func pauseSession() {
+        self.captureSession?.stopRunning()
+    }
+
+    /// Stop defintely the capture session
+    open func endSession() {
         self.captureSession?.stopRunning()
         self.captureSession = nil
     }
 
-    open func onMetaDataOutput(_ metadata: String) {
+    open func captureFrameReset() {
+        qrCodeFrameView?.frame = .zero
+        qrCodeFrameView?.layer.borderColor = UIColor.green.cgColor
+    }
+    open func captureFrameError() {
+        qrCodeFrameView?.layer.borderColor = UIColor.red.cgColor
+    }
+
+    /// Receive data from capture session
+    /// Return true if must end the session or false to just pause it
+    open func onMetaDataOutput(_ metadata: String) -> Bool {
         self.metadata = metadata
+        // CLEAN maybe use a delegate protocol to send data
+        return true // consumed
     }
 }
 
@@ -267,8 +298,11 @@ extension BarcodeScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
             }
 
             if let value = metadataObj.stringValue {
-                self.endSession()
-                self.onMetaDataOutput(value)
+                self.pauseSession()
+                let consumed = self.onMetaDataOutput(value)
+                if consumed {
+                    self.endSession()
+                }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { // add a delay to let user see the detection effect
                     self.onDismissCallback?(self)
                 }
@@ -282,9 +316,10 @@ public class BarcodeScannerRowViewController: BarcodeScannerViewController, Type
 
     public var row: RowOf<String>!
 
-    override open func onMetaDataOutput(_ metadata: String) {
-        super.onMetaDataOutput(metadata)
+    override open func onMetaDataOutput(_ metadata: String) -> Bool {
+        _ = super.onMetaDataOutput(metadata)
         row.value = metadata
+        return true
     }
 
 }
