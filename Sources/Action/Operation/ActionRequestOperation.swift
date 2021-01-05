@@ -17,10 +17,18 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
 
     var request: ActionRequest
 
+    var actionUI: ActionUI
+    var context: ActionContext
+    var completionHandler: ActionManager.ActionExecutionCompletionHandler?
+
     var bag: Cancellable?
 
-    init(_ request: ActionRequest) {
+    init(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) {
         self.request = request
+        self.actionUI = actionUI
+        self.context = context
+        self.completionHandler = completionHandler
+
         super.init()
         self.name = self.request.id + self.request.action.name
 
@@ -30,7 +38,24 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             switch result {
             case .success(let value):
                 logger.error("Action result not managed yet")
-            // _ = self.handle(result: value, for: self.request.action, from: actionUI, in: context)
+
+                let handle: () -> Void = {
+                    onForeground {
+                        background {
+                            _ =  ActionManager.instance.handle(result: value, for: request.action, from: actionUI, in: context)
+                        }
+                    }
+                }
+
+                if let completionHandler = completionHandler {
+                    let future = completionHandler(.success(value)) // close UI
+                    // delay handle action result, after form finish with it
+                    future.onComplete { _ in
+                        handle()
+                    }.sink()
+                } else {
+                    handle()
+                }
             case .failure(let error):
                 logger.warning(" \(error)")
             }
@@ -122,10 +147,14 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         }*/
     }
 
+    func clone() -> ActionRequestOperation {
+        return ActionRequestOperation(self.request, self.actionUI, self.context, self.completionHandler)
+    }
+
 }
 
 extension ActionRequest {
-    func newOp() -> ActionRequestOperation {
-       return ActionRequestOperation(self)
+    func newOp(_ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) -> ActionRequestOperation {
+       return ActionRequestOperation(self, actionUI, context, completionHandler)
    }
 }

@@ -38,8 +38,8 @@ extension ListForm {
         if dataSync.tablesInfoByTable.isEmpty {
             _ = dataSync.loadTable(on: nil)
         }
-
-        for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == self.tableName {
+        let currentTablename = self.tableName
+        for (_, tableInfo) in dataSync.tablesInfoByTable where tableInfo.name == currentTablename {
             return tableInfo
         }
         return nil

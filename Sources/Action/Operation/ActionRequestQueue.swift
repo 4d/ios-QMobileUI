@@ -20,13 +20,13 @@ class ActionRequestQueue: OperationQueue {
         self.name = "ActionRequestQueue"
     }
 
-    func addRequest(_ request: ActionRequest) {
-        self.add([request.newOp()])
+    func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) {
+        self.add([request.newOp(actionUI, context, completionHandler)])
     }
 
-    func addRequests(_ requests: [ActionRequest]) {
+    /*func addRequests(_ requests: [ActionRequest]) {
         self.add(requests.map { $0.newOp() })
-    }
+    }*/
 
     fileprivate func add(_ operations: [ActionRequestOperation]) {
         // chain operations
@@ -52,7 +52,7 @@ class ActionRequestQueue: OperationQueue {
 
     func retry(_ operation: ActionRequestOperation) {
         // we enqueue a new operation between passed operation and its next one
-        enqueue(ActionRequestOperation(operation.request), after: operation)
+        enqueue(operation.clone(), after: operation)
     }
 
     func enqueue(_ operation: ActionRequestOperation, after previousOperation: ActionRequestOperation) {

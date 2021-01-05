@@ -53,24 +53,28 @@ public class ActionManager: NSObject, ObservableObject {
         super.init()
         setupDefaultHandler()
         if offlineAction {
-            loadActionRequests()
-            $requests.sink { [weak self] in
-                print("new request \($0)")
-                self?.saveActionRequests()
-            }.store(in: &bag)
-            registerListener()
-
-            /*$requests.sink(receiveValue: { requests in
-                print("\(requests.map({ $0.action.name }))")
-               // self.queue.addRequests(requests) // each time so total , not by packet
-            })
-            .store(in: &subscriptions)*/
-            /*requests.publisher.sink { completion in
-                print("\(completion)")
-            } receiveValue: { request in
-                self.queue.addRequest(request)
-            }.store(in: &bag)*/
+            initOfflineAction()
         }
+    }
+
+    fileprivate func initOfflineAction() {
+        loadActionRequests()
+        $requests.sink { [weak self] in
+            print("new request \($0)")
+            self?.saveActionRequests()
+        }.store(in: &bag)
+        registerListener()
+
+        /*$requests.sink(receiveValue: { requests in
+            print("\(requests.map({ $0.action.name }))")
+           // self.queue.addRequests(requests) // each time so total , not by packet
+        })
+        .store(in: &subscriptions)*/
+        /*requests.publisher.sink { completion in
+            print("\(completion)")
+        } receiveValue: { request in
+            self.queue.addRequest(request)
+        }.store(in: &bag)*/
     }
 
     // MARK: handlers
@@ -150,6 +154,8 @@ public class ActionManager: NSObject, ObservableObject {
             if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
                 for request in requests {
                     self.requests.append(request)
+
+                    //self.queue.addRequest(request, request, )
                 }
             }
             checkHistory()
@@ -180,8 +186,7 @@ public class ActionManager: NSObject, ObservableObject {
         if offlineAction {
             request.state = .ready
             self.requests.append(request)
-            self.queue.addRequests(requests)
-
+            self.queue.addRequest(request, actionUI, context, completionHandler)
         } else {
             let actionQueue: DispatchQueue = .background
             actionQueue.async {
@@ -195,30 +200,13 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
-    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutionCompletionHandler?) {
-        request.result = result
-
-        if offlineAction {
-            saveActionRequests() // TODO check if sink call on element change?
-        }
+    fileprivate func onOfflineActionResult(_ result: Result<ActionResult, ActionRequest.Error>, _ request: ActionRequest, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?, _ actionUI: ActionUI, _ context: ActionContext) {
+        saveActionRequests() // TODO check if sink call on element change?
         // Display result or do some actions (incremental etc...)
         switch result {
         case .failure(let error):
             logger.warning("Action error: \(error)")
 
-            if !Prephirences.Auth.Login.form, error.isUnauthorized {
-                ApplicationAuthenticate.retryGuestLogin { authResult in
-                    switch authResult {
-                    case .success:
-                        // XXX do not do infinite retry
-                        self.executeActionRequest(request, actionUI, context, completionHandler)
-                    case .failure(let authError):
-                        SwiftMessages.showError(ActionRequest.Error(authError))
-                        _ = completionHandler?(.failure(error))
-                    }
-                }
-                return
-            }
             // tempo code to see diff between task to relaunch or not
             if error.mustRetry {
                 request.state = .pending
@@ -226,7 +214,6 @@ public class ActionManager: NSObject, ObservableObject {
                 request.state = .finished // with error
             }
 
-            SwiftMessages.showError(error)
             _ = completionHandler?(.failure(error))
         case .success(let value):
             request.state = .finished
@@ -246,6 +233,64 @@ public class ActionManager: NSObject, ObservableObject {
                 onForeground {
                     background {
                         _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
+                    }
+                }
+            }
+        }
+    }
+
+    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutionCompletionHandler?) {
+        request.result = result
+
+        if offlineAction {
+            onOfflineActionResult(result, request, completionHandler, actionUI, context)
+        } else {
+            // Display result or do some actions (incremental etc...)
+            switch result {
+            case .failure(let error):
+                logger.warning("Action error: \(error)")
+
+                if !Prephirences.Auth.Login.form, error.isUnauthorized {
+                    ApplicationAuthenticate.retryGuestLogin { authResult in
+                        switch authResult {
+                        case .success:
+                            // XXX do not do infinite retry
+                            self.executeActionRequest(request, actionUI, context, completionHandler)
+                        case .failure(let authError):
+                            SwiftMessages.showError(ActionRequest.Error(authError))
+                            _ = completionHandler?(.failure(error))
+                        }
+                    }
+                    return
+                }
+                // tempo code to see diff between task to relaunch or not
+                if error.mustRetry {
+                    request.state = .pending
+                } else {
+                    request.state = .finished // with error
+                }
+
+                SwiftMessages.showError(error)
+                _ = completionHandler?(.failure(error))
+            case .success(let value):
+                request.state = .finished
+                logger.debug("\(value)")
+                if let completionHandler = completionHandler {
+                    let future = completionHandler(.success(value))
+                    // delay handle action result, after form finish with it
+                    future.onComplete { result in
+                        onForeground {
+                            background {
+                                _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
+                            }
+                        }
+                    }.sink()
+                    .store(in: &self.bag)
+                } else {
+                    onForeground {
+                        background {
+                            _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
+                        }
                     }
                 }
             }
@@ -292,21 +337,22 @@ extension SwiftMessages {
 
 // MARK: manage reachability to suspend operation
 
-extension ActionManager: ReachabilityListener {
+extension ActionManager: ReachabilityListener, StatusListener {
 
     fileprivate func registerListener() {
-        ApplicationReachability._instance.add(listener: self)
+        ApplicationReachability.instance.add(listener: self)
     }
 
     public func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
         checkSuspend()
     }
 
+    public func onStatusChanged(status: Status, old: Status) {
+        checkSuspend()
+    }
+
     fileprivate func checkSuspend() {
-        guard let serverStatus = ApplicationReachability._instance.serverStatus else {
-            self.isSuspended = true
-            return
-        }
+        let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
         self.isSuspended = !serverStatus.ok
 
@@ -338,161 +384,27 @@ extension ActionManager: ActionResultHandler {
         return handled
     }
 
-    fileprivate func setupDefaultHandler() { //swiftlint:disable:this function_body_length
-        //swiftlint:disable:this function_body_length
+    fileprivate func setupDefaultHandler() {
         // default handlers
 
-        // Show log
+        // Show debug log for each action result
         append { result, _, _, _ in
             logger.debug("Action result \(result.json)")
             return true
         }
 
-        // Show message as info message
-        append { result, _, _, _ in
-            guard let statusText = result.statusText else { return false }
-            if result.success {
-                SwiftMessages.info(statusText)
-            } else {
-                SwiftMessages.warning(statusText)
-            }
-            return true
-        }
-
-        // dataSynchro
-        append { result, action, _, _ in
-            guard result.dataSynchro else { return false }
-            logger.info("Data synchronisation is launch after action \(action.name)")
-            _ = dataSync { result in
-                switch result {
-                case .failure(let error):
-                    logger.warning("Failed to do data synchro after action \(action.name): \(error)")
-                case .success:
-                    logger.info("Data synchro after action \(action.name) success")
-                }
-            }
-            return true
-        }
-
-        // openURL
-        append { result, _, _, _ in
-            guard let urlString = result.openURL, let url = URL(string: urlString) else { return false }
-            logger.info("Open url \(urlString)")
-            onForeground {
-                UIApplication.shared.open(url, options: [:], completionHandler: { success in
-                    if success {
-                        logger.info("Open url \(urlString) done")
-                    } else {
-                        logger.warning("Failed to open url \(urlString)")
-                    }
-                })
-            }
-            return true
-        }
-        // Copy test to pasteboard
-        append { result, _, _, _ in
-            guard let pasteboard = result.pasteboard else { return false }
-            UIPasteboard.general.string = pasteboard
-            return true
-        }
-        append { result, _, _, _ in
-            guard result.goBack else { return false }
-            UIApplication.topViewController?.dismiss(animated: true, completion: {
-
-            })
-
-            return true
-        }
-
-        append { result, _, actionUI, context in
-            guard let actionSheet = result.actionSheet else { return false }
-            onForeground {
-                let alertController = UIAlertController.build(from: actionSheet, context: context, handler: self.prepareAndExecuteAction)
-                _ = alertController.checkPopUp(actionUI)
-                alertController.show {
-
-                }
-            }
-            return true
-        }
-
-        append { result, _, actionUI, context in
-            guard let action = result.action else { return false }
-            onForeground {
-                self.prepareAndExecuteAction(action, actionUI, context)
-            }
-            return true
-        }
-
-        append { result, _, _, _ in
-            guard let deepLink = result.deepLink else { return false }
-            logger.info("Deeplink from action: \(deepLink)")
-            foreground {
-                ApplicationCoordinator.open(deepLink) { _ in }
-            }
-            return true
-        }
-
-        append { result, _, actionUI, _ in
-            guard let share = result.share else { return false }
-            let activityItems: [Any] = share.compactMap { item in
-                if let itemInfo = item.dictionary, let value = itemInfo["value"] {
-                    if let type = itemInfo["type"]?.string {
-                        switch type {
-                        case "url":
-                            return URL(string: value.stringValue)
-                        case "image":
-                            if let url = URL(string: value.stringValue) {
-                                if let data = try? Data(contentsOf: url) {
-                                    return UIImage(data: data)
-                                }
-                                return url
-                            }
-                            return value.rawValue
-                        default:
-                            return value.rawValue
-                        }
-                    } else {
-                        return value.rawValue
-                    }
-                } else {
-                    return item.rawValue
-                }
-            }
-
-            foreground {
-
-                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-                activityViewController.checkPopUp(actionUI)
-
-                activityViewController.show(animated: true) {
-                    logger.info("Share activity presented")
-                }
-            }
-
-            return true
-        }
-
-        append { result, _, actionUI, _ in
-            guard let urlString = result.downloadURL, let url = URL(string: urlString) else { return false }
-            logger.info("Download url \(urlString)")
-
-            AF.request(url).responseData { response in
-                if let fileData = response.data {
-                    foreground {
-                        let activityViewController = UIActivityViewController(activityItems: [url.lastPathComponent, fileData], applicationActivities: nil)
-                        activityViewController.checkPopUp(actionUI)
-                        activityViewController.show(animated: true) {
-                            logger.info("End to download \(url)")
-                        }
-                    }
-                }
-            }
-            return true
-        }
+        append(ActionResult.statusTextBlock)
+        append(ActionResult.dataSynchroBlock)
+        append(ActionResult.openURLBlock)
+        append(ActionResult.pasteboardBlock)
+        append(ActionResult.actionSheetBlock(self.prepareAndExecuteAction))
+        append(ActionResult.actionBlock(self.prepareAndExecuteAction))
+        append(ActionResult.deepLinkBlock)
+        append(ActionResult.shareBlock)
+        append(ActionResult.downloadURLBlock)
 
         onForeground {
-            /// Code to inject custom handlers.
+            // Code to inject custom handlers.
             if let injectedHandler = UIApplication.shared.delegate as? ActionResultHandler {
                 self.handlers.append(injectedHandler)
             }
@@ -508,6 +420,10 @@ extension ActionManager: ActionResultHandler {
 
     public func append(_ block: @escaping ActionResultHandler.Block) {
         handlers.append(ActionResultHandlerBlock(block))
+    }
+
+    public func append(_ handler: ActionResultHandler) {
+        handlers.append(handler)
     }
 }
 
@@ -525,79 +441,6 @@ public struct ActionResultHandlerBlock: ActionResultHandler {
     }
     public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI, in context: ActionContext) -> Bool {
         return block(result, action, actionUI, context)
-    }
-}
-
-extension ActionResult {
-    /// Return: `true` if a data synchronisation must be done after the action.
-    fileprivate var dataSynchro: Bool {
-        return json["dataSynchro"].boolValue
-    }
-    fileprivate var openURL: String? {
-        return json["openURL"].string
-    }
-    fileprivate var downloadURL: String? {
-        return json["downloadURL"].string
-    }
-    fileprivate var share: [JSON]? {
-        return json["share"].array
-    }
-    fileprivate var pasteboard: String? {
-        return json["pasteboard"].string
-    }
-    fileprivate var goTo: String? {
-        return json["goTo"].string
-    }
-    fileprivate var goBack: Bool {
-        return json["goBack"].boolValue
-    }
-    fileprivate var actionSheet: QMobileAPI.ActionSheet? {
-        if json["actions"].isEmpty {
-            return nil
-        }
-        guard let jsonString = json.rawString(options: []) else {
-            return nil
-        }
-        return ActionSheet.decode(fromJSON: jsonString)
-    }
-
-    fileprivate var action: Action? {
-        if json["parameters"].isEmpty {
-            return nil
-        }
-        guard let jsonString = json.rawString(options: []) else {
-            return nil
-        }
-        return Action.decode(fromJSON: jsonString)
-    }
-    /*fileprivate var action: Action? {
-     guard let jsonString = json["action"].rawString(options: []) else {
-     return nil
-     }
-     return Action.decode(fromJSON: jsonString)
-     }*/
-
-    fileprivate var deepLink: DeepLink? {
-        return DeepLink.from(json)
-    }
-
-    typealias Validation = (String?, ValidationError)
-
-    fileprivate var validationErrors: [Validation]? {
-        guard let errors = json["validationErrors"].arrayObject else {
-            return nil
-        }
-
-        return errors.compactMap { (object: Any) -> Validation? in
-            if let message = object as? String {
-                return (nil, ValidationError(msg: message))
-            } else if let dictionary = object as? [String: String],
-                      let message = dictionary["message"],
-                      let field = dictionary["field"] {
-                return (field, ValidationError(msg: message))
-            }
-            return nil
-        }
     }
 }
 

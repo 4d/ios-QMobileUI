@@ -20,6 +20,8 @@ import QMobileDataSync
 /// Service to check network avaibility and also configured server.
 class ApplicationReachability: NSObject {
 
+    public static var instance: ApplicationReachability = ApplicationReachability()
+
     var reachabilityTask: Moya.Cancellable?
     var reachabilityStatus: NetworkReachabilityStatus = .unknown {
         didSet {
@@ -32,9 +34,14 @@ class ApplicationReachability: NSObject {
     var serverInfoTask: Moya.Cancellable?
     var serverInfo: WebTestInfo?
     var serverStatusTask: Moya.Cancellable?
-    var serverStatus: Status?
+    var serverStatus: Status = Status(ok: false) {
+        didSet {
+            notifyStatusChanged(status: serverStatus, old: oldValue)
+        }
+    }
+    var serverStatusListener: [StatusListener] = []
 
-    open func add(listener: ReachabilityListener) {
+    open func add(reachabilityListener listener: ReachabilityListener) {
         self.listeners.append(listener)
     }
     func notifyReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
@@ -42,20 +49,30 @@ class ApplicationReachability: NSObject {
             listener.onReachabilityChanged(status: status, old: old)
         }
     }
+    open func add(serverStatusListener listener: StatusListener) {
+        self.serverStatusListener.append(listener)
+    }
+    func notifyStatusChanged(status: Status, old: Status) {
+        for listener in serverStatusListener {
+            listener.onStatusChanged(status: status, old: old)
+        }
+    }
+    open func add(listener: ReachabilityListener & StatusListener) {
+        self.add(reachabilityListener: listener)
+        self.add(serverStatusListener: listener)
+    }
 }
 
 public protocol ReachabilityListener: NSObjectProtocol {
     func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus)
 }
 
+public protocol StatusListener: NSObjectProtocol {
+    func onStatusChanged(status: Status, old: Status)
+}
+
 // MARK: service
 extension ApplicationReachability: ApplicationService {
-
-    public static var instance: ApplicationService {
-        return _instance
-    }
-
-    static let _instance = ApplicationReachability() // swiftlint:disable:this identifier_name
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         startMonitoringReachability()
@@ -77,7 +94,7 @@ extension ApplicationReachability: ApplicationService {
 extension ApplicationReachability {
 
     static var isReachable: Bool {
-        return _instance.reachabilityStatus.isReachable
+        return instance.reachabilityStatus.isReachable
     }
 
     fileprivate func startMonitoringReachability() {
@@ -87,9 +104,10 @@ extension ApplicationReachability {
             switch status {
             case .reachable(let type):
                 logger.debug("Server is reachable using \(type)")
-
+                self.refreshServerInfo(APIManager.instance)
             case .notReachable, .unknown:
                 logger.debug("Server not reachable")
+                self.serverStatus = Status(ok: false)
             }
         }
     }
@@ -144,6 +162,7 @@ extension ApplicationReachability {
                 self?.serverStatus = serverStatus
                 self?.serverStatusTask = nil
             case .failure(let error):
+                self?.serverStatus = Status(ok: false)
                 if ApplicationReachability.isReachable {
                     logger.warning("Error when getting server status \(error)")
                 } else {
@@ -155,7 +174,7 @@ extension ApplicationReachability {
 
 }
 
-public protocol ServerStatusListener: NSObjectProtocol {
+public protocol ServerStatusListener: NSObjectProtocol { // TODO merge with StatusListener
     func onStatusChanged(status: ServerStatus)
 }
 
