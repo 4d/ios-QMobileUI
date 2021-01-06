@@ -184,7 +184,7 @@ extension UIViewController {
     /// - parameter:
     ///
     func addChildViewController(storyboardName: String, bundle: Bundle? = nil) {
-        if let childVc = UIStoryboard(name: storyboardName, bundle: bundle).instantiateInitialViewController() {
+        if let childVc = StoryboardFactory.storyboard(for: storyboardName, bundle: bundle ?? .main)?.instantiateInitialViewController() {
             addChild(childVc)
         }
     }

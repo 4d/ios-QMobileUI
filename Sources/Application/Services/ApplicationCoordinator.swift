@@ -356,15 +356,26 @@ extension ApplicationCoordinator {
     }
 }
 
+struct StoryboardFactory {
+
+    static func storyboard(for name: String, bundle: Bundle = .main) -> UIStoryboard? {
+        guard bundle.url(forResource: name, withExtension: "storyboardc") != nil else {
+            return nil // prevent crash by not trying to init not existing storyboard
+        }
+        return UIStoryboard(name: name, bundle: bundle)
+    }
+
+}
+
 // MARK: open specific data form
 
 extension ApplicationCoordinator {
 
     public static func open(tableName: String, completion: @escaping (Bool) -> Void) {
         let storyboardName = "\(storyboardTableName(tableName))ListForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
-        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+        let storyboard = StoryboardFactory.storyboard(for: storyboardName)
 
-        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+        guard let viewControllerToPresent = storyboard?.instantiateInitialViewController() else {
             logger.warning("Failed to present form for table '\(tableName)'")
             completion(false)
             return
@@ -378,8 +389,9 @@ extension ApplicationCoordinator {
 
     public static func open(tableName: String, primaryKeyValue: Any, completion: @escaping (Bool) -> Void) {
         let storyboardName = "\(storyboardTableName(tableName))DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
-        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
-        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+
+        let storyboard = StoryboardFactory.storyboard(for: storyboardName)
+        guard let viewControllerToPresent = storyboard?.instantiateInitialViewController() else {
             logger.warning("Failed to present form for table '\(tableName)'")
             completion(false)
             return
@@ -467,8 +479,8 @@ extension ApplicationCoordinator {
 
             foreground {
                 let storyboardName = relationShipInfo.isToMany ? "\(relationTable.name)ListForm": "\(relationTable.name)DetailsForm"
-                let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
-                guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+                let storyboard = StoryboardFactory.storyboard(for: storyboardName)
+                guard let viewControllerToPresent = storyboard?.instantiateInitialViewController() else {
                     logger.warning("Failed to present form for table '\(tableName)'")
                     completion(false)
                     return
@@ -518,7 +530,7 @@ extension ApplicationCoordinator {
 
     public static func open(tableName: String, record: Record, completion: @escaping (Bool) -> Void) {
         let storyboardName = "\(storyboardTableName(tableName))DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
-        let storyboard = UIStoryboard(name: storyboardName, bundle: .main)
+        let storyboard = StoryboardFactory.storyboard(for: storyboardName)
 
         guard let relationDataSource: DataSource = RecordDataSource(record: record.store) else {
             logger.warning("Cannot get record attribute to make data source: \(record) when presenting form \(tableName)")
@@ -528,7 +540,7 @@ extension ApplicationCoordinator {
         let entry = DataSourceEntry(dataSource: relationDataSource)
         entry.indexPath = .zero
 
-        guard let viewControllerToPresent = storyboard.instantiateInitialViewController() else {
+        guard let viewControllerToPresent = storyboard?.instantiateInitialViewController() else {
             logger.warning("Failed to present form for table '\(tableName)'")
             completion(false)
             return
