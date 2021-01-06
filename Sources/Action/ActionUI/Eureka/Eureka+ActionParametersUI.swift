@@ -14,10 +14,11 @@ import SwiftMessages
 import Combine
 
 import QMobileAPI
+import QMobileDataSync // not need if Combine code moved to QMobileAPI
 
 class ActionFormViewController: FormViewController { // swiftlint:disable:this type_body_length 
 
-    var builder: ActionParametersUIBuilder?
+    var builder: ActionParametersUIBuilder!
     var settings: ActionFormSettings = ActionFormSettings()
 
     // MARK: Init
@@ -37,7 +38,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     fileprivate func initNavigationBar() {
-        let style = self.builder?.action.style
+        let style = self.builder.action.style
         let styleProperties = style?.properties
 
         let cancelItem: UIBarButtonItem
@@ -64,15 +65,15 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
         self.navigationItem.add(where: .right, item: doneItem)
 
-        self.navigationItem.title = self.builder?.action.preferredShortLabel
+        self.navigationItem.title = self.builder.action.preferredShortLabel
         if let navigationBar = self.navigationController?.navigationBar, let tintColor = navigationBar.tintColor {
             navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: tintColor]
         }
     }
 
     fileprivate func initDefaultValues() {
-        guard let context = self.builder?.context else { return }
-        guard let action = self.builder?.action else { return }
+        let context = self.builder.context
+        let action = self.builder.action
         guard let parameters = action.parameters else { return }
         var values: [String: Any?] = [:]
         for parameter in parameters {
@@ -83,7 +84,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     fileprivate func initRows() {
-        guard let action = self.builder?.action else { return }
+        let action = self.builder.action
         guard let parameters = action.parameters else { return }
         if !settings.useSection {
             assertionFailure("No more tested")
@@ -275,49 +276,29 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
     @objc func doneAction(sender: UIButton!) {
         hasValidateForm = true
-        remoteRemoteErrors()
+        clearErrors()
         let errors = self.form.validateRows()
         if errors.isEmpty {
-            sender.isEnabled = false
-            send { _ in
+            // if no validatio error, send the action
+            sender.isEnabled = false // desactivate temporary
+            sendActionRequest { _ in
                 onForeground {
                     sender.isEnabled = true
                 }
             }
         } else {
+            fillErrors(errors)
+        }
+    }
 
-            // display errors
-            if settings.errorColorInLabel && settings.useSection {
-                self.refreshToDisplayErrors()
-            } else {
-                // remove if no more errors
-                for row in self.form.rows where row.validationErrors.isEmpty {
-                    row.removeValidationErrorRows()
-                }
-                for (row, rowErrors) in errors {
-                    row.display(errors: rowErrors, with: settings)
-                }
-            }
-
-            // scroll to first row with errors
-            let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
-            if let row = rows.first {
-                let animated = true
-                if !settings.useSection {
-                    row.selectScrolling(animated: animated)
-                    row.baseCell.cellBecomeFirstResponder(withDirection: .down)
-                } else {
-                    // one section by field, scroll to section
-                    //row.selectScrolling(animated: animated)
-                    row.section?.selectScrolling(animated: animated)
-                    row.baseCell.cellBecomeFirstResponder(withDirection: .down)
-                }
-            }
+    @objc func cancelAction(sender: Any!) {
+        self.dismiss(animated: true) {
+            self.builder.completionHandler(.failure(.userCancel))
         }
     }
 
     /// Get form values.
-    func formValues(completionHandler: @escaping (ActionParameters) -> Void) {
+    func formValues(completionHandler: @escaping (Result<ActionParameters, APIError>) -> Void) {
         let values = self.form.values()
         /// Remove nil values.
         var parameters = values.reduce(ActionParameters()) { (dict, entry) in
@@ -339,8 +320,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
         if images.isEmpty {
             // No image, return immediatly
-            completionHandler(parameters)
+            completionHandler(.success(parameters))
         } else {
+
             // upload images
             var itemDone = 0
             for (key, image) in images {
@@ -367,9 +349,11 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                     }
                     itemDone += 1
                     if itemDone == images.count {
-                        completionHandler(parameters)
+                        completionHandler(.success(parameters))
                     }
                 }
+                // TODO BUG if network error, we must postpone upload...send a completion error?
+
                 if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
                     logger.debug("Upload image using url \(url)")
                     _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
@@ -390,70 +374,115 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     /// Send action to server, and manage result
-    func send(completionHandler: @escaping (Result<ActionResult, ActionRequest.Error>) -> Void) {
-        formValues { values in
-            self.builder?.success(with: values) { result in
-                return Future<ActionResult, ActionRequest.Error> { promise in
-                    completionHandler(result)
-                    switch result {
-                    case .success(let actionResult):
-                        if actionResult.success || actionResult.close {
-                            onForeground {
-                                self.dismiss(animated: true) {
-                                    logger.debug("Action parameters form dismissed")
-                                    promise(result)
-                                }
-                            }
-                        } else {
-                            if let errors = actionResult.errors {
-                                var errorsByComponents: [String: [String]] = [:]
-                                for error in errors {
-                                    if let error = error as? [String: String], let tag = error["component"] ?? error["parameter"], let message = error["message"] {
-                                        if errorsByComponents[tag] == nil {
-                                            errorsByComponents[tag] = []
-                                        }
-                                        errorsByComponents[tag]?.append(message)
+    func sendActionRequest(completionHandler: @escaping (Result<ActionResult, ActionRequest.Error>) -> Void) {
+        formValues { valuesResult in
+            switch valuesResult {
+            case .success(let values):
+                self.builder.success(with: values) { result in
+                    return Future<ActionResult, ActionRequest.Error> { promise in
+                        completionHandler(result)
+                        switch result {
+                        case .success(let actionResult):
+                            if actionResult.mustCloseActionForm {
+                                onForeground {
+                                    self.dismiss(animated: true) {
+                                        logger.debug("Action parameters form dismissed")
+                                        promise(result)
                                     }
                                 }
-
-                                for (key, restErrors) in errorsByComponents {
-                                    if let row = self.form.rowBy(tag: key) {
-                                        row.remoteErrorsString = restErrors
-                                    } else {
-                                        logger.warning("Unknown field returned \(key) to display associated errors")
-                                    }
-                                }
-                                self.refreshToDisplayErrors()
                             } else {
-                                logger.warning("Action result \(actionResult): nothing to do or display. Action form not closed. Send success or close with True value to dismiss it.")
+                                if let errors = actionResult.errors {
+                                    self.fillErrors(errors)
+                                } else {
+                                    logger.warning("Action result \(actionResult): nothing to do or display. Why not success?. Action form not closed. Send success or close with True value to dismiss it.")
+                                }
+                                promise(result)
                             }
+                        case .failure(let error):
+                            self.fillErrors(error)
                             promise(result)
                         }
-                    case .failure(let error):
-                        logger.debug("Errors from 4d server")
-                        if let restErrors = error.restErrors {
-                            /*if let statusText = restErrors.statusText {
-
-                             }*/
-
-                            let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
-                                return [error.componentSignature: error.message]
-                            })
-
-                            for (key, restErrors) in errorsByComponents {
-                                if let row = self.form.rowBy(tag: key) {
-                                    row.remoteErrorsString = restErrors
-                                } else {
-                                    logger.warning("Unknown field returned \(key) to display associated errors")
-                                }
-                            }
-                            self.refreshToDisplayErrors()
-                        }
-                        promise(result)
                     }
                 }
+            case .failure(let error):
+                logger.warning("Action errors, cannot upload \(error)")
+                // TODO maybe show failing to upload error in image row
             }
         }
+    }
+
+    // MARK: errors
+
+    /// Fills errors
+    func fillErrors(_ errors: [BaseRow: [ValidationError]]) {
+        // display errors
+        if settings.errorColorInLabel && settings.useSection {
+            self.refreshToDisplayErrors()
+        } else {
+            removeValidationErrorRows()
+            for (row, rowErrors) in errors {
+                row.display(errors: rowErrors, with: settings)
+            }
+        }
+
+        // scroll to first row with errors
+        let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
+        if let row = rows.first {
+            let animated = true
+            if !settings.useSection {
+                row.selectScrolling(animated: animated)
+                row.baseCell.cellBecomeFirstResponder(withDirection: .down)
+            } else {
+                // one section by field, scroll to section
+                //row.selectScrolling(animated: animated)
+                row.section?.selectScrolling(animated: animated)
+                row.baseCell.cellBecomeFirstResponder(withDirection: .down)
+            }
+        }
+    }
+
+    /// Fills errors in form
+    /// @params errorsByComponents: dico of row key and list of errors
+    func fillErrors(_ errorsByComponents: [String: [String]]) {
+        // apply to the rows
+        for (key, restErrors) in errorsByComponents {
+            if let row = self.form.rowBy(tag: key) {
+                row.remoteErrorsString = restErrors
+            } else {
+                logger.warning("Unknown field returned \(key) to display associated errors")
+            }
+        }
+        self.refreshToDisplayErrors()
+    }
+
+    /// Fills errors in form from request error
+    func fillErrors(_ error: (ActionRequest.Error)) {
+        logger.debug("Errors from 4d server when executing action")
+        guard let restErrors = error.restErrors else { return }
+
+        // get a dictionary of row/errors
+        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+            return [error.componentSignature: error.message]
+        })
+
+        fillErrors(errorsByComponents)
+    }
+
+    /// Fills errors in form from list of request
+    func fillErrors(_ errors: [Any]) {
+        var errorsByComponents: [String: [String]] = [:]
+        for error in errors {
+            if let error = error as? [String: String],
+               let tag = error["component"] ?? error["parameter"],
+               let message = error["message"] {
+                if errorsByComponents[tag] == nil {
+                    errorsByComponents[tag] = []
+                }
+                errorsByComponents[tag]?.append(message)
+            }
+        }
+
+        fillErrors(errorsByComponents)
     }
 
     private func refreshToDisplayErrors() {
@@ -461,18 +490,27 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             self.tableView?.reloadData()
         }
     }
-    private func remoteRemoteErrors() {
+
+    fileprivate func removeValidationErrorRows() {
+        // remove if no more errors
+        for row in self.form.rows where row.validationErrors.isEmpty {
+            row.removeValidationErrorRows()
+        }
+    }
+
+    private func clearErrors() {
         for row in self.form.allRows {
             row.remoteErrorsString = []
         }
     }
 
-    @objc func cancelAction(sender: Any!) {
-        self.dismiss(animated: true) {
-            self.builder?.completionHandler(.failure(.userCancel))
-        }
-    }
+}
 
+extension ActionResult {
+    // Close action form if success or explicitely close event if failed
+    var mustCloseActionForm: Bool {
+        return self.success || self.close
+    }
 }
 
 private var xoAssociationKey: UInt8 = 0

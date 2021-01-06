@@ -71,7 +71,7 @@ extension UIView {
                     let cellIndexPath = cell.indexPath
                     if cellIndexPath != self.bindTo.table?.indexPath {
                         self.bindTo.table?.indexPath = cellIndexPath
-                        logger.warning("Cell no more binding good index \(String(describing: cellIndexPath)) != \(String(describing: self.bindTo.table?.indexPath))")
+                        logger.warning("Cell no more binding good index \(String(describing: cellIndexPath)) != \(String(describing: cellIndexPath))")
                     }
                     let viewController = cell.parentView?.findViewController()
                     if let listForm = viewController as? ListForm,
