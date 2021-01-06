@@ -240,7 +240,7 @@ open class SettingsForm: UITableViewController, Storyboardable {
 
 extension SettingsForm: ServerStatusListener {
 
-    public func onStatusChanged(status: ServerStatus) {
+    public func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
         onForeground {
             // Reload server status view ie. the footer of server
             self.reload(section: Section.server)

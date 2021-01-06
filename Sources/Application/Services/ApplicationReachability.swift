@@ -34,12 +34,12 @@ class ApplicationReachability: NSObject {
     var serverInfoTask: Moya.Cancellable?
     var serverInfo: WebTestInfo?
     var serverStatusTask: Moya.Cancellable?
-    var serverStatus: Status = Status(ok: false) {
+    var serverStatus: ServerStatus = .unknown {
         didSet {
             notifyStatusChanged(status: serverStatus, old: oldValue)
         }
     }
-    var serverStatusListener: [StatusListener] = []
+    var serverStatusListener: [ServerStatusListener] = []
 
     open func add(reachabilityListener listener: ReachabilityListener) {
         self.listeners.append(listener)
@@ -49,15 +49,15 @@ class ApplicationReachability: NSObject {
             listener.onReachabilityChanged(status: status, old: old)
         }
     }
-    open func add(serverStatusListener listener: StatusListener) {
+    open func add(serverStatusListener listener: ServerStatusListener) {
         self.serverStatusListener.append(listener)
     }
-    func notifyStatusChanged(status: Status, old: Status) {
+    func notifyStatusChanged(status: ServerStatus, old: ServerStatus) {
         for listener in serverStatusListener {
-            listener.onStatusChanged(status: status, old: old)
+            listener.onServerStatusChanged(status: status, old: old)
         }
     }
-    open func add(listener: ReachabilityListener & StatusListener) {
+    open func add(listener: ReachabilityListener & ServerStatusListener) {
         self.add(reachabilityListener: listener)
         self.add(serverStatusListener: listener)
     }
@@ -67,8 +67,8 @@ public protocol ReachabilityListener: NSObjectProtocol {
     func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus)
 }
 
-public protocol StatusListener: NSObjectProtocol {
-    func onStatusChanged(status: Status, old: Status)
+public protocol ServerStatusListener: NSObjectProtocol {
+    func onServerStatusChanged(status: ServerStatus, old: ServerStatus)
 }
 
 // MARK: service
@@ -107,7 +107,7 @@ extension ApplicationReachability {
                 self.refreshServerInfo(APIManager.instance)
             case .notReachable, .unknown:
                 logger.debug("Server not reachable")
-                self.serverStatus = Status(ok: false)
+                self.serverStatus = .noNetwork
             }
         }
     }
@@ -155,14 +155,14 @@ extension ApplicationReachability {
             }
         }
 
+        self.serverStatus = .checking
         self.serverStatusTask = apiManager.status { [weak self] result in
+            self?.serverStatus = .done(result)
             switch result {
             case .success(let serverStatus):
                 logger.info("ServerStatus \(serverStatus)")
-                self?.serverStatus = serverStatus
                 self?.serverStatusTask = nil
             case .failure(let error):
-                self?.serverStatus = Status(ok: false)
                 if ApplicationReachability.isReachable {
                     logger.warning("Error when getting server status \(error)")
                 } else {
@@ -172,10 +172,6 @@ extension ApplicationReachability {
         }
     }
 
-}
-
-public protocol ServerStatusListener: NSObjectProtocol { // TODO merge with StatusListener
-    func onStatusChanged(status: ServerStatus)
 }
 
 open class ServerStatusManager {
@@ -197,18 +193,18 @@ open class ServerStatusManager {
 
     public private(set) var serverStatus: ServerStatus = .unknown {
         didSet {
-            updateListener()
+            notifyListener(value: serverStatus, old: oldValue)
         }
     }
 
-    open func updateListener() {
+    open func notifyListener(value serverStatus: ServerStatus, old: ServerStatus) {
         for listener in listeners {
-            listener.onStatusChanged(status: serverStatus)
+            listener.onServerStatusChanged(status: serverStatus, old: old)
         }
     }
 
     open func add(listener: ServerStatusListener) {
-        listener.onStatusChanged(status: serverStatus)
+        listener.onServerStatusChanged(status: serverStatus, old: .unknown)
         self.listeners.append(listener)
     }
 
@@ -268,10 +264,7 @@ open class ServerStatusManager {
     }
 
     private func serverStatus(_ status: ServerStatus) {
-        // let oldStatus = self.serverStatus // XXX if too much notif, use old status to notify or not
         self.serverStatus = status
-
-        updateListener()
     }
 
 }

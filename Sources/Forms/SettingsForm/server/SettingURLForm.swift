@@ -219,7 +219,7 @@ open class SettingURLForm: UIViewController, Storyboardable {
 
 extension SettingURLForm: ServerStatusListener {
 
-    public func onStatusChanged(status: ServerStatus) {
+    public func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
         onForeground {
             self.status = status
         }

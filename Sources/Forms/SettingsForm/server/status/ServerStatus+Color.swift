@@ -28,7 +28,7 @@ extension ServerStatus {
     /// A color associated with the server status
     public var color: UIColor {
         switch self {
-        case .emptyURL, .notValidURL, .notValidScheme:
+        case .emptyURL, .notValidURL, .notValidScheme, .noNetwork:
             return .statusFailure
         case .checking, .unknown:
             return .clear

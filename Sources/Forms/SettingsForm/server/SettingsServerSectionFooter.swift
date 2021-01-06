@@ -46,7 +46,7 @@ open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, 
 
 extension SettingsServerSectionFooter: ServerStatusListener {
 
-    public func onStatusChanged(status: ServerStatus) {
+    public func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
         foreground { [weak self] in
             self?.iconView.backgroundColor = status.color
             self?.titleLabel.text = status.message

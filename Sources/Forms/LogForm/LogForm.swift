@@ -140,7 +140,7 @@ extension BaseDestination {
 
 extension LogForm: FeedbackFormDelegate {
     public func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void) {
-        (ApplicationFeedback.instance as? ApplicationFeedback)?.send(feedback: feedback, dismiss: dismiss)
+        ApplicationFeedback.instance.send(feedback: feedback, dismiss: dismiss)
     }
 
     public func discard(feedback: Feedback?) {

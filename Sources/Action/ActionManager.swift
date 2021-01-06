@@ -337,7 +337,7 @@ extension SwiftMessages {
 
 // MARK: manage reachability to suspend operation
 
-extension ActionManager: ReachabilityListener, StatusListener {
+extension ActionManager: ReachabilityListener, ServerStatusListener {
 
     fileprivate func registerListener() {
         ApplicationReachability.instance.add(listener: self)
@@ -347,14 +347,14 @@ extension ActionManager: ReachabilityListener, StatusListener {
         checkSuspend()
     }
 
-    public func onStatusChanged(status: Status, old: Status) {
+    public func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
         checkSuspend()
     }
 
     fileprivate func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.ok
+        self.isSuspended = !serverStatus.isSuccess
 
     }
 }

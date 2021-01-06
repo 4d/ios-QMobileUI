@@ -22,6 +22,8 @@ public enum ServerStatus {
     case notValidScheme
     /// Checking status
     case checking
+    /// No network
+    case noNetwork
     /// Status checked with a result
     case done(ServerStatusResult)
 }
@@ -58,26 +60,19 @@ extension ServerStatus {
     }
 
     public var isFailure: Bool {
-        // CLEAN : make a switch
-        if case .done(let result) = self {
-            if case .failure = result {
+        switch self {
+        case .done(let result) :
+            switch result {
+            case .failure:
                 return true
-            }
-            if case .success(let status) = result {
+            case .success(let status):
                 return !status.ok
             }
-        }
-        if case .emptyURL = self {
+        case .emptyURL, .notValidURL, .notValidScheme, .noNetwork:
             return true
+        case .unknown, .checking:
+            return false // We do not consider it as failure for UI. but no a success too or yet
         }
-        if case .notValidURL = self {
-            return true
-        }
-        if case .notValidScheme = self {
-            return true
-        }
-
-        return false
     }
 }
 
@@ -93,6 +88,8 @@ extension ServerStatus {
             return "Please enter a valid URL (https://hostname)"
         case .checking:
             return "Checking server accessibility..."
+        case .noNetwork:
+            return "No network. Please check wifi or mobile data."
         case .done (let result):
             switch result {
             case .success:
@@ -132,6 +129,7 @@ extension ServerStatus: Equatable {
         case (.notValidURL, .notValidURL): return true
         case (.notValidScheme, .notValidScheme): return true
         case (.checking, .checking): return true
+        case (.noNetwork, .noNetwork): return true
         case (.done(let result), .done (let result2)):
             switch (result, result2) {
             case (.success, .success): return true
