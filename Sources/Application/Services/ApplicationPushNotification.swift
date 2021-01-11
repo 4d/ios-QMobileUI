@@ -198,7 +198,14 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
 
                 let dataSyncInstance = ApplicationDataSync.instance.dataSync
                 let dataStore = dataSyncInstance.dataStore // CLEAN better way to get it(singleton is ...)
-
+                if !dataStore.isLoaded {
+                    logger.info("Data store is not loaded yet, postpone data synchronization by push notification")
+                    // bug do not manipulate too soon the datastore or two load are done (section critic is not locked?)
+                    DispatchQueue.main.after(2) { // alternative: wait data store load event?  DataStoreFactory.observe(.dataStoreLoaded) { _ in } (issue possible, loaded just after register, even not received
+                        self.executeDefault(userInfo, withCompletionHandler: completionHandler)
+                    }
+                    return
+                }
                 if let deepLink = DeepLink.from(userInfo),
                    case DeepLink.record(let tableName, let primaryKeyValue) = deepLink,
                    let table = dataSyncInstance.tables.filter({$0.name == tableName}).first,
