@@ -10,33 +10,6 @@ import UIKit
 import QMobileDataStore // TODO break dependences?; instance of ?
 import QMobileAPI // emptyable protocol
 
-/// Protocol to provide info on relation
-public protocol RelationInfoUI {
-    /// Relation object data.
-    var relation: Any? { get }
-    /// The relation name
-    var relationName: String? { get }
-    /// The relation format
-    var relationFormat: String? { get }
-    /// The inverse relation name.
-    //var inverseRelationName: String? { get } // CLEAN to remove
-    /// Is relation to many.
-    var relationIsToMany: Bool { get }
-    /// Add action to launch segue.
-    var addRelationSegueAction: Bool { get }
-}
-
-struct RelationInfoUIAssociatedKeys {
-    static var relation = "RelationInfoUI.relation"
-    static var relationName = "RelationInfoUI.relationName"
-    static var relationFormat = "RelationInfoUI.relationFormat"
-    static var relationLabel = "RelationInfoUI.relationLabel"
-    static var relationIsToMany = "RelationInfoUI.relationIsToMany"
-    //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
-    static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
-    static var relationTapGesture = "RelationInfoUI.relationTapGesture"
-}
-
 extension UIControl: RelationInfoUI {
 
     #if TARGET_INTERFACE_BUILDER

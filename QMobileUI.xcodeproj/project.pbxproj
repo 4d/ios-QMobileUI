@@ -213,6 +213,7 @@
 		C40E40D524B0B56C0095E2FD /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */; };
 		C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */; };
 		C4585D31236B159400A96AF7 /* FeedbackTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4585D30236B159400A96AF7 /* FeedbackTarget.swift */; };
+		C45F2B5225B5D96F00433E18 /* RelationInfoUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45F2B5125B5D96F00433E18 /* RelationInfoUI.swift */; };
 		C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46F7C6E24BE3271005CF355 /* DeepLink.swift */; };
 		C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */; };
 		C489F5BA255D203300EED0C1 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B5255D203300EED0C1 /* AsynchronousOperation.swift */; };
@@ -222,6 +223,7 @@
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C4B5E6A725A41FEB007678F4 /* ActionResult+Handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */; };
 		C4B6AD30258407CC003DAAD2 /* ListFormSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */; };
+		C4D04D7025A7347D008DD666 /* ValidationError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D04D6F25A7347D008DD666 /* ValidationError+LocalizedError.swift */; };
 		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
 		C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F2208C254357020063653A /* SignatureViewRow.swift */; };
 		C4F22091254357480063653A /* SignatureViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C4F22090254357480063653A /* SignatureViewCell.xib */; };
@@ -447,6 +449,7 @@
 		C40E40D424B0B56B0095E2FD /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		C4585D2E236B13BC00A96AF7 /* CrashStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashStatus.swift; sourceTree = "<group>"; };
 		C4585D30236B159400A96AF7 /* FeedbackTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTarget.swift; sourceTree = "<group>"; };
+		C45F2B5125B5D96F00433E18 /* RelationInfoUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationInfoUI.swift; sourceTree = "<group>"; };
 		C46F7C6E24BE3271005CF355 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionParameter+KeyboardType.swift"; sourceTree = "<group>"; };
 		C489F5B5255D203300EED0C1 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
@@ -456,6 +459,7 @@
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionResult+Handlers.swift"; sourceTree = "<group>"; };
 		C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFormSearchable.swift; sourceTree = "<group>"; };
+		C4D04D6F25A7347D008DD666 /* ValidationError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ValidationError+LocalizedError.swift"; sourceTree = "<group>"; };
 		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
 		C4F2208C254357020063653A /* SignatureViewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewRow.swift; sourceTree = "<group>"; };
 		C4F22090254357480063653A /* SignatureViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignatureViewCell.xib; sourceTree = "<group>"; };
@@ -660,6 +664,7 @@
 				48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */,
 				480392AD1E92930A008CF992 /* UIBarItem+BindTo.swift */,
 				48112D4F1E9FB8CB00A3A88C /* IBAttributable.swift */,
+				C45F2B5125B5D96F00433E18 /* RelationInfoUI.swift */,
 				48F8855222E88A4000343CBD /* UIControl+BindToRelation.swift */,
 				483EE58F24B24E270064EA0C /* UILabel+BindToRelation.swift */,
 			);
@@ -688,6 +693,7 @@
 				480B785422CA01900037C1D8 /* TapOutsideTableView.swift */,
 				480B785622CA01E90037C1D8 /* ActionFormSettings.swift */,
 				48CE63DB24D0229300C39E1E /* RuleIsMultipleOf.swift */,
+				C4D04D6F25A7347D008DD666 /* ValidationError+LocalizedError.swift */,
 			);
 			path = Eureka;
 			sourceTree = "<group>";
@@ -1472,6 +1478,7 @@
 				4853BD622105A948004B2467 /* NSAttributedString+QMobile.swift in Sources */,
 				C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */,
 				4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */,
+				C45F2B5225B5D96F00433E18 /* RelationInfoUI.swift in Sources */,
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
@@ -1527,6 +1534,7 @@
 				48112D501E9FB8CB00A3A88C /* IBAttributable.swift in Sources */,
 				480392B81E92944D008CF992 /* Collection+QMobile.swift in Sources */,
 				48112D4C1E9FB53800A3A88C /* UIImage+QMobile.swift in Sources */,
+				C4D04D7025A7347D008DD666 /* ValidationError+LocalizedError.swift in Sources */,
 				483EE59024B24E270064EA0C /* UILabel+BindToRelation.swift in Sources */,
 				48CC0335231CFE05007EF134 /* IBStoryboard.swift in Sources */,
 				489A68AB21B526AA00A90DC6 /* Form.swift in Sources */,
