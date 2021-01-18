@@ -38,6 +38,7 @@ class ApplicationDataSync: NSObject {
     /// Keep trace about starting state. Since iOS13 enterForeground is called also if starting app.
     fileprivate var starting: Bool = false
 
+    fileprivate var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
 }
 
 extension ApplicationDataSync: ApplicationService {
@@ -252,6 +253,11 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Moya.Cancellable) {
         SwiftMessages.debug("Data \(operation) will begin")
+
+        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: operation.description) {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+            self.backgroundTaskID = .invalid
+        }
     }
     public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
         if applicationWillTerminate /* stop sync is app shutdown */ {
@@ -281,6 +287,9 @@ extension ApplicationDataSync: DataSyncDelegate {
     public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end")
 
+        UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+        self.backgroundTaskID = .invalid
+
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
         onForeground {
             guard let detailForm = UIApplication.detailViewController else { return }
@@ -306,6 +315,9 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end.\n \(error)")
+
+        UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+        self.backgroundTaskID = .invalid
     }
 
 }
