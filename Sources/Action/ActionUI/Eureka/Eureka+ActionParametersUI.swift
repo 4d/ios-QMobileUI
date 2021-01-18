@@ -635,16 +635,6 @@ extension BaseRow: Hashable {
     }
 }
 
-extension ValidationError: LocalizedError {
-    public var errorDescription: String? { return msg }
-
-    public var failureReason: String? { return nil }
-
-    public var recoverySuggestion: String? { return nil }
-
-    public var helpAnchor: String? { return nil }
-}
-
 // MARK: listen to click outside
 
 extension ActionFormViewController: TapOutsideTableViewDelegate {
