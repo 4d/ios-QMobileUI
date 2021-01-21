@@ -148,6 +148,11 @@ extension UIResponder {
             if let viewController = nextResponser as? UIViewController {
                 return viewController
             }
+            if let view = nextResponser as? UIView {
+                if let viewVC = view.owningViewController {
+                    return viewVC
+                }
+            }
         }
         return nil
     }

@@ -60,13 +60,14 @@ extension UIViewController {
 
                         let barButton: UIBarButtonItem
                         if ActionFormSettings.useMenu {
-                            let actionContext: ActionContext = button // XXx maybe find better context and see if it works
+                            let actionContext = LazyActionContext { [weak self] in
+                                return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
+                            }
                             let menu = UIMenu.build(from: actionSheet, context: actionContext, handler: ActionManager.instance.prepareAndExecuteAction)
                             barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
                         } else {
                             barButton = UIBarButtonItem(customView: button)
                         }
-
                         self.navigationItem.add(where: .right, item: barButton, at: 0)
                     } else {
                         logger.warning("Could not install automatically actions into \(self) because there is no navigation bar")
@@ -98,5 +99,27 @@ extension UIBarButtonItem {
     convenience init(customView: UIButton) {
         self.init()
         self.customView = customView
+    }
+}
+
+fileprivate class LazyActionContext: ActionContext {
+    var builder: (()-> ActionContext?)
+    
+    init(_ builder: @escaping (()-> ActionContext?)) {
+        self.builder = builder
+    }
+    
+    lazy var actionContext: ActionContext? = {
+        return builder()
+    }()
+    
+    func actionContextParameters() -> ActionParameters? {
+        assert(actionContext != nil, "no action context setted before using it")
+        return actionContext?.actionContextParameters()
+    }
+    
+    func actionParameterValue(for field: String) -> Any? {
+        assert(actionContext != nil, "no action context setted before using it to get parameter val")
+        return actionContext?.actionParameterValue(for: field)
     }
 }
