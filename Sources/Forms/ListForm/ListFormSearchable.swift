@@ -62,6 +62,7 @@ extension ListFormSearchable where Self: UIViewController {
                     searchController.searchResultsUpdater = self
                     searchController.obscuresBackgroundDuringPresentation = false
                     searchController.hidesNavigationBarDuringPresentation = searchableHideNavigation
+                    searchController.automaticallyShowsScopeBar = true
                     searchController.delegate = self
                     self.definesPresentationContext = true
                     self.navigationItem.searchController = searchController
@@ -83,6 +84,29 @@ extension ListFormSearchable where Self: UIViewController {
             self.searchBar?.showsBookmarkButton = true
             self.searchBar?.setImage(UIImage(systemName: "qrcode"), for: .bookmark, state: .normal)
         }
+        if hasSearchScope {
+            searchBar?.scopeButtonTitles = Array(searchScopes.map { $0.0 })
+            searchBar?.showsScopeBar = true
+            searchBar?.scopeBarBackgroundImage = UIImage(color: UIColor.background)
+            searchBar?.selectedScopeButtonIndex = 0
+
+            if let segment = searchBar?.findFirst(UISegmentedControl.self) {
+                segment.setTitleTextAttributes([.foregroundColor: UIColor.foreground], for: .normal)
+                segment.setTitleTextAttributes([.foregroundColor: UIColor.background], for: .selected)
+                // segment.tintColor = .red
+                // segment.backgroundColor = .red
+                // segment.selectedSegmentTintColor = .blue
+
+                // following code remove animation
+                // segment.setBackgroundImage(UIImage(color: .background), for: .normal, barMetrics: .default)
+                // segment.setBackgroundImage(UIImage(color: .foreground), for: .selected, barMetrics: .default)
+
+                segment.layer.borderColor = UIColor.foreground.cgColor
+                segment.layer.borderWidth = 1
+                // segment.setDividerImage(UIImage(color: UIColor.foreground), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+            }
+        }
+
         if let searchTextField = searchBar?.searchTextField, let navigationBarColor = self.navigationController?.navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor ?? searchTextField.textColor {
             //if !searchableAsTitle {
             searchTextField.textColor = navigationBarColor
@@ -98,10 +122,24 @@ extension ListFormSearchable where Self: UIViewController {
         }
     }
 
+    var hasSearchScope: Bool {
+        return !searchScopes.isEmpty
+    }
+
     func performSearch(_ searchText: String) {
         if !isSearchBarMustBeHidden {
             // Create the search predicate
-            dataSource?.predicate = createSearchPredicate(searchText, tableInfo: tableInfo)
+            var predicates: [NSPredicate] = []
+            if let defaultSearchPredicate = self.defaultSearchPredicate {
+                predicates.append(defaultSearchPredicate)
+            }
+            if hasSearchScope {
+                let index = self.searchBar.selectedScopeButtonIndex
+                if /*let title = self.searchBar.scopeButtonTitles?[index],*/ let predicate = searchScopes[safe: index]?.1 {
+                    predicates.append(predicate)
+                }
+            }
+            dataSource?.predicate = createSearchPredicate(searchText, tableInfo: tableInfo, predicates: predicates)
 
             // Event
             onSearchFetching()
@@ -147,8 +185,29 @@ extension ListFormSearchable where Self: UIViewController {
         //}
     }
 
+    func do_searchScopeChange(_ searchBar: UISearchBar, to selectedScope: Int) {
+        guard let title = searchBar.scopeButtonTitles?[selectedScope] else {
+            return
+        }
+        logger.debug("Scope \(title) selected")
+        performSearch(searchBar.searchTextField.text ?? "")
+    }
 }
 
+extension UIImage {
+    convenience init?(color: UIColor) {
+        let rect: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 1, height: 1), false, 0)
+        color.setFill()
+        UIRectFill(rect)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        guard let data = image.pngData() else {
+            return nil
+        }
+        self.init(data: data)
+    }
+}
 extension ListFormSearchable where Self: UIViewController {
 
     // by default open a sesssion to scan

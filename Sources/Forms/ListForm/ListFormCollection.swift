@@ -29,10 +29,10 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
 
     @IBOutlet open var searchBar: UISearchBar!
     public var searchActive: Bool = false
-    /// Operator used to search. contains, beginwith,endwith. Default contains
+    /// Operator used to search. contains, beginswith,endswith. Default contains
     @IBInspectable open var searchOperator: String = "contains" {
         didSet {
-            assert(["contains", "beginwith", "endwitch"].contains(searchOperator.lowercased()))
+            assert(["contains", "beginswith", "endswith"].contains(searchOperator.lowercased()))
         }
     }
     /// Case sensitivity when searching. Default cd
@@ -52,6 +52,8 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
     var searchOpenIfOneRestoreValue: Bool = false
     /// When there is no more things to search, apply still a predicate (default: nil)
     open var defaultSearchPredicate: NSPredicate?
+    /// Experimental: add core data search with a segmented control UI
+    open var searchScopes: [(String, NSPredicate)] = []
 
     /// Name of the field used to sort. (You use multiple field using coma)
     @IBInspectable open var sortField: String = ""
@@ -558,6 +560,14 @@ extension ListFormCollection: DataSourceSearchable {
 
     public func updateSearchResults(for searchController: UISearchController) {
         do_updateSearchResults(for: searchController)
+    }
+
+    public func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        do_searchBarBookmarkButtonClicked(for: searchBar)
+    }
+
+    public func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        do_searchScopeChange(searchBar, to: selectedScope)
     }
 
 }

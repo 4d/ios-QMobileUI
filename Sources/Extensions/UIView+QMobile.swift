@@ -109,6 +109,21 @@ public extension UIView {
         }
         return result
     }
+
+    func findFirst<T: UIView>(_ clazz: T.Type) -> T? {
+        let subviews = self.subviews
+        for subview in subviews {
+            if let ofClass = subview as? T {
+                return ofClass
+            }
+        }
+        for subview in subviews {
+            if let ofClass = subview.findFirst(clazz) {
+                return ofClass
+            }
+        }
+        return nil
+    }
 }
 
 protocol LayoutGuide {

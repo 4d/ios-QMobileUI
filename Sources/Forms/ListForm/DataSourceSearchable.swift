@@ -20,10 +20,13 @@ public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchContro
     var searchActive: Bool { get set }
     /// Name(s) of the search field(s)
     var searchableField: String { get }
-    /// Operator used to search. contains, beginwith,endwith. Default contains
+    /// Operator used to search. contains, beginswith,endswith. Default contains
     var searchOperator: String { get }
     /// Case sensitivity when searching. Default cd
     var searchSensitivity: String { get }
+
+    /// Search scopes
+    var searchScopes: [(String, NSPredicate)] { get } // orderred list
 
     /// When there is no more things to search, apply still a predicate (default: nil)
     var defaultSearchPredicate: NSPredicate? { get }
@@ -108,8 +111,8 @@ extension DataSourceSearchable {
         return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    func createSearchPredicate(_ searchText: String, tableInfo: DataStoreTableInfo?) -> NSPredicate? {
-        var predicate: NSPredicate? = self.defaultSearchPredicate
+    func createSearchPredicate(_ searchText: String, tableInfo: DataStoreTableInfo?, predicates: [NSPredicate]) -> NSPredicate? {
+        var predicates: [NSPredicate] = predicates
         // need text to seach
         if !searchText.isEmpty {
             let fields = self.searchableFields
@@ -129,15 +132,16 @@ extension DataSourceSearchable {
                     }
                 }
             }
+            var searchPredicate: NSPredicate?
 
             // Create predicate if there is one field or dev assert
             if searchableFields.isEmpty {
                 assertionFailure("Configured field(s) to search '\(searchableField)' is not in table fields.\n Check search identifier list form storyboard for class \(self).\n Table: \((String(unwrappedDescrib: tableInfo)))")
             } else if searchableFields.count == 1, let searchableField = searchableFields.first {
                 if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
-                    predicate = NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+                    searchPredicate = NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
                 } else {
-                    predicate = NSPredicate(format: "(\(searchableField).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+                    searchPredicate = NSPredicate(format: "(\(searchableField).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
                 }
             } else {
                 let predicates: [NSPredicate] = searchableFields.map { field in
@@ -147,12 +151,22 @@ extension DataSourceSearchable {
                         return NSPredicate(format: "(\(field).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
                     }
                 }
-
-                let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
-
-                predicate = orPredicate
+                searchPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+            }
+            if let searchPredicate = searchPredicate {
+                if predicates.isEmpty {
+                    return searchPredicate // just to be faster
+                }
+                predicates.append(searchPredicate)
             }
         }
-        return predicate
+
+        // return the predicate
+        if predicates.isEmpty {
+            return nil
+        } else if predicates.count == 1 {
+            return predicates.first
+        }
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 }
