@@ -51,7 +51,7 @@ extension ListForm {
         /*if context = self.formContext {
             // return .relation(T##String, T##Any, T##String) // TODO manage by relation deeplink
         }*/
-        return .table(self.tableName)
+        return .table(self.tableInfo?.originalName ?? self.tableName)
     }
 
     func configureListFormView(_ view: UIView, _ record: AnyObject, _ indexPath: IndexPath) {

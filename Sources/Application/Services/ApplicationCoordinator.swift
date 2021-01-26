@@ -400,7 +400,7 @@ extension ApplicationCoordinator {
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
-            guard let tableInfo = context.tableInfo(forOriginalName: tableName) else {
+            guard let tableInfo = context.tableInfo(forOriginalName: tableName) ?? context.tableInfo(for: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
                 completion(false)
                 return
@@ -443,7 +443,7 @@ extension ApplicationCoordinator {
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
-            guard let tableInfo = context.tableInfo(forOriginalName: tableName) else {
+            guard let tableInfo = context.tableInfo(forOriginalName: tableName) ?? context.tableInfo(for: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
                 completion(false)
                 return
@@ -561,6 +561,10 @@ extension ApplicationCoordinator {
     }
 
     public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        if let deepLinkable = UIApplication.topViewController?.firstController as? DeepLinkable, deepLinkable.deepLink == deepLink {
+            logger.info("Do not open \(deepLink) because already open on top")
+            return
+        }
         mainCoordinator.follow(deepLink: deepLink) { managed in
             if managed {
                 completion(true)

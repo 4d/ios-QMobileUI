@@ -11,6 +11,7 @@ import UIKit
 
 import QMobileDataStore
 import QMobileAPI
+import QMobileDataSync
 
 public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Form, Storyboardable, DeepLinkable {
 
@@ -30,7 +31,7 @@ public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Fo
 extension DetailsForm {
 
     public var deepLink: DeepLink? {
-        guard let tableName = self.tableName,
+        guard let tableName = self.tableInfo?.originalName ?? self.tableName,
             let primaryKeyValue = self._record?.primaryKeyValue else {
                 return nil
         }
