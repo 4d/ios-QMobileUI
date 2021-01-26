@@ -138,7 +138,11 @@ extension ApplicationReachability {
         apiManagerObserver = nil
     }
 
-    fileprivate func refreshServerInfo(_ apiManager: APIManager) {
+    public func refreshServerInfo() {
+        refreshServerInfo(.instance)
+    }
+
+    fileprivate func refreshServerInfo(_ apiManager: APIManager = .instance) {
         let apiManager = APIManager.instance // some weird issue with parameter, use singleton
         self.serverInfoTask = apiManager.loadWebTestInfo(callbackQueue: .background) { [weak self] result in
             switch result {

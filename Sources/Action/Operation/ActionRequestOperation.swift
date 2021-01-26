@@ -11,6 +11,8 @@ import QMobileAPI
 import Moya
 import Prephirences
 
+import Combine
+
 class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRequest.Error> {
 
     weak var nextOperation: Operation?
@@ -19,14 +21,16 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
 
     var actionUI: ActionUI
     var context: ActionContext
-    var completionHandler: ActionManager.ActionExecutionCompletionHandler?
+    var waitUI: ActionExecutor.WaitPresenter
+    var completionHandler: ActionExecutor.CompletionHandler?
 
-    var bag: Cancellable?
+    private var bag = Set<AnyCancellable>()
 
-    init(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) {
+    init(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
         self.request = request
         self.actionUI = actionUI
         self.context = context
+        self.waitUI = waitUI
         self.completionHandler = completionHandler
 
         super.init()
@@ -47,17 +51,15 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                     }
                 }
 
-                if let completionHandler = completionHandler {
-                    let future = completionHandler(.success(value)) // close UI
-                    // delay handle action result, after form finish with it
-                    future.onComplete { _ in
-                        handle()
-                    }.sink()
-                } else {
+                completionHandler?(.success(value)) // close UI or display some info
+                // delay handle action result, after form finish with it
+                waitUI.onComplete { _ in
                     handle()
-                }
+                }.sink().store(in: &self.bag)
+
             case .failure(let error):
-                logger.warning(" \(error)")
+                completionHandler?(result)
+                logger.warning("Error on action request operation \(error)")
             }
         }
 
@@ -116,6 +118,7 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                 return
             }
             logger.warning("retry: \(self.request)")
+            ApplicationReachability.instance.refreshServerInfo() // XXX maybe limit to some errors?
 
             if !Prephirences.Auth.Login.form, error.isUnauthorized {
                 ApplicationAuthenticate.retryGuestLogin { _ in
@@ -132,9 +135,10 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         logger.debug("Action operation: \(request.id) \(request.action.name)")
         let queue = OperationQueue.current as! ActionRequestQueue //swiftlint:disable:this force_cast
 
-        bag = APIManager.instance.action(request, callbackQueue: .background) { (result) in
+        let cancellable = APIManager.instance.action(request, callbackQueue: .background) { (result) in
             self.complete(with: result.mapError({ ActionRequest.Error($0)}), on: queue)
         }
+        self.bag.insert(AnyCancellable(cancellable.cancel))
 
       /*
          // subscript on , receive on the operation queue?
@@ -148,13 +152,13 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
     }
 
     func clone() -> ActionRequestOperation {
-        return ActionRequestOperation(self.request, self.actionUI, self.context, self.completionHandler)
+        return ActionRequestOperation(self.request, self.actionUI, self.context, self.waitUI, self.completionHandler)
     }
 
 }
 
 extension ActionRequest {
-    func newOp(_ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) -> ActionRequestOperation {
-       return ActionRequestOperation(self, actionUI, context, completionHandler)
+    func newOp(_ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ actionExecutor: ActionExecutor.CompletionHandler?) -> ActionRequestOperation {
+       return ActionRequestOperation(self, actionUI, context, waitUI, actionExecutor)
    }
 }

@@ -80,7 +80,7 @@ public class ActionManager: NSObject, ObservableObject {
     // MARK: handlers
 
     /// List of avaiable handlers
-    public var handlers: [ActionResultHandler] = []
+    var handlers: [ActionResultHandler] = []
 
     // MARK: - Action execution
 
@@ -88,45 +88,24 @@ public class ActionManager: NSObject, ObservableObject {
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
-            executeAction(action, actionUI, context, nil /*without parameters*/, nil)
+            executeAction(action, actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
         } else {
             // Create UI according to action parameters
             var control: ActionParametersUIControl?
             if ActionFormSettings.alertIfOneField {
-                control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
+                control = UIAlertController.build(action, actionUI, context, self) // could return nil if not managed
             }
 
             if control == nil {
                 let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-                control = type.build(action, actionUI, context, self.executeActionUICallback)
+                control = type.build(action, actionUI, context, self)
             }
-            control?.showActionParameters()
-        }
-    }
-
-    typealias ActionExecutionCompletionHandler = ((Result<ActionResult, ActionRequest.Error>) -> Future<ActionResult, ActionRequest.Error>)
-    typealias ActionExecutionContext = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutionCompletionHandler?)
-
-    /// Execute action if success (ie. no error in form validatiion
-    func executeActionUICallback(_ result: Result<ActionExecutionContext, ActionParametersUIError>) {
-        switch result {
-        case .success(let context):
-            executeAction(context.0, context.1, context.2, context.3, context.4)
-        case .failure(let error):
-            if error.isUserRequested {
-                logger.info("Action not performed: \(error)") // cancel
+            if let control = control {
+                control.showActionParameters()
             } else {
-                logger.warning("Action not performed: \(error)")
+                logger.debug("Failed to build action for \(action)")
             }
         }
-    }
-
-    /// Execute the network call for action.
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ completionHandler: ActionExecutionCompletionHandler?) {
-
-        let contextParameters: ActionParameters? = context.actionContextParameters()
-        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
-        executeActionRequest(request, actionUI, context, completionHandler)
     }
 
     func openUI(_ request: ActionRequest, _ actionUI: ActionUI) {
@@ -138,12 +117,12 @@ public class ActionManager: NSObject, ObservableObject {
         // Create UI according to action parameters
         var control: ActionParametersUIControl?
         if ActionFormSettings.alertIfOneField {
-            control = UIAlertController.build(action, actionUI, context, self.executeActionUICallback) // could return nil if not managed
+            control = UIAlertController.build(action, actionUI, context, self) // could return nil if not managed
         }
 
         if control == nil {
             let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
-            control = type.build(action, actionUI, context, self.executeActionUICallback)
+            control = type.build(action, actionUI, context, self)
         }
         control?.showActionParameters()
     }
@@ -180,27 +159,7 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
-    // TODO remove ui and context?
-    func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionExecutionCompletionHandler?) {
-
-        if offlineAction {
-            request.state = .ready
-            self.requests.append(request)
-            self.queue.addRequest(request, actionUI, context, completionHandler)
-        } else {
-            let actionQueue: DispatchQueue = .background
-            actionQueue.async {
-                logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
-                request.state = .executing
-                request.lastDate = Date()
-                _ = APIManager.instance.action(request, callbackQueue: .background) { (result) in
-                    self.onActionResult(request, actionUI, context, result.mapError { ActionRequest.Error($0) }, completionHandler)
-                }
-            }
-        }
-    }
-
-    fileprivate func onOfflineActionResult(_ result: Result<ActionResult, ActionRequest.Error>, _ request: ActionRequest, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?, _ actionUI: ActionUI, _ context: ActionContext) {
+   /* fileprivate func onOfflineActionResult(_ result: Result<ActionResult, ActionRequest.Error>, _ request: ActionRequest, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?, _ actionUI: ActionUI, _ context: ActionContext) {
         saveActionRequests() // TODO check if sink call on element change?
         // Display result or do some actions (incremental etc...)
         switch result {
@@ -237,13 +196,13 @@ public class ActionManager: NSObject, ObservableObject {
                 }
             }
         }
-    }
+    }*/
 
-    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutionCompletionHandler?) {
+    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutor.CompletionHandler?) {
         request.result = result
 
         if offlineAction {
-            onOfflineActionResult(result, request, completionHandler, actionUI, context)
+            //onOfflineActionResult(result, request, completionHandler, actionUI, context)
         } else {
             // Display result or do some actions (incremental etc...)
             switch result {
@@ -255,7 +214,7 @@ public class ActionManager: NSObject, ObservableObject {
                         switch authResult {
                         case .success:
                             // XXX do not do infinite retry
-                            self.executeActionRequest(request, actionUI, context, completionHandler)
+                            self.executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
                         case .failure(let authError):
                             SwiftMessages.showError(ActionRequest.Error(authError))
                             _ = completionHandler?(.failure(error))
@@ -276,9 +235,9 @@ public class ActionManager: NSObject, ObservableObject {
                 request.state = .finished
                 logger.debug("\(value)")
                 if let completionHandler = completionHandler {
-                    let future = completionHandler(.success(value))
+                    /*let waitPresenter = */completionHandler(.success(value))
                     // delay handle action result, after form finish with it
-                    future.onComplete { result in
+                    waitPresenter.onComplete { _ in
                         onForeground {
                             background {
                                 _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
@@ -315,6 +274,60 @@ public class ActionManager: NSObject, ObservableObject {
         self.queue.waitUntilAllOperationsAreFinished()
     }
 }
+
+/// Responsible of executing an action
+protocol ActionExecutor {
+    typealias WaitPresenter = AnyPublisher<Void, Never>
+    typealias CompletionHandler = (Result<ActionResult, ActionRequest.Error>) -> Void // WaitPresenter
+    typealias Context = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutor.WaitPresenter, ActionExecutor.CompletionHandler?)
+
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) // swiftlint:disable:this function_parameter_count
+}
+
+extension ActionExecutor {
+
+    /// Execute action if success (ie. no error in form validation
+    @available(*, deprecated, message: "use executeAction(_,_,_,_,_)")
+    func executeAction(_ context: ActionExecutor.Context) {
+        executeAction(context.0, context.1, context.2, context.3, context.4, context.5)
+    }
+
+}
+
+extension ActionManager: ActionExecutor {
+
+    /// Execute the network call for action.
+    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) { // swiftlint:disable:this function_parameter_count
+
+        // Create the action request
+        let contextParameters: ActionParameters? = context.actionContextParameters()
+        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
+
+        // and execute it
+        executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
+    }
+
+    fileprivate func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
+
+        if offlineAction {
+            request.state = .ready
+            self.requests.append(request)
+            self.queue.addRequest(request, actionUI, context, waitPresenter, completionHandler)
+        } else {
+            let actionQueue: DispatchQueue = .background
+            actionQueue.async {
+                logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+                request.state = .executing
+                request.lastDate = Date()
+                _ = APIManager.instance.action(request, callbackQueue: .background) { result in
+                    self.onActionResult(request, actionUI, context, waitPresenter, result.mapError { ActionRequest.Error($0) }, completionHandler)
+                }
+            }
+        }
+    }
+}
+
+/// Execute the network call for action.
 
 extension SwiftMessages {
 
@@ -370,78 +383,6 @@ extension ActionRequest: ActionContext {
         return self.actionParameters?[field] // this context will return parameter form already filled by user, it do not have record to complete more field
     }
 
-}
-
-// MARK: ActionResultHandler
-
-extension ActionManager: ActionResultHandler {
-
-    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI, in context: ActionContext) -> Bool {
-        var handled = false
-        for handler in handlers {
-            handled = handler.handle(result: result, for: action, from: actionUI, in: context) || handled
-        }
-        return handled
-    }
-
-    fileprivate func setupDefaultHandler() {
-        // default handlers
-
-        // Show debug log for each action result
-        append { result, _, _, _ in
-            logger.debug("Action result \(result.json)")
-            return true
-        }
-
-        append(ActionResult.statusTextBlock)
-        append(ActionResult.dataSynchroBlock)
-        append(ActionResult.openURLBlock)
-        append(ActionResult.pasteboardBlock)
-        append(ActionResult.actionSheetBlock(self.prepareAndExecuteAction))
-        append(ActionResult.actionBlock(self.prepareAndExecuteAction))
-        append(ActionResult.deepLinkBlock)
-        append(ActionResult.shareBlock)
-        append(ActionResult.downloadURLBlock)
-
-        onForeground {
-            // Code to inject custom handlers.
-            if let injectedHandler = UIApplication.shared.delegate as? ActionResultHandler {
-                self.handlers.append(injectedHandler)
-            }
-            if let app = UIApplication.shared as? QApplication {
-                for service in app.services.services {
-                    if let injectedHandler = service as? ActionResultHandler {
-                        self.handlers.append(injectedHandler)
-                    }
-                }
-            }
-        }
-    }
-
-    public func append(_ block: @escaping ActionResultHandler.Block) {
-        handlers.append(ActionResultHandlerBlock(block))
-    }
-
-    public func append(_ handler: ActionResultHandler) {
-        handlers.append(handler)
-    }
-}
-
-/// Handle an action results.
-public protocol ActionResultHandler {
-    typealias Block = (ActionResult, Action, ActionUI, ActionContext) -> Bool
-    func handle(result: ActionResult, for action: Action, from: ActionUI, in context: ActionContext) -> Bool
-}
-
-/// Handle action result with a block
-public struct ActionResultHandlerBlock: ActionResultHandler {
-    var block: ActionResultHandler.Block
-    public init(_ block: @escaping ActionResultHandler.Block) {
-        self.block = block
-    }
-    public func handle(result: ActionResult, for action: Action, from actionUI: ActionUI, in context: ActionContext) -> Bool {
-        return block(result, action, actionUI, context)
-    }
 }
 
 class ActionOperation: Operation {

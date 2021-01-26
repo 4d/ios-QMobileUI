@@ -13,9 +13,8 @@ import Combine
 extension UIAlertController: ActionParametersUI {
 
     /// Build an action controller for one field
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? { //swiftlint:disable:this function_body_length
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl? { //swiftlint:disable:this function_body_length
         guard let parameters = action.parameters, let parameter = parameters.first else {
-            completionHandler(.failure(.noParameters))
             return nil
         }
         guard parameters.count == 1 else {
@@ -93,13 +92,8 @@ extension UIAlertController: ActionParametersUI {
         }
 
         let validateAction = UIAlertAction(title: "Done", style: .default) { _ in
-            let builder = ActionParametersUIBuilder(action, actionUI, context, completionHandler)
-            builder.success(with: actionParametersValue) { result in
-                // let general done
-                return Future<ActionResult, ActionRequest.Error> { promise in
-                    promise(result)
-                }
-            }
+            let builder = ActionParametersUIBuilder(action, actionUI, context, actionExecutor)
+            _ = builder.executeAction(with: actionParametersValue, waitUI: Just(()).eraseToAnyPublisher())
         }
         alertController.addAction(validateAction)
         alertController.addAction(alertController.dismissAction())

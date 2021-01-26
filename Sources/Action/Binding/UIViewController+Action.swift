@@ -102,22 +102,22 @@ extension UIBarButtonItem {
     }
 }
 
-fileprivate class LazyActionContext: ActionContext {
-    var builder: (()-> ActionContext?)
-    
-    init(_ builder: @escaping (()-> ActionContext?)) {
+private class LazyActionContext: ActionContext {
+    var builder: (() -> ActionContext?)
+
+    init(_ builder: @escaping (() -> ActionContext?)) {
         self.builder = builder
     }
-    
+
     lazy var actionContext: ActionContext? = {
         return builder()
     }()
-    
+
     func actionContextParameters() -> ActionParameters? {
         assert(actionContext != nil, "no action context setted before using it")
         return actionContext?.actionContextParameters()
     }
-    
+
     func actionParameterValue(for field: String) -> Any? {
         assert(actionContext != nil, "no action context setted before using it to get parameter val")
         return actionContext?.actionParameterValue(for: field)

@@ -13,13 +13,12 @@ import Combine
 
 /// UI to fill action parameters.
 protocol ActionParametersUI {
-    typealias CompletionHandler = (Result<ActionManager.ActionExecutionContext, ActionParametersUIError>) -> Void
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl?
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl?
 }
 
 protocol ActionParametersUIControl {
     func showActionParameters()
-    func dismissActionParameters()
+    // func dismissActionParameters()
 }
 
 extension UIViewController: ActionParametersUIControl {
@@ -27,9 +26,9 @@ extension UIViewController: ActionParametersUIControl {
         self.show()
     }
 
-    func dismissActionParameters() {
+    /*func dismissActionParameters() {
         self.dismiss(animated: true, completion: nil)
-    }
+    }*/
 }
 
 struct ActionParametersUIBuilder {
@@ -37,45 +36,40 @@ struct ActionParametersUIBuilder {
     var action: Action
     var actionUI: ActionUI
     var context: ActionContext
-    var completionHandler: ActionParametersUI.CompletionHandler
+    var actionExecutor: ActionExecutor
 
-    init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping ActionParametersUI.CompletionHandler) {
+    init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) {
         self.action = action
         self.actionUI = actionUI
         self.context = context
-        self.completionHandler = completionHandler
+        self.actionExecutor = actionExecutor
     }
 
     func build<T: ActionParametersUI>(of type: T.Type) -> ActionParametersUIControl? {
-        return type.build(action, actionUI, context, completionHandler)
+        return type.build(action, actionUI, context, actionExecutor)
     }
 
-    func success(with parameters: ActionParameters?, _ actionCompletionHandler: ActionManager.ActionExecutionCompletionHandler?) {
-        self.completionHandler(.success((self.action, self.actionUI, self.context, parameters, actionCompletionHandler)))
+    fileprivate func executeAction(with parameters: ActionParameters?, waitUI: ActionExecutor.WaitPresenter, completionHandler: ActionExecutor.CompletionHandler?) {
+        self.actionExecutor.executeAction(self.action, self.actionUI, self.context, parameters, waitUI, completionHandler)
     }
-}
 
-/// All errors if action parameters cannot be computed
-enum ActionParametersUIError: Error {
-    case noParameters
-    case wrongNumberOfParameters
-    case userCancel
-
-    var isUserRequested: Bool {
-        switch self {
-        case .userCancel:
-            return true
-        default:
-            return false
+    func executeAction(with parameters: ActionParameters?, waitUI: ActionExecutor.WaitPresenter) -> Future<ActionResult, ActionRequest.Error> {
+         return Future { promise in
+            self.executeAction(with: parameters, waitUI: waitUI, completionHandler: promise)
+         }
+    }
+    private func failWith(error: ActionRequest.Error) -> Future<Void, ActionRequest.Error> {
+        return Future { promise in
+            promise(.failure(error))
         }
     }
 }
-
+/*
 /// Custom implementation
 class ActionParametersController: UIViewController, ActionParametersUI {
 
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
-        let viewController = ActionParametersController(builder: ActionParametersUIBuilder(action, actionUI, context, completionHandler))
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl? {
+        let viewController = ActionParametersController(builder: ActionParametersUIBuilder(action, actionUI, context, actionExecutor))
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
 
@@ -157,27 +151,30 @@ class ActionParametersController: UIViewController, ActionParametersUI {
 
     }
 
+    func dismiss() {
+        self.dismiss(animated: true) { [unowned self] in
+            self.waiter.send(completion: .finished)
+        }
+    }
+    var waiter: PassthroughSubject<Void, ActionRequest.Error> = PassthroughSubject()
+
     @objc func doneAction(sender: UIButton!) {
-        self.builder?.success(with: self.actionParametersValue) { result in
-            return Future<ActionResult, ActionRequest.Error> { promise in
-                switch result {
-                case .success:
-                    onForeground {
-                        self.dismiss(animated: true) { // TODO: do not dismiss here, only according to action result
-                            promise(result)
-                        }
-                    }
-                case .failure:
-                    promise(result)
+        self.builder?.executeAction(with: self.actionParametersValue, waitUI: self.waiter) { result in
+
+            switch result {
+            case .success:
+                onForeground {
+
                 }
+            case .failure:
+                promise(result)
             }
         }
     }
 
     @objc func cancelAction(sender: Any!) {
-        self.dismiss(animated: true) {
-            self.builder?.completionHandler(.failure(.userCancel))
-        }
+        logger.info("Action cancel")
+        dismiss()
     }
 
-}
+}*/

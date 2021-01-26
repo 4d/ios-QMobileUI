@@ -20,8 +20,8 @@ class ActionRequestQueue: OperationQueue {
         self.name = "ActionRequestQueue"
     }
 
-    func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?) {
-        self.add([request.newOp(actionUI, context, completionHandler)])
+    func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
+        self.add([request.newOp(actionUI, context, waitUI, completionHandler)])
     }
 
     /*func addRequests(_ requests: [ActionRequest]) {

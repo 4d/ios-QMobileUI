@@ -223,6 +223,8 @@
 		C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B2CDBD224A2C0D00E1B902 /* Binded.swift */; };
 		C4B5E6A725A41FEB007678F4 /* ActionResult+Handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */; };
 		C4B6AD30258407CC003DAAD2 /* ListFormSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */; };
+		C4BE1E1425BB102700315664 /* ActionResultHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE1E1325BB102700315664 /* ActionResultHandler.swift */; };
+		C4BE1E1D25BB106700315664 /* ActionManager+ActionResultHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE1E1C25BB106700315664 /* ActionManager+ActionResultHandler.swift */; };
 		C4D04D7025A7347D008DD666 /* ValidationError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D04D6F25A7347D008DD666 /* ValidationError+LocalizedError.swift */; };
 		C4D6A487253F1C04000CD742 /* BarcodeScannerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */; };
 		C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F2208C254357020063653A /* SignatureViewRow.swift */; };
@@ -459,6 +461,8 @@
 		C4B2CDBD224A2C0D00E1B902 /* Binded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binded.swift; sourceTree = "<group>"; };
 		C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionResult+Handlers.swift"; sourceTree = "<group>"; };
 		C4B6AD2F258407CC003DAAD2 /* ListFormSearchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListFormSearchable.swift; sourceTree = "<group>"; };
+		C4BE1E1325BB102700315664 /* ActionResultHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResultHandler.swift; sourceTree = "<group>"; };
+		C4BE1E1C25BB106700315664 /* ActionManager+ActionResultHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionManager+ActionResultHandler.swift"; sourceTree = "<group>"; };
 		C4D04D6F25A7347D008DD666 /* ValidationError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ValidationError+LocalizedError.swift"; sourceTree = "<group>"; };
 		C4D6A486253F1C04000CD742 /* BarcodeScannerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerRow.swift; sourceTree = "<group>"; };
 		C4F2208C254357020063653A /* SignatureViewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureViewRow.swift; sourceTree = "<group>"; };
@@ -874,8 +878,8 @@
 		48B23CF92231152A00F6D94C /* Action */ = {
 			isa = PBXGroup;
 			children = (
-				C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */,
 				4869D60A223BA4410042379F /* ActionManager.swift */,
+				C4BE1E1725BB104B00315664 /* Handlers */,
 				C489F5B3255D203300EED0C1 /* Operation */,
 				48B23CFD2231154C00F6D94C /* ActionUI */,
 				488D40382236BF1500F0E0B2 /* Binding */,
@@ -1177,6 +1181,16 @@
 				C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */,
 			);
 			path = Operation;
+			sourceTree = "<group>";
+		};
+		C4BE1E1725BB104B00315664 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				C4BE1E1325BB102700315664 /* ActionResultHandler.swift */,
+				C4B5E6A325A41F6C007678F4 /* ActionResult+Handlers.swift */,
+				C4BE1E1C25BB106700315664 /* ActionManager+ActionResultHandler.swift */,
+			);
+			path = Handlers;
 			sourceTree = "<group>";
 		};
 		C4D6A481253F1BBA000CD742 /* BarcodeScannerRow */ = {
@@ -1481,6 +1495,7 @@
 				C45F2B5225B5D96F00433E18 /* RelationInfoUI.swift in Sources */,
 				48E49CEB1EB9CA70002B60AF /* ApplicationDataStore.swift in Sources */,
 				48B2F0A01EA8AC9100F67871 /* UITableView+QMobile.swift in Sources */,
+				C4BE1E1425BB102700315664 /* ActionResultHandler.swift in Sources */,
 				489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */,
 				FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
@@ -1571,6 +1586,7 @@
 				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
 				48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */,
 				480392BF1E929593008CF992 /* UIRefreshControl+QMobile.swift in Sources */,
+				C4BE1E1D25BB106700315664 /* ActionManager+ActionResultHandler.swift in Sources */,
 				480B43531E842289007C90DD /* UIDevice+QMobile.swift in Sources */,
 				480392AE1E92930A008CF992 /* UIBarItem+BindTo.swift in Sources */,
 				483190EB2297E28E0041B41A /* UIAlertController+ActionParametersUI.swift in Sources */,

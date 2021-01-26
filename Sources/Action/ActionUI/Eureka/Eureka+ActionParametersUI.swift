@@ -20,7 +20,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
     var builder: ActionParametersUIBuilder!
     var settings: ActionFormSettings = ActionFormSettings()
-
+    var cancellables = Set<AnyCancellable>()
     // MARK: Init
 
     convenience init(builder: ActionParametersUIBuilder, settings: ActionFormSettings = ActionFormSettings()) {
@@ -277,28 +277,70 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     @objc func doneAction(sender: UIButton!) {
         hasValidateForm = true
         clearErrors()
-        let errors = self.form.validateRows()
-        if errors.isEmpty {
-            // if no validatio error, send the action
-            sender.isEnabled = false // desactivate temporary
-            sendActionRequest { _ in
-                onForeground {
-                    sender.isEnabled = true
+
+        sender.isEnabled = false // TODO maybe add activity indicator if not already don
+
+        sendActionRequest()
+            .receiveOnForeground()
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    self.fillErrors(error)
+                } else {
+                    self.dismiss()
                 }
-            }
-        } else {
-            fillErrors(errors)
-        }
+                sender.isEnabled = true
+            }, receiveValue: { _ in })
+            .store(in: &cancellables)
     }
 
     @objc func cancelAction(sender: Any!) {
         self.dismiss(animated: true) {
-            self.builder.completionHandler(.failure(.userCancel))
+            logger.info("Action canceled") // cancel
+        }
+    }
+
+    func dismiss() {
+        self.dismiss(animated: true) {
+            self.waiter.send(completion: .finished)
+        }
+    }
+
+    fileprivate func uploadImage(_ image: UIImage, for key: String, completion imageCompletion: @escaping APIManager.CompletionUploadResultHandler) {
+        if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
+            logger.debug("Upload image using url \(url)")
+            _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
+        } else if let url = (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image) {
+            logger.debug("Upload image using url \(url)")
+            _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
+        } else if let imageData = image.jpegData(compressionQuality: 1) {
+            logger.debug("Upload image using jpegData")
+            _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/jpeg", completionHandler: imageCompletion)
+        } else if let imageData = image.pngData() {
+            logger.debug("Upload image using pngData")
+            _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
+        } else {
+            assertionFailure("Cannot convert row data to upload")
+            imageCompletion(.failure(.request(NSError(domain: "assert", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot upload unknow data type"])))) // Not convertible, must not corrurs, just create wrong error
         }
     }
 
     /// Get form values.
-    func formValues(completionHandler: @escaping (Result<ActionParameters, APIError>) -> Void) {
+    func formValuesCombine() -> Future<ActionParameters, ActionFormError> {
+        return Future { promise in
+            self.formValues(completionHandler: promise)
+        }
+    }
+
+    /// Get form values.
+    func formValues(completionHandler: @escaping (Result<ActionParameters, ActionFormError>) -> Void) {
+        // check validation locally
+        let errors = self.form.validateRows()
+        guard errors.isEmpty else {
+            completionHandler(.failure(.validation(errors)))
+            return
+        }
+
+        // get values
         let values = self.form.values()
         /// Remove nil values.
         var parameters = values.reduce(ActionParameters()) { (dict, entry) in
@@ -325,6 +367,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
             // upload images
             var itemDone = 0
+            var errors: [String: APIError] = [:]
+
             for (key, image) in images {
                 let imageCompletion: APIManager.CompletionUploadResultHandler = { result in
                     switch result {
@@ -346,88 +390,64 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                         } else {
                             // do nothing, we have already removed UIImage values
                         }
+                        errors[key] = error // XXX maybe here manage a list if multiple
                     }
-                    itemDone += 1
-                    if itemDone == images.count {
-                        completionHandler(.success(parameters))
-                    }
-                }
-                // TODO BUG if network error, we must postpone upload...send a completion error?
 
-                if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
-                    logger.debug("Upload image using url \(url)")
-                    _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
-                } else if let url = (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image) {
-                    logger.debug("Upload image using url \(url)")
-                    _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
-                } else if let imageData = image.jpegData(compressionQuality: 1) {
-                    logger.debug("Upload image using jpegData")
-                    _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/jpeg", completionHandler: imageCompletion)
-                } else if let imageData = image.pngData() {
-                    logger.debug("Upload image using pngData")
-                    _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
-                } else {
-                    parameters.removeValue(forKey: key) // Not convertible
+                    // check final completion? // CLEAN do parallele call, and merge it
+                    itemDone += 1
+                    if itemDone == images.count { // XXX critic section, check if no parallele task
+                        if errors.isEmpty {
+                            completionHandler(.success(parameters))
+                        } else {
+                            completionHandler(.failure(.upload(errors))) // TODO conserve already success upload?
+                        }
+                    }
                 }
+
+                self.uploadImage(image, for: key, completion: imageCompletion)
             }
         }
     }
 
+    // replace by a dimiss publisher
+    var waiter: PassthroughSubject<Void, Never> = PassthroughSubject()
+
     /// Send action to server, and manage result
-    func sendActionRequest(completionHandler: @escaping (Result<ActionResult, ActionRequest.Error>) -> Void) {
-        formValues { valuesResult in
-            switch valuesResult {
-            case .success(let values):
-                self.builder.success(with: values) { result in
-                    return Future<ActionResult, ActionRequest.Error> { promise in
-                        completionHandler(result)
-                        switch result {
-                        case .success(let actionResult):
-                            if actionResult.mustCloseActionForm {
-                                onForeground {
-                                    self.dismiss(animated: true) {
-                                        logger.debug("Action parameters form dismissed")
-                                        promise(result)
-                                    }
-                                }
-                            } else {
-                                if let errors = actionResult.errors {
-                                    self.fillErrors(errors)
-                                } else {
-                                    logger.warning("Action result \(actionResult): nothing to do or display. Why not success?. Action form not closed. Send success or close with True value to dismiss it.")
-                                }
-                                promise(result)
-                            }
-                        case .failure(let error):
-                            self.fillErrors(error)
-                            promise(result)
-                        }
-                    }
-                }
-            case .failure(let error):
-                logger.warning("Action errors, cannot upload \(error)")
-                // TODO maybe show failing to upload error in image row
+    func sendActionRequest() -> AnyPublisher<Void, ActionFormError> {
+        return self.formValuesCombine()
+            .flatMap { parameters in
+                return self.builder.executeAction(with: parameters, waitUI: self.waiter.eraseToAnyPublisher())
+                    .mapError({ ActionFormError.request($0) })
+                    .eraseToAnyPublisher()
             }
-        }
+            .tryMap { (actionResult: ActionResult) throws -> ActionResult in
+                if !actionResult.mustCloseActionForm {
+                    if let errors = actionResult.errors { // Explicity errors to display in form
+                        throw ActionFormError.components(errors)
+                    }
+                    // if !actionResult.success -> not an error, just close and statusText be handled
+                }
+                return actionResult
+            }
+            .mapError({ $0 as! ActionFormError }) //swiftlint:disable:this force_cast (How to force type after a tryMap?)
+            .asVoid() // we do not care about success result
+            .eraseToAnyPublisher()
     }
 
     // MARK: errors
 
-    /// Fills errors
-    func fillErrors(_ errors: [BaseRow: [ValidationError]]) {
-        // display errors
-        if settings.errorColorInLabel && settings.useSection {
-            self.refreshToDisplayErrors()
-        } else {
-            removeValidationErrorRows()
-            for (row, rowErrors) in errors {
-                row.display(errors: rowErrors, with: settings)
-            }
+    func fillErrors(_ error: ActionFormError) {
+        switch error {
+        case .validation(let validationError):
+            self.fillErrors(validationError)
+        default:
+            self.fillErrors(error.displayableErrors)
         }
+    }
 
+    fileprivate func scrollToFirstValidationError() {
         // scroll to first row with errors
-        let rows = self.form.rows.filter { !$0.validationErrors.isEmpty }
-        if let row = rows.first {
+        if let row = self.form.rows.first(where: { !$0.validationErrors.isEmpty }) {
             let animated = true
             if !settings.useSection {
                 row.selectScrolling(animated: animated)
@@ -441,9 +461,24 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
     }
 
+    /// Fills errors
+    func fillErrors(_ errors: [BaseRow: [ValidationError]]) {
+        // display errors
+        if settings.errorColorInLabel && settings.useSection {
+            self.refreshToDisplayErrors()
+        } else {
+            removeValidationErrorRows()
+            for (row, rowErrors) in errors {
+                row.display(errors: rowErrors, with: settings)
+            }
+        }
+
+        scrollToFirstValidationError()
+    }
+
     /// Fills errors in form
     /// @params errorsByComponents: dico of row key and list of errors
-    func fillErrors(_ errorsByComponents: [String: [String]]) {
+    fileprivate func fillErrors(_ errorsByComponents: [String: [String]]) {
         // apply to the rows
         for (key, restErrors) in errorsByComponents {
             if let row = self.form.rowBy(tag: key) {
@@ -453,36 +488,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             }
         }
         self.refreshToDisplayErrors()
-    }
-
-    /// Fills errors in form from request error
-    func fillErrors(_ error: (ActionRequest.Error)) {
-        logger.debug("Errors from 4d server when executing action")
-        guard let restErrors = error.restErrors else { return }
-
-        // get a dictionary of row/errors
-        let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
-            return [error.componentSignature: error.message]
-        })
-
-        fillErrors(errorsByComponents)
-    }
-
-    /// Fills errors in form from list of request
-    func fillErrors(_ errors: [Any]) {
-        var errorsByComponents: [String: [String]] = [:]
-        for error in errors {
-            if let error = error as? [String: String],
-               let tag = error["component"] ?? error["parameter"],
-               let message = error["message"] {
-                if errorsByComponents[tag] == nil {
-                    errorsByComponents[tag] = []
-                }
-                errorsByComponents[tag]?.append(message)
-            }
-        }
-
-        fillErrors(errorsByComponents)
     }
 
     private func refreshToDisplayErrors() {
@@ -647,12 +652,12 @@ extension ActionFormViewController: TapOutsideTableViewDelegate {
 
 extension ActionFormViewController: ActionParametersUI {
 
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ completionHandler: @escaping CompletionHandler) -> ActionParametersUIControl? {
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl? {
         if action.parameters == nil {
-            completionHandler(.failure(.noParameters))
             return nil
         }
-        let viewController: ActionFormViewController = ActionFormViewController(builder: ActionParametersUIBuilder(action, actionUI, context, completionHandler))
+        let builder = ActionParametersUIBuilder(action, actionUI, context, actionExecutor)
+        let viewController: ActionFormViewController = ActionFormViewController(builder: builder)
 
         let navigationController = viewController.embedIntoNavigationController()
         navigationController.navigationBar.prefersLargeTitles = false
@@ -661,3 +666,43 @@ extension ActionFormViewController: ActionParametersUI {
     }
 }
 //swiftlint:disable:this file_length
+
+// MARK: ActionFormError
+enum ActionFormError: Error {
+    case validation([BaseRow: [ValidationError]])
+    case components([Any])
+    case request(ActionRequest.Error)
+    case upload([String: APIError])
+}
+
+extension ActionFormError {
+
+    var displayableErrors: [String: [String]] {
+        switch self {
+        case .components(let errors):
+            var errorsByComponents: [String: [String]] = [:]
+            for error in errors {
+                if let error = error as? [String: String],
+                   let tag = error["component"] ?? error["parameter"],
+                   let message = error["message"] {
+                    if errorsByComponents[tag] == nil {
+                        errorsByComponents[tag] = []
+                    }
+                    errorsByComponents[tag]?.append(message)
+                }
+            }
+            return errorsByComponents
+        case .upload(let errors):
+            return errors.mapValues({ ["Failed to upload", $0.localizedDescription] })
+        case .validation:
+            return [:] // let do elsewhere
+        case .request(let error):
+            guard let restErrors = error.restErrors else { return [:] }
+            // get a dictionary of row/errors
+            let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
+                return [error.componentSignature: error.message]
+            })
+            return errorsByComponents
+        }
+    }
+} // swiftlint:disable:this file_length
