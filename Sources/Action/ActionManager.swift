@@ -198,7 +198,12 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }*/
 
-    func onActionResult(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ result: Result<ActionResult, ActionRequest.Error>, _ completionHandler: ActionExecutor.CompletionHandler?) {
+    func onActionResult(_ request: ActionRequest, // swiftlint:disable:this function_parameter_count
+                        _ actionUI: ActionUI,
+                        _ context: ActionContext,
+                        _ waitPresenter: ActionExecutor.WaitPresenter,
+                        _ result: Result<ActionResult, ActionRequest.Error>,
+                        _ completionHandler: ActionExecutor.CompletionHandler?) {
         request.result = result
 
         if offlineAction {
@@ -281,7 +286,12 @@ protocol ActionExecutor {
     typealias CompletionHandler = (Result<ActionResult, ActionRequest.Error>) -> Void // WaitPresenter
     typealias Context = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutor.WaitPresenter, ActionExecutor.CompletionHandler?)
 
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) // swiftlint:disable:this function_parameter_count
+    func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
+                       _ actionUI: ActionUI,
+                       _ context: ActionContext,
+                       _ actionParameters: ActionParameters?,
+                       _ waitPresenter: ActionExecutor.WaitPresenter,
+                       _ completionHandler: ActionExecutor.CompletionHandler?)
 }
 
 extension ActionExecutor {
@@ -297,7 +307,12 @@ extension ActionExecutor {
 extension ActionManager: ActionExecutor {
 
     /// Execute the network call for action.
-    func executeAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionParameters: ActionParameters?, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) { // swiftlint:disable:this function_parameter_count
+    func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
+                       _ actionUI: ActionUI,
+                       _ context: ActionContext,
+                       _ actionParameters: ActionParameters?,
+                       _ waitPresenter: ActionExecutor.WaitPresenter,
+                       _ completionHandler: ActionExecutor.CompletionHandler?) {
 
         // Create the action request
         let contextParameters: ActionParameters? = context.actionContextParameters()

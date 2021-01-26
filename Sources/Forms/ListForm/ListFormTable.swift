@@ -29,7 +29,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
 
     @IBOutlet open var searchBar: UISearchBar!
     public var searchActive: Bool = false
-    /// Operator used to search. contains, beginswith, endwith. Default contains
+    /// Operator used to search. contains, beginswith, endswith. Default contains
     @IBInspectable open var searchOperator: String = "contains" {
         didSet {
             assert(["contains", "beginswith", "endswith"].contains(searchOperator.lowercased()))

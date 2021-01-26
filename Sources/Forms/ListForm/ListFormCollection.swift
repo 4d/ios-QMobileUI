@@ -17,7 +17,7 @@ import Moya
 import SwiftMessages
 
 @IBDesignable
-open class ListFormCollection: UICollectionViewController, ListFormSearchable {
+open class ListFormCollection: UICollectionViewController, ListFormSearchable { //swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource? {
         return collectionDataSource
@@ -29,7 +29,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable {
 
     @IBOutlet open var searchBar: UISearchBar!
     public var searchActive: Bool = false
-    /// Operator used to search. contains, beginswith,endswith. Default contains
+    /// Operator used to search. contains, beginswith, endswith. Default contains
     @IBInspectable open var searchOperator: String = "contains" {
         didSet {
             assert(["contains", "beginswith", "endswith"].contains(searchOperator.lowercased()))

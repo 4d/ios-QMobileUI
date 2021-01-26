@@ -439,7 +439,7 @@ extension ApplicationCoordinator {
         }
     }
 
-    public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) {
+    public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) { //swiftlint:disable:this function_body_length
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
