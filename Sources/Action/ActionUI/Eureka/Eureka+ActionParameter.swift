@@ -205,7 +205,7 @@ extension ActionParameterFormat {
         case .scientific, .percent, .energy, .mass:
             return DecimalRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
         case .longDate, .shortDate, .mediumDate, .fullDate:
-            return DateRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
+            return DateWheelRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
         case .custom(let string):
             if let builder = UIApplication.shared.delegate as? ActionParameterCustomFormatRowBuilder {
                 if let row = builder.buildActionParameterCustomFormatRow(key: key, format: string, onRowEvent: eventCallback) {
@@ -225,6 +225,13 @@ extension ActionParameterFormat {
         }
     }
 
+}
+
+final class DateWheelRow: _DateRow, RowType {
+    required init(tag: String?) {
+        super.init(tag: tag)
+        self.cell.datePicker.preferredDatePickerStyle = .wheels
+    }
 }
 
 /// base type of custom row

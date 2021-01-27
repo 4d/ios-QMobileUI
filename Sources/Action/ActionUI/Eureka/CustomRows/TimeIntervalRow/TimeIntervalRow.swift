@@ -118,6 +118,7 @@ open class TimeIntervalCell: Cell<TimeInterval>, CellType {
         datePicker.datePickerMode = datePickerMode()
         datePicker.addTarget(self, action: #selector(TimeIntervalCell.datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.timeZone = .greenwichMeanTime
+        datePicker.preferredDatePickerStyle = .wheels
     }
 
     deinit {
