@@ -561,8 +561,13 @@ extension ApplicationCoordinator {
     }
 
     public static func open(_ deepLink: DeepLink, completion: @escaping (Bool) -> Void) {
+        self.open(deepLink, recursive: false, completion: completion) // here to fix weird compilation issue we use two method, instead of one with default value
+    }
+
+    public static func open(_ deepLink: DeepLink, recursive: Bool, completion: @escaping (Bool) -> Void) {
         if let deepLinkable = UIApplication.topViewController?.firstController as? DeepLinkable, deepLinkable.deepLink == deepLink {
-            logger.info("Do not open \(deepLink) because already open on top")
+            logger.log(recursive ? .debug: .info, "Do not open \(deepLink) because already open on top")
+            completion(false)
             return
         }
         mainCoordinator.follow(deepLink: deepLink) { managed in
@@ -686,7 +691,7 @@ struct MainNavigationCoordinator {
         case .record(let tableName, _):
             if self.form?.childrenForms.first(where: { ($0.firstController as? ListForm)?.tableName == tableName }) != nil { // present list form parent only if in tabs, otherwise just open as modal
                 if let tableParentLink = deepLink.parent {
-                    ApplicationCoordinator.open(tableParentLink) { _ in
+                    ApplicationCoordinator.open(tableParentLink, recursive: true) { _ in
                         completion(false)
                     }
                     return
@@ -695,7 +700,7 @@ struct MainNavigationCoordinator {
             completion(false)
         case .relation:
             if let recordParentLink = deepLink.parent { // for relation always try to open parent record
-                ApplicationCoordinator.open(recordParentLink) { _ in
+                ApplicationCoordinator.open(recordParentLink, recursive: true) { _ in
                     completion(false)
                 }
                 return
