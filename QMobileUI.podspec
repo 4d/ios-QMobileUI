@@ -32,7 +32,6 @@ Pod::Spec.new do |s|
 
   s.dependency "XCGLogger"
   s.dependency "Kingfisher"
-  s.dependency "Guitar"
   s.dependency "ValueTransformerKit"
   s.dependency "SwiftMessages"
   s.dependency "CallbackURLKit"

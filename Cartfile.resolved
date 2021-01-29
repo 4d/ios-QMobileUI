@@ -1,5 +1,4 @@
 github "Alamofire/Alamofire" "5.0.0"
-github "ArtSabintsev/Guitar" "1.1.2"
 github "DaveWoodCom/XCGLogger" "7.0.1"
 github "IBAnimatable/IBAnimatable" "6.1.0"
 github "Moya/Moya" "14.0.0"

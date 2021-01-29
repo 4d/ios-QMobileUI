@@ -123,8 +123,6 @@
 		48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
 		48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
 		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
-		48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
-		48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A62CC81E9E486A002A76C2 /* Guitar.framework */; };
 		48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */; };
 		48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */; };
 		48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */; };
@@ -216,6 +214,7 @@
 		C45F2B5225B5D96F00433E18 /* RelationInfoUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45F2B5125B5D96F00433E18 /* RelationInfoUI.swift */; };
 		C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46F7C6E24BE3271005CF355 /* DeepLink.swift */; };
 		C4844BF92535E16C00EEB131 /* ActionParameter+KeyboardType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */; };
+		C488439125C4072800DAD2E9 /* NSRegularExpression+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C488439025C4072800DAD2E9 /* NSRegularExpression+QMobile.swift */; };
 		C489F5BA255D203300EED0C1 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B5255D203300EED0C1 /* AsynchronousOperation.swift */; };
 		C489F5BB255D203300EED0C1 /* ActionRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */; };
 		C489F5BD255D203300EED0C1 /* ActionRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */; };
@@ -369,7 +368,6 @@
 		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
 		48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMessages.framework; path = Carthage/Build/iOS/SwiftMessages.framework; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
-		48A62CC81E9E486A002A76C2 /* Guitar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Guitar.framework; path = Carthage/Build/iOS/Guitar.framework; sourceTree = "<group>"; };
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
 		48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexPathTests.swift; sourceTree = "<group>"; };
 		48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIGestureRecognizer+QMobile.swift"; sourceTree = "<group>"; };
@@ -457,6 +455,7 @@
 		C45F2B5125B5D96F00433E18 /* RelationInfoUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationInfoUI.swift; sourceTree = "<group>"; };
 		C46F7C6E24BE3271005CF355 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionParameter+KeyboardType.swift"; sourceTree = "<group>"; };
+		C488439025C4072800DAD2E9 /* NSRegularExpression+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRegularExpression+QMobile.swift"; sourceTree = "<group>"; };
 		C489F5B5255D203300EED0C1 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		C489F5B6255D203300EED0C1 /* ActionRequestQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestQueue.swift; sourceTree = "<group>"; };
 		C489F5B8255D203300EED0C1 /* ActionRequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRequestOperation.swift; sourceTree = "<group>"; };
@@ -487,7 +486,6 @@
 			files = (
 				48E49CFD1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */,
 				4859D94A1F82777100C8A020 /* IBAnimatable.framework in Frameworks */,
-				48A62CC91E9E486A002A76C2 /* Guitar.framework in Frameworks */,
 				48FB2CE51E93A27F00F4F685 /* QMobileDataStore.framework in Frameworks */,
 				48FB2CE21E93A25E00F4F685 /* XCGLogger.framework in Frameworks */,
 				48E49CF41EB9D8B0002B60AF /* QMobileAPI.framework in Frameworks */,
@@ -508,7 +506,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				48A62CCA1E9E486A002A76C2 /* Guitar.framework in Frameworks */,
 				48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */,
 				48FB2CD81E93A22600F4F685 /* Prephirences.framework in Frameworks */,
 				48E49CF91EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
@@ -598,6 +595,7 @@
 				48F8E2C31F7D0EC1000080FB /* RawRepresentable+IndexSet.swift */,
 				4846083520AF057A00EE4696 /* Timer+QMobile.swift */,
 				4853BD612105A948004B2467 /* NSAttributedString+QMobile.swift */,
+				C488439025C4072800DAD2E9 /* NSRegularExpression+QMobile.swift */,
 			);
 			name = Foundation;
 			sourceTree = "<group>";
@@ -963,7 +961,6 @@
 				48E49CF71EB9DC33002B60AF /* Moya.framework */,
 				48E49CF31EB9D8B0002B60AF /* QMobileAPI.framework */,
 				48E49CF01EB9D28D002B60AF /* QMobileDataSync.framework */,
-				48A62CC81E9E486A002A76C2 /* Guitar.framework */,
 				48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */,
 				48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */,
 				48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */,
@@ -1430,7 +1427,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Prephirences.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/XCGLogger.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Guitar.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/QMobileDataSync.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/QMobileAPI.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Moya.framework",
@@ -1483,6 +1479,7 @@
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
 				48E655E5229EB2D40060568B /* LocationRow.swift in Sources */,
+				C488439125C4072800DAD2E9 /* NSRegularExpression+QMobile.swift in Sources */,
 				483192552297F8EE0041B41A /* ImageRow.swift in Sources */,
 				48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */,
 				4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */,

@@ -7,7 +7,6 @@ github "onevcat/Kingfisher" # image download
 github "phimage/CallbackURLKit" # action using url
 
 github "phimage/ValueTransformerKit" # format value
-github "ArtSabintsev/Guitar" # string extension, camel cased etc...
 
 github "SwiftKickMobile/SwiftMessages" # display message
 github "xmartlabs/Eureka"
