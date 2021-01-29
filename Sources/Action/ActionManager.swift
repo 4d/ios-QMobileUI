@@ -59,9 +59,12 @@ public class ActionManager: NSObject, ObservableObject {
 
     fileprivate func initOfflineAction() {
         loadActionRequests()
-        $requests.sink { [weak self] in
-            print("new request \($0)")
-            self?.saveActionRequests()
+
+        $requests.sink { [weak self] requests in
+            if !requests.isEmpty {
+                logger.debug("New action requests \(requests)")
+                self?.saveActionRequests()
+            }
         }.store(in: &bag)
         registerListener()
 

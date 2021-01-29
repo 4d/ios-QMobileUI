@@ -20,9 +20,10 @@ open class SettingsForm: UITableViewController, Storyboardable {
     public enum Section: Int {
 
         case server
+        case action
         case account
 
-        public static let all: [Section] = [.server, .account]
+        public static let all: [Section] = [.server, .action, .account]
 
         static func register(in tableView: UITableView) {
             for section in Section.all {
@@ -121,6 +122,10 @@ open class SettingsForm: UITableViewController, Storyboardable {
             logger.debug("UI Transition with segue \(String(describing: segue.identifier))")
         }
         segue.fix()
+    }
+
+    @IBSegueAction open func segue2SwiftUI(_ coder: NSCoder) -> UIViewController? {
+        return ActionRequestForm(coder: coder, rootView: ActionRequestFormUI(requests: ActionManager.instance.requests))
     }
 
     @objc func application(didEnterBackground notification: Notification) {
