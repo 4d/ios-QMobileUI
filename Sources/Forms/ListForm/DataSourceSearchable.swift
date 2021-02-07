@@ -70,7 +70,7 @@ extension DataSourceSortable {
                 sortDescriptors = [firstField.sortDescriptor(ascending: true)]
             } else {
                 // XXX Find in UI Cell first/main field?
-                //assertionFailure("No sort field. Please fill sortField with a field name")
+                // assertionFailure("No sort field. Please fill sortField with a field name")
             }
         } else {
             if let sectionFieldname = self.sectionFieldname, !sectionFieldname.isEmpty { // Section must sorted first it seems
@@ -99,6 +99,30 @@ extension DataSourceSortable {
 
 }
 
+import FileKit
+struct SearchMapping {
+
+    static var instance = SearchMapping()
+
+    lazy var searchLocalizedMapping: [String: [String: String]] = {
+        var result: [String: [String: String]] = [:]
+        if let path = Bundle.main.path(forResource: "Formatters", ofType: "strings"),
+           let strings: [String: String] = try? Dictionary(contentsOfPath: Path(path)) {
+            for (key, value) in strings {
+                if let index = key.firstIndex(of: "_") {
+                    let startIndex: String.Index = key.startIndex
+                    let field = String(key[startIndex..<index])
+                    if result[field] == nil {
+                        result[field] = [:]
+                    }
+                    result[field]?[value] = String(key[key.index(index, offsetBy: 1)..<key.endIndex])
+                }
+            }
+        }
+        return result
+    }()
+}
+
 extension DataSourceSearchable {
 
     /// Return multiple search fields if defined in `searchableField` with separator `,`
@@ -109,6 +133,22 @@ extension DataSourceSearchable {
     // Hide if search field name is empty by default
     public var isSearchBarMustBeHidden: Bool {
         return searchableField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    fileprivate func createSearchPredicate(_ fieldsByName: [String: DataStoreFieldInfo], _ searchableField: String, _ searchText: String) -> NSPredicate {
+        let searchPredicate: NSPredicate
+        if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
+            searchPredicate = NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+        } else {
+            searchPredicate = NSPredicate(format: "(\(searchableField).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
+        }
+        guard let forField = SearchMapping.instance.searchLocalizedMapping[searchableField], let newSearchText = forField[searchText] else {
+            return searchPredicate
+        }
+        return NSCompoundPredicate(orPredicateWithSubpredicates: [
+            searchPredicate,
+            NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", newSearchText)
+        ])
     }
 
     func createSearchPredicate(_ searchText: String, tableInfo: DataStoreTableInfo?, predicates: [NSPredicate]) -> NSPredicate? {
@@ -138,18 +178,10 @@ extension DataSourceSearchable {
             if searchableFields.isEmpty {
                 assertionFailure("Configured field(s) to search '\(searchableField)' is not in table fields.\n Check search identifier list form storyboard for class \(self).\n Table: \((String(unwrappedDescrib: tableInfo)))")
             } else if searchableFields.count == 1, let searchableField = searchableFields.first {
-                if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
-                    searchPredicate = NSPredicate(format: "(\(searchableField) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
-                } else {
-                    searchPredicate = NSPredicate(format: "(\(searchableField).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
-                }
+                searchPredicate = createSearchPredicate(fieldsByName, searchableField, searchText)
             } else {
-                let predicates: [NSPredicate] = searchableFields.map { field in
-                    if case fieldsByName[searchableField]?.type = DataStoreFieldType.string {
-                        return NSPredicate(format: "(\(field) \(searchOperator)[\(searchSensitivity)] %@)", searchText)
-                    } else {
-                        return NSPredicate(format: "(\(field).stringValue \(searchOperator)[\(searchSensitivity)] %@)", searchText)
-                    }
+                let predicates: [NSPredicate] = searchableFields.map { searchableField in
+                    return createSearchPredicate(fieldsByName, searchableField, searchText)
                 }
                 searchPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
             }
