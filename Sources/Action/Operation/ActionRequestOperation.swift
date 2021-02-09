@@ -65,7 +65,7 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         }
 
         self.onStateChanged = { _ in
-            // self.request.state = . TODO update  state for UI
+            ActionManager.instance.sendChange()
         }
 
         // test or notify block

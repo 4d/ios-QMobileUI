@@ -17,7 +17,9 @@ public struct ActionRequestRow: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                ActionRequestStatusView(request: request).frame(width: 24, height: 32, alignment: .topLeading)
+                ActionRequestStatusView(request: request)
+                    .frame(width: 32, height: 32, alignment: .topLeading)
+                    .padding(0)
                 VStack(alignment: .leading) {
                     Text(request.action.preferredLongLabel)
                         .font(.headline)

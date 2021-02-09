@@ -44,7 +44,7 @@ public class ActionManager: NSObject, ObservableObject {
     /// Operation queue.
     fileprivate let queue = ActionRequestQueue()
 
-    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? false
+    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
 
     private var bag = Set<AnyCancellable>()

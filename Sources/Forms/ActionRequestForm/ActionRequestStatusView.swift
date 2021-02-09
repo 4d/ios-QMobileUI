@@ -7,12 +7,17 @@
 //
 
 import SwiftUI
+import QMobileAPI
 
 struct ActionRequestStatusView: View {
     @State var request: ActionRequest
     var body: some View {
-        if request.isExecuting {
-            ProgressView().progressViewStyle(CircularProgressViewStyle())
+        if request.state == .executing {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+        } else if request.state == .ready {
+            Image(systemName: "mail.stack")
+                .foregroundColor(.primary)
         } else {
             Text(request.statusImage)
         }
@@ -27,17 +32,11 @@ struct ActionRequestStatusView_Previews: PreviewProvider {
             ActionRequestStatusView(request: ActionRequest.examples[2])
             ActionRequestStatusView(request: ActionRequest.examples[3])
 
-        }.previewLayout(.fixed(width: 70, height: 70))
+        }.previewLayout(.fixed(width: 32, height: 32))
     }
 }
 
-import QMobileAPI
-
 extension ActionRequest {
-
-    var isExecuting: Bool {
-        return state == .executing
-    }
 
     var statusImage: String {
         switch state {
