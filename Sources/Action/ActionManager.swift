@@ -149,6 +149,7 @@ public class ActionManager: NSObject, ObservableObject {
                             case .failure(let error):
                                 logger.warning("Background action \(request) finish with error \(error)")
                             }
+                            self.objectWillChange.send()
                         }
                 }
             }
@@ -287,7 +288,7 @@ public class ActionManager: NSObject, ObservableObject {
 
     // MARK: - queue based
 
-    fileprivate var isSuspended: Bool {
+    private(set) var isSuspended: Bool {
         get {
             return self.queue.isSuspended
         }
@@ -351,7 +352,10 @@ extension ActionManager: ActionExecutor {
         if offlineAction {
             request.state = .ready
             self.requests.append(request)
-            self.queue.addRequest(request, actionUI, context, waitPresenter, completionHandler)
+            self.queue.addRequest(request, actionUI, context, waitPresenter) { result in
+                completionHandler?(result)
+                self.objectWillChange.send()
+            }
             self.objectWillChange.send()
         } else {
             let actionQueue: DispatchQueue = .background

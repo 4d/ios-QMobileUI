@@ -12,9 +12,6 @@ import SwiftUI
 
 import QMobileAPI
 
-open class ActionRequestForm: UIHostingController<ActionRequestFormUI> {
-}
-
 public struct ActionRequestFormUI: View {
     @EnvironmentObject public var instance: ActionManager
     public var requests: [ActionRequest]
@@ -44,10 +41,21 @@ public struct ActionRequestFormUI: View {
         }
     }
 
+    @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
+        switch sectionCase {
+        case .pending:
+            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online").onTapGesture(perform: {
+                ServerStatusManager.instance.checkStatus()
+            })
+        case .history:
+            Spacer()
+        }
+    }
+
     public var body: some View {
         List {
             ForEach(sections) { section in
-                Section(header: Text(section.rawValue)) {
+                Section(header: Text(section.rawValue), footer: footer(for: section)) {
                     if hasRequests(for: section) {
                         ForEach(getRequests(for: section), id: \.id) { request in
                             switch section {
@@ -66,7 +74,7 @@ public struct ActionRequestFormUI: View {
                     } else {
                         switch section {
                         case .pending:
-                            Text("0 request")
+                            Text("0 draft")
                                 .foregroundColor(.secondary)
                         case .history:
                             Text("Nothing has happened yet") // "0 item"
@@ -82,6 +90,6 @@ public struct ActionRequestFormUI: View {
 
 struct ActionRequestFormUI_Previews: PreviewProvider {
     static var previews: some View {
-        ActionRequestFormUI(requests: ActionRequest.examples)
+        ActionRequestFormUI(requests: ActionRequest.examples).environmentObject(ActionManager.instance)
     }
 }

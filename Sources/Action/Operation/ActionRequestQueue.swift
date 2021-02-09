@@ -32,11 +32,19 @@ class ActionRequestQueue: OperationQueue {
         // chain operations
         for operation in operations {
             synced {
+                var mustSendSuspended = isSuspended
                 if let previousOperation = lastOperation {
                     operation.addDependency(previousOperation)
+
+                    mustSendSuspended = mustSendSuspended || !operation.isFinished
+
                     #if DEBUG
                     logger.verbose("\(previousOperation.request.action.name) -> \(operation.request.action.name) ")
                     #endif
+                }
+                if mustSendSuspended { // dirty way to send error to action next in queue, to stop UI
+                    operation.completionHandler?(.success(ActionResult(success: true, json: JSON(["statusText": "Request enqueued"]))))
+                    // self.completionHandler?(.failure(ActionRequest.Error(APIError.error(from: NSError()))))
                 }
                 lastOperation = operation
             }

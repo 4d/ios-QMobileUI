@@ -17,7 +17,7 @@ public struct ActionRequestRow: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                ActionRequestStatusView(request: request)
+                ActionRequestStatusView(request: request).frame(width: 24, height: 32, alignment: .topLeading)
                 VStack(alignment: .leading) {
                     Text(request.action.preferredLongLabel)
                         .font(.headline)
@@ -50,7 +50,7 @@ extension ActionRequest {
 
     static var examples: [ActionRequest] {
         return [
-            ActionRequest(action: Action.examples[0]),
+            ActionRequest(action: Action.examples[0], state: .ready),
             ActionRequest(action: Action.examples[1], state: .executing),
             ActionRequest(action: Action.examples[1], state: .finished, result: .success(.emptySuccess)),
             ActionRequest(action: Action.examples[2], state: .finished, result: .success(.emptyFailure))

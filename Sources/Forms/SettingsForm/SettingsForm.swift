@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftUI
+import Combine
 
 import Prephirences
 import Moya
@@ -21,10 +22,9 @@ open class SettingsForm: UITableViewController, Storyboardable {
     public enum Section: Int {
 
         case server
-        case action
         case account
 
-        public static let all: [Section] = [.server, .action, .account]
+        public static let all: [Section] = [.server, .account]
 
         static func register(in tableView: UITableView) {
             for section in Section.all {
@@ -58,8 +58,9 @@ open class SettingsForm: UITableViewController, Storyboardable {
         }
     }
 
+    @IBOutlet weak var requestDraftLabel: UILabel?
     @IBInspectable open var sectionHeaderForegroundColor: UIColor = /*UIColor(named: "BackgroundColor") ??*/ .clear
-
+    fileprivate var bag = Set<AnyCancellable>()
     // MARK: event
 
     final public override func viewDidLoad() {
@@ -77,6 +78,17 @@ open class SettingsForm: UITableViewController, Storyboardable {
         super.viewWillAppear(animated)
         checkBackButton()
         onWillAppear(animated)
+
+        guard let requestDraftLabel = self.requestDraftLabel else {
+            return
+        }
+        let instance = ActionManager.instance
+        let draftCount = instance.requests.filter({$0.state != .finished }).count
+        requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
+        instance.$requests.receiveOnForeground().sink { _ in //  listen to change of number of request
+            let draftCount = instance.requests.filter({$0.state != .finished }).count
+            requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
+        }.store(in: &bag)
     }
 
     final public override func viewDidAppear(_ animated: Bool) {
@@ -88,6 +100,7 @@ open class SettingsForm: UITableViewController, Storyboardable {
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         onWillDisappear(animated)
+        bag.removeAll()
     }
 
     final public override func viewDidDisappear(_ animated: Bool) {
