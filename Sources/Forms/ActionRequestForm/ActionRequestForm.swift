@@ -18,6 +18,7 @@ open class ActionRequestForm: UIHostingController<ActionRequestFormUI> {
 public struct ActionRequestFormUI: View {
     @EnvironmentObject public var instance: ActionManager
     public var requests: [ActionRequest]
+    var hasDetailLink = false
 
     enum SectionCase: String, Identifiable, CaseIterable {
         case pending, history
@@ -34,20 +35,43 @@ public struct ActionRequestFormUI: View {
         }
     }
 
+    func hasRequests(for sectionCase: SectionCase) -> Bool {
+        switch sectionCase {
+        case .pending:
+            return instance.requests.contains(where: { !$0.isCompleted })
+        case .history:
+            return instance.requests.contains(where: { $0.isCompleted })
+        }
+    }
+
     public var body: some View {
         List {
             ForEach(sections) { section in
                 Section(header: Text(section.rawValue)) {
-                    ForEach(getRequests(for: section), id: \.id) { request in
-                        switch section {
-                        case .pending:
-                            NavigationLink(destination: ActionRequestDetail(request: request)) {
+                    if hasRequests(for: section) {
+                        ForEach(getRequests(for: section), id: \.id) { request in
+                            switch section {
+                            case .pending:
+                                if hasDetailLink {
+                                    NavigationLink(destination: ActionRequestDetail(request: request)) {
+                                        ActionRequestRow(request: request)
+                                    }
+                                } else {
+                                    ActionRequestRow(request: request)
+                                }
+                            case .history:
                                 ActionRequestRow(request: request)
                             }
-                        case .history:
-                            ActionRequestRow(request: request)
                         }
-
+                    } else {
+                        switch section {
+                        case .pending:
+                            Text("0 request")
+                                .foregroundColor(.secondary)
+                        case .history:
+                            Text("Nothing has happened yet") // "0 item"
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }
