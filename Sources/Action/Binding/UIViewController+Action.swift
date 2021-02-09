@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 import QMobileAPI
 
@@ -34,9 +35,9 @@ extension UIViewController {
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    open var actionSheet: ActionSheet? {
+    open var actionSheet: QMobileAPI.ActionSheet? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? ActionSheet
+            return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? QMobileAPI.ActionSheet
         }
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.actionSheetKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -44,7 +45,7 @@ extension UIViewController {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
                     if let view = self.view {
-                        let items = actionSheetUI.build(from: actionSheet, context: view, handler: ActionManager.instance.prepareAndExecuteAction)
+                        let items = actionSheetUI.build(from: actionSheet, context: view, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
                         actionSheetUI.addActionUIs(items)
                     }
 
@@ -63,7 +64,18 @@ extension UIViewController {
                             let actionContext = LazyActionContext { [weak self] in
                                 return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
                             }
-                            let menu = UIMenu.build(from: actionSheet, context: actionContext, handler: ActionManager.instance.prepareAndExecuteAction)
+                            let actionUI = UIAction(
+                                title: "Operations log",
+                                image: UIImage(systemName: "ellipsis"),
+                                identifier: UIAction.Identifier(rawValue: "action.log"),
+                                attributes: []) { actionUI in
+                                let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
+                                let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
+                                self.present(hostController, animated: true, completion: {
+                                    logger.debug("present action more")
+                                })
+                            }
+                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [actionUI], handler: ActionManager.instance.prepareAndExecuteAction)
                             barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
                         } else {
                             barButton = UIBarButtonItem(customView: button)

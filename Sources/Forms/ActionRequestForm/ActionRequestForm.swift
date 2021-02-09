@@ -16,6 +16,7 @@ public struct ActionRequestFormUI: View {
     @EnvironmentObject public var instance: ActionManager
     public var requests: [ActionRequest]
     var hasDetailLink = false
+    var actionContext: ActionContext?
 
     enum SectionCase: String, Identifiable, CaseIterable {
         case pending, history
@@ -24,12 +25,21 @@ public struct ActionRequestFormUI: View {
     var sections: [SectionCase] = SectionCase.allCases
 
     func getRequests(for sectionCase: SectionCase) -> [ActionRequest] {
+        var requests: [ActionRequest]
         switch sectionCase {
         case .pending:
-            return instance.requests.filter({ !$0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
+            requests = instance.requests.filter({ !$0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
         case .history:
-            return instance.requests.filter({ $0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
+            requests = instance.requests.filter({ $0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
         }
+        if let actionContext = actionContext?.actionContextParameters() {
+            requests = requests .filter {
+                $0.contextParameters?[ActionParametersKey.table] as? String == actionContext[ActionParametersKey.table] as? String
+                    && $0.contextParameters?[ActionParametersKey.record] as? [String: String] == actionContext[ActionParametersKey.record] as? [String: String]
+                    && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == actionContext[ActionParametersKey.record] as? [String: Int]
+            }
+        }
+        return requests.sorted(by: { $0.creationDate > $1.creationDate })
     }
 
     func hasRequests(for sectionCase: SectionCase) -> Bool {

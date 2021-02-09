@@ -79,7 +79,7 @@ extension UITableView: ActionSheetUI {
         guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
 
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
-        var contextualActions = self.build(from: actionSheet, context: context, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
+        var contextualActions = self.build(from: actionSheet, context: context, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
 
         guard contextualActions.count > UITableView.maxVisibleContextualActions else {
             gradientBackgroundColor(contextualActions)

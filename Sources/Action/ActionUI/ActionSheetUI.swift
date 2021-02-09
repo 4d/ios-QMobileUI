@@ -15,7 +15,7 @@ public protocol ActionSheetUI {
     // associatedtype ActionUIItem: ActionUI // XXX swift generic do not work well with objc dynamic and storyboards
     func actionUIType() -> ActionUI.Type
 
-    func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI]
+    func build(from actionSheet: ActionSheet, context: ActionContext, moreActions: [ActionUI]?, handler: @escaping ActionUI.Handler) -> [ActionUI]
     func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI?
 
     func addActionUI(_ item: ActionUI?)
@@ -23,10 +23,10 @@ public protocol ActionSheetUI {
 
 public extension ActionSheetUI {
 
-    func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI] {
+    func build(from actionSheet: ActionSheet, context: ActionContext, moreActions: [ActionUI]?, handler: @escaping ActionUI.Handler) -> [ActionUI] {
         return actionSheet.actions.compactMap {
             return actionUIType().build(from: $0, context: context, handler: handler)
-        }
+        } + (moreActions ?? [])
     }
 
     func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI? {

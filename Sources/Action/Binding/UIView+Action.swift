@@ -52,7 +52,7 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
+                    let items = actionSheetUI.build(from: actionSheet, context: self, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
                     actionSheetUI.addActionUIs(items)
                 } else {
                     // default behaviour: if clicked create a ui alert controller

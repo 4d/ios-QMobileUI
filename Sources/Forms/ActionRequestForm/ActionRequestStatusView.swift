@@ -12,14 +12,18 @@ import QMobileAPI
 struct ActionRequestStatusView: View {
     @State var request: ActionRequest
     var body: some View {
-        if request.state == .executing {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-        } else if request.state == .ready {
+        switch request.state {
+        case .executing:
+            ZStack {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                Text(" ") // to fix padding...
+            }
+        case .ready:
             Image(systemName: "mail.stack")
                 .foregroundColor(.primary)
-        } else {
-            Text(request.statusImage)
+        default:
+            Text(request.statusImage(color: true))
         }
     }
 }
@@ -31,33 +35,56 @@ struct ActionRequestStatusView_Previews: PreviewProvider {
             ActionRequestStatusView(request: ActionRequest.examples[1])
             ActionRequestStatusView(request: ActionRequest.examples[2])
             ActionRequestStatusView(request: ActionRequest.examples[3])
+            ActionRequestStatusView(request: ActionRequest.examples[4])
 
         }.previewLayout(.fixed(width: 32, height: 32))
     }
 }
 
 extension ActionRequest {
-
-    var statusImage: String {
+    func statusImage(color: Bool) -> String {
+        if color {
+            switch state {
+            case .cancelled:
+                return "🚫"
+            case .executing:
+                return " " // replaced by spinner
+            /*case .pending:
+                return "⏸"*/
+            case .ready:
+                return "🆕"
+            case .finished:
+                switch result! {
+                case .success(let value):
+                    if value.success {
+                        return "✅"
+                    } else {
+                        return "⚠️"
+                    }
+                case .failure:
+                    return "❌"
+                }
+            }
+        }
         switch state {
         case .cancelled:
-            return "🚫"
+            return "⌀"
         case .executing:
-            return "-" // replaced by spinner
+            return " " // replaced by spinner
         /*case .pending:
-            return "⏸"*/
+            return "‖"*/
         case .ready:
             return "🆕"
         case .finished:
             switch result! {
             case .success(let value):
                 if value.success {
-                    return "🟢"
+                    return "✓"
                 } else {
-                    return "🟠"
+                    return "⚠"
                 }
             case .failure:
-                return "🔴"
+                return "x"
             }
         }
     }

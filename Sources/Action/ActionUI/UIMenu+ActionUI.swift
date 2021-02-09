@@ -14,14 +14,14 @@ import UIKit
 extension UIMenu: ActionSheetUI {
 
     public func actionUIType() -> ActionUI.Type {
-        return UIAction.self
+        return UIMenuElement.self
     }
 
     public func addActionUI(_ item: ActionUI?) {}
 }
 
 @available(iOS 13.0, *)
-extension UIAction: ActionUI {
+extension UIMenuElement: ActionUI {
 
     public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
         let actionUI = UIAction(
@@ -53,9 +53,10 @@ extension UIMenuElement.Attributes {
 }
 
 extension UIMenu {
-    static func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> UIMenu {
-        let menuItem = actionSheet.actions.compactMap { UIAction.build(from: $0, context: context, handler: handler) as? UIMenuElement }
-        // TODO maybe force destructive if one menu item has destructive
+    static func build(from actionSheet: ActionSheet, context: ActionContext, moreActions: [ActionUI]?, handler: @escaping ActionUI.Handler) -> UIMenu {
+        let more = (moreActions ?? [])
+        let menuItem = actionSheet.actions.compactMap { UIMenuElement.build(from: $0, context: context, handler: handler) as? UIMenuElement } + more.compactMap({ $0 as? UIMenuElement})
+        // XXX maybe force destructive mode if one menu item has destructive
         return UIMenu(title: actionSheet.title ?? "", image: nil, identifier: nil, options: [], children: menuItem)
     }
 }

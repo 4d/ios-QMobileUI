@@ -16,10 +16,9 @@ public struct ActionRequestRow: View {
 
     public var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(spacing: 0) {
                 ActionRequestStatusView(request: request)
-                    .frame(width: 32, height: 32, alignment: .topLeading)
-                    .padding(0)
+                    .frame(width: 24, height: 28, alignment: .topLeading)
                 VStack(alignment: .leading) {
                     Text(request.action.preferredLongLabel)
                         .font(.headline)
@@ -28,6 +27,7 @@ public struct ActionRequestRow: View {
                         .foregroundColor(.secondary)
                         .font(.subheadline)
                 }
+                Spacer()
                 Spacer()
             }
             MetadataView(request: request)
@@ -55,7 +55,8 @@ extension ActionRequest {
             ActionRequest(action: Action.examples[0], state: .ready),
             ActionRequest(action: Action.examples[1], state: .executing),
             ActionRequest(action: Action.examples[1], state: .finished, result: .success(.emptySuccess)),
-            ActionRequest(action: Action.examples[2], state: .finished, result: .success(.emptyFailure))
+            ActionRequest(action: Action.examples[2], state: .finished, result: .success(.emptyFailure)),
+            ActionRequest(action: Action.examples[3], state: .finished, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))
         ]
     }
 
@@ -64,9 +65,10 @@ extension Action {
 
     static var examples: [Action] {
         return [
-            Action(name: "addEmploye"),
-            Action(name: "deleteX"),
-            Action(name: "deleteX")
+            Action(name: "add Employe"),
+            Action(name: "delete X"),
+            Action(name: "delete Y"),
+            Action(name: "modify X")
         ]
     }
 

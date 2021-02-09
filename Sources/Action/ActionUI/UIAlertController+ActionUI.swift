@@ -51,9 +51,9 @@ extension UIAlertController: ActionSheetUI {
 }
 
 extension UIAlertController {
-    static func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> UIAlertController {
+    static func build(from actionSheet: ActionSheet, context: ActionContext, moreActions: [ActionUI]? = nil, handler: @escaping ActionUI.Handler) -> UIAlertController {
         let alertController = UIAlertController(title: actionSheet.title, message: actionSheet.subtitle, preferredStyle: .actionSheet)
-        let items = alertController.build(from: actionSheet, context: context, handler: handler)
+        let items = alertController.build(from: actionSheet, context: context, moreActions: nil, handler: handler)
         alertController.addActionUIs(items)
         alertController.addAction(alertController.dismissAction(title: actionSheet.dismissLabel ?? "Cancel"))
         return alertController
