@@ -36,7 +36,7 @@ public class ActionManager: NSObject, ObservableObject {
     public static let instance = ActionManager()
 
     /// Manage action one by one (see if we can parallelize later by group of concern)
-    //public let operationQueue = OperationQueue(underlyingQueue: .background /*.userInitiated*/, maxConcurrentOperationCount: 1)
+    // public let operationQueue = OperationQueue(underlyingQueue: .background /*.userInitiated*/, maxConcurrentOperationCount: 1)
 
     /// List of requests
     @Published public var requests: [ActionRequest] = []
@@ -62,8 +62,8 @@ public class ActionManager: NSObject, ObservableObject {
 
         $requests.sink { [weak self] requests in
             if !requests.isEmpty {
-                logger.debug("New action requests \(requests)")
-                self?.saveActionRequests()
+                logger.debug("New action request \(String(describing: requests.last))")
+                self?.saveActionRequests(requests)
             }
         }.store(in: &bag)
         registerListener()
@@ -80,6 +80,11 @@ public class ActionManager: NSObject, ObservableObject {
         }.store(in: &bag)*/
     }
 
+    func sendChange() {
+        onForeground {  // XXX use a better place , using observer pattern
+            self.objectWillChange.send()
+        }
+    }
     // MARK: handlers
 
     /// List of avaiable handlers
@@ -134,10 +139,17 @@ public class ActionManager: NSObject, ObservableObject {
         let store: PreferencesType = Prephirences.sharedInstance
         do {
             if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
-                for request in requests {
-                    self.requests.append(request)
-
-                    //self.queue.addRequest(request, request, )
+                self.requests.append(contentsOf: requests)
+                for request in requests where request.state != .finished {
+                        let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
+                        self.queue.addRequest(request, BackgroundActionUI(), request, noWait) { result in
+                            switch result {
+                            case .success(let result):
+                                logger.debug("Background action \(request) finish with result \(result)")
+                            case .failure(let error):
+                                logger.warning("Background action \(request) finish with error \(error)")
+                            }
+                        }
                 }
             }
             checkHistory()
@@ -148,15 +160,24 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     func checkHistory() {
-
-        // TODO remove from requests older requests if finished and more than offlineActionHistoryMax
+        var finished = 0
+        var toRemoves: [Int] = []
+        for (index, request) in requests.enumerated().reversed() /* old at the begining */ where request.state == .finished {
+            finished += 1
+            if finished > offlineActionHistoryMax {
+                toRemoves.append(index)
+            }
+        }
+        for toRemove in toRemoves where toRemove < requests.count {
+            requests.remove(at: toRemove)
+        }
     }
 
-    func saveActionRequests() {
+    func saveActionRequests(_ requests: [ActionRequest]? = nil) {
         // if possible call it when list published change (and any element)
         let store: MutablePreferencesType? = Prephirences.sharedMutableInstance
         do {
-            try store?.set(encodable: self.requests, forKey: "action.requests")
+            try store?.set(encodable: requests ?? self.requests, forKey: "action.requests")
         } catch {
             logger.warning("Failed to save actions history and draft \(error)")
         }
@@ -210,7 +231,7 @@ public class ActionManager: NSObject, ObservableObject {
         request.result = result
 
         if offlineAction {
-            //onOfflineActionResult(result, request, completionHandler, actionUI, context)
+            // onOfflineActionResult(result, request, completionHandler, actionUI, context)
         } else {
             // Display result or do some actions (incremental etc...)
             switch result {
@@ -231,11 +252,11 @@ public class ActionManager: NSObject, ObservableObject {
                     return
                 }
                 // tempo code to see diff between task to relaunch or not
-                if error.mustRetry {
+                /*if error.mustRetry {
                     request.state = .pending
                 } else {
                     request.state = .finished // with error
-                }
+                }*/
 
                 SwiftMessages.showError(error)
                 _ = completionHandler?(.failure(error))
@@ -331,6 +352,7 @@ extension ActionManager: ActionExecutor {
             request.state = .ready
             self.requests.append(request)
             self.queue.addRequest(request, actionUI, context, waitPresenter, completionHandler)
+            self.objectWillChange.send()
         } else {
             let actionQueue: DispatchQueue = .background
             actionQueue.async {
@@ -386,7 +408,6 @@ extension ActionManager: ReachabilityListener, ServerStatusListener {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
         self.isSuspended = !serverStatus.isSuccess
-
     }
 }
 
@@ -411,5 +432,14 @@ class ActionOperation: Operation {
 
     override func main () {
 
+    }
+}
+
+// placeholder for UI elements if no more element
+// Handlers use it mainly to present new elements, maybe remove that!
+struct BackgroundActionUI: ActionUI {
+    static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI {
+        // maybe object must allow to repopen a new dialog using actionmanager
+        return BackgroundActionUI()
     }
 }

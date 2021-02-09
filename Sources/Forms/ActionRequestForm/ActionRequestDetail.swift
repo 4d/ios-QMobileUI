@@ -12,7 +12,7 @@ import SwiftUI
 import QMobileAPI
 
 public struct ActionRequestDetail: View {
-    @State var request: ActionRequest
+    let request: ActionRequest
     @State var txt: String = ""
 
     public var body: some View {
@@ -41,6 +41,6 @@ public struct ActionRequestDetail: View {
 
 struct ActionDetail_Previews: PreviewProvider {
     static var previews: some View {
-        ActionRequestDetail(request: ActionRequest(action: Action(name: "addEmploye")))
+        ActionRequestDetail(request: ActionRequest.examples[0])
     }
 }

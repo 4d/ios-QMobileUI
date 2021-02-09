@@ -80,6 +80,7 @@
 		4846083D20AF07DD00EE4696 /* FloatingLabelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846083B20AF07DD00EE4696 /* FloatingLabelTextField.swift */; };
 		4846083F20AF07F600EE4696 /* CircleProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846083E20AF07F600EE4696 /* CircleProgressBar.swift */; };
 		4846084120AF07FB00EE4696 /* IconLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846084020AF07FB00EE4696 /* IconLabel.swift */; };
+		4846C18825D2898F00BD459D /* MetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846C18725D2898F00BD459D /* MetadataView.swift */; };
 		4848E0EF21B181E800DB65A2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4848E0ED21B181E700DB65A2 /* LoadingView.swift */; };
 		484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484FFE31213E66E3003F01B8 /* String+Binding.swift */; };
 		4853BD622105A948004B2467 /* NSAttributedString+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4853BD612105A948004B2467 /* NSAttributedString+QMobile.swift */; };
@@ -129,6 +130,7 @@
 		48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */; };
 		48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */; };
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
+		48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */; };
 		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
 		48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */; };
 		48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */; };
@@ -328,6 +330,7 @@
 		4846083B20AF07DD00EE4696 /* FloatingLabelTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatingLabelTextField.swift; sourceTree = "<group>"; };
 		4846083E20AF07F600EE4696 /* CircleProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleProgressBar.swift; sourceTree = "<group>"; };
 		4846084020AF07FB00EE4696 /* IconLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconLabel.swift; sourceTree = "<group>"; };
+		4846C18725D2898F00BD459D /* MetadataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetadataView.swift; sourceTree = "<group>"; };
 		4848E0ED21B181E700DB65A2 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		484FFE31213E66E3003F01B8 /* String+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Binding.swift"; sourceTree = "<group>"; };
 		4853BD612105A948004B2467 /* NSAttributedString+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+QMobile.swift"; sourceTree = "<group>"; };
@@ -377,6 +380,7 @@
 		48AE2C5F1F45754D0013FDEE /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		48AE2C601F4575590013FDEE /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		48AE2C611F4577A40013FDEE /* BrightFutures.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightFutures.framework; path = Carthage/Build/iOS/BrightFutures.framework; sourceTree = "<group>"; };
+		48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRequestStatusView.swift; sourceTree = "<group>"; };
 		48B23CFA2231154C00F6D94C /* UIView+Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Action.swift"; sourceTree = "<group>"; };
 		48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+ActionUI.swift"; sourceTree = "<group>"; };
 		48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Floaty+ActionUI.swift"; sourceTree = "<group>"; };
@@ -1217,9 +1221,11 @@
 		C4F6F6AA25C164A300802593 /* ActionRequestForm */ = {
 			isa = PBXGroup;
 			children = (
+				4846C18725D2898F00BD459D /* MetadataView.swift */,
 				C4F6F6A625C1649D00802593 /* ActionRequestForm.swift */,
 				C4F6F6AF25C1668F00802593 /* ActionRequestRow.swift */,
 				C4F6F6B325C1677500802593 /* ActionRequestDetail.swift */,
+				48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */,
 			);
 			path = ActionRequestForm;
 			sourceTree = "<group>";
@@ -1475,6 +1481,7 @@
 				48D43CEF22CE48160013432C /* RowOfComparable.swift in Sources */,
 				480A36FF22C276170019BC39 /* ChoiceList.swift in Sources */,
 				489C15D41F3A18B7004844F3 /* ListForm+DataSync.swift in Sources */,
+				4846C18825D2898F00BD459D /* MetadataView.swift in Sources */,
 				C4585D2F236B13BD00A96AF7 /* CrashStatus.swift in Sources */,
 				483FDA831E826C9900FAF84B /* UIView+QMobile.swift in Sources */,
 				4859D95C1F827E6800C8A020 /* SettingsForm.swift in Sources */,
@@ -1615,6 +1622,7 @@
 				48B23D072231154C00F6D94C /* UIAlertController+ActionUI.swift in Sources */,
 				48BC856C226EF96400D548B2 /* UIAlertController+TextView.swift in Sources */,
 				4881205D20FDEF510041D774 /* LogForm.swift in Sources */,
+				48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */,
 				C489F5BD255D203300EED0C1 /* ActionRequestOperation.swift in Sources */,
 				4827B5D320FCE1C500570AC8 /* ApplicationFeedBack.swift in Sources */,
 				4869D606223BA2920042379F /* DataSource+ActionContext.swift in Sources */,

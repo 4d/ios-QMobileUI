@@ -34,15 +34,6 @@ public protocol ActionContextProvider {
     func actionContext() -> ActionContext?
 }
 
-/// Some well known key for ActionParameters (not public yet)
-struct ActionParametersKey {
-    static let table = "dataClass"
-    static let record = "entity"
-    static let primaryKey = "primaryKey"
-    static let parent = "parent"
-    static let relationName = "relationName"
-}
-
 extension ActionParameter {
 
     // Do the better to cast data according to action parameter type.

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 import Prephirences
 import Moya
@@ -125,7 +126,8 @@ open class SettingsForm: UITableViewController, Storyboardable {
     }
 
     @IBSegueAction open func segue2SwiftUI(_ coder: NSCoder) -> UIViewController? {
-        return ActionRequestForm(coder: coder, rootView: ActionRequestFormUI(requests: ActionManager.instance.requests))
+        // return ActionRequestForm(coder: coder, rootView: ActionRequestFormUI(requests: ActionManager.instance.requests).environmentObject(ActionManager.instance)) // swiftlint:disable:this force_cast
+        return UIHostingController(coder: coder, rootView: ActionRequestFormUI(requests: ActionManager.instance.requests).environmentObject(ActionManager.instance))
     }
 
     @objc func application(didEnterBackground notification: Notification) {

@@ -54,7 +54,7 @@ extension ActionResult {
 
     // Show message as info message
     static var statusTextBlock: ActionResultHandler.Block {
-        return {result, _, actionUI, _ in
+        return {result, _, _, _ in
             guard let statusText = result.statusText else { return false }
             if result.success {
                 SwiftMessages.info(statusText)
