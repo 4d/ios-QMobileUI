@@ -22,14 +22,14 @@ struct RecordFormatter {
     }
 
     class Lexer {
-        typealias TokenBuilder = (String, CountableRange<Int>) -> Token? //swiftlint:disable:this nesting
+        typealias TokenBuilder = (String, CountableRange<Int>) -> Token? // swiftlint:disable:this nesting
         static let tokenStringList: [String: TokenBuilder] = [
             ":[a-zA-Z][a-zA-Z0-9]*": ({ .field($0, $1) }),
             "%[\\w ]*%": ({ .fieldOriginal($0, $1) })
         ]
-        typealias TokenRegularExpression = (NSRegularExpression, TokenBuilder) //swiftlint:disable:this nesting
+        typealias TokenRegularExpression = (NSRegularExpression, TokenBuilder) // swiftlint:disable:this nesting
         static let tokenList: [TokenRegularExpression] = tokenStringList.map {
-            (try! NSRegularExpression(pattern: "^\($0.0)", options: []), $0.1) //swiftlint:disable:this force_try
+            (try! NSRegularExpression(pattern: "^\($0.0)", options: []), $0.1) // swiftlint:disable:this force_try
         }
         /// Split input string to tokens
         static func tokenize(_ input: String) -> [Token] {

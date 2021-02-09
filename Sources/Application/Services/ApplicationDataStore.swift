@@ -31,8 +31,8 @@ extension ApplicationDataStore: ApplicationService {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        //var dataStore = self.dataStore
-        //dataStore.delegate = self
+        // var dataStore = self.dataStore
+        // dataStore.delegate = self
         registerEvent(dataStore)
         self.load()
     }
@@ -114,8 +114,8 @@ extension ApplicationDataStore {
 
     fileprivate func registerEvent(_ dataStore: DataStore) {
         // Register to some event to log (XXX could be done by delegate some remove it and move the code)
-        //listeners += [ds.onDrop(queue: operationQueue) { _ in }]
-        //listeners += [ds.onSave(queue: operationQueue) { _ in }]
+        // listeners += [ds.onDrop(queue: operationQueue) { _ in }]
+        // listeners += [ds.onSave(queue: operationQueue) { _ in }]
         if logger.isEnabledFor(level: .debug) {
             let logDataStore: (Notification) -> Void = { notification in
                 logger.debug("\(notification)")

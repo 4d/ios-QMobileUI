@@ -209,7 +209,7 @@ open class Binder: NSObject {
         }
     }
 
-    ///fileprivate var updateViewOnDidSet = true
+    /// fileprivate var updateViewOnDidSet = true
 
     /*
     internal func beginUpdateView() {
@@ -227,7 +227,7 @@ open class Binder: NSObject {
     /// If put an image or data into restImage, manage it
     fileprivate func fix(key: inout String, accordingTo extractedValue: Any?) {
         if key == "restImage" { // for test purpose, fix type
-            //logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
+            // logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
             if extractedValue is Data {
                 key = "imageData"
             } else if extractedValue is UIImage {

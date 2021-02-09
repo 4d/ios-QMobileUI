@@ -109,15 +109,15 @@ extension ApplicationCrashManager {
 
     func send(crashs: [Path]) {
         let data: Path = .userTemporary + "data"
-        //clean tmp
+        // clean tmp
         self.deleteCrashFile(pathCrash: data, zipPath: .userTemporary + "data.zip")
-        //add log files corresponding to the crash files
+        // add log files corresponding to the crash files
         for crash in crashs {
             if zipFile(crashFile: crash) {
                 getLogFromCrach(crashFile: crash)
             }
         }
-        //zip folder tmp and send
+        // zip folder tmp and send
         zipAndSend(crashFile: data, crashsFiles: crashs)
     }
 
@@ -169,7 +169,7 @@ extension ApplicationCrashManager {
 
             send(file: zipPath, parameters: applicationInformation) { success in
                 if success {
-                    //delete crash file
+                    // delete crash file
                     for crash in crashsFiles {
                         self.deleteCrashFile(pathCrash: crash, zipPath: zipPath)
                     }

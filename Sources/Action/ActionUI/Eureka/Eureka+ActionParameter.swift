@@ -75,7 +75,7 @@ extension ActionParameter {
 
     // Create a row according to format and type
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
-    private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { //swiftlint:disable:this function_body_length
+    private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
         if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
 
             // XXX multiple interface to choose between list

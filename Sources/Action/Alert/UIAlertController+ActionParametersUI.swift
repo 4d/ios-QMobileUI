@@ -13,7 +13,7 @@ import Combine
 extension UIAlertController: ActionParametersUI {
 
     /// Build an action controller for one field
-    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl? { //swiftlint:disable:this function_body_length
+    static func build(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) -> ActionParametersUIControl? { // swiftlint:disable:this function_body_length
         guard let parameters = action.parameters, let parameter = parameters.first else {
             return nil
         }

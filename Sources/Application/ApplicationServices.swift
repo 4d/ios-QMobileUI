@@ -92,12 +92,12 @@ public struct ApplicationServiceUserInfoKey {
 extension UIApplication {
 
     public static let openUrlWithOptionsNotification: Notification.Name = .init("UIApplicationOpenUrlWithOptions")
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     public static let didRegisterForRemoteWithDeviceTokenNotification: NSNotification.Name = .init("UIApplicationDidRegisterForRemoteWithDeviceToken")
     public static let didFailToRegisterForRemoteNotifications: NSNotification.Name = .init("UIApplicationDidFailToRegisterForRemoteNotifications")
 
     public static let didUpdateUserActivityNotification: NSNotification.Name = .init("UIApplicationDidUpdateUserActivity")
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     public static let didFailToContinueUserActivityNotification: NSNotification.Name = .init("UIApplicationDidFailToContinueUserActivity")
     public static let willContinueUserActivityNotification: NSNotification.Name = .init("UIApplicationWillContinueUserActivity")
     public static let continueUserActivityNotification: NSNotification.Name = .init("UIApplicationContinueUserActivity")

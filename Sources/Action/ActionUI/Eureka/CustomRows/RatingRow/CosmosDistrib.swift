@@ -1542,4 +1542,4 @@ struct RightToLeft {
 
         update()
     }
-}//swiftlint:disable:this file_length
+}// swiftlint:disable:this file_length

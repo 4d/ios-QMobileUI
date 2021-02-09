@@ -17,7 +17,7 @@ import Moya
 import SwiftMessages
 
 @IBDesignable
-open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlint:disable:this type_body_length
+open class ListFormTable: UITableViewController, ListFormSearchable { // swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource? {
         return tableDataSource
@@ -366,8 +366,8 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
     }
 
     open func installDataEmptyView() {
-        //self.tableView.emptyDataSetSource = self
-        //self.tableView.emptyDataSetDelegate = self
+        // self.tableView.emptyDataSetSource = self
+        // self.tableView.emptyDataSetDelegate = self
     }
 
     /// Install the seach bar if defined using storyboard IBOutlet
@@ -402,10 +402,10 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
         parentView.addSubview(loadingView!)
         parentView.bringSubviewToFront(loadingView!)*/
     }
-    //@objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
 
     open func dataSourceDidChangeContent(_ dataSource: DataSource) {
         /*DispatchQueue.main.async {
@@ -418,7 +418,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { //swiftlin
             foreground { [self] in
                 if self.dataSource?.fetchedRecords.count == 1/*, let record = self.dataSource?.fetchedRecords.first*/ {
                     // self.tableView.selectRow(at: .zero, animated: false, scrollPosition: .none)
-                    //self.tableView(self.tableView, didSelectRowAt: .zero)
+                    // self.tableView(self.tableView, didSelectRowAt: .zero)
                     self.performSegue(withIdentifier: self.selectedSegueIdentifier, sender: self.tableView.visibleCells.first)
                 }
                 self.searchOpenIfOne = self.searchOpenIfOneRestoreValue

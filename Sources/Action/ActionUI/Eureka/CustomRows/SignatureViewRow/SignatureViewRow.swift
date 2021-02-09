@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import Eureka
-//import DeviceKit
+// import DeviceKit
 
 public class SignatureViewCell: Cell<UIImage>, CellType, SignatureViewDelegate {
     @IBOutlet weak var clearBtn: UIImageView!
@@ -54,7 +54,7 @@ public final class SignatureViewRow: Row<SignatureViewCell>, RowType {
     public override func customUpdateCell() {
         /*  self.cell?.signView.isOpaque = true
          self.cell?.signView.isUserInteractionEnabled = true*/
-        //self.cell?.signView.isExclusiveTouch = true
+        // self.cell?.signView.isExclusiveTouch = true
     }
 }
 
@@ -95,8 +95,8 @@ class SignatureView: UIView, SignatureViewProtocol {
         subview = LegacySignatureView(frame: self.bounds)
         /*}*/
         // backgroundColor = .systemGray6
-        //subview.backgroundColor = .red
-        //self.insertSubview(subview, at: 1)
+        // subview.backgroundColor = .red
+        // self.insertSubview(subview, at: 1)
         self.addSubview(subview)
         subview.snap(to: self)
 

@@ -148,7 +148,7 @@ extension FeedbackForm: UITextViewDelegate {
 open class PlaceholderTextView: UITextView {
 
     // Keep current color to restore it
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     var _textColor: UIColor?
 
     @IBInspectable open var placeholder: String = "" {

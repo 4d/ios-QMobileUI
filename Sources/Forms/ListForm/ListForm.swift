@@ -192,7 +192,7 @@ extension ListForm where Self: UIViewController {
                 // if UIApplication.topViewController?.firstController == self {
                 LinearProgressBar.removeAllProgressBars(self.view)
                 LinearProgressBar.showProgressBar(self.view) // DO not show animated bar in not visible controller, 100%cpu
-                //}
+                // }
             }
         } else {
             foreground {

@@ -100,7 +100,7 @@ open class BarcodeScannerViewController: UIViewController {
         // launch a capture session
         do {
             captureSession = AVCaptureSession()
-            //captureSession.beginConfiguration()
+            // captureSession.beginConfiguration()
            // captureSession.connections.first?.videoOrientation = .landscapeLeft
 
             // with camera as input

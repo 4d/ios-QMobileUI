@@ -51,7 +51,7 @@ public protocol ApplicationService {
 // Remap notifications to all services
 fileprivate extension Notification {
     var application: UIApplication {
-        //swiftlint:disable:next force_cast
+        // swiftlint:disable:next force_cast
         return self.object as! UIApplication
     }
 }

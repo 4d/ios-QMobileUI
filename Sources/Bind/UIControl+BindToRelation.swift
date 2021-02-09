@@ -160,7 +160,7 @@ extension UIControl: RelationInfoUI {
             // If no data to bind, empty the widget (this is done one time before binding)
             self.isEnabled = false
             if self.relationLabel.isEmpty, let title = button.title(for: .normal), !title.isEmpty {
-                self.relationLabel = title //Backup to restore it
+                self.relationLabel = title // Backup to restore it
             }
             button.setTitle("", for: .normal)
             removeRelationSegue()
@@ -179,7 +179,7 @@ extension UIControl: RelationInfoUI {
     @objc func touchDown(sender: UIControl!) {
         UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseOut, animations: {
             sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }) { _ in //swiftlint:disable:this multiple_closures_with_trailing_closure
+        }) { _ in // swiftlint:disable:this multiple_closures_with_trailing_closure
             UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseOut, animations: {
                 sender.transform = CGAffineTransform(scaleX: 1, y: 1)
             }, completion: nil)

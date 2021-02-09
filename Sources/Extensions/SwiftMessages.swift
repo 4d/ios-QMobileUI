@@ -218,7 +218,7 @@ extension SwiftMessages {
 
     public static func loading(_ message: String = "") {
         onForeground {
-            //swiftlint:disable:next force_try
+            // swiftlint:disable:next force_try
             let view: LoadingView = try! SwiftMessages.viewFromNib()
             view.backgroundView.backgroundColor = UIColor.init(white: 0.97, alpha: 1)
             view.backgroundView.layer.cornerRadius = 10

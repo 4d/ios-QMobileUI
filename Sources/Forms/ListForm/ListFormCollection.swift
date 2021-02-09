@@ -17,7 +17,7 @@ import Moya
 import SwiftMessages
 
 @IBDesignable
-open class ListFormCollection: UICollectionViewController, ListFormSearchable { //swiftlint:disable:this type_body_length
+open class ListFormCollection: UICollectionViewController, ListFormSearchable { // swiftlint:disable:this type_body_length
 
     public var dataSource: DataSource? {
         return collectionDataSource
@@ -216,7 +216,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     override open func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         // This will cancel all unfinished downloading task when the cell disappearing.
 
-        //(cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
+        // (cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
 
     public override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -348,7 +348,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     }
 
     open func installDataEmptyView() {
-        //self.collectionView?.emptyDataSetSource = self
+        // self.collectionView?.emptyDataSetSource = self
         // self.collectionView?.emptyDataSetDelegate = self
     }
 
@@ -377,10 +377,10 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
          parentView.addSubview(loadingView!)
          parentView.bringSubviewToFront(loadingView!)*/
     }
-    //@objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
-    //@objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didInsertRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didUpdateRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didDeleteRecord record: Record, atIndexPath indexPath: IndexPath)
+    // @objc func dataSource(_ dataSource: DataSource, didMoveRecord record: Record, fromIndexPath oldIndexPath: IndexPath, toIndexPath newIndexPath: IndexPath)
 
     open func dataSourceDidChangeContent(_ dataSource: DataSource) {
         /*DispatchQueue.main.async {
@@ -392,8 +392,8 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         if self.searchOpenIfOne {
             foreground {
                 if self.dataSource?.fetchedRecords.count == 1/*, let record = self.dataSource?.fetchedRecords.first*/ {
-                    //self.collectionView.selectRow(at: .zero, animated: false, scrollPosition: .none)
-                    //self.collectionView(self.collectionView, didSelectRowAt: .zero)
+                    // self.collectionView.selectRow(at: .zero, animated: false, scrollPosition: .none)
+                    // self.collectionView(self.collectionView, didSelectRowAt: .zero)
                     self.performSegue(withIdentifier: self.selectedSegueIdentifier, sender: self.collectionView.visibleCells.first)
                 }
                 self.searchOpenIfOne = self.searchOpenIfOneRestoreValue
@@ -475,10 +475,10 @@ extension ListFormCollection {
         self.searchBar?.endEditing(true)
     }
 
-    //action go to next section
+    // action go to next section
     @IBAction func nextHeader(_ sender: UIButton) {
         let lastSectionIndex = collectionView?.numberOfSections
-        let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] //self.collectionView.indexPathsForVisibleRows?[1]
+        let firstVisibleIndexPath = self.collectionView?.indexPathsForVisibleItems[1] // self.collectionView.indexPathsForVisibleRows?[1]
         if (firstVisibleIndexPath?.section)! < lastSectionIndex! - 1 {
             previousButton?.alpha = 1
             nextButton?.alpha = 1
@@ -488,7 +488,7 @@ extension ListFormCollection {
         }
     }
 
-    //action back to previous section
+    // action back to previous section
     @IBAction func previousItem(_ sender: Any?) {
         let firstVisibleIndexPath = collectionView?.indexPathsForVisibleItems[1]
         if (firstVisibleIndexPath?.section)! > 0 {
@@ -524,12 +524,12 @@ extension ListFormCollection: UICollectionViewDataSourcePrefetching {
     }
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        //let records = indexPaths.flatMap {dataSo
+        // let records = indexPaths.flatMap {dataSo
 
         // get all image urls from records
-        //let urls: [URL] = [] // records.flatMap {  }
-        //let imagePrefetcher = ImagePrefetcher(urls: urls)
-        //imagePrefetcher.start()
+        // let urls: [URL] = [] // records.flatMap {  }
+        // let imagePrefetcher = ImagePrefetcher(urls: urls)
+        // imagePrefetcher.start()
     }
 
     // public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {}

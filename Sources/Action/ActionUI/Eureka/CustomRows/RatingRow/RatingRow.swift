@@ -18,7 +18,7 @@ public class RatingCell: Cell<Int>, CellType {
     }()
 
     private var ratingRow: RatingRow {
-        return row as! RatingRow //swiftlint:disable:this force_cast
+        return row as! RatingRow // swiftlint:disable:this force_cast
     }
 
     open override func setup() {

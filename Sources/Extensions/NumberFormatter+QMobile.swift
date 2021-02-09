@@ -140,12 +140,12 @@ extension NumberFormatter {
 }
 
 extension Locale {
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     static let us = Locale(identifier: "en_US")
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     static let jp = Locale(identifier: "ja_JP")
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     static let fr = Locale(identifier: "fr_FR")
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     static let gb = Locale(identifier: "en_GB")
 }

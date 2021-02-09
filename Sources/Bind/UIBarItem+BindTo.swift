@@ -26,7 +26,7 @@ extension UIBarItem: Binded {
             objc_setAssociatedObject(self, &xoAssociationKey, bindTo, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
         bindTo?.resetKeyPath()
-        return bindTo! //swiftlint:disable:this force_cast
+        return bindTo! // swiftlint:disable:this force_cast
     }
     #endif
 

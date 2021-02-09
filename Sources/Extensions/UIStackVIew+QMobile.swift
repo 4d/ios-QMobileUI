@@ -11,7 +11,7 @@ import UIKit
 extension UIStackView {
 
     /// Configure intermediate stack view. By default `.horizontal` and `.fillEqually`
-    public static let defaultRearrangeConfigure: ((UIStackView, Int) -> Void) = { configurableStackView, index in
+    public static let defaultRearrangeConfigure: ((UIStackView, Int) -> Void) = { configurableStackView, _ in
         configurableStackView.alignment = .fill
         configurableStackView.distribution = .fillEqually
         configurableStackView.axis = .horizontal

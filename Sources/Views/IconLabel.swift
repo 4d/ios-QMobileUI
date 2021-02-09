@@ -55,7 +55,7 @@ open class IconLabel: UILabel {
         case bottom
     }
 
-    //swiftlint:disable:next identifier_name
+    // swiftlint:disable:next identifier_name
     var _imagePosition: ImagePosition = .left {
         didSet {
             configureView()

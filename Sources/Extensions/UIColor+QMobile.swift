@@ -53,7 +53,7 @@ extension UIColor {
         return String(format: "#%06x", rgb)
     }
 
-    //swiftlint:disable:next large_tuple
+    // swiftlint:disable:next large_tuple
     var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
         var red: CGFloat = 0
         var green: CGFloat = 0

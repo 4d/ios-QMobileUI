@@ -54,7 +54,7 @@ extension UIApplication {
 extension UIApplicationDelegate {
 
     public static var shared: UIApplicationDelegate {
-        //swiftlint:disable:next force_cast
+        // swiftlint:disable:next force_cast
         return UIApplication.shared.delegate!
     }
 

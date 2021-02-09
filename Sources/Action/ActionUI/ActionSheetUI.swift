@@ -12,7 +12,7 @@ import UIKit
 import QMobileAPI
 
 public protocol ActionSheetUI {
-    //associatedtype ActionUIItem: ActionUI // XXX swift generic do not work well with objc dynamic and storyboards
+    // associatedtype ActionUIItem: ActionUI // XXX swift generic do not work well with objc dynamic and storyboards
     func actionUIType() -> ActionUI.Type
 
     func build(from actionSheet: ActionSheet, context: ActionContext, handler: @escaping ActionUI.Handler) -> [ActionUI]

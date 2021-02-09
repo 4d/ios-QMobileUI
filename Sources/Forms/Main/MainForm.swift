@@ -46,7 +46,7 @@ open class Main: UIViewController, Form {
 
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let loginForm = segue.destination as? LoginForm {
-            loginForm.delegate = ApplicationAuthenticate.instance as! ApplicationAuthenticate //swiftlint:disable:this force_cast
+            loginForm.delegate = ApplicationAuthenticate.instance as! ApplicationAuthenticate // swiftlint:disable:this force_cast
         }
         segue.fix()
     }
@@ -83,7 +83,7 @@ open class Main: UIViewController, Form {
         }
     }
 
-    var _style: UIUserInterfaceStyle = .unspecified //swiftlint:disable:this identifier_name
+    var _style: UIUserInterfaceStyle = .unspecified // swiftlint:disable:this identifier_name
 
 }
 

@@ -98,7 +98,7 @@ extension ApplicationReachability {
     }
 
     fileprivate func startMonitoringReachability() {
-        //self.reachability = APIManager.instance.reachability { status in
+        // self.reachability = APIManager.instance.reachability { status in
         self.reachabilityTask = APIManager.reachability { status in
             self.reachabilityStatus = status
             switch status {

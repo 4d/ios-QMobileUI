@@ -22,7 +22,7 @@ public extension ErrorMessageable {
 
 public typealias ErrorMessageableTextField = UITextField & ErrorMessageable
 
-//swiftlint:disable:next type_body_length
+// swiftlint:disable:next type_body_length
 @IBDesignable open class FloatingLabelTextField: ErrorMessageableTextField {
 
     @objc dynamic open var titleFadeInDuration: TimeInterval = 0.2

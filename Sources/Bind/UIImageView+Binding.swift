@@ -111,7 +111,7 @@ extension UIImageView {
                     #if DEBUG
                     assert(ApplicationImageCache.isCached(imageResource)) // if failed maybe preprocessor
                     #endif
-                    //self.setNeedsDisplay() // force refresh ??
+                    // self.setNeedsDisplay() // force refresh ??
                 case .failure(let error):
                     ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
                     _ = self.kf.setImage(with: imageResource.bundleProvider,

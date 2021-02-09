@@ -32,7 +32,7 @@ extension LoginForm {
         var destination: UIViewController {
             switch self {
             case .logged:
-                return MainNavigation.instantiateInitialViewController()!//swiftlint:disable:this force_cast
+                return MainNavigation.instantiateInitialViewController()!// swiftlint:disable:this force_cast
             }
         }
     }

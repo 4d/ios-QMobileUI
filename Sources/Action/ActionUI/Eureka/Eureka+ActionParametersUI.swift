@@ -123,7 +123,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 let rowIndex = settings.useSection ? indexPath.section: indexPath.row
                 self.rowHasBeenEdited.insert(rowIndex)
                 self.tableView?.reloadSections([rowIndex], with: .none)
-                //self.tableView?.reloadData()
+                // self.tableView?.reloadData()
             }
 
             // Expand text area
@@ -283,12 +283,12 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         sendActionRequest()
             .receiveOnForeground()
             .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    self.fillErrors(error)
+                sender.isEnabled = true
+                if case .failure(let error) = completion, self.fillErrors(error) {
+                    // keep UI open
                 } else {
                     self.dismiss()
                 }
-                sender.isEnabled = true
             }, receiveValue: { _ in })
             .store(in: &cancellables)
     }
@@ -429,19 +429,24 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 }
                 return actionResult
             }
-            .mapError({ $0 as! ActionFormError }) //swiftlint:disable:this force_cast (How to force type after a tryMap?)
+            .mapError({ $0 as! ActionFormError }) // swiftlint:disable:this force_cast (How to force type after a tryMap?)
             .asVoid() // we do not care about success result
             .eraseToAnyPublisher()
     }
 
     // MARK: errors
 
-    func fillErrors(_ error: ActionFormError) {
+    func fillErrors(_ error: ActionFormError) -> Bool {
         switch error {
         case .validation(let validationError):
             self.fillErrors(validationError)
+            return true
         default:
-            self.fillErrors(error.displayableErrors)
+            if let displayableErrors = error.displayableErrors {
+                self.fillErrors(displayableErrors)
+                return true
+            }
+            return false
         }
     }
 
@@ -454,7 +459,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 row.baseCell.cellBecomeFirstResponder(withDirection: .down)
             } else {
                 // one section by field, scroll to section
-                //row.selectScrolling(animated: animated)
+                // row.selectScrolling(animated: animated)
                 row.section?.selectScrolling(animated: animated)
                 row.baseCell.cellBecomeFirstResponder(withDirection: .down)
             }
@@ -603,7 +608,7 @@ extension BaseRow {
 extension Section {
     func selectScrolling(animated: Bool = false) {
         guard let index = index, let controller = self.form?.delegate as? FormViewController, let tableView = controller.tableView  else { return }
-        //tableView.scrollToRow(at: IndexPath(row: 0/*NSNotFound*/, section: index), at: .top, animated: animated)
+        // tableView.scrollToRow(at: IndexPath(row: 0/*NSNotFound*/, section: index), at: .top, animated: animated)
 
         // implement to scroll if not visible only
         let sectionRect: CGRect = tableView.rect(forSection: index)
@@ -665,7 +670,7 @@ extension ActionFormViewController: ActionParametersUI {
         return navigationController
     }
 }
-//swiftlint:disable:this file_length
+// swiftlint:disable:this file_length
 
 // MARK: ActionFormError
 enum ActionFormError: Error {
@@ -677,7 +682,7 @@ enum ActionFormError: Error {
 
 extension ActionFormError {
 
-    var displayableErrors: [String: [String]] {
+    var displayableErrors: [String: [String]]? {
         switch self {
         case .components(let errors):
             var errorsByComponents: [String: [String]] = [:]
@@ -691,13 +696,16 @@ extension ActionFormError {
                     errorsByComponents[tag]?.append(message)
                 }
             }
+            if errorsByComponents.isEmpty {
+                return nil
+            }
             return errorsByComponents
         case .upload(let errors):
             return errors.mapValues({ ["Failed to upload", $0.localizedDescription] })
         case .validation:
-            return [:] // let do elsewhere
+            return nil
         case .request(let error):
-            guard let restErrors = error.restErrors else { return [:] }
+            guard let restErrors = error.restErrors else { return nil }
             // get a dictionary of row/errors
             let errorsByComponents: [String: [String]] = restErrors.errors.asDictionaryOfArray(transform: { error in
                 return [error.componentSignature: error.message]

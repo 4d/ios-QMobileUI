@@ -31,7 +31,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
     @IBInspectable open var saveLoginInfo: Bool = Prephirences.Auth.Login.save
 
     /// Segue to go to passcode form
-    //@IBInspectable open var passcodeSegueIdentifier: String = "passcode"
+    // @IBInspectable open var passcodeSegueIdentifier: String = "passcode"
 
     /// Constaint for view at the bottom.
     @IBOutlet weak open var bottomLayoutConstraint: NSLayoutConstraint!
@@ -201,7 +201,7 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
     /// The login text field is no more edited.
     open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        //textField.resignFirstResponder() // Dismiss the keyboard
+        // textField.resignFirstResponder() // Dismiss the keyboard
         login(textField)
         return true
     }

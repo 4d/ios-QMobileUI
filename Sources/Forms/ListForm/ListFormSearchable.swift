@@ -108,9 +108,9 @@ extension ListFormSearchable where Self: UIViewController {
         }
 
         if let searchTextField = searchBar?.searchTextField, let navigationBarColor = self.navigationController?.navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor ?? searchTextField.textColor {
-            //if !searchableAsTitle {
+            // if !searchableAsTitle {
             searchTextField.textColor = navigationBarColor
-            //}
+            // }
             searchTextField.tintColor = navigationBarColor
             searchTextField.leftView?.tintColor = navigationBarColor
             searchTextField.rightView?.tintColor = navigationBarColor
@@ -179,10 +179,10 @@ extension ListFormSearchable where Self: UIViewController {
     }
 
     func do_updateSearchResults(for searchController: UISearchController) {
-        //let searchBar = searchController.searchBar
-        //if let searchText = searchBar.text {
-        //performSearch(searchText) // already done by search bar listener
-        //}
+        // let searchBar = searchController.searchBar
+        // if let searchText = searchBar.text {
+        // performSearch(searchText) // already done by search bar listener
+        // }
     }
 
     func do_searchScopeChange(_ searchBar: UISearchBar, to selectedScope: Int) {

@@ -25,7 +25,7 @@ extension ApplicationCoordinator: ApplicationService {
     static var mainCoordinator = MainCoordinator()
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-        //_ = UIViewController.enableCoordinatorSegues
+        // _ = UIViewController.enableCoordinatorSegues
         guard let options = launchOptions,
             /*let userActivtyDictionary = options[.userActivityDictionary] as? [UIApplication.LaunchOptionsKey: Any],
              let userActivityType = userActivtyDictionary[.userActivityType] as? String, userActivityType == NSUserActivityTypeBrowsingWeb */
@@ -135,35 +135,35 @@ extension ApplicationCoordinator {
 
     /// Transition 1->N relation from DetailForm
     static func transition<S: DetailsForm & UIViewController, D: ListForm & UIViewController>(from source: S, to destination: D, relationInfoUI: RelationInfoUI, completion: @escaping () -> Void) {
-        //assert(source.isPresented)
+        // assert(source.isPresented)
         self.prepare(from: source, to: destination, relationInfoUI: relationInfoUI)
         source.present(destination, animated: true, completion: completion)
     }
 
     /// Transition 1->N relation from ListForm
     static func transition<S: ListForm & UIViewController, D: ListForm & UIViewController>(from source: S, at indexPath: IndexPath, to destination: D, relationInfoUI: RelationInfoUI, completion: @escaping () -> Void) {
-        //assert(source.isPresented)
+        // assert(source.isPresented)
         self.prepare(from: source, at: indexPath, to: destination, relationInfoUI: relationInfoUI)
         source.present(destination, animated: true, completion: completion)
     }
 
     /// Transition for N->1 relation from ListForm
     static func transition<S: ListForm & UIViewController, D: DetailsForm & UIViewController>(from source: S, at indexPath: IndexPath, to destination: D, relationInfoUI: RelationInfoUI, completion: @escaping () -> Void) {
-        //assert(source.isPresented)
+        // assert(source.isPresented)
         self.prepare(from: source, at: indexPath, to: destination, relationInfoUI: relationInfoUI)
         source.present(destination, animated: true, completion: completion)
     }
 
     /// Transition to details
     static func transition<S: ListForm & UIViewController, D: DetailsForm & UIViewController>(from source: S, at indexPath: IndexPath, to destination: D, completion: @escaping () -> Void) {
-        //assert(source.isPresented)
+        // assert(source.isPresented)
         self.prepare(from: source, at: indexPath, to: destination)
         source.present(destination, animated: true, completion: completion)
     }
 
     /// Transition N->1 relation from DetailForm
     static func transition<S: DetailsForm & UIViewController, D: DetailsForm & UIViewController>(from source: S, to destination: D, relationInfoUI: RelationInfoUI, completion: @escaping () -> Void) {
-        //assert(source.isPresented)
+        // assert(source.isPresented)
         self.prepare(from: source, to: destination, relationInfoUI: relationInfoUI)
         source.present(destination, animated: true, completion: completion)
     }
@@ -406,7 +406,7 @@ extension ApplicationCoordinator {
                 return
             }
 
-            //let predicate = tableInfo.api.predicate(for: primaryKeyValue)
+            // let predicate = tableInfo.api.predicate(for: primaryKeyValue)
             guard let predicate = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
                 logger.warning("Failed to request by predicate the \(tableName) with id \(primaryKeyValue) to present table '\(tableName)' form")
                 completion(false)
@@ -439,7 +439,7 @@ extension ApplicationCoordinator {
         }
     }
 
-    public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) { //swiftlint:disable:this function_body_length
+    public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) { // swiftlint:disable:this function_body_length
         let dataStore = ApplicationDataStore.instance.dataStore
         _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
@@ -449,7 +449,7 @@ extension ApplicationCoordinator {
                 return
             }
 
-            //let predicate = tableInfo.api.predicate(for: primaryKeyValue)
+            // let predicate = tableInfo.api.predicate(for: primaryKeyValue)
             guard let predicate = tableInfo.primaryKeyPredicate(value: primaryKeyValue) else {
                 logger.warning("Failed to request by predicate the \(tableName) with id \(primaryKeyValue) to present table '\(tableName)' form")
                 completion(false)

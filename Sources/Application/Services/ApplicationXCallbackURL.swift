@@ -77,7 +77,7 @@ extension ApplicationXCallbackURL: ApplicationService {
                 }
             }
         }
-        Manager.shared["dump"] = { parameters, success, failure, cancel in
+        Manager.shared["dump"] = { parameters, success, failure, _ in
             let path: Path
             if let pathString = parameters["path"] {
                 path = Path(pathString)
@@ -94,14 +94,14 @@ extension ApplicationXCallbackURL: ApplicationService {
             }
         }
 
-        Manager.shared["clear"] = { parameters, success, failure, cancel in
+        Manager.shared["clear"] = { _, _, _, _ in
             // ApplicationDataSync.dataSync.dataStore.perform(DataStoreContextType)
         }
 
-        Manager.shared["exit"] = { parameters, success, failure, cancel in
+        Manager.shared["exit"] = { _, _, _, _ in
             exit(0)
         }
-        Manager.shared["logger"] = { parameters, success, failure, cancel in
+        Manager.shared["logger"] = { parameters, _, _, _ in
             if let levelString = parameters["setlevel"] {
                 if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
                     logger.outputLevel = level
@@ -110,7 +110,7 @@ extension ApplicationXCallbackURL: ApplicationService {
                 }
             }
         }
-        Manager.shared["settings"] = { parameters, success, failure, cancel in
+        Manager.shared["settings"] = { parameters, _, _, _ in
             if let levelString = parameters["setlevel"] {
                 if let levelInt = Int(levelString), let level = Level(rawValue: levelInt) {
                     logger.outputLevel = level

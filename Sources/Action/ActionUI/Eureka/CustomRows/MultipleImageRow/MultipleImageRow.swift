@@ -12,7 +12,7 @@ import UIKit
 import Eureka
 
 // MARK: Row
- //swiftlint:disable:next type_name
+ // swiftlint:disable:next type_name
 open class _MultipleImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where Cell: BaseCell, Cell.Value == [UIImage] {
 
     public typealias PresenterRow = MultipleImagePickerController

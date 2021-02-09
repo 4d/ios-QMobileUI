@@ -13,10 +13,10 @@ import QMobileAPI
 public struct RuleIsMultipleOf<T: IsMultipleOf>: RuleType {
 
     let dividingBy: T
-    public var id: String? //swiftlint:disable:this identifier_name
+    public var id: String? // swiftlint:disable:this identifier_name
     public var validationError: ValidationError
 
-    public init(dividingBy: T, msg: String? = nil, id: String? = nil) { //swiftlint:disable:this identifier_name
+    public init(dividingBy: T, msg: String? = nil, id: String? = nil) { // swiftlint:disable:this identifier_name
         let ruleMsg = msg ?? "Field value must be a multiple of \(dividingBy)"
         self.dividingBy = dividingBy
         self.validationError = ValidationError(msg: ruleMsg)

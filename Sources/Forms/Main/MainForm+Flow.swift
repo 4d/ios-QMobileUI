@@ -47,11 +47,11 @@ extension Main {
         var destination: UIViewController {
             switch self {
             case .login:
-                return LoginForm.instantiate()!//swiftlint:disable:this force_cast
+                return LoginForm.instantiate()!// swiftlint:disable:this force_cast
             case .navigation:
-                return MainNavigation.instantiateInitialViewController()!//swiftlint:disable:this force_cast
+                return MainNavigation.instantiateInitialViewController()!// swiftlint:disable:this force_cast
             case .settingURL:
-                return SettingURLForm.instantiateInitialViewController()!//swiftlint:disable:this force_cast
+                return SettingURLForm.instantiateInitialViewController()!// swiftlint:disable:this force_cast
             }
         }
     }

@@ -26,7 +26,7 @@ extension UIView: Binded {
             objc_setAssociatedObject(self, &xoAssociationKey, bindTo, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
         bindTo?.resetKeyPath()
-        //swiftlint:disable:next force_cast
+        // swiftlint:disable:next force_cast
         return bindTo!
     }
     #endif

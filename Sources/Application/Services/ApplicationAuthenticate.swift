@@ -205,11 +205,11 @@ extension ApplicationAuthenticate: LoginFormDelegate {
         /// reload embedded and sync?
         /// reload only table with filter?
 
-        //SwiftMessages.loading("\(operation.description.capitalized()) data")
+        // SwiftMessages.loading("\(operation.description.capitalized()) data")
 
         // Launch a background task to reload
         _ = BackGroundDataSyncManager.instance.sync(operation: operation) { dataResult in
-            //SwiftMessages.hide()
+            // SwiftMessages.hide()
 
             switch dataResult {
             case .success:
@@ -374,7 +374,7 @@ class BackGroundDataSyncManager {
 
     static let instance = BackGroundDataSyncManager()
 
-    //var listeners: [DataReloadListener] = []
+    // var listeners: [DataReloadListener] = []
     var cancellable = CancellableComposite()
 
     fileprivate func log(operation: DataSync.Operation, _ result: DataSync.SyncResult) {
@@ -398,7 +398,7 @@ class BackGroundDataSyncManager {
                 guard let this = self else {return}
 
                 this.log(operation: operation, result)
-                //this.notify(result)
+                // this.notify(result)
                 completionHandler?(result)
             }
             if let reload = reload {

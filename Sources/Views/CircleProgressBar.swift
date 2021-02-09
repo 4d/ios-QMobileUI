@@ -41,9 +41,9 @@ open class CircleProgressBar: UIView {
     }
 
     override open func draw(_ rect: CGRect) {
-        //swiftlint:disable:next identifier_name
+        // swiftlint:disable:next identifier_name
         let x = self.bounds.midX
-        //swiftlint:disable:next identifier_name
+        // swiftlint:disable:next identifier_name
         let y = self.bounds.midY
         var strokeStart: CGFloat = 0
         var strokeEnd: CGFloat = percent

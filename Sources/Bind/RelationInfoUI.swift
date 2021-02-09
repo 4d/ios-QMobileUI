@@ -17,7 +17,7 @@ public protocol RelationInfoUI {
     /// The relation format
     var relationFormat: String? { get }
     /// The inverse relation name.
-    //var inverseRelationName: String? { get } // CLEAN to remove
+    // var inverseRelationName: String? { get } // CLEAN to remove
     /// Is relation to many.
     var relationIsToMany: Bool { get }
     /// Add action to launch segue.
@@ -30,7 +30,7 @@ struct RelationInfoUIAssociatedKeys {
     static var relationFormat = "RelationInfoUI.relationFormat"
     static var relationLabel = "RelationInfoUI.relationLabel"
     static var relationIsToMany = "RelationInfoUI.relationIsToMany"
-    //static var inverseRelationName = "RelationInfoUI.inverseRelationName"
+    // static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
     static var relationTapGesture = "RelationInfoUI.relationTapGesture"
 }

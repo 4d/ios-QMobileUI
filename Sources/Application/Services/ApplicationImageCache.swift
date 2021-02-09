@@ -22,12 +22,12 @@ class ApplicationImageCache: NSObject {
     static var instance: ApplicationService = ApplicationImageCache()
 
     fileprivate static var instanceCached: ApplicationImageCache {
-        //swiftlint:disable:next force_cast
+        // swiftlint:disable:next force_cast
         return instance as! ApplicationImageCache
     }
 
     private lazy var imageCache: ImageCache = {
-        return try! ImageCache(name: "imageCache", cacheDirectoryURL: nil) { (_, _) -> URL in //swiftlint:disable:this force_try
+        return try! ImageCache(name: "imageCache", cacheDirectoryURL: nil) { (_, _) -> URL in // swiftlint:disable:this force_try
             let path: Path = (Path.userCaches + "imageCache")
             return path.url
         }}()
