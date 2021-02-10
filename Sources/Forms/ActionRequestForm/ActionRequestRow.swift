@@ -18,7 +18,7 @@ public struct ActionRequestRow: View {
         VStack(alignment: .leading) {
             HStack(spacing: 0) {
                 ActionRequestStatusView(request: request)
-                    .frame(width: 24, height: 28, alignment: .topLeading)
+                    .frame(width: 28, height: 28, alignment: .topLeading)
                 VStack(alignment: .leading) {
                     Text(request.action.preferredLongLabel)
                         .font(.headline)
@@ -50,10 +50,17 @@ struct ActionRow_Previews: PreviewProvider {
 
 extension ActionRequest {
 
+    static var examplesContext: [ActionParameters] {
+        return [
+            [ActionParametersKey.table: "myTable"],
+            [ActionParametersKey.table: "myTable", ActionParametersKey.record: [ActionParametersKey.primaryKey: "MYPRIMARYKEY"]]
+        ]
+    }
+
     static var examples: [ActionRequest] {
         return [
-            ActionRequest(action: Action.examples[0], state: .ready),
-            ActionRequest(action: Action.examples[1], state: .executing),
+            ActionRequest(action: Action.examples[0], contextParameters: ActionRequest.examplesContext[0], state: .ready),
+            ActionRequest(action: Action.examples[1], contextParameters: ActionRequest.examplesContext[1], state: .executing),
             ActionRequest(action: Action.examples[1], state: .finished, result: .success(.emptySuccess)),
             ActionRequest(action: Action.examples[2], state: .finished, result: .success(.emptyFailure)),
             ActionRequest(action: Action.examples[3], state: .finished, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))

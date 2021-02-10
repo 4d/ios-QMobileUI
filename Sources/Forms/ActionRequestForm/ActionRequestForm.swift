@@ -17,6 +17,7 @@ public struct ActionRequestFormUI: View {
     public var requests: [ActionRequest]
     var hasDetailLink = false
     var actionContext: ActionContext?
+    @State private var editMode = EditMode.inactive
 
     enum SectionCase: String, Identifiable, CaseIterable {
         case pending, history
@@ -43,6 +44,7 @@ public struct ActionRequestFormUI: View {
     }
 
     func hasRequests(for sectionCase: SectionCase) -> Bool {
+        // TODO takeinto account also actionContext
         switch sectionCase {
         case .pending:
             return instance.requests.contains(where: { !$0.isCompleted })
@@ -51,12 +53,22 @@ public struct ActionRequestFormUI: View {
         }
     }
 
+    @ViewBuilder func header(for sectionCase: SectionCase) -> some View {
+        switch sectionCase {
+        case .pending:
+            Text(sectionCase.rawValue)
+        case .history:
+            Text(sectionCase.rawValue)
+        }
+    }
+
     @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online").onTapGesture(perform: {
-                ServerStatusManager.instance.checkStatus()
-            })
+            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online")
+                .onTapGesture(perform: {
+                    ServerStatusManager.instance.checkStatus()
+                })
         case .history:
             Spacer()
         }
@@ -65,11 +77,13 @@ public struct ActionRequestFormUI: View {
     public var body: some View {
         List {
             ForEach(sections) { section in
-                Section(header: Text(section.rawValue), footer: footer(for: section)) {
-                    if hasRequests(for: section) {
-                        ForEach(getRequests(for: section), id: \.id) { request in
-                            switch section {
-                            case .pending:
+                Section(header: header(for: section), footer: footer(for: section)) {
+
+                    switch section {
+                    case .pending:
+                        if true /* hasRequests(for: section) */{
+                            ForEach(getRequests(for: section), id: \.id) { request in
+
                                 if hasDetailLink {
                                     NavigationLink(destination: ActionRequestDetail(request: request)) {
                                         ActionRequestRow(request: request)
@@ -77,24 +91,35 @@ public struct ActionRequestFormUI: View {
                                 } else {
                                     ActionRequestRow(request: request)
                                 }
-                            case .history:
-                                ActionRequestRow(request: request)
                             }
-                        }
-                    } else {
-                        switch section {
-                        case .pending:
+                            .onDelete(perform: onDelete)
+                            .environment(\.editMode, $editMode)
+                        } else {
                             Text("0 draft")
                                 .foregroundColor(.secondary)
-                        case .history:
+                        }
+                    case .history:
+                        if hasRequests(for: section) {
+                            ForEach(getRequests(for: section), id: \.id) { request in
+                                ActionRequestRow(request: request)
+                            }
+                        } else {
                             Text("Nothing has happened yet") // "0 item"
                                 .foregroundColor(.secondary)
                         }
                     }
                 }
             }
+        }.toolbar {
+            if hasRequests(for: .pending) {
+                EditButton()
+            }
         }
         .listStyle(GroupedListStyle())
+    }
+    private func onDelete(offsets: IndexSet) {
+        var pendingRequest = getRequests(for: .pending)
+        pendingRequest.remove(atOffsets: offsets)
     }
 }
 

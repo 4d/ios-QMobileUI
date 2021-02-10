@@ -3,21 +3,38 @@ import SwiftUI
 import QMobileAPI
 
 struct MetadataView: View {
-    let request: ActionRequest
+    @ObservedObject var request: ActionRequest
+    @State var debug = false
+    @State var tapCount = 0
+
+    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    @State var since = ""
 
     var body: some View {
         HStack {
             ForEach(
-                [
-                    ("clock", "\(timeSince(request.creationDate))", Color.primary),
-                    ("arrow.counterclockwise", "\(request.tryCount)", Color.secondary),
-                    ("tablecells", "\(request.tableName)", Color.primary)
+                [("clock", "\(timeSince(request.creationDate))", Color.primary),
+                 ("tablecells", "\(request.tableName)", Color.primary),
+                 ("key.icloud", debug ? "\(request.recordSummary)": "", Color.secondary),
+                 ("arrow.counterclockwise", debug ? "\(request.tryCount)": "", Color.secondary)
                 ], id: \.0) { data in
                 Group {
-                    Image(systemName: data.0)
-                    Text(data.1)
+                    if !data.1.isEmpty {
+                        Image(systemName: data.0)
+                        if data.0 == "clock" {
+                            Text(since.isEmpty ? data.1: since)
+                                .onReceive(timer) { _ in
+                                    since = "\(timeSince(request.creationDate))"
+                                }
+                        } else {
+                            Text(data.1)
+                        }
+                    }
                 }
                 .foregroundColor(data.2)
+            }.onTapGesture {
+                tapCount+=1
+                debug = (tapCount % 10) == 0
             }
         }
     }
