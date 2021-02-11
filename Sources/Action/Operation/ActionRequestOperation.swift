@@ -157,6 +157,11 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         }*/
     }
 
+    public override func cancel(with error: ActionRequest.Error) {
+        self.request.result = .failure(error)
+        super.cancel(with: error)
+    }
+
     func clone() -> ActionRequestOperation {
         return ActionRequestOperation(self.request, self.actionUI, self.context, self.waitUI, self.completionHandler)
     }

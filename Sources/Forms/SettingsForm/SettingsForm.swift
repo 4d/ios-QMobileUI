@@ -83,10 +83,10 @@ open class SettingsForm: UITableViewController, Storyboardable {
             return
         }
         let instance = ActionManager.instance
-        let draftCount = instance.requests.filter({$0.state != .finished }).count
+        let draftCount = instance.requests.filter({!$0.state.isFinal}).count
         requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
         instance.$requests.receiveOnForeground().sink { _ in //  listen to change of number of request
-            let draftCount = instance.requests.filter({$0.state != .finished }).count
+            let draftCount = instance.requests.filter({!$0.state.isFinal}).count
             requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
         }.store(in: &bag)
     }

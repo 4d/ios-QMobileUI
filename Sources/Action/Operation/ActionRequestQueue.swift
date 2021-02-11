@@ -52,6 +52,26 @@ class ActionRequestQueue: OperationQueue {
         addOperations(operations, waitUntilFinished: false)
     }
 
+    func remove(_ operation: ActionRequestOperation) -> Bool {
+        /*if operation == self.lastOperation {
+         // ignore? (to test ; state , retry, cancel)
+         } else {*/
+        let dependencies = operation.dependencies
+        // first transfert dependencies to next operation
+        if let nextOp = operation.nextOperation as? ActionRequestOperation {
+            for dependency in dependencies {
+                nextOp.addDependency(dependency)
+            }
+        }
+        // cancel current task
+        operation.cancel(with: .cancelError)
+        for dependency in dependencies {
+            operation.removeDependency(dependency)
+        }
+        /*}*/
+        return true // not able to cancel?
+    }
+
     func synced(closure: () -> Void) {
         objc_sync_enter(self)
         closure()

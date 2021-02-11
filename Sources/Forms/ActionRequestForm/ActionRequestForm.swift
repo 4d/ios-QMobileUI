@@ -82,7 +82,8 @@ public struct ActionRequestFormUI: View {
                     switch section {
                     case .pending:
                         if true /* hasRequests(for: section) */{
-                            ForEach(getRequests(for: section), id: \.id) { request in
+                            let requests = getRequests(for: section)
+                            ForEach(requests, id: \.id) { request in
 
                                 if hasDetailLink {
                                     NavigationLink(destination: ActionRequestDetail(request: request)) {
@@ -92,12 +93,14 @@ public struct ActionRequestFormUI: View {
                                     ActionRequestRow(request: request)
                                 }
                             }
-                            .onDelete(perform: onDelete)
+                            .onDelete { index in
+                                onDelete(index, requests)
+                            }
                             .environment(\.editMode, $editMode)
-                        } else {
+                        } /*else {
                             Text("0 draft")
                                 .foregroundColor(.secondary)
-                        }
+                        }*/
                     case .history:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.id) { request in
@@ -117,9 +120,16 @@ public struct ActionRequestFormUI: View {
         }
         .listStyle(GroupedListStyle())
     }
-    private func onDelete(offsets: IndexSet) {
-        var pendingRequest = getRequests(for: .pending)
-        pendingRequest.remove(atOffsets: offsets)
+
+    private func onDelete(_ indexSet: IndexSet, _ requests: [ActionRequest]) {
+        let pendingRequest = requests // getRequests(for: .pending)
+        // pendingRequest.remove(atOffsets: offsets)
+
+        for index in indexSet {
+            if let request = pendingRequest[safe: index] {
+                instance.remove(request)
+            }
+        }
     }
 }
 

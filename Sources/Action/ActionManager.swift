@@ -140,7 +140,7 @@ public class ActionManager: NSObject, ObservableObject {
         do {
             if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
                 self.requests.append(contentsOf: requests)
-                for request in requests where request.state != .finished {
+                for request in requests where !request.state.isFinal {
                         let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
                         self.queue.addRequest(request, BackgroundActionUI(), request, noWait) { result in
                             switch result {
@@ -368,6 +368,30 @@ extension ActionManager: ActionExecutor {
                 }
             }
         }
+    }
+
+    /// Cancel the request
+    func remove(_ request: ActionRequest) {
+        /*REMOVE instead of CANCEL ? self.requests.removeAll { request in
+         return request == operation // (if request without id, it could failed)
+         }*/
+        request.state = .cancelled
+        guard let requestOp = self.queue.operations.first(where: { oneOp -> Bool in
+            guard let requestOp = oneOp as? ActionRequestOperation else {
+                return false
+            }
+            return requestOp.request == request
+        }) as? ActionRequestOperation else {
+            return
+        }
+        remove(requestOp)
+        saveActionRequests()
+        sendChange()
+    }
+
+    /// Remove an operation ie. remove from list and cancel it
+    fileprivate func remove(_ operation: ActionRequestOperation) {
+        _ = self.queue.remove(operation) // cancel
     }
 }
 
