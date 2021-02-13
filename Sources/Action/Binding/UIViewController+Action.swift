@@ -71,7 +71,13 @@ extension UIViewController {
                                 attributes: []) { actionUI in
                                 let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
                                 let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
-                                self.present(hostController, animated: true, completion: {
+                                let presentedController = UINavigationController(rootViewController: hostController)
+                                presentedController.navigationBar.tintColor = UIColor.foreground
+                                presentedController.navigationBar.isTranslucent = false
+                                // presentedController.navigationBar.backgroundColor = UIColor.background
+                                presentedController.navigationBar.barTintColor = UIColor.background
+                                hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
+                                self.present(presentedController, animated: true, completion: {
                                     logger.debug("present action more")
                                 })
                             }
@@ -143,5 +149,12 @@ private class LazyActionContext: ActionContext {
     func actionParameterValue(for field: String) -> Any? {
         assert(actionContext != nil, "no action context setted before using it to get parameter val")
         return actionContext?.actionParameterValue(for: field)
+    }
+}
+
+extension UIViewController {
+
+    @objc func dismissAnimated() {
+        self.dismiss(animated: true, completion: nil)
     }
 }
