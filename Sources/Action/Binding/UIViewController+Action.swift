@@ -65,7 +65,7 @@ extension UIViewController {
                                 return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
                             }
                             let actionUI = UIAction(
-                                title: "Operations log",
+                                title: "History",
                                 image: UIImage(systemName: "ellipsis"),
                                 identifier: UIAction.Identifier(rawValue: "action.log"),
                                 attributes: []) { actionUI in
@@ -75,8 +75,18 @@ extension UIViewController {
                                     logger.debug("present action more")
                                 })
                             }
-                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [actionUI], handler: ActionManager.instance.prepareAndExecuteAction)
+
+                            let deferredMenuElement = UIDeferredMenuElement { (elementProvider) in
+                                /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
+                                elementProvider([actionUI])
+                            }
+                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                             barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
+
+                           /* let ellipsis = UIHostingController(rootView: Ellipsis(scale: .large, color: Color(UIColor.foreground.cgColor)))
+                            ellipsis.view.backgroundColor = .clear
+                            barButton = UIBarButtonItem(customView: ellipsis.view)*/
+
                         } else {
                             barButton = UIBarButtonItem(customView: button)
                         }
