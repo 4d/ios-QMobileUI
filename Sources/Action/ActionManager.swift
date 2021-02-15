@@ -303,7 +303,31 @@ public class ActionManager: NSObject, ObservableObject {
     fileprivate func waitUntilAllOperationsAreFinished() {
         self.queue.waitUntilAllOperationsAreFinished()
     }
+
 }
+
+// MARK: - Image
+
+extension APIManager {
+
+    func uploadImage(url: URL?, image: UIImage, for key: String, completion imageCompletion: @escaping APIManager.CompletionUploadResultHandler) {
+        if let url = url {
+            logger.debug("Upload image using url \(url)")
+            _ = upload(url: url, completionHandler: imageCompletion)
+        } else if let imageData = image.jpegData(compressionQuality: 1) {
+            logger.debug("Upload image using jpegData")
+            _ = upload(data: imageData, image: true, mimeType: "image/jpeg", completionHandler: imageCompletion)
+        } else if let imageData = image.pngData() {
+            logger.debug("Upload image using pngData")
+            _ = upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
+        } else {
+            assertionFailure("Cannot convert row data to upload")
+            imageCompletion(.failure(.request(NSError(domain: "assert", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot upload unknow data type"])))) // Not convertible, must not corrurs, just create wrong error
+        }
+    }
+}
+
+// MARK: - ActionExecutor
 
 /// Responsible of executing an action
 protocol ActionExecutor {

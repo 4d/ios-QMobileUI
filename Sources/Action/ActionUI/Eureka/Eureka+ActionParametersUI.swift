@@ -305,25 +305,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
     }
 
-    fileprivate func uploadImage(_ image: UIImage, for key: String, completion imageCompletion: @escaping APIManager.CompletionUploadResultHandler) {
-        if let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL {
-            logger.debug("Upload image using url \(url)")
-            _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
-        } else if let url = (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image) {
-            logger.debug("Upload image using url \(url)")
-            _ = APIManager.instance.upload(url: url, completionHandler: imageCompletion)
-        } else if let imageData = image.jpegData(compressionQuality: 1) {
-            logger.debug("Upload image using jpegData")
-            _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/jpeg", completionHandler: imageCompletion)
-        } else if let imageData = image.pngData() {
-            logger.debug("Upload image using pngData")
-            _ = APIManager.instance.upload(data: imageData, image: true, mimeType: "image/png", completionHandler: imageCompletion)
-        } else {
-            assertionFailure("Cannot convert row data to upload")
-            imageCompletion(.failure(.request(NSError(domain: "assert", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cannot upload unknow data type"])))) // Not convertible, must not corrurs, just create wrong error
-        }
-    }
-
     /// Get form values.
     func formValuesCombine() -> Future<ActionParameters, ActionFormError> {
         return Future { promise in
@@ -404,7 +385,8 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                     }
                 }
 
-                self.uploadImage(image, for: key, completion: imageCompletion)
+                let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL ?? (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image)
+                APIManager.instance.uploadImage(url: url, image: image, for: key, completion: imageCompletion)
             }
         }
     }
