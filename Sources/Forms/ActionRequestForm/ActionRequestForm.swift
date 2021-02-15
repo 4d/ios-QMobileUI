@@ -84,9 +84,13 @@ public struct ActionRequestFormUI: View {
                         if true /* hasRequests(for: section) */{
                             let requests = getRequests(for: section)
                             ForEach(requests, id: \.id) { request in
+                                if hasDetailLink && !request.action.parameters.isEmpty {
+                                    let actionParametersForm = ActionFormViewControllerUI(request: request)
+                                    NavigationLink(destination: actionParametersForm.toolbar {
+                                        Button("Done") {
 
-                                if hasDetailLink {
-                                    NavigationLink(destination: ActionRequestDetail(request: request)) {
+                                        }
+                                    }) { // ActionRequestDetail(request: request)
                                         ActionRequestRow(request: request)
                                     }
                                 } else {

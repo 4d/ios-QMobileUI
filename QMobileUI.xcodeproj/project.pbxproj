@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4801337B25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4801337A25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift */; };
 		48016A6C22BB88A5005A7C65 /* TimeIntervalRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48016A6B22BB88A5005A7C65 /* TimeIntervalRow.swift */; };
 		480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392A51E928C4B008CF992 /* UILabel+Binding.swift */; };
 		480392A91E92916E008CF992 /* ApplicationServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480392A81E92916E008CF992 /* ApplicationServices.swift */; };
@@ -251,6 +252,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4801337A25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionFormViewControllerUI.swift; sourceTree = "<group>"; };
 		48016A6B22BB88A5005A7C65 /* TimeIntervalRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalRow.swift; sourceTree = "<group>"; };
 		480392A51E928C4B008CF992 /* UILabel+Binding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+Binding.swift"; sourceTree = "<group>"; };
 		480392A81E92916E008CF992 /* ApplicationServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServices.swift; sourceTree = "<group>"; };
@@ -1226,6 +1228,7 @@
 				C4F6F6AF25C1668F00802593 /* ActionRequestRow.swift */,
 				C4F6F6B325C1677500802593 /* ActionRequestDetail.swift */,
 				48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */,
+				4801337A25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift */,
 			);
 			path = ActionRequestForm;
 			sourceTree = "<group>";
@@ -1580,6 +1583,7 @@
 				48E655E2229EA6A80060568B /* Eureka+ActionParameter.swift in Sources */,
 				483FDA911E828AB900FAF84B /* UIViewController+QMobile.swift in Sources */,
 				C4AF29BA259B7D7500E9FC19 /* LinearProgressBar.swift in Sources */,
+				4801337B25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift in Sources */,
 				4869D608223BA4110042379F /* ActionContext.swift in Sources */,
 				489B736B1FA1C1A1009E9AB5 /* ApplicationCrashManager.swift in Sources */,
 				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,
