@@ -52,4 +52,62 @@ extension UIImage {
         return label.frame.height
     }
 
+    func resizeImage(targetSize: CGSize) -> UIImage {
+        let image = self
+        let size = image.size
+
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+
+        var newSize: CGSize
+        if widthRatio > heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }
+
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
+    }
+
+}
+
+extension Array where Element == UIImage {
+
+    func mergeToGrid() -> UIImage? {
+        if isEmpty {
+            return nil
+        }
+        if count == 1 {
+            return first
+        }
+        let images = self.compactMap({$0})
+        let padding: CGFloat = 0
+        var first = images[0]
+        first =  images[0].resizeImage(targetSize: CGSize(width: 100, height: first.size.height * 100 / first.size.width)) // resize to speed up
+        let newWidth = first.size.width * 2 + padding * 3
+        let newHeight = first.size.height + padding * 3
+        let newSize = CGSize(width: newWidth, height: newHeight)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+
+        for (index, element) in images.enumerated() {
+            let xIndex = CGFloat(index % 2)
+            let x = xIndex * (first.size.width + padding) + padding // swiftlint:disable:this identifier_name
+            let yIndex = floor(CGFloat(index) / 2)
+            let y = yIndex * (first.size.height + padding) + padding // swiftlint:disable:this identifier_name
+            element.draw(in: CGRect(origin: CGPoint(x: Double(x), y: Double(y)), size: first.size))
+        }
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+
 }

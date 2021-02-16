@@ -146,7 +146,7 @@ open class _MultipleImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
         if let images = self.value {
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
             imageView.contentMode = .scaleAspectFill
-            imageView.image = images.first
+            imageView.image = images.mergeToGrid()
             imageView.clipsToBounds = true
 
             cell.accessoryView = imageView

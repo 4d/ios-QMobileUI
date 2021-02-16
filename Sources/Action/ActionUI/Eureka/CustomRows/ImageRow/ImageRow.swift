@@ -32,13 +32,28 @@ public struct ImageRowSourceTypes: OptionSet {
     public var imagePickerControllerSourceTypeRawValue: Int { return self.rawValue >> 1 }
 
     public init(rawValue: Int) { self.rawValue = rawValue }
-    init(_ sourceType: UIImagePickerController.SourceType) { self.init(rawValue: 1 << sourceType.rawValue) }
+    init(_ sourceType: ImagePickerController.SourceType) { self.init(rawValue: 1 << sourceType.rawValue) }
 
     public static let photoLibrary = ImageRowSourceTypes(.photoLibrary)
     public static let camera = ImageRowSourceTypes(.camera)
-    public static let savedPhotosAlbum = ImageRowSourceTypes(.savedPhotosAlbum)
-    public static let all: ImageRowSourceTypes = [camera, photoLibrary, savedPhotosAlbum]
+    public static let all: ImageRowSourceTypes = [camera, photoLibrary]
 
+    var image: (UIImage, CGRect)? {
+        var types: [ImagePickerController.SourceType] = []
+        var size = CGRect(x: 0, y: 0, width: 0, height: 20)
+        if self.contains(.camera) {
+            types.append(.camera)
+            size = size.with(width: size.width + 20)
+        }
+        if self.contains(.photoLibrary) {
+            types.append(.photoLibrary)
+            size = size.with(width: size.width + 20)
+        }
+        guard let image = types.map({$0.image}).mergeToGrid()?.withRenderingMode(.alwaysTemplate) else {
+            return nil
+        }
+        return (image, size)
+    }
 }
 
 extension ImageRowSourceTypes {
@@ -51,8 +66,6 @@ extension ImageRowSourceTypes {
             return "Take photo"
         case ImageRowSourceTypes.photoLibrary:
             return "Photo Library"
-        case ImageRowSourceTypes.savedPhotosAlbum:
-            return "Saved Photos"
         default:
             return ""
         }
@@ -69,7 +82,6 @@ public enum ImageClearAction {
 open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where Cell: BaseCell, Cell.Value == UIImage {
 
     public typealias PresenterRow = ImagePickerController
-
     /// Defines how the view controller will be presented, pushed, etc.
     open var presentationMode: PresentationMode<PresenterRow>?
 
@@ -80,11 +92,12 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
     open internal(set) var imageURL: URL?
     open var clearAction = ImageClearAction.yes(style: .destructive)
 
-    private var _sourceType = UIImagePickerController.SourceType.camera
+    private var _sourceType = ImagePickerController.SourceType.camera
 
     public required init(tag: String?) {
         sourceTypes = .all
         super.init(tag: tag)
+        refreshAvailableType()
         presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return ImagePickerController() }, onDismiss: { [weak self] viewController in
             self?.select()
             viewController.dismiss(animated: true)
@@ -94,7 +107,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
     }
 
     // copy over the existing logic from the SelectorRow
-    func displayImagePickerController(_ sourceType: UIImagePickerController.SourceType) {
+    func displayImagePickerController(_ sourceType: ImagePickerController.SourceType) {
         if let presentationMode = presentationMode, !isDisabled {
             if let controller = presentationMode.makeController() {
                 controller.row = self
@@ -108,6 +121,19 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         }
     }
 
+    fileprivate func refreshAvailableType() {
+        var availableSources: ImageRowSourceTypes = []
+
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            _ = availableSources.insert(.photoLibrary)
+        }
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            _ = availableSources.insert(.camera)
+        }
+
+        sourceTypes.formIntersection(availableSources)
+    }
+
     /// Extends `didSelect` method
     /// Selecting the Image Row cell will open a popup to choose where to source the photo from,
     /// based on the `sourceTypes` configured and the available sources.
@@ -118,19 +144,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         }
         deselect()
 
-        var availableSources: ImageRowSourceTypes = []
-
-        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            _ = availableSources.insert(.photoLibrary)
-        }
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            _ = availableSources.insert(.camera)
-        }
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            _ = availableSources.insert(.savedPhotosAlbum)
-        }
-
-        sourceTypes.formIntersection(availableSources)
+        refreshAvailableType()
 
         if sourceTypes.isEmpty {
             super.customDidSelect()
@@ -163,9 +177,8 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
             sourceActionSheet.addAction(clearPhotoOption)
         }
         let actions: [UIAlertAction] = sourceActionSheet.actions
-        let count: Int = actions.count
-        if count == 1 {
-            if let imagePickerSourceType = UIImagePickerController.SourceType(rawValue: sourceTypes.imagePickerControllerSourceTypeRawValue) {
+        if actions.count == 1 {
+            if let imagePickerSourceType = ImagePickerController.SourceType(rawValue: sourceTypes.imagePickerControllerSourceTypeRawValue) {
                 displayImagePickerController(imagePickerSourceType)
             }
         } else {
@@ -204,6 +217,14 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
 
             cell.accessoryView = imageView
             cell.editingAccessoryView = imageView
+        } else if let (image, size) = self.sourceTypes.image {
+            let imageView = UIImageView(frame: size)
+            imageView.contentMode = .scaleAspectFit
+            imageView.image = image
+            // imageView.clipsToBounds = true
+
+            cell.accessoryView = imageView
+            cell.editingAccessoryView = imageView
         } else {
             cell.accessoryView = nil
             cell.editingAccessoryView = nil
@@ -214,10 +235,10 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
 
 extension _ImageRow {
 
-// MARK: Helpers
+    // MARK: Helpers
 
     func createOptionForAlertController(_ alertController: UIAlertController, sourceType: ImageRowSourceTypes) {
-        guard let pickerSourceType = UIImagePickerController.SourceType(rawValue: sourceType.imagePickerControllerSourceTypeRawValue), sourceTypes.contains(sourceType) else { return }
+        guard let pickerSourceType = ImagePickerController.SourceType(rawValue: sourceType.imagePickerControllerSourceTypeRawValue), sourceTypes.contains(sourceType) else { return }
         let option = UIAlertAction(title: NSLocalizedString(sourceType.localizedString, comment: ""), style: .default, handler: { [weak self] _ in
             self?.displayImagePickerController(pickerSourceType)
         })
@@ -227,7 +248,6 @@ extension _ImageRow {
     func createOptionsForAlertController(_ alertController: UIAlertController) {
         createOptionForAlertController(alertController, sourceType: .camera)
         createOptionForAlertController(alertController, sourceType: .photoLibrary)
-        createOptionForAlertController(alertController, sourceType: .savedPhotosAlbum)
     }
 }
 

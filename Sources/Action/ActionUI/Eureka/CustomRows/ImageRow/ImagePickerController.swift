@@ -25,9 +25,34 @@
 import Foundation
 import UIKit
 import Eureka
+import PhotosUI
 
 /// Selector Controller used to pick an image
-open class ImagePickerController: UIImagePickerController, TypedRowControllerType, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+open class ImagePickerController: UIViewController, TypedRowControllerType, UIImagePickerControllerDelegate, PHPickerViewControllerDelegate, UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate {
+
+    public enum SourceType: Int, CaseIterable {
+        case photoLibrary = 0
+        case camera = 1
+
+        var uikit: UIImagePickerController.SourceType {
+            switch self {
+            case .camera:
+                return .camera
+            case .photoLibrary:
+                return .photoLibrary
+            }
+        }
+        var image: UIImage {
+            switch self {
+            case .camera:
+                return  UIImage(systemName: "camera")!
+            case .photoLibrary:
+                return UIImage(systemName: "photo.on.rectangle.angled")!
+            }
+        }
+    }
+
+    var sourceType: SourceType = .camera
 
     /// The row that pushed or presented this controller
     public var row: RowOf<UIImage>!
@@ -35,19 +60,84 @@ open class ImagePickerController: UIImagePickerController, TypedRowControllerTyp
     /// A closure to be called when the controller disappears.
     public var onDismissCallback: ((UIViewController) -> Void)?
 
+    var cameraController: UIImagePickerController = {
+        var controller = UIImagePickerController()
+        controller.allowsEditing = true
+        return controller
+    }()
+    var photoLibraryController: PHPickerViewController = {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 1
+        var imagePickerController = PHPickerViewController(configuration: configuration)
+        imagePickerController.isModalInPresentation = true
+        return imagePickerController
+    }()
+    fileprivate func showPicker() {
+        switch sourceType {
+        case .camera:
+            cameraController.sourceType = .camera
+            cameraController.delegate = self
+            cameraController.view.frame = self.view.frame
+            self.present(cameraController, animated: true) {
+                self.cameraController.presentationController?.delegate = self
+            }
+        case .photoLibrary:
+            photoLibraryController.delegate = self
+            self.present(photoLibraryController, animated: true) {
+                self.photoLibraryController.presentationController?.delegate = self
+            }
+        }
+    }
+
     open override func viewDidLoad() {
         super.viewDidLoad()
-        delegate = self
-        self.allowsEditing = true
+        self.isModalInPresentation = true
+        DispatchQueue.main.async {
+            self.showPicker()
+        }
     }
+
+    // MARK: - UIImagePickerControllerDelegate
 
     open func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         (row as? ImageRow)?.imageURL = info[.imageURL] as? URL
         row.value = info[.originalImage] as? UIImage
-        onDismissCallback?(self)
+        cameraController.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
     }
 
     open func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        onDismissCallback?(self)
+        cameraController.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
+    }
+
+    // MARK: - PHPickerViewControllerDelegate
+
+    open func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let itemProvider = results.first?.itemProvider, itemProvider.canLoadObject(ofClass: UIImage.self) else {
+            picker.dismiss(animated: true) {
+                self.onDismissCallback?(self)
+            }
+            return
+        }
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self]  image, _ in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                // (row as? ImageRow)?.imageURL = info[.imageURL] as? URL
+                self.row.value = image as? UIImage
+                picker.dismiss(animated: true) {
+                    self.onDismissCallback?(self)
+                }
+            }
+        }
+    }
+
+    // MARK: - UIAdaptivePresentationControllerDelegate
+
+    open func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        self.onDismissCallback?(self)
     }
 }
