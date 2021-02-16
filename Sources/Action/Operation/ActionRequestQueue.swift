@@ -25,7 +25,7 @@ class ActionRequestQueue: OperationQueue {
         let operation = request.newOp(actionUI, context, waitUI, completionHandler)
 
         if let actionParameters = request.actionParameters {
-            for (key, value) in actionParameters {
+            for (_, value) in actionParameters {
                 if let subOpInfo = value as? ActionRequestParameterWithRequest {
 
                     let subOperation = subOpInfo.newOperation(operation)
@@ -151,14 +151,23 @@ class ImageOperation: AsynchronousResultOperation<UploadResult, ActionFormError>
                 self.finish(with: .success(uploadResult))
             case .failure:
                 queue.retry(self)
+                ApplicationReachability.instance.refreshServerInfo() // XXX maybe limit to some errors?
                 self.finish(with: result.mapError { ActionFormError.upload([key: $0]) })
             }
         }
-        guard let image = ActionManager.instance.cache.get(cacheId: cacheId) else {
-            self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: nil))])))
-            return
-        }
-        APIManager.instance.uploadImage(url: nil, image: image, completion: imageCompletion)
+        ActionManager.instance.cache.retrieve(cacheId: cacheId) { result in
+            switch result {
+            case.success(let result):
+                if let image = result.image {
+                    APIManager.instance.uploadImage(url: nil, image: image, completion: imageCompletion)
+                } else {
+                    assertionFailure("Do not retrieve image in cache but success? why?")
+                    self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: nil))])))
+                }
+            case .failure(let error):
+                self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSUnderlyingErrorKey: error]))])))
+            }
+         }
     }
 
     func clone() -> ImageOperation {

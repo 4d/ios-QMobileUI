@@ -8,20 +8,26 @@
 
 import Foundation
 import UIKit
+import Kingfisher
+import FileKit
 
 class ActionManagerCache {
 
-    var memory: [String: UIImage] = [:]
+    lazy var imageCache: ImageCache = {
+        return try! ImageCache(name: "uploadCache", cacheDirectoryURL: nil) { (_, _) -> URL in // swiftlint:disable:this force_try
+            let path: Path = (Path.userCaches + "uploadCache")
+            return path.url
+        }}()
 
     func store(cacheId: String, image: UIImage) {
-        memory[cacheId] = image
+        imageCache.store(image, forKey: cacheId)
     }
 
-    func get(cacheId: String) -> UIImage? {
-        return memory[cacheId]
+    func retrieve(cacheId: String, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
+        imageCache.retrieveImage(forKey: cacheId, completionHandler: completionHandler)
     }
 
     func remove(cacheId: String) {
-        memory.removeValue(forKey: cacheId)
+        imageCache.removeImage(forKey: cacheId)
     }
 }
