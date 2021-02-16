@@ -130,6 +130,7 @@
 		48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */; };
 		48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */; };
 		48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */; };
+		48AA781525DBBD1A00759F76 /* Ellipsis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AA781425DBBD1A00759F76 /* Ellipsis.swift */; };
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
 		48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */; };
 		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
@@ -378,6 +379,7 @@
 		48A62CDD1E9E78C5002A76C2 /* UIGestureRecognizer+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIGestureRecognizer+QMobile.swift"; sourceTree = "<group>"; };
 		48A9CB2E20348B40007183B4 /* UINavigationController+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+QMobile.swift"; sourceTree = "<group>"; };
 		48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBar+QMobile.swift"; sourceTree = "<group>"; };
+		48AA781425DBBD1A00759F76 /* Ellipsis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ellipsis.swift; sourceTree = "<group>"; };
 		48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationDataSync.swift; sourceTree = "<group>"; };
 		48AE2C5F1F45754D0013FDEE /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		48AE2C601F4575590013FDEE /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -1229,6 +1231,7 @@
 				C4F6F6B325C1677500802593 /* ActionRequestDetail.swift */,
 				48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */,
 				4801337A25D5CF35008FE1A4 /* ActionFormViewControllerUI.swift */,
+				48AA781425DBBD1A00759F76 /* Ellipsis.swift */,
 			);
 			path = ActionRequestForm;
 			sourceTree = "<group>";
@@ -1525,6 +1528,7 @@
 				FE65600020AD95EF00B55336 /* CrashTarget.swift in Sources */,
 				48E49CEC1EB9CA70002B60AF /* ApplicationStepLogging.swift in Sources */,
 				C5CE5BE0243E167D00C008C7 /* ApplicationPushNotification.swift in Sources */,
+				48AA781525DBBD1A00759F76 /* Ellipsis.swift in Sources */,
 				48EE07861E7AEF1A00A8546E /* ListForm.swift in Sources */,
 				48F8E2C21F7D0B23000080FB /* ServerStatus.swift in Sources */,
 				C4F2208D254357020063653A /* SignatureViewRow.swift in Sources */,

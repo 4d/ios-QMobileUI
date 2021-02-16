@@ -65,7 +65,7 @@ extension UIViewController {
                                 return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
                             }
                             let actionUI = UIAction(
-                                title: "History",
+                                title: "Actions log",
                                 image: UIImage(systemName: "ellipsis"),
                                 identifier: UIAction.Identifier(rawValue: "action.log"),
                                 attributes: []) { actionUI in
@@ -74,7 +74,6 @@ extension UIViewController {
                                 let presentedController = UINavigationController(rootViewController: hostController)
                                 presentedController.navigationBar.tintColor = UIColor.foreground
                                 presentedController.navigationBar.isTranslucent = false
-                                // presentedController.navigationBar.backgroundColor = UIColor.background
                                 presentedController.navigationBar.barTintColor = UIColor.background
                                 hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
                                 self.present(presentedController, animated: true, completion: {
@@ -89,10 +88,16 @@ extension UIViewController {
                             let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                             barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
 
-                           /* let ellipsis = UIHostingController(rootView: Ellipsis(scale: .large, color: Color(UIColor.foreground.cgColor)))
-                            ellipsis.view.backgroundColor = .clear
-                            barButton = UIBarButtonItem(customView: ellipsis.view)*/
-
+                            /*let ellipsis = elView()
+                            let button = UIButton()
+                            button.addSubview(ellipsis)
+                            ellipsis.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
+                            ellipsis.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+                            button.sizeToFit()
+                            ellipsis.sizeToFit()
+                            button.menu = menu
+                            button.showsMenuAsPrimaryAction = true
+                           // barButton.customView = button*/
                         } else {
                             barButton = UIBarButtonItem(customView: button)
                         }
@@ -103,6 +108,11 @@ extension UIViewController {
                 }
             }
         }
+    }
+    func elView() -> UIView {
+        let ellipsis = UIHostingController(rootView: Ellipsis(scale: .large, color: Color(UIColor.foreground.cgColor)))
+        ellipsis.view.backgroundColor = .clear
+        return ellipsis.view
     }
     #endif
 
