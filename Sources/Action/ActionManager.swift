@@ -163,6 +163,9 @@ public class ActionManager: NSObject, ObservableObject {
     func checkHistory() {
         var finished = 0
         var toRemoves: [Int] = []
+        for (index, request) in requests.enumerated() where request.state == .cancelled {
+            toRemoves.append(index)
+        }
         for (index, request) in requests.enumerated().reversed() /* old at the begining */ where request.state == .finished {
             finished += 1
             if finished > offlineActionHistoryMax {

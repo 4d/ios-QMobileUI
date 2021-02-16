@@ -49,7 +49,7 @@ public struct ActionRequestFormUI: View {
         case .pending:
             return instance.requests.contains(where: { !$0.isCompleted })
         case .history:
-            return instance.requests.contains(where: { $0.isCompleted })
+            return instance.requests.contains(where: { $0.state == .finished })
         }
     }
 
