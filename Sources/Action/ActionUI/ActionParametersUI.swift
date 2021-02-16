@@ -37,12 +37,14 @@ struct ActionParametersUIBuilder {
     var actionUI: ActionUI
     var context: ActionContext
     var actionExecutor: ActionExecutor
+    var id: String // swiftlint:disable:this identifier_name
 
     init(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext, _ actionExecutor: ActionExecutor) {
         self.action = action
         self.actionUI = actionUI
         self.context = context
         self.actionExecutor = actionExecutor
+        self.id = ActionRequest.generateID()
     }
 
     func build<T: ActionParametersUI>(of type: T.Type) -> ActionParametersUIControl? {
@@ -50,7 +52,7 @@ struct ActionParametersUIBuilder {
     }
 
     fileprivate func executeAction(with parameters: ActionParameters?, waitUI: ActionExecutor.WaitPresenter, completionHandler: ActionExecutor.CompletionHandler?) {
-        self.actionExecutor.executeAction(self.action, self.actionUI, self.context, parameters, waitUI, completionHandler)
+        self.actionExecutor.executeAction(self.action, self.id, self.actionUI, self.context, parameters, waitUI, completionHandler)
     }
 
     func executeAction(with parameters: ActionParameters?, waitUI: ActionExecutor.WaitPresenter) -> Future<ActionResult, ActionRequest.Error> {

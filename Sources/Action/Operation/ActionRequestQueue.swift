@@ -21,7 +21,21 @@ class ActionRequestQueue: OperationQueue {
     }
 
     func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
-        self.add([request.newOp(actionUI, context, waitUI, completionHandler)])
+
+        let operation = request.newOp(actionUI, context, waitUI, completionHandler)
+
+        if let actionParameters = request.actionParameters {
+            for (key, value) in actionParameters {
+                if let subOpInfo = value as? ActionRequestParameterWithRequest {
+
+                    let subOperation = subOpInfo.newOperation(operation)
+                    self.addOperation(subOperation)
+                    operation.addDependency(subOperation)
+                }
+            }
+        }
+
+        self.add([operation])
     }
 
     /*func addRequests(_ requests: [ActionRequest]) {
@@ -78,11 +92,17 @@ class ActionRequestQueue: OperationQueue {
         objc_sync_exit(self)
     }
 
+    func retry(_ operation: ImageOperation) {
+        enqueue(operation.clone())
+    }
+    func enqueue(_ operation: ImageOperation) {
+        operation.operation.addDependency(operation)
+        self.addOperation(operation)
+    }
     func retry(_ operation: ActionRequestOperation) {
         // we enqueue a new operation between passed operation and its next one
         enqueue(operation.clone(), after: operation)
     }
-
     func enqueue(_ operation: ActionRequestOperation, after previousOperation: ActionRequestOperation) {
         let nextOperation = previousOperation.nextOperation // /!\ get next before changing it by retry op
 
@@ -104,5 +124,66 @@ class ActionRequestQueue: OperationQueue {
             }
         }
 
+    }
+}
+
+class ImageOperation: AsynchronousResultOperation<UploadResult, ActionFormError> {
+
+    let info: ImageUploadOperationInfo
+    let operation: ActionRequestOperation
+
+    init(_ info: ImageUploadOperationInfo, _ operation: ActionRequestOperation) {
+        self.info = info
+        self.operation = operation
+    }
+
+    override func main() {
+        let queue = OperationQueue.current as! ActionRequestQueue // swiftlint:disable:this force_cast
+        let cacheId = self.info.cacheId
+        let key = info.key
+        let imageCompletion: APIManager.CompletionUploadResultHandler = { result in
+            switch result {
+            case .success(let uploadResult):
+                logger.debug("Image uploaded \(uploadResult)")
+                self.operation.request.setActionParameters(key: key, value: uploadResult)
+                ActionManager.instance.saveActionRequests()
+                ActionManager.instance.cache.remove(cacheId: cacheId)
+                self.finish(with: .success(uploadResult))
+            case .failure:
+                queue.retry(self)
+                self.finish(with: result.mapError { ActionFormError.upload([key: $0]) })
+            }
+        }
+        guard let image = ActionManager.instance.cache.get(cacheId: cacheId) else {
+            self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: nil))])))
+            return
+        }
+        APIManager.instance.uploadImage(url: nil, image: image, completion: imageCompletion)
+    }
+
+    func clone() -> ImageOperation {
+        return ImageOperation(self.info, self.operation)
+    }
+}
+
+protocol ActionRequestParameterWithRequest {
+
+    func newOperation(_ operation: ActionRequestOperation) -> Operation
+
+}
+
+struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, Codable {
+
+    var cacheId: String
+
+    var key: String {
+        if let range = cacheId.range(of: "_") {
+            return String(cacheId[range.upperBound...])
+        }
+        return cacheId
+    }
+
+    func newOperation(_ operation: ActionRequestOperation) -> Operation {
+        return ImageOperation(self, operation)
     }
 }

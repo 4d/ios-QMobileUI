@@ -59,11 +59,11 @@ extension ActionRequest {
 
     static var examples: [ActionRequest] {
         return [
-            ActionRequest(action: Action.examples[0], contextParameters: ActionRequest.examplesContext[0], state: .ready),
-            ActionRequest(action: Action.examples[1], contextParameters: ActionRequest.examplesContext[1], state: .executing),
-            ActionRequest(action: Action.examples[1], state: .finished, result: .success(.emptySuccess)),
-            ActionRequest(action: Action.examples[2], state: .finished, result: .success(.emptyFailure)),
-            ActionRequest(action: Action.examples[3], state: .finished, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))
+            ActionRequest(action: Action.examples[0], contextParameters: ActionRequest.examplesContext[0], id: ActionRequest.generateID(), state: .ready),
+            ActionRequest(action: Action.examples[1], contextParameters: ActionRequest.examplesContext[1], id: ActionRequest.generateID(), state: .executing),
+            ActionRequest(action: Action.examples[1], id: ActionRequest.generateID(), state: .finished, result: .success(.emptySuccess)),
+            ActionRequest(action: Action.examples[2], id: ActionRequest.generateID(), state: .finished, result: .success(.emptyFailure)),
+            ActionRequest(action: Action.examples[3], id: ActionRequest.generateID(), state: .finished, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))
         ]
     }
 

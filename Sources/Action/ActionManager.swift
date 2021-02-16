@@ -47,6 +47,8 @@ public class ActionManager: NSObject, ObservableObject {
     public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
 
+    let cache = ActionManagerCache()
+
     private var bag = Set<AnyCancellable>()
 
     override init() {
@@ -96,7 +98,7 @@ public class ActionManager: NSObject, ObservableObject {
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
-            executeAction(action, actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
+            executeAction(action, ActionRequest.generateID(), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
         } else {
             // Create UI according to action parameters
             var control: ActionParametersUIControl?
@@ -313,7 +315,7 @@ public class ActionManager: NSObject, ObservableObject {
 
 extension APIManager {
 
-    func uploadImage(url: URL?, image: UIImage, for key: String, completion imageCompletion: @escaping APIManager.CompletionUploadResultHandler) {
+    func uploadImage(url: URL?, image: UIImage, completion imageCompletion: @escaping APIManager.CompletionUploadResultHandler) {
         if let url = url {
             logger.debug("Upload image using url \(url)")
             _ = upload(url: url, completionHandler: imageCompletion)
@@ -339,6 +341,7 @@ protocol ActionExecutor {
     typealias Context = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutor.WaitPresenter, ActionExecutor.CompletionHandler?)
 
     func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
+                       _ id: String,
                        _ actionUI: ActionUI,
                        _ context: ActionContext,
                        _ actionParameters: ActionParameters?,
@@ -351,7 +354,7 @@ extension ActionExecutor {
     /// Execute action if success (ie. no error in form validation
     @available(*, deprecated, message: "use executeAction(_,_,_,_,_)")
     func executeAction(_ context: ActionExecutor.Context) {
-        executeAction(context.0, context.1, context.2, context.3, context.4, context.5)
+        executeAction(context.0, ActionRequest.generateID(), context.1, context.2, context.3, context.4, context.5)
     }
 
 }
@@ -360,6 +363,7 @@ extension ActionManager: ActionExecutor {
 
     /// Execute the network call for action.
     func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
+                       _ id: String,
                        _ actionUI: ActionUI,
                        _ context: ActionContext,
                        _ actionParameters: ActionParameters?,
@@ -368,7 +372,7 @@ extension ActionManager: ActionExecutor {
 
         // Create the action request
         let contextParameters: ActionParameters? = context.actionContextParameters()
-        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters)
+        let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters, id: id)
 
         // and execute it
         executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)

@@ -15,7 +15,7 @@ import QMobileAPI
 public struct ActionRequestFormUI: View {
     @EnvironmentObject public var instance: ActionManager
     public var requests: [ActionRequest]
-    var hasDetailLink = false
+    var hasDetailLink = true
     var actionContext: ActionContext?
     @State private var editMode = EditMode.inactive
 
@@ -31,7 +31,7 @@ public struct ActionRequestFormUI: View {
         case .pending:
             requests = instance.requests.filter({ !$0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
         case .history:
-            requests = instance.requests.filter({ $0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
+            requests = instance.requests.filter({ $0.state == .finished }).sorted(by: { $0.creationDate > $1.creationDate })
         }
         if let actionContext = actionContext?.actionContextParameters() {
             requests = requests .filter {

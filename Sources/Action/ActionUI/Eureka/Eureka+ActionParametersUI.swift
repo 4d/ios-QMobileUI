@@ -346,6 +346,18 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             completionHandler(.success(parameters))
         } else {
 
+            if ActionManager.instance.offlineAction {
+                let prefix = self.builder.id + "_"
+                let cache = ActionManager.instance.cache
+                for (key, image) in images {
+                    let cacheKey = prefix + key
+                    cache.store(cacheId: cacheKey, image: image)
+                    parameters[key] = ImageUploadOperationInfo(cacheId: cacheKey)
+                }
+                completionHandler(.success(parameters))
+                return
+            }
+
             // upload images
             var itemDone = 0
             var errors: [String: APIError] = [:]
@@ -386,7 +398,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 }
 
                 let url = (self.form.rowBy(tag: key) as? ImageRow)?.imageURL ?? (self.form.rowBy(tag: key) as? MultipleImageRow)?.imageURL(for: image)
-                APIManager.instance.uploadImage(url: url, image: image, for: key, completion: imageCompletion)
+                APIManager.instance.uploadImage(url: url, image: image, completion: imageCompletion)
             }
         }
     }

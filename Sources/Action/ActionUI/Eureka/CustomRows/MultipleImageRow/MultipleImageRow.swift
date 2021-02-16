@@ -73,10 +73,6 @@ open class _MultipleImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             _ = availableSources.insert(.camera)
         }
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            _ = availableSources.insert(.savedPhotosAlbum)
-        }
-
         sourceTypes.formIntersection(availableSources)
 
         if sourceTypes.isEmpty {
@@ -191,7 +187,6 @@ extension _MultipleImageRow {
     func createOptionsForAlertController(_ alertController: UIAlertController) {
         createOptionForAlertController(alertController, sourceType: .camera)
         createOptionForAlertController(alertController, sourceType: .photoLibrary)
-        createOptionForAlertController(alertController, sourceType: .savedPhotosAlbum)
     }
 }
 

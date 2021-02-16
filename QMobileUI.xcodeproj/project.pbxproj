@@ -124,6 +124,7 @@
 		48A1E5E61FE15CBB00C6E0B0 /* ApplicationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */; };
 		48A2A2E9219AFEA4001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
 		48A2A2EA219AFF5D001A6A7C /* SwiftMessages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */; };
+		48A3018925DBFDD700D86BD0 /* ActionManagerCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A3018825DBFDD700D86BD0 /* ActionManagerCache.swift */; };
 		48A62CC61E9E2ED3002A76C2 /* StringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CC41E9E27E8002A76C2 /* StringTests.swift */; };
 		48A62CCE1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CCC1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodeld */; };
 		48A62CDC1E9E7684002A76C2 /* IndexPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */; };
@@ -373,6 +374,7 @@
 		48A1E5E31FE13F7600C6E0B0 /* ApplicationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationUpdate.swift; sourceTree = "<group>"; };
 		48A1E5E51FE15CBB00C6E0B0 /* ApplicationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationService.swift; sourceTree = "<group>"; };
 		48A2A2E8219AFEA4001A6A7C /* SwiftMessages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftMessages.framework; path = Carthage/Build/iOS/SwiftMessages.framework; sourceTree = "<group>"; };
+		48A3018825DBFDD700D86BD0 /* ActionManagerCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManagerCache.swift; sourceTree = "<group>"; };
 		48A62CC41E9E27E8002A76C2 /* StringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTests.swift; sourceTree = "<group>"; };
 		48A62CCD1E9E6D2A002A76C2 /* QMobileDataStoreTests.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QMobileDataStoreTests.xcdatamodel; sourceTree = "<group>"; };
 		48A62CDB1E9E7684002A76C2 /* IndexPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexPathTests.swift; sourceTree = "<group>"; };
@@ -891,6 +893,7 @@
 			isa = PBXGroup;
 			children = (
 				4869D60A223BA4410042379F /* ActionManager.swift */,
+				48A3018825DBFDD700D86BD0 /* ActionManagerCache.swift */,
 				C4BE1E1725BB104B00315664 /* Handlers */,
 				C489F5B3255D203300EED0C1 /* Operation */,
 				48B23CFD2231154C00F6D94C /* ActionUI */,
@@ -1509,6 +1512,7 @@
 				487EC33E20AD83B500646B5B /* SettingLogOutCell.swift in Sources */,
 				48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */,
 				480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */,
+				48A3018925DBFDD700D86BD0 /* ActionManagerCache.swift in Sources */,
 				483FDA891E8283DA00FAF84B /* DetailsForm.swift in Sources */,
 				480392BD1E929524008CF992 /* QApplication.swift in Sources */,
 				C489F5BB255D203300EED0C1 /* ActionRequestQueue.swift in Sources */,
