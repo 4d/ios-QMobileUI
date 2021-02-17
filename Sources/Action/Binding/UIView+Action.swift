@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 import Prephirences
 import IBAnimatable
@@ -43,9 +44,9 @@ extension UIView {
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    open var actionSheet: ActionSheet? {
+    open var actionSheet: QMobileAPI.ActionSheet? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? ActionSheet
+            return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? QMobileAPI.ActionSheet
         }
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.actionSheetKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -55,8 +56,38 @@ extension UIView {
                     let items = actionSheetUI.build(from: actionSheet, context: self, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
                     actionSheetUI.addActionUIs(items)
                 } else {
-                    // default behaviour: if clicked create a ui alert controller
-                    addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionSheetGesture(_:))))
+                    if let button = self as? UIButton, ActionFormSettings.useMenu {
+                        let actionContext: ActionContext = self
+
+                        let actionUI = UIAction(
+                            title: "Actions log",
+                            image: UIImage(systemName: "ellipsis"),
+                            identifier: UIAction.Identifier(rawValue: "action.log"),
+                            attributes: []) { actionUI in
+                            let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
+                            let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
+                            let presentedController = UINavigationController(rootViewController: hostController)
+                            presentedController.navigationBar.tintColor = UIColor.foreground
+                            presentedController.navigationBar.isTranslucent = false
+                            presentedController.navigationBar.barTintColor = UIColor.background
+                            hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
+                            (self.owningViewController ?? UIApplication.topViewController)?.present(presentedController, animated: true, completion: {
+                                logger.debug("present action more")
+                            })
+                        }
+
+                        let deferredMenuElement = UIDeferredMenuElement { (elementProvider) in
+                            /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
+                            elementProvider([actionUI])
+                        }
+
+                        let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
+                        button.menu = menu
+                        button.showsMenuAsPrimaryAction = true
+                    } else {
+                        // default behaviour: if clicked create a ui alert controller
+                        addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionSheetGesture(_:))))
+                    }
                 }
             }
         }
@@ -75,7 +106,7 @@ extension UIView {
                     }
                     let viewController = cell.parentView?.findViewController()
                     if let listForm = viewController as? ListForm,
-                        let formContext = listForm.formContext { // Success, there is a parent
+                       let formContext = listForm.formContext { // Success, there is a parent
                         actionContext = DataSourceParentEntry(actionContext: self, formContext: formContext)
                     }
                 }
