@@ -67,17 +67,29 @@ extension UIView {
             if let actionSheet = newValue {
                 if let actionSheetUI = self as? ActionSheetUI {
                     /// Build and add
-                    let items = actionSheetUI.build(from: actionSheet, context: self, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
-                    actionSheetUI.addActionUIs(items)
+                    if let actionIndex = actionIndex, let action = actionSheet.actions[safe: actionIndex.intValue] {
+                        let item = actionSheetUI.build(from: action, context: self, handler: ActionManager.instance.prepareAndExecuteAction)
+                        actionSheetUI.addActionUI(item)
+                    } else {
+                        let items = actionSheetUI.build(from: actionSheet, context: self, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
+                        actionSheetUI.addActionUIs(items)
+                    }
                 } else {
-                    let actionContext: ActionContext = self
-
-                    if let actionIndex = actionIndex, actionSheet.actions[safe: actionIndex.intValue] != nil {
+                    if let actionIndex = actionIndex, let action = actionSheet.actions[safe: actionIndex.intValue] {
+                        // If there is no image and text on button use one defined in action
+                        if let button = self as? UIButton, button.image(for: .normal) == nil, (button.title(for: .normal) ?? "").isEmpty {
+                            if let image = ActionUIBuilder.actionImage(for: action) {
+                                button.setImage(image, for: .normal)
+                            } else {
+                                button.setTitle(action.preferredShortLabel, for: .normal)
+                            }
+                        }
+                        // add gesture to launch action
                         addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionGesture(_:))))
                         return
                     }
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
-
+                        let actionContext: ActionContext = self
                         let actionUI = UIAction(
                             title: "Actions log",
                             image: UIImage(systemName: "ellipsis"),

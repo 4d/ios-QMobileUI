@@ -56,7 +56,10 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func header(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(sectionCase.rawValue)
+            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online")
+                .onTapGesture(perform: {
+                    ServerStatusManager.instance.checkStatus()
+                })
         case .history:
             Text(sectionCase.rawValue)
         }
@@ -65,10 +68,7 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online")
-                .onTapGesture(perform: {
-                    ServerStatusManager.instance.checkStatus()
-                })
+            Spacer()
         case .history:
             Spacer()
         }
@@ -102,9 +102,9 @@ public struct ActionRequestFormUI: View {
                             }
                             .environment(\.editMode, $editMode)
                         } /*else {
-                            Text("0 draft")
-                                .foregroundColor(.secondary)
-                        }*/
+                     Text("0 draft")
+                     .foregroundColor(.secondary)
+                     }*/
                     case .history:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.id) { request in
@@ -123,8 +123,19 @@ public struct ActionRequestFormUI: View {
             }
         }
         .listStyle(GroupedListStyle())
+        .highPriorityGesture(
+            DragGesture()
+                .onChanged { gesture in
+                    print("onChanged \(gesture.location)")
+                    print("onChanged \(gesture.predictedEndLocation)")
+                }
+                .onEnded { gesture in
+                    print("onEnded \(gesture.location)")
+                    print("onEnded \(gesture.predictedEndLocation)")
+                }
+        )
     }
-
+    @State private var offset = CGSize.zero
     private func onDelete(_ indexSet: IndexSet, _ requests: [ActionRequest]) {
         let pendingRequest = requests // getRequests(for: .pending)
         // pendingRequest.remove(atOffsets: offsets)

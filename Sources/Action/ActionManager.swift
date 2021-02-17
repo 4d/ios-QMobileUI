@@ -300,7 +300,7 @@ public class ActionManager: NSObject, ObservableObject {
         }
         set {
             self.queue.isSuspended = newValue
-            DispatchQueue.main.async {
+            DispatchQueue.main.after(1) {
                 self.objectWillChange.send()
             }
         }
