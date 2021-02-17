@@ -209,9 +209,12 @@ open class SettingsForm: UITableViewController, Storyboardable {
     open override func tableView(_ tableView: UITableView, willDisplay: UITableViewCell, forRowAt: IndexPath) {
 
     }
-    /*open override func tableView(_ tableView: UITableView, heightForRowAt: IndexPath) -> CGFloat {
-        return 50
-    }*/
+    open override func tableView(_ tableView: UITableView, heightForRowAt: IndexPath) -> CGFloat {
+        if heightForRowAt.section == 0 && heightForRowAt.row == 1 && !ActionManager.instance.hasAction {
+            return 0
+        }
+        return UITableView.automaticDimension
+    }
     /*open override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }*/

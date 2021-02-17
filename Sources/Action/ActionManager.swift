@@ -44,7 +44,8 @@ public class ActionManager: NSObject, ObservableObject {
     /// Operation queue.
     fileprivate let queue = ActionRequestQueue()
 
-    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true
+    public var hasAction: Bool = Prephirences.sharedInstance["action"] as? Bool ?? true
+    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true // FEATURE #112750
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
 
     let cache = ActionManagerCache()
