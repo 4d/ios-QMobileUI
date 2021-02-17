@@ -92,11 +92,11 @@ class ActionRequestQueue: OperationQueue {
         objc_sync_exit(self)
     }
 
-    func retry(_ operation: ImageOperation) {
+    func retry(_ operation: ActionRequestImageOperation) {
         enqueue(operation.clone())
     }
-    func enqueue(_ operation: ImageOperation) {
-        operation.operation.addDependency(operation)
+    func enqueue(_ operation: ActionRequestImageOperation) {
+        operation.parentOperation.addDependency(operation)
         self.addOperation(operation)
     }
     func retry(_ operation: ActionRequestOperation) {
@@ -124,75 +124,5 @@ class ActionRequestQueue: OperationQueue {
             }
         }
 
-    }
-}
-
-class ImageOperation: AsynchronousResultOperation<UploadResult, ActionFormError> {
-
-    let info: ImageUploadOperationInfo
-    let operation: ActionRequestOperation
-
-    init(_ info: ImageUploadOperationInfo, _ operation: ActionRequestOperation) {
-        self.info = info
-        self.operation = operation
-    }
-
-    override func main() {
-        let queue = OperationQueue.current as! ActionRequestQueue // swiftlint:disable:this force_cast
-        let cacheId = self.info.cacheId
-        let key = info.key
-        let imageCompletion: APIManager.CompletionUploadResultHandler = { result in
-            switch result {
-            case .success(let uploadResult):
-                logger.debug("Image uploaded \(uploadResult)")
-                self.operation.request.setActionParameters(key: key, value: uploadResult)
-                ActionManager.instance.saveActionRequests()
-                ActionManager.instance.cache.remove(cacheId: cacheId)
-                self.finish(with: .success(uploadResult))
-            case .failure:
-                queue.retry(self)
-                ApplicationReachability.instance.refreshServerInfo() // XXX maybe limit to some errors?
-                self.finish(with: result.mapError { ActionFormError.upload([key: $0]) })
-            }
-        }
-        ActionManager.instance.cache.retrieve(cacheId: cacheId) { result in
-            switch result {
-            case.success(let result):
-                if let image = result.image {
-                    APIManager.instance.uploadImage(url: nil, image: image, completion: imageCompletion)
-                } else {
-                    assertionFailure("Do not retrieve image in cache but success? why?")
-                    self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: nil))])))
-                }
-            case .failure(let error):
-                self.finish(with: .failure(ActionFormError.upload([key: APIError.request(NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSUnderlyingErrorKey: error]))])))
-            }
-         }
-    }
-
-    func clone() -> ImageOperation {
-        return ImageOperation(self.info, self.operation)
-    }
-}
-
-protocol ActionRequestParameterWithRequest {
-
-    func newOperation(_ operation: ActionRequestOperation) -> Operation
-
-}
-
-struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, Codable {
-
-    var cacheId: String
-
-    var key: String {
-        if let range = cacheId.range(of: "_") {
-            return String(cacheId[range.upperBound...])
-        }
-        return cacheId
-    }
-
-    func newOperation(_ operation: ActionRequestOperation) -> Operation {
-        return ImageOperation(self, operation)
     }
 }

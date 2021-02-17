@@ -27,11 +27,11 @@ extension ApplicationPreferences: ApplicationService {
     static let settings: PreferencesType = {
         #if DEBUG
         // if compiled without debug, this file will not be used
-        let settings: CompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
+        let thesettings: CompositePreferences = [Plist(filename: "Settings.debug") ?? [:], Plist(filename: "Settings") ?? [:]]
         #else
-        let settings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
+        let thesettings: DictionaryPreferences = Plist(filename: "Settings") ?? [:]
         #endif
-        return settings
+        return thesettings
     }()
 
     static let preferences: MutableCompositePreferences = {
@@ -93,6 +93,8 @@ extension ApplicationPreferences: ApplicationService {
 
         // Finish
         userDefaults.synchronize() // XXX maybe now useless
+
+        ClassStore.register(ImageUploadOperationInfo.self)
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

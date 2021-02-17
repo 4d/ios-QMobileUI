@@ -348,11 +348,10 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
             if ActionManager.instance.offlineAction {
                 let prefix = self.builder.id + "_"
-                let cache = ActionManager.instance.cache
                 for (key, image) in images {
-                    let cacheKey = prefix + key
-                    cache.store(cacheId: cacheKey, image: image)
-                    parameters[key] = ImageUploadOperationInfo(cacheId: cacheKey)
+                    let info = ImageUploadOperationInfo(cacheId: prefix + key)
+                    info.store(image: image)
+                    parameters[key] = info
                 }
                 completionHandler(.success(parameters))
                 return
