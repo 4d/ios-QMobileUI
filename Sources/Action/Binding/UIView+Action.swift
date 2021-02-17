@@ -71,8 +71,8 @@ extension UIView {
                     actionSheetUI.addActionUIs(items)
                 } else {
                     let actionContext: ActionContext = self
-                    let actionPos = self.actionPos
-                    if let actionPos = actionPos, actionSheet.actions[safe: actionPos.intValue] != nil {
+
+                    if let actionIndex = actionIndex, actionSheet.actions[safe: actionIndex.intValue] != nil {
                         addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionGesture(_:))))
                         return
                     }
