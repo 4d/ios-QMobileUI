@@ -19,6 +19,7 @@ import QMobileAPI
 extension UIView {
 
     private struct AssociatedKeys {
+        static var actionIndex = "UIView.ActionIndex"
         static var actionSheetKey = "UIView.ActionSheet"
         static var actionKey = "UIView.Action"
         static var actionTouchKey = "UIView.ActionTouch"
@@ -39,11 +40,24 @@ extension UIView {
     }
 
     #if TARGET_INTERFACE_BUILDER
-    open var actionSheet: ActionSheet? {
+    open var actionSheet: QMobileAPI.ActionSheet? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    open var actionIndex: NSNumber? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
+    @objc
+    open var actionIndex: NSNumber? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.actionIndex) as? NSNumber
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.actionIndex, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
     open var actionSheet: QMobileAPI.ActionSheet? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? QMobileAPI.ActionSheet
@@ -56,8 +70,13 @@ extension UIView {
                     let items = actionSheetUI.build(from: actionSheet, context: self, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction)
                     actionSheetUI.addActionUIs(items)
                 } else {
+                    let actionContext: ActionContext = self
+                    let actionPos = self.actionPos
+                    if let actionPos = actionPos, actionSheet.actions[safe: actionPos.intValue] != nil {
+                        addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionGesture(_:))))
+                        return
+                    }
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
-                        let actionContext: ActionContext = self
 
                         let actionUI = UIAction(
                             title: "Actions log",
@@ -191,7 +210,7 @@ extension UIView {
 
     // MARK: - Action
     /// Binded action string.
-  /*  @objc dynamic var action: String {
+    @objc dynamic var action: String {
         get {
             return self._action?.toJSON() ?? ""
         }
@@ -203,7 +222,7 @@ extension UIView {
     #if TARGET_INTERFACE_BUILDER
     open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
         get { return nil }
-        set {}
+        set {} // swiftlint:disable:this unused_setter_value
     }
     #else
     open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
@@ -212,15 +231,8 @@ extension UIView {
         }
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.actionKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if let action = newValue {
-                if let actionSheetUI = self as? ActionSheetUI {
-                    if let actionUI = actionSheetUI.build(from: action, context: self, handler: ActionManager.instance.executeAction) {
-                        actionSheetUI.addActionUI(actionUI)
-                    }
-                } else {
-                    // default behaviour: if clicked create a ui alert controller
-                    addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionGesture(_:))))
-                }
+            if newValue != nil {
+                addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionGesture(_:))))
             }
         }
     }
@@ -230,18 +242,15 @@ extension UIView {
         guard case recognizer.state = UIGestureRecognizer.State.ended else {
             return
         }
-        if let action = self._action {
-            // XXX execute the action or ask confirmation if only one action? maybe according to action definition
-
-            let alertController = UIAlertController(title: action.label ?? action.name, message: "Confirm", preferredStyle: .alert)
-            let item = alertController.build(from: action, context: self, handler: ActionManager.instance.executeAction)
-            alertController.addActionUI(item)
-            alertController.addAction(alertController.dismissAction())
-            alertController.show()
+        let actionContext: ActionContext = self
+        if let actionSheet = self.actionSheet, let actionIndex = self.actionIndex, let action = actionSheet.actions[safe: actionIndex.intValue] {
+            ActionManager.instance.prepareAndExecuteAction(action, self as? ActionUI ?? BackgroundActionUI(), actionContext)
+        } else if let action = self._action {
+            ActionManager.instance.prepareAndExecuteAction(action, self as? ActionUI ?? BackgroundActionUI(), actionContext)
         } else {
             logger.debug("Action pressed but not action information")
         }
-    }*/
+    }
 
     // MARK: - Common
 

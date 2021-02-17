@@ -30,7 +30,7 @@ extension UIViewController {
         }
     }
     #if TARGET_INTERFACE_BUILDER
-    open var actionSheet: ActionSheet? {
+    open var actionSheet: QMobileAPI.ActionSheet? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
