@@ -257,6 +257,17 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         rowKeyboardSpacing = 20 // Leaves 20pt of space between the keyboard and the highlighted row after scrolling to an off screen row
     }
 
+    var listener: ((Result<ActionParameters, ActionFormError>) -> Void)?
+
+    override func viewWillDisappear(_ animated: Bool) {
+        if let listener = listener {
+            self.formValues { result in
+                listener(result)
+            }
+        }
+    }
+
+    // MARK: override
     open override var customNavigationAccessoryView: (UIView & NavigationAccessory)? {
         if let image = UIImage(named: "keyboardDismiss") {
             let accessoryView = NavigationAccessoryView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 44.0))

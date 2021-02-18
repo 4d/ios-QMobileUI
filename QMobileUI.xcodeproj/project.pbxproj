@@ -103,6 +103,7 @@
 		48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* MainForm.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
+		4878472725DEF7FD006A5B4B /* View+Instrospection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4878472325DEF7FD006A5B4B /* View+Instrospection.swift */; };
 		4879496320AC5807008876B8 /* SettingURLCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4879496220AC5807008876B8 /* SettingURLCell.swift */; };
 		487DE2C41EA0AC8D005E385B /* ApplicationServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */; };
 		487DE2C71EA0B3D3005E385B /* Array+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487DE2C51EA0B21A005E385B /* Array+QMobile.swift */; };
@@ -358,6 +359,7 @@
 		48708B5C2195B36E005C9C4A /* MainForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainForm.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
+		4878472325DEF7FD006A5B4B /* View+Instrospection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+Instrospection.swift"; sourceTree = "<group>"; };
 		4879496220AC5807008876B8 /* SettingURLCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingURLCell.swift; sourceTree = "<group>"; };
 		487DE2C31EA0AC8D005E385B /* ApplicationServicesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationServicesTests.swift; sourceTree = "<group>"; };
 		487DE2C51EA0B21A005E385B /* Array+QMobile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+QMobile.swift"; sourceTree = "<group>"; };
@@ -1231,6 +1233,7 @@
 		C4F6F6AA25C164A300802593 /* ActionRequestForm */ = {
 			isa = PBXGroup;
 			children = (
+				4878472325DEF7FD006A5B4B /* View+Instrospection.swift */,
 				4846C18725D2898F00BD459D /* MetadataView.swift */,
 				C4F6F6A625C1649D00802593 /* ActionRequestForm.swift */,
 				C4F6F6AF25C1668F00802593 /* ActionRequestRow.swift */,
@@ -1651,6 +1654,7 @@
 				48F8DF292057F35E0087066F /* PasscodeField.swift in Sources */,
 				483192562297F8F10041B41A /* ImagePickerController.swift in Sources */,
 				480392C31E9298B3008CF992 /* UIImageView+Qmobile.swift in Sources */,
+				4878472725DEF7FD006A5B4B /* View+Instrospection.swift in Sources */,
 				48D584831E783447006F56B5 /* TableDataSource.swift in Sources */,
 				48087E4D22C4D69E0008A3D6 /* ChoiceListItem.swift in Sources */,
 				48BC856E226F0B9300D548B2 /* UIAlertController+DataPicker.swift in Sources */,

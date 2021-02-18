@@ -11,8 +11,8 @@ import SwiftUI
 import QMobileAPI
 
 struct ActionFormViewControllerUI: UIViewControllerRepresentable {
-    typealias UIViewControllerType = ActionFormViewController
 
+    typealias UIViewControllerType = ActionFormViewController
     var request: ActionRequest
     init(request: ActionRequest) {
         self.request = request
@@ -20,12 +20,21 @@ struct ActionFormViewControllerUI: UIViewControllerRepresentable {
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) -> ActionFormViewController {
         let controller = ActionFormViewController(builder: self.request.builder)
+        controller.listener = { result in
+            switch result {
+            case .success(let values):
+                print("\(values)")
+
+                request.actionParameters = values
+
+            case .failure(let error):
+                print("\(error)") // maybe to late to manage error if already dismissed
+            }
+        }
         return controller
     }
 
-    func updateUIViewController(_ uiViewController: ActionFormViewController, context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) {
-
-    }
+    func updateUIViewController(_ uiViewController: ActionFormViewController, context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) {}
 }
 
 struct ActionFormViewControllerUI_Previews: PreviewProvider {

@@ -85,14 +85,7 @@ public struct ActionRequestFormUI: View {
                             let requests = getRequests(for: section)
                             ForEach(requests, id: \.id) { request in
                                 if hasDetailLink && !request.action.parameters.isEmpty {
-                                    let actionParametersForm = ActionFormViewControllerUI(request: request)
-                                    NavigationLink(destination: actionParametersForm.toolbar {
-                                        Button("Done") {
-
-                                        }
-                                    }) { // ActionRequestDetail(request: request)
-                                        ActionRequestRow(request: request)
-                                    }
+                                    ActionRequestEditableRow(request: request)
                                 } else {
                                     ActionRequestRow(request: request)
                                 }
@@ -122,18 +115,25 @@ public struct ActionRequestFormUI: View {
                 EditButton()
             }
         }
+        .introspectTableView { tableView in
+
+            let action = UIAction(title: "",
+                                  image: nil,
+                                  identifier: UIAction.Identifier(rawValue: "azeazaze"),
+                                  discoverabilityTitle: nil,
+                                  attributes: .empty,
+                                  state: UIMenuElement.State.on) { _ in
+
+                DispatchQueue.main.after(0.2) {
+                    ServerStatusManager.instance.checkStatus()
+                    tableView.refreshControl?.endRefreshing()
+                }
+            }
+            tableView.refreshControl = UIRefreshControl(frame: CGRect(x: 0, y: 0, width: 100, height: 50), primaryAction: action)
+            tableView.refreshControl?.tintColor = UIColor.foreground
+        }
         .listStyle(GroupedListStyle())
-        .highPriorityGesture(
-            DragGesture()
-                .onChanged { gesture in
-                    print("onChanged \(gesture.location)")
-                    print("onChanged \(gesture.predictedEndLocation)")
-                }
-                .onEnded { gesture in
-                    print("onEnded \(gesture.location)")
-                    print("onEnded \(gesture.predictedEndLocation)")
-                }
-        )
+
     }
     @State private var offset = CGSize.zero
     private func onDelete(_ indexSet: IndexSet, _ requests: [ActionRequest]) {
@@ -144,6 +144,24 @@ public struct ActionRequestFormUI: View {
             if let request = pendingRequest[safe: index] {
                 instance.remove(request)
             }
+        }
+    }
+}
+
+struct ActionRequestEditableRow: View {
+    @State var showModal = false
+    @State var request: ActionRequest
+
+    public var body: some View {
+        let actionParametersForm = ActionFormViewControllerUI(request: request)
+        NavigationLink(destination: actionParametersForm.toolbar {
+            Button("Done") {
+                // actionParametersForm.done {
+                    showModal.toggle()
+               // }
+            }
+        }, isActive: $showModal) {
+            ActionRequestRow(request: request)
         }
     }
 }
