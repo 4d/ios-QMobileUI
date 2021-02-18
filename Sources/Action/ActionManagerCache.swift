@@ -23,8 +23,8 @@ class ActionManagerCache {
         imageCache.store(image, forKey: cacheId)
     }
 
-    func retrieve(cacheId: String, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
-        imageCache.retrieveImage(forKey: cacheId, completionHandler: completionHandler)
+    func retrieve(cacheId: String, callbackQueue: CallbackQueue = .mainCurrentOrAsync, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
+        imageCache.retrieveImage(forKey: cacheId, callbackQueue: callbackQueue, completionHandler: completionHandler)
     }
 
     func remove(cacheId: String) {

@@ -85,8 +85,21 @@ struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, VeryCodable 
 import Kingfisher
 extension ImageUploadOperationInfo {
 
-    func retrieve(_ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
-        ActionManager.instance.cache.retrieve(cacheId: cacheId, completionHandler)
+    func retrieve(callbackQueue: CallbackQueue = .mainCurrentOrAsync, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
+        ActionManager.instance.cache.retrieve(cacheId: cacheId, callbackQueue: callbackQueue, completionHandler)
+    }
+
+    func awaitRetrieve() -> Result<ImageCacheResult, KingfisherError> {
+        let semaphore = DispatchSemaphore(value: 0)
+        var theResult: Result<ImageCacheResult, KingfisherError>?
+        DispatchQueue.userInitiated.async {
+            self.retrieve(callbackQueue: .dispatch(DispatchQueue.userInitiated)) { result in
+                theResult = result
+                semaphore.signal()
+            }
+        }
+        _ = semaphore.wait(wallTimeout: .distantFuture)
+        return theResult!
     }
 
     func remove() {

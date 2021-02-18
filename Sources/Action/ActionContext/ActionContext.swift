@@ -113,7 +113,7 @@ extension ActionParameter {
                     if let value = value as? Double {
                         return value / 1000 // remove misslisecond to transform to timeInterval(seconde)
                     }
-                case .image:
+                case .image, .picture:
                     if let value = value as? [String: Any] {
                         if let imageResource = ApplicationImageCache.imageResource(for: value),
                             let image = ApplicationImageCache.retrieve(for: imageResource) {
@@ -136,13 +136,18 @@ extension ActionParameter {
                 switch self.type {
                 case .time:
                     if let value = value as? Double {
-                        return value / 1000 // remove misslisecond to transform to timeInterval(seconde)
+                        return value * 1000 // add misslisecond
+                    } else if let value = value as? Int {
+                        return value * 1000 // add misslisecond 
                     }
-                case .image:
-                    if let value = value as? [String: Any] {
-                        if let imageResource = ApplicationImageCache.imageResource(for: value),
-                            let image = ApplicationImageCache.retrieve(for: imageResource) {
-                            return image
+                case .image, .picture:
+                    if let value = value as? ImageUploadOperationInfo {
+                        let result = value.awaitRetrieve()
+                        switch result {
+                        case .success(let imageResult):
+                            return imageResult.image
+                        case .failure:
+                            break
                         }
                     }
                 default:
