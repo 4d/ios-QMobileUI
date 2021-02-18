@@ -56,7 +56,7 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func header(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(instance.isSuspended ? "🔴 Server is not accessible": "🟢 Server is online")
+            Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
                 .onTapGesture(perform: {
                     ServerStatusManager.instance.checkStatus()
                 })
@@ -68,7 +68,15 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Spacer()
+            Button(action: {
+                instance.pause.toggle()
+            }, label: {
+                Image(systemName: instance.pause ? "play": "pause")
+                    .padding(5)
+                    .foregroundColor(Color("ForegroundColor"))
+                    .background(Color("BackgroundColor"))
+                    .cornerRadius(5)
+            })
         case .history:
             Spacer()
         }
@@ -85,7 +93,7 @@ public struct ActionRequestFormUI: View {
                             let requests = getRequests(for: section)
                             ForEach(requests, id: \.id) { request in
                                 if hasDetailLink && !request.action.parameters.isEmpty {
-                                    ActionRequestEditableRow(request: request)
+                                    ActionRequestEditableRow(request: request, instance: instance)
                                 } else {
                                     ActionRequestRow(request: request)
                                 }
@@ -140,14 +148,15 @@ public struct ActionRequestFormUI: View {
 struct ActionRequestEditableRow: View {
     @State var showModal = false
     @State var request: ActionRequest
+    @ObservedObject public var instance: ActionManager
 
     public var body: some View {
         let actionParametersForm = ActionFormViewControllerUI(request: request)
         NavigationLink(destination: actionParametersForm.toolbar {
             Button("Done") {
                 // actionParametersForm.done {
-                    showModal.toggle()
-               // }
+                showModal.toggle()
+                // }
             }
         }, isActive: $showModal) {
             ActionRequestRow(request: request)

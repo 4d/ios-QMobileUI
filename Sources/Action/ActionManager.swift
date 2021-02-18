@@ -293,6 +293,16 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     // MARK: - queue based
+    var pause: Bool = false {
+        didSet {
+            checkSuspend()
+        }
+    }
+
+    var isServerAccessible: Bool {
+        let serverStatus = ApplicationReachability.instance.serverStatus
+        return serverStatus.isSuccess
+    }
 
     private(set) var isSuspended: Bool {
         get {
@@ -467,7 +477,7 @@ extension ActionManager: ReachabilityListener, ServerStatusListener {
     fileprivate func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.isSuccess
+        self.isSuspended = !serverStatus.isSuccess ||  pause
     }
 }
 
