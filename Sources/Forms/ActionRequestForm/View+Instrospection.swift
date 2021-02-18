@@ -21,6 +21,21 @@ extension View {
         return introspect(selector: Introspection.ancestorOrSiblingContaining, customize: customize)
     }
 
+    public func onPushToRefresh(customize: @escaping (UIRefreshControl) -> Void, refreshing: @escaping (UIRefreshControl) -> Void) -> some View {
+        return self.introspectTableView { tableView in
+            let action = UIAction(title: "Refresh",
+                                  image: nil,
+                                  identifier: UIAction.Identifier(rawValue: "Refresh"),
+                                  discoverabilityTitle: nil,
+                                  attributes: .empty,
+                                  state: UIMenuElement.State.on) { action in
+                refreshing(action.sender as! UIRefreshControl) // swiftlint:disable:this force_cast
+            }
+            let refreshControl = UIRefreshControl(frame: CGRect(x: 0, y: 0, width: 100, height: 50), primaryAction: action)
+            tableView.refreshControl = refreshControl
+            customize(refreshControl)
+        }
+    }
 }
 
 public class IntrospectionUIView: UIView {

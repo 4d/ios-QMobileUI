@@ -115,23 +115,12 @@ public struct ActionRequestFormUI: View {
                 EditButton()
             }
         }
-        .introspectTableView { tableView in
-
-            let action = UIAction(title: "",
-                                  image: nil,
-                                  identifier: UIAction.Identifier(rawValue: "azeazaze"),
-                                  discoverabilityTitle: nil,
-                                  attributes: .empty,
-                                  state: UIMenuElement.State.on) { _ in
-
-                DispatchQueue.main.after(0.2) {
-                    ServerStatusManager.instance.checkStatus()
-                    tableView.refreshControl?.endRefreshing()
-                }
+        .onPushToRefresh(customize: { $0.tintColor = UIColor.foreground }, refreshing: { refreshControl in
+            DispatchQueue.main.after(0.2) {
+                ServerStatusManager.instance.checkStatus()
+                refreshControl.endRefreshing()
             }
-            tableView.refreshControl = UIRefreshControl(frame: CGRect(x: 0, y: 0, width: 100, height: 50), primaryAction: action)
-            tableView.refreshControl?.tintColor = UIColor.foreground
-        }
+        })
         .listStyle(GroupedListStyle())
 
     }
