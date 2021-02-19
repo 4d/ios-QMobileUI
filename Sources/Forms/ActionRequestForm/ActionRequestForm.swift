@@ -190,6 +190,7 @@ struct ActionRequestEditableRow: View {
 
                     // TODO we need here to
                     // to check if there is new image to upload to add operation on the queue (because the operation of this request is already on the queue)
+                    instance.requestUpdated(request)
 
                 case .failure(let error):
                     logger.warning("Cannot update action request due to \(error)")

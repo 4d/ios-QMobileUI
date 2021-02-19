@@ -320,6 +320,10 @@ public class ActionManager: NSObject, ObservableObject {
         self.queue.waitUntilAllOperationsAreFinished()
     }
 
+    func requestUpdated(_ request: ActionRequest) {
+        self.queue.requestUpdated(request)
+    }
+
 }
 
 // MARK: - Image

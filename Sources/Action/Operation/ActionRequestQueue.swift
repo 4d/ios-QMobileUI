@@ -123,6 +123,39 @@ class ActionRequestQueue: OperationQueue {
                 }
             }
         }
+    }
 
+    func requestUpdated(_ request: ActionRequest) {
+        guard let operation = self.operations.compactMap({$0 as? ActionRequestOperation}).first(where: {$0.request.id == request.id}) else {
+            logger.warning("Failed to find corresponding operation for request \(request)")
+            return
+        }
+
+        let imageOps = operation.dependencies.compactMap({$0 as? ActionRequestImageOperation})
+
+        for (key, value) in request.actionParameters ?? [:] {
+            if let imageInfo = value as? ImageUploadOperationInfo { // XXX if we could be more generic using ActionRequestParameterWithRequest, it will be better
+                if let imageOp = imageOps.first(where: { $0.info.cacheId == imageInfo.cacheId}) {
+
+                    if imageOp.info.id == imageInfo.id {
+                        // already scheduled
+                    } else {
+                        // same fields but not same operation, cancel the previous one?
+                        if !imageOp.isCancelled {
+                            imageOp.cancel(with: ActionFormError.upload([key: APIError.request(NSError(domain: "qmobile", code: 100, userInfo: [NSLocalizedDescriptionKey: "Operation cancelled, because a new image must be uploaded"]))]))
+                        }
+                        // schedule a new one
+                        let subOperation = imageInfo.newOperation(operation)
+                        self.addOperation(subOperation)
+                        operation.addDependency(subOperation)
+                    }
+                } else {
+                    // schedule one if missing
+                    let subOperation = imageInfo.newOperation(operation)
+                    self.addOperation(subOperation)
+                    operation.addDependency(subOperation)
+                }
+            }
+        }
     }
 }
