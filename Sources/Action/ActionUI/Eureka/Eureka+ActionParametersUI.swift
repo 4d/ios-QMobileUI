@@ -18,9 +18,17 @@ import QMobileDataSync // not need if Combine code moved to QMobileAPI
 
 class ActionFormViewController: FormViewController { // swiftlint:disable:this type_body_length 
 
+    /// all information needed to build the form : action etc...
     var builder: ActionParametersUIBuilder!
+    /// static configuration fom preferences
     var settings: ActionFormSettings = ActionFormSettings()
-    var cancellables = Set<AnyCancellable>()
+
+    /// a bag for async op
+    fileprivate var cancellables = Set<AnyCancellable>()
+
+    /// listener which listen to each change
+    var listener: ((Result<ActionParameters, ActionFormError>) -> Void)?
+
     // MARK: Init
 
     convenience init(builder: ActionParametersUIBuilder, settings: ActionFormSettings = ActionFormSettings()) {
@@ -46,7 +54,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             cancelItem = UIBarButtonItem(title: dismissLabel, style: .plain, target: self, action: #selector(cancelAction))
         } else {
             cancelItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAction))
-
         }
         self.navigationItem.add(where: .left, item: cancelItem)
 
@@ -164,6 +171,13 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 row.cell?.datePicker.timeZone = .greenwichMeanTime
             }
         }
+        if let listener = listener {
+            if case .onChange = event {
+                self.formValues { result in
+                    listener(result)
+                }
+            }
+        }
     }
 
     // MARK: table view
@@ -255,16 +269,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         navigationOptions = [.Enabled, .StopDisabledRow]
         animateScroll = true
         rowKeyboardSpacing = 20 // Leaves 20pt of space between the keyboard and the highlighted row after scrolling to an off screen row
-    }
-
-    var listener: ((Result<ActionParameters, ActionFormError>) -> Void)?
-
-    override func viewWillDisappear(_ animated: Bool) {
-        if let listener = listener {
-            self.formValues { result in
-                listener(result)
-            }
-        }
     }
 
     // MARK: override

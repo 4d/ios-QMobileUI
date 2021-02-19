@@ -13,24 +13,19 @@ import QMobileAPI
 struct ActionFormViewControllerUI: UIViewControllerRepresentable {
 
     typealias UIViewControllerType = ActionFormViewController
+
+    /// the requet
     var request: ActionRequest
-    init(request: ActionRequest) {
+    var listener: ((Result<ActionParameters, ActionFormError>) -> Void)
+
+    init(request: ActionRequest, listener: @escaping ((Result<ActionParameters, ActionFormError>) -> Void)) {
         self.request = request
+        self.listener = listener
     }
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) -> ActionFormViewController {
         let controller = ActionFormViewController(builder: self.request.builder)
-        controller.listener = { result in
-            switch result {
-            case .success(let values):
-                print("\(values)")
-
-                request.actionParameters = values
-
-            case .failure(let error):
-                print("\(error)") // maybe to late to manage error if already dismissed
-            }
-        }
+        controller.listener = listener
         return controller
     }
 
@@ -39,7 +34,7 @@ struct ActionFormViewControllerUI: UIViewControllerRepresentable {
 
 struct ActionFormViewControllerUI_Previews: PreviewProvider {
     static var previews: some View {
-        ActionFormViewControllerUI(request: ActionRequest.examples[1])
+        ActionFormViewControllerUI(request: ActionRequest.examples[1], listener: { _ in })
     }
 }
 

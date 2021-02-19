@@ -13,11 +13,25 @@ import SwiftUI
 import QMobileAPI
 
 public struct ActionRequestFormUI: View {
-    @EnvironmentObject public var instance: ActionManager
+    // action manager to use
+    @EnvironmentObject public var instance: ActionManager // CLEAN rename instance to actionManager everywhere
+
+    // list of requests to display
     public var requests: [ActionRequest]
-    var hasDetailLink = true
-    var actionContext: ActionContext?
+
+    // context could be table or record
+    public var actionContext: ActionContext?
+
+    // allow to edit ie. delete
     @State private var editMode = EditMode.inactive
+
+    // some feature flags
+    var hasDetailLink = true
+    #if DEBUG
+    var hasPauseButton = false
+    #else
+    var hasPauseButton = false
+    #endif
 
     enum SectionCase: String, Identifiable, CaseIterable {
         case pending, history
@@ -68,15 +82,19 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Button(action: {
-                instance.pause.toggle()
-            }, label: {
-                Image(systemName: instance.pause ? "play": "pause")
-                    .padding(5)
-                    .foregroundColor(Color("ForegroundColor"))
-                    .background(Color("BackgroundColor"))
-                    .cornerRadius(5)
-            })
+            if hasPauseButton {
+                Button(action: {
+                    instance.pause.toggle()
+                }, label: {
+                    Image(systemName: instance.pause ? "play": "pause")
+                        .padding(5)
+                        .foregroundColor(Color("ForegroundColor"))
+                        .background(Color("BackgroundColor"))
+                        .cornerRadius(5)
+                })
+            } else {
+                Spacer()
+            }
         case .history:
             Spacer()
         }
@@ -150,16 +168,37 @@ struct ActionRequestEditableRow: View {
     @State var request: ActionRequest
     @ObservedObject public var instance: ActionManager
 
+    @State var result: Result<ActionParameters, ActionFormError>?
+
     public var body: some View {
-        let actionParametersForm = ActionFormViewControllerUI(request: request)
+        let actionParametersForm = ActionFormViewControllerUI(request: request, listener: { newValue in
+            self.result = newValue
+        })
         NavigationLink(destination: actionParametersForm.toolbar {
             Button("Done") {
-                // actionParametersForm.done {
-                showModal.toggle()
-                // }
+                // manage action request modification
+                guard let result = self.result else {
+                    showModal.toggle() // dismiss
+                    logger.debug("No result from action parameters. Maybe no change")
+                    return
+                }
+                switch result {
+                case .success(let values):
+                    // save new values to the request
+                    request.actionParameters = values
+                    showModal.toggle() // dismiss
+
+                    // TODO we need here to
+                    // to check if there is new image to upload to add operation on the queue (because the operation of this request is already on the queue)
+
+                case .failure(let error):
+                    logger.warning("Cannot update action request due to \(error)")
+                }
             }
-        }, isActive: $showModal) {
+        }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request)
+        }.onChange(of: showModal) { newValue in
+            instance.pause = newValue
         }
     }
 }
