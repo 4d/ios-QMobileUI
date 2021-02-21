@@ -111,7 +111,7 @@ public struct ActionRequestFormUI: View {
                             let requests = getRequests(for: section)
                             ForEach(requests, id: \.id) { request in
                                 if hasDetailLink && !request.action.parameters.isEmpty {
-                                    ActionRequestEditableRow(request: request, instance: instance)
+                                    ActionRequestEditableRow(request: request, actionManager: instance)
                                 } else {
                                     ActionRequestRow(request: request)
                                 }
@@ -166,40 +166,45 @@ public struct ActionRequestFormUI: View {
 struct ActionRequestEditableRow: View {
     @State var showModal = false
     @State var request: ActionRequest
-    @ObservedObject public var instance: ActionManager
+    @ObservedObject public var actionManager: ActionManager
 
+    @State var actionDone: Bool = false
     @State var result: Result<ActionParameters, ActionFormError>?
 
     public var body: some View {
-        let actionParametersForm = ActionFormViewControllerUI(request: request, listener: { newValue in
-            self.result = newValue
-        })
-        NavigationLink(destination: actionParametersForm.toolbar {
-            Button("Done") {
+        let actionParametersForm = ActionFormViewControllerUI(request: request, action: $actionDone, result: $result)
+            .onChange(of: actionDone) { actionValue in
+                if actionValue {
+                    return // Just luanch action
+                } // else set to false because action finish
+
                 // manage action request modification
                 guard let result = self.result else {
                     showModal.toggle() // dismiss
-                    logger.debug("No result from action parameters. Maybe no change")
+                    logger.warning("No result from action parameters. Maybe no change")
                     return
                 }
                 switch result {
                 case .success(let values):
                     // save new values to the request
                     request.actionParameters = values
+                    // we need here to to check if there is new image to upload to add operation on the queue
+                    // (because the operation of this request is already on the queue)
+                    actionManager.requestUpdated(request)
+
                     showModal.toggle() // dismiss
-
-                    // TODO we need here to
-                    // to check if there is new image to upload to add operation on the queue (because the operation of this request is already on the queue)
-                    instance.requestUpdated(request)
-
                 case .failure(let error):
                     logger.warning("Cannot update action request due to \(error)")
                 }
             }
+        NavigationLink(destination: actionParametersForm.toolbar {
+            Button("Done") {
+                self.actionDone = true
+            }
         }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request)
         }.onChange(of: showModal) { newValue in
-            instance.pause = newValue
+            actionManager.pause = newValue
         }
     }
 }

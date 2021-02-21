@@ -26,9 +26,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     /// a bag for async op
     fileprivate var cancellables = Set<AnyCancellable>()
 
-    /// listener which listen to each change
-    var listener: ((Result<ActionParameters, ActionFormError>) -> Void)?
-
     // MARK: Init
 
     convenience init(builder: ActionParametersUIBuilder, settings: ActionFormSettings = ActionFormSettings()) {
@@ -119,6 +116,18 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         }
     }
 
+    func externalDone(_ completionHandler: @escaping ((Result<ActionParameters, ActionFormError>) -> Void)) {
+        self.formValues { result in
+            switch result {
+            case .failure(let error):
+                _ = self.fillErrors(error)
+            case .success:
+                break
+            }
+            completionHandler(result)
+        }
+    }
+
     // MARK: configure rows
 
     func onRowEvent(cell: BaseCell?, row: BaseRow, event: RowEvent) {
@@ -171,13 +180,19 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 row.cell?.datePicker.timeZone = .greenwichMeanTime
             }
         }
-        if let listener = listener {
+       /* if let listener = listener {
             if case .onChange = event {
                 self.formValues { result in
                     listener(result)
+                    switch result {
+                    case .failure(let error):
+                        self.fillErrors(error)
+                    case .success:
+                        break
+                    }
                 }
             }
-        }
+        }*/
     }
 
     // MARK: table view
@@ -721,4 +736,23 @@ extension ActionFormError {
             return errorsByComponents
         }
     }
-} // swiftlint:disable:this file_length
+}
+/*
+extension ActionFormError: Equatable {
+    static func == (left: ActionFormError, rigth: ActionFormError) -> Bool {
+        switch (left, rigth) {
+        case (.components(let l), .components(let r)):
+            return true
+        case (.upload(let l), .upload( let r)):
+            return true
+        case (.validation(let l), .validation( let r)):
+            return true
+        case (.upload(let l), .upload( let r)):
+            return true
+
+        default:
+            return false
+        }
+
+    }
+} */// swiftlint:disable:this file_length
