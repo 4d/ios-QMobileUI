@@ -26,13 +26,21 @@ import Foundation
 import UIKit
 import Eureka
 import PhotosUI
+import VisionKit
 
 /// Selector Controller used to pick an image
-open class ImagePickerController: UIViewController, TypedRowControllerType, UIImagePickerControllerDelegate, PHPickerViewControllerDelegate, UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate {
+open class ImagePickerController: UIViewController,
+                                  TypedRowControllerType,
+                                  UIImagePickerControllerDelegate,
+                                  PHPickerViewControllerDelegate,
+                                  VNDocumentCameraViewControllerDelegate,
+                                  UINavigationControllerDelegate,
+                                  UIAdaptivePresentationControllerDelegate {
 
     public enum SourceType: Int, CaseIterable {
         case photoLibrary = 0
         case camera = 1
+        case document = 2
 
         var uikit: UIImagePickerController.SourceType {
             switch self {
@@ -40,6 +48,9 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
                 return .camera
             case .photoLibrary:
                 return .photoLibrary
+            case .document:
+                assertionFailure("cannot convert document source type")
+                return .savedPhotosAlbum
             }
         }
         var image: UIImage {
@@ -48,11 +59,13 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
                 return  UIImage(systemName: "camera")!
             case .photoLibrary:
                 return UIImage(systemName: "photo.on.rectangle.angled")!
+            case .document:
+                return UIImage(systemName: "doc.text.viewfinder")!
             }
         }
     }
 
-    var sourceType: SourceType = .camera
+    var sourceType: SourceType = .photoLibrary
 
     /// The row that pushed or presented this controller
     public var row: RowOf<UIImage>!
@@ -60,12 +73,12 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
     /// A closure to be called when the controller disappears.
     public var onDismissCallback: ((UIViewController) -> Void)?
 
-    var cameraController: UIImagePickerController = {
+    lazy var cameraController: UIImagePickerController = {
         var controller = UIImagePickerController()
         controller.allowsEditing = true
         return controller
     }()
-    var photoLibraryController: PHPickerViewController = {
+    lazy var photoLibraryController: PHPickerViewController = {
         var configuration = PHPickerConfiguration()
         configuration.filter = .images
         configuration.selectionLimit = 1
@@ -73,6 +86,18 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
         imagePickerController.isModalInPresentation = true
         return imagePickerController
     }()
+    lazy var documentController: VNDocumentCameraViewController = {
+        var documentController = VNDocumentCameraViewController()
+        documentController.isModalInPresentation = true
+        return documentController
+    }()
+
+    /*lazy var colorPicker: UIColorPickerViewController = {
+        let colorPicker = UIColorPickerViewController()
+        colorPicker.supportsAlpha = false
+        return colorPicker
+    }()*/
+
     fileprivate func showPicker() {
         switch sourceType {
         case .camera:
@@ -86,6 +111,11 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
             photoLibraryController.delegate = self
             self.present(photoLibraryController, animated: true) {
                 self.photoLibraryController.presentationController?.delegate = self
+            }
+        case .document:
+            documentController.delegate = self
+            self.present(documentController, animated: true) {
+                self.documentController.presentationController?.delegate = self
             }
         }
     }
@@ -135,9 +165,66 @@ open class ImagePickerController: UIViewController, TypedRowControllerType, UIIm
         }
     }
 
+    // MARK: - VNDocumentCameraViewControllerDelegate
+    open func documentCameraViewController(_ picker: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
+        // for pageIndex in 0 ..< scan.pageCount {
+        if scan.pageCount > 0 {
+            row.value = scan.imageOfPage(at: 0)
+        }
+        picker.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
+    }
+
+    // The delegate will receive this call when the user cancels.
+    open func documentCameraViewControllerDidCancel(_ picker: VNDocumentCameraViewController) {
+        picker.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
+    }
+
+    // The delegate will receive this call when the user is unable to scan, with the following error.
+    open func documentCameraViewController(_ picker: VNDocumentCameraViewController, didFailWithError error: Error) {
+        logger.error("error when scanning document \(error)")
+        picker.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
+    }
+
     // MARK: - UIAdaptivePresentationControllerDelegate
 
     open func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         self.onDismissCallback?(self)
     }
 }
+/*
+extension ImagePickerController: UIColorPickerViewControllerDelegate {
+
+    //  func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController)
+
+    /// In presentations (except popovers) the color picker shows a close button. If the close button is tapped,
+    /// the view controller is dismissed and `colorPickerViewControllerDidFinish:` is called. Can be used to
+    /// animate alongside the dismissal.
+    public func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+
+        // SwiftMessages.info(viewController.selectedColor.hexString)
+        row.value = UIImage(color: viewController.selectedColor)
+        viewController.dismiss(animated: true) {
+            self.onDismissCallback?(self)
+        }
+    }
+
+}
+public extension UIImage {
+    convenience init?(color: UIColor, size: CGSize = CGSize(width: 10, height: 10)) {
+        let rect = CGRect(origin: .zero, size: size)
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        color.setFill()
+        UIRectFill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        guard let cgImage = image?.cgImage else { return nil }
+        self.init(cgImage: cgImage)
+    }
+}*/

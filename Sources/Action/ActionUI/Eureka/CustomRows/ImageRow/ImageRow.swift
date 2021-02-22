@@ -25,6 +25,7 @@
 import Foundation
 import UIKit
 import Eureka
+import VisionKit
 
 public struct ImageRowSourceTypes: OptionSet {
 
@@ -36,7 +37,8 @@ public struct ImageRowSourceTypes: OptionSet {
 
     public static let photoLibrary = ImageRowSourceTypes(.photoLibrary)
     public static let camera = ImageRowSourceTypes(.camera)
-    public static let all: ImageRowSourceTypes = [camera, photoLibrary]
+    public static let document = ImageRowSourceTypes(.document)
+    public static let all: ImageRowSourceTypes = [camera, photoLibrary, .document]
 
     var image: (UIImage, CGRect)? {
         var types: [ImagePickerController.SourceType] = []
@@ -49,6 +51,10 @@ public struct ImageRowSourceTypes: OptionSet {
             types.append(.photoLibrary)
             size = size.with(width: size.width + 20)
         }
+        if self.contains(.document) {
+            types.append(.document)
+            size = size.with(width: size.width + 20)
+        }
         guard let image = types.map({$0.image}).mergeToGrid()?.withRenderingMode(.alwaysTemplate) else {
             return nil
         }
@@ -58,14 +64,14 @@ public struct ImageRowSourceTypes: OptionSet {
 
 extension ImageRowSourceTypes {
 
-// MARK: Helpers
-
     var localizedString: String {
         switch self {
-        case ImageRowSourceTypes.camera:
+        case .camera:
             return "Take photo"
-        case ImageRowSourceTypes.photoLibrary:
+        case .photoLibrary:
             return "Photo Library"
+        case .document:
+            return "Scan Document"
         default:
             return ""
         }
@@ -96,6 +102,7 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
 
     public required init(tag: String?) {
         sourceTypes = .all
+
         super.init(tag: tag)
         refreshAvailableType()
         presentationMode = .presentModally(controllerProvider: ControllerProvider.callback { return ImagePickerController() }, onDismiss: { [weak self] viewController in
@@ -129,6 +136,9 @@ open class _ImageRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType where C
         }
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             _ = availableSources.insert(.camera)
+        }
+        if VNDocumentCameraViewController.isSupported {
+            _ = availableSources.insert(.document)
         }
 
         sourceTypes.formIntersection(availableSources)
@@ -248,6 +258,7 @@ extension _ImageRow {
     func createOptionsForAlertController(_ alertController: UIAlertController) {
         createOptionForAlertController(alertController, sourceType: .camera)
         createOptionForAlertController(alertController, sourceType: .photoLibrary)
+        createOptionForAlertController(alertController, sourceType: .document)
     }
 }
 

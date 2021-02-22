@@ -150,7 +150,7 @@ extension ActionParameterType {
         case .number, .real:
             return DecimalRow(key) { $0.formatter = nil }.onRowEvent(eventCallback)
         case .time:
-            return TimeIntervalRow(key).onRowEvent(eventCallback)
+            return TimeRow(key).onRowEvent(eventCallback)
         case .picture, .image:
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:
@@ -188,6 +188,14 @@ extension ActionParameterFormat {
             return BarcodeScannerRow(key).onRowEvent(eventCallback)
         case .signature:
             return SignatureViewRow(key).onRowEvent(eventCallback)
+        case .camera:
+            return ImageRow(key) { $0.sourceTypes = .camera }.onRowEvent(eventCallback)
+        case .photoLibrary:
+            return ImageRow(key) { $0.sourceTypes = .photoLibrary }.onRowEvent(eventCallback)
+        case .document:
+            return ImageRow(key) { $0.sourceTypes = .document }.onRowEvent(eventCallback)
+        case .ocr:
+            return OCRRow(key).onRowEvent(eventCallback)
         case .location:
             return LocationRow(key).onRowEvent(eventCallback)
         case .stepper:

@@ -135,6 +135,7 @@
 		48A9CB3420348C78007183B4 /* UIBar+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9CB3320348C78007183B4 /* UIBar+QMobile.swift */; };
 		48AA781525DBBD1A00759F76 /* Ellipsis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AA781425DBBD1A00759F76 /* Ellipsis.swift */; };
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
+		48AEA33725E1243500433361 /* OCRRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AEA33625E1243500433361 /* OCRRow.swift */; };
 		48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */; };
 		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
 		48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */; };
@@ -390,6 +391,7 @@
 		48AE2C5F1F45754D0013FDEE /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		48AE2C601F4575590013FDEE /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		48AE2C611F4577A40013FDEE /* BrightFutures.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightFutures.framework; path = Carthage/Build/iOS/BrightFutures.framework; sourceTree = "<group>"; };
+		48AEA33625E1243500433361 /* OCRRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OCRRow.swift; sourceTree = "<group>"; };
 		48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRequestStatusView.swift; sourceTree = "<group>"; };
 		48B23CFA2231154C00F6D94C /* UIView+Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Action.swift"; sourceTree = "<group>"; };
 		48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+ActionUI.swift"; sourceTree = "<group>"; };
@@ -459,7 +461,6 @@
 		48F8E2CC1F7D0FB6000080FB /* UINibable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UINibable.swift; path = ../UINibable.swift; sourceTree = "<group>"; };
 		48FB2CD21E93A22600F4F685 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		48FB2CD31E93A22600F4F685 /* Prephirences.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Prephirences.framework; path = Carthage/Build/iOS/Prephirences.framework; sourceTree = "<group>"; };
-		48FB2CDB1E93A23900F4F685 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
 		48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QMobileDataStore.framework; path = Carthage/Build/iOS/QMobileDataStore.framework; sourceTree = "<group>"; };
@@ -723,6 +724,7 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				48AEA33525E1243500433361 /* OCRRow */,
 				C4F2208B254356F70063653A /* SignatureViewRow */,
 				C4D6A481253F1BBA000CD742 /* BarcodeScannerRow */,
 				48016A6A22BB8885005A7C65 /* TimeIntervalRow */,
@@ -893,6 +895,14 @@
 			name = Control;
 			sourceTree = "<group>";
 		};
+		48AEA33525E1243500433361 /* OCRRow */ = {
+			isa = PBXGroup;
+			children = (
+				48AEA33625E1243500433361 /* OCRRow.swift */,
+			);
+			path = OCRRow;
+			sourceTree = "<group>";
+		};
 		48B23CF92231152A00F6D94C /* Action */ = {
 			isa = PBXGroup;
 			children = (
@@ -979,7 +989,6 @@
 				48FB2CE41E93A27F00F4F685 /* QMobileDataStore.framework */,
 				48FB2CDE1E93A25E00F4F685 /* ObjcExceptionBridging.framework */,
 				48FB2CDF1E93A25E00F4F685 /* XCGLogger.framework */,
-				48FB2CDB1E93A23900F4F685 /* Result.framework */,
 				48FB2CD21E93A22600F4F685 /* Kingfisher.framework */,
 				48FB2CD31E93A22600F4F685 /* Prephirences.framework */,
 			);
@@ -1671,6 +1680,7 @@
 				4859D95E1F827E6800C8A020 /* SettingURLForm.swift in Sources */,
 				480B43551E8423AD007C90DD /* UIAlertController+QMobile.swift in Sources */,
 				48DCEAE3212C528A00473910 /* ValueTransformers.swift in Sources */,
+				48AEA33725E1243500433361 /* OCRRow.swift in Sources */,
 				C46F7C6F24BE3271005CF355 /* DeepLink.swift in Sources */,
 				48016A6C22BB88A5005A7C65 /* TimeIntervalRow.swift in Sources */,
 				4810B02220FF4C6D0049F31D /* LogSettingForm.swift in Sources */,
