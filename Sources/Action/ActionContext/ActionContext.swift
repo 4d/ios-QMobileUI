@@ -132,14 +132,13 @@ extension ActionParameter {
             }
             logger.warning("Default field defined \(field) but not found in context \(context)")
         } else if let actionRequest = context as? ActionRequest {
+
+            actionRequest.decodeParameters() // alternative, get a new decoded object which respond to actionParameterValue(for: name)
+
             if let value = actionRequest.actionParameterValue(for: name) {
                 switch self.type {
                 case .time:
-                    if let value = value as? Double {
-                        return value * 1000 // add misslisecond
-                    } else if let value = value as? Int {
-                        return value * 1000 // add misslisecond 
-                    }
+                    return value
                 case .image, .picture:
                     if let value = value as? ImageUploadOperationInfo {
                         let result = value.awaitRetrieve()

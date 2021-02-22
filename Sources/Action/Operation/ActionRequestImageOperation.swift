@@ -66,7 +66,7 @@ protocol ActionRequestParameterWithRequest {
 
 struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, VeryCodable {
 
-    var id: String = UUID().uuidString // add an id to make not equal too different image to upload associated to same field (we could when edit change the image)
+    var id: String = UUID().uuidString // add an id to make not equal too different image to upload associated to same field (we could when edit change the image) // swiftlint:disable:this identifier_name
     var cacheId: String
 
     var key: String {

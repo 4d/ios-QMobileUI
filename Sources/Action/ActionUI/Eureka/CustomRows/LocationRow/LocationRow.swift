@@ -76,7 +76,7 @@ extension LocationRow: RowInitializable {
 
 import QMobileAPI
 
-public struct Coordinate: Equatable {
+public struct Coordinate: Equatable, Codable {
     public var latitude: Double
     public var longitude: Double
 
@@ -100,6 +100,9 @@ extension Coordinate: ActionParameterEncodable {
         return "\(latitude), \(longitude)"
     }
 
+}
+
+extension Coordinate {
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }

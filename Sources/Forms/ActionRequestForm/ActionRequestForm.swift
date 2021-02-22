@@ -188,6 +188,7 @@ struct ActionRequestEditableRow: View {
                 case .success(let values):
                     // save new values to the request
                     request.actionParameters = values
+                    request.encodeParameters()
                     // we need here to to check if there is new image to upload to add operation on the queue
                     // (because the operation of this request is already on the queue)
                     actionManager.requestUpdated(request)
