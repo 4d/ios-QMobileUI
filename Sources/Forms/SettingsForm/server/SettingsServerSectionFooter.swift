@@ -12,7 +12,7 @@ import IBAnimatable
 
 open class SettingsServerSectionFooter: UITableViewHeaderFooterView, UINibable, ReusableView {
 
-    @IBOutlet weak open var iconView: AnimatableView!
+    @IBOutlet weak open var iconView: UILabel!
     @IBOutlet weak open var iconAnimationView: ServerStatusView!
     @IBOutlet weak open var titleLabel: UILabel!
     @IBOutlet weak open var detailLabel: UILabel!
@@ -48,7 +48,9 @@ extension SettingsServerSectionFooter: ServerStatusListener {
 
     public func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
         foreground { [weak self] in
-            self?.iconView.backgroundColor = status.color
+            // self?.iconView.backgroundColor = status.color
+            self?.iconView.text = status.emoticon
+            self?.iconView.font = .systemFont(ofSize: 14)
             self?.titleLabel.text = status.message
             self?.detailLabel.text = status.detailMessage
             if status.isChecking {
