@@ -13,6 +13,7 @@ import Eureka
 
 public class SignatureViewCell: Cell<UIImage>, CellType, SignatureViewDelegate {
     @IBOutlet weak var clearBtn: UIImageView!
+    @IBOutlet weak var placeholder: UIImageView!
     @IBOutlet weak var signView: SignatureView!
 
     @IBOutlet weak var signViewHeightConstraint: NSLayoutConstraint!
@@ -26,15 +27,36 @@ public class SignatureViewCell: Cell<UIImage>, CellType, SignatureViewDelegate {
         self.signView.listener = self
         clearBtn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearSignature(_:))))
         clearBtn.isUserInteractionEnabled = true
-        clearBtn.image = UIImage(systemName: "signature")
+
+        if let startImage = self.row.value {
+            self.placeholder.isHidden = false
+            self.placeholder.image = startImage
+            self.placeholder.alpha = 0.1
+            self.placeholder.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(removePlaceholder(_:))))
+            clearBtn.image = UIImage(systemName: "clear")
+        } else {
+            self.placeholder.isHidden = true
+            self.placeholder.image = nil
+            clearBtn.image = UIImage(systemName: "signature")
+        }
+    }
+
+    @objc public func removePlaceholder(_ sign: Any?) {
+        self.placeholder.image = nil
+        self.placeholder.isHidden = true
     }
 
     @objc public func clearSignature(_ sign: Any?) {
         self.signView.clearSignature()
         self.signView.listener = self
+        self.placeholder.image = nil
+        self.placeholder.isHidden = true
     }
 
     public func signatureUpdated(_ image: UIImage?) {
+        self.placeholder.image = nil
+        self.placeholder.isHidden = true
+
         self.row.value = image
 
         if image == nil {

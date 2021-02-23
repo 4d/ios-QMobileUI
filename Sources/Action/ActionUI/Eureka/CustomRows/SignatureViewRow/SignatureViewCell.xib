@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,6 +21,9 @@
                         <constraint firstAttribute="height" constant="200" id="BSo-Eg-lma"/>
                     </constraints>
                 </view>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="shl-iG-aZm">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
+                </imageView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gGw-Re-L8i" userLabel="Separator">
                     <rect key="frame" x="20" y="112" width="335" height="1"/>
                     <color key="backgroundColor" systemColor="systemGray4Color"/>
@@ -39,18 +42,23 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="shl-iG-aZm" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="01a-iD-ZcD"/>
                 <constraint firstItem="HTe-lN-qpU" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Ebe-CQ-LnX"/>
                 <constraint firstItem="gGw-Re-L8i" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" id="RSH-f7-LxF"/>
+                <constraint firstItem="shl-iG-aZm" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="f9s-9R-yq5"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="rBs-lb-K4I" secondAttribute="trailing" constant="10" id="fOd-Ks-Ehg"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="rBs-lb-K4I" secondAttribute="bottom" constant="10" id="hee-Vp-w0q"/>
                 <constraint firstItem="HTe-lN-qpU" firstAttribute="baseline" secondItem="gGw-Re-L8i" secondAttribute="firstBaseline" constant="88" id="nZo-Nh-bWm"/>
                 <constraint firstItem="HTe-lN-qpU" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="oR7-mv-thW"/>
                 <constraint firstAttribute="trailing" secondItem="gGw-Re-L8i" secondAttribute="trailing" constant="20" id="rCH-VU-z9b"/>
+                <constraint firstItem="shl-iG-aZm" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="t1i-Ao-VTA"/>
                 <constraint firstItem="HTe-lN-qpU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="uTV-oR-gQJ"/>
+                <constraint firstItem="shl-iG-aZm" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="whC-7C-Tm3"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="clearBtn" destination="rBs-lb-K4I" id="o1h-iy-Cke"/>
+                <outlet property="placeholder" destination="shl-iG-aZm" id="8OB-cF-Ur4"/>
                 <outlet property="signView" destination="HTe-lN-qpU" id="bup-Hg-K9R"/>
                 <outlet property="signViewHeightConstraint" destination="BSo-Eg-lma" id="7yC-ka-Oyx"/>
             </connections>
