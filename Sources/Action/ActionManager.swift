@@ -84,6 +84,7 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     func sendChange() {
+        self.saveActionRequests()
         onForeground {  // XXX use a better place , using observer pattern
             self.objectWillChange.send()
         }
