@@ -58,5 +58,9 @@ func timeSince(_ date: Date?) -> String {
     }
     let formatter = RelativeDateTimeFormatter()
     formatter.unitsStyle = .full
-    return formatter.localizedString(for: date, relativeTo: Date())
+    let now = Date()
+    if date == now {
+        formatter.dateTimeStyle = .named
+    }
+    return formatter.localizedString(for: date, relativeTo: now)
 }
