@@ -150,7 +150,7 @@ extension ActionParameterType {
         case .number, .real:
             return DecimalRow(key) { $0.formatter = nil }.onRowEvent(eventCallback)
         case .time:
-            return TimeRow(key).onRowEvent(eventCallback)
+            return TimeIntervalRow(key).onRowEvent(eventCallback)
         case .picture, .image:
             return ImageRow(key).onRowEvent(eventCallback)
         case .file, .blob:
