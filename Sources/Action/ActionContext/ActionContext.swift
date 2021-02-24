@@ -37,7 +37,7 @@ public protocol ActionContextProvider {
 extension ActionParameter {
 
     // Do the better to cast data according to action parameter type.
-    fileprivate func castData(_ value: Any) -> Any? {
+    func castData(_ value: Any) -> Any? {
         if let valueString = value as? String {
             switch self.type {
             case .date:

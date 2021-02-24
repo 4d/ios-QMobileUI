@@ -59,7 +59,8 @@ extension ActionRequest {
 }
 
 extension ActionRequest {
-    public var summary: String {
+
+    var summary: String {
         if let statusText = statusText {
             return statusText
         }
@@ -74,53 +75,8 @@ extension ActionRequest {
              }*/
             var values: [Any] = []
             for (key, value) in parameters {
-
-                if let definition = definitionsMap[key] {
-                    switch definition.type {
-                    case .date:
-                        if let string = value as? String,
-                           let date = DateFormatter.simpleDate.date(from: string) {
-                            values.append(DateFormatter.shortDate.string(from: date))
-                        } else if let date = value as? Date {
-                            values.append(DateFormatter.shortDate.string(from: date))
-                        } else {
-                            values.append(value)
-                        }
-                    case .time:
-                        if let format = definition.format, case .duration = format {
-                            if let number = value as? Double {
-                                let dateComponents = Calendar.iso8601GreenwichMeanTime.dateComponents([.hour, .minute/*, .second*/], from: Date(timeInterval: number))
-                                values.append(DateComponentsFormatter.localizedString(from: dateComponents, unitsStyle: .full)?.replacingOccurrences(of: ",", with: "") ?? value)
-
-                            } else {
-                                values.append(value)
-                            }
-
-                        } else {
-                            if let number = value as? Int {
-                                values.append(TimeFormatter.short.string(from: number))
-                            } else if let number = value as? Double {
-                                values.append(TimeFormatter.short.string(from: number))
-                            } else {
-                                values.append(value)
-                            }
-                        }
-                    case .number, .real:
-                        values.append("\(value)")
-                    case .bool, .boolean:
-                        if let format = definition.format, let value = value as? Bool {
-                            if case .check = format {
-                                values.append("\(value ? "✓": "")")
-                            } else  if case .switch = format {
-                                values.append("\(value ? "on": "off")")
-                            }
-                        } else {
-                            values.append("\(value)")
-                        }
-                    default:
-                        values.append(value)
-                    }
-
+                if let definition = definitionsMap[key], let value = definition.sumary(for: value) {
+                    values.append(value)
                 } else {
                     values.append(value)
                 }
@@ -128,5 +84,61 @@ extension ActionRequest {
             summary += values.compactMap({$0 as? String}).joined(separator: ",")
         }
         return summary
+    }
+}
+
+extension ActionParameter {
+
+    fileprivate func sumary(for value: Any) -> String? {
+        if let choiceList = self.choiceList, let choice = ChoiceList(choiceList: choiceList, type: self.type) {
+            if let value = choice.choice(for: AnyCodable(castData(value))) {  // find value in list
+                return "\(value.value)"
+            }
+        }
+
+        switch self.type {
+        case .date:
+            if let string = value as? String,
+               let date = DateFormatter.simpleDate.date(from: string) {
+               return DateFormatter.shortDate.string(from: date)
+            } else if let date = value as? Date {
+                return DateFormatter.shortDate.string(from: date)
+            } else {
+               return nil
+            }
+        case .time:
+            if let format = self.format, case .duration = format {
+                if let number = value as? Double {
+                    let dateComponents = Calendar.iso8601GreenwichMeanTime.dateComponents([.hour, .minute/*, .second*/], from: Date(timeInterval: number))
+                    return DateComponentsFormatter.localizedString(from: dateComponents, unitsStyle: .full)?.replacingOccurrences(of: ",", with: "")
+                } else {
+                    return nil
+                }
+
+            } else {
+                if let number = value as? Int {
+                    return TimeFormatter.short.string(from: number)
+                } else if let number = value as? Double {
+                    return TimeFormatter.short.string(from: number)
+                } else {
+                    return nil
+                }
+            }
+        case .number, .real:
+            return "\(value)"
+        case .bool, .boolean:
+            if let format = self.format, let value = value as? Bool {
+                if case .check = format {
+                    return "\(value ? "☑": "☐")"
+                } else  if case .switch = format {
+                    return "\(value ? "on": "off")"
+                }
+            } else {
+                return "\(value)"
+            }
+        default:
+            return nil
+        }
+        return nil
     }
 }
