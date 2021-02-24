@@ -97,7 +97,35 @@ extension ActionParameter {
     /// - Parameters:
     ///     - context: the context to get data values if `defaultField` defined.
     public func defaultValue(with context: ActionContext) -> Any? { // swiftlint:disable:this function_body_length
-        if let value = self.default?.value {
+         if let actionRequest = context as? ActionRequest {
+
+            actionRequest.decodeParameters() // alternative, get a new decoded object which respond to actionParameterValue(for: name)
+
+            if let value = actionRequest.actionParameterValue(for: name) {
+                switch self.type {
+                case .time:
+                    return value
+                case .image, .picture:
+                    if let value = value as? ImageUploadOperationInfo {
+                        let result = value.awaitRetrieve()
+                        switch result {
+                        case .success(let imageResult):
+                            return imageResult.image
+                        case .failure:
+                            break
+                        }
+                    }
+                default:
+                    break
+                }
+                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+                    if let value = choice.choice(for: AnyCodable(value)) { // find value in list
+                        return value
+                    }
+                }
+                return value
+            }
+        } else if let value = self.default?.value {
             let castedData = castData(value)
             if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
                 if let value = choice.choice(for: AnyCodable(castedData)) {  // find value in list
@@ -131,34 +159,6 @@ extension ActionParameter {
                 return value
             }
             logger.warning("Default field defined \(field) but not found in context \(context)")
-        } else if let actionRequest = context as? ActionRequest {
-
-            actionRequest.decodeParameters() // alternative, get a new decoded object which respond to actionParameterValue(for: name)
-
-            if let value = actionRequest.actionParameterValue(for: name) {
-                switch self.type {
-                case .time:
-                    return value
-                case .image, .picture:
-                    if let value = value as? ImageUploadOperationInfo {
-                        let result = value.awaitRetrieve()
-                        switch result {
-                        case .success(let imageResult):
-                            return imageResult.image
-                        case .failure:
-                            break
-                        }
-                    }
-                default:
-                    break
-                }
-                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
-                    if let value = choice.choice(for: AnyCodable(value)) { // find value in list
-                        return value
-                    }
-                }
-                return value
-            }
         }
         return nil
     }
