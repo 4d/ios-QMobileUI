@@ -324,6 +324,7 @@ public class ActionManager: NSObject, ObservableObject {
     func requestUpdated(_ request: ActionRequest) {
         self.queue.requestUpdated(request)
         saveActionRequests()
+        sendChange()
     }
 
 }

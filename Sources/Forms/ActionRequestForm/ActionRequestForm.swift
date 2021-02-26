@@ -48,10 +48,15 @@ public struct ActionRequestFormUI: View {
             requests = instance.requests.filter({ $0.state == .finished }).sorted(by: { $0.creationDate > $1.creationDate })
         }
         if let actionContext = actionContext?.actionContextParameters() {
+            let table = actionContext[ActionParametersKey.table] as? String
+            let record = actionContext[ActionParametersKey.record] as? [String: String]
+            let recordInt = actionContext[ActionParametersKey.record] as? [String: Int]
+            let hasRecord = record != nil || recordInt != nil
             requests = requests .filter {
-                $0.contextParameters?[ActionParametersKey.table] as? String == actionContext[ActionParametersKey.table] as? String
-                    && $0.contextParameters?[ActionParametersKey.record] as? [String: String] == actionContext[ActionParametersKey.record] as? [String: String]
-                    && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == actionContext[ActionParametersKey.record] as? [String: Int]
+                $0.contextParameters?[ActionParametersKey.table] as? String == table
+                    && ( !hasRecord || (
+                        $0.contextParameters?[ActionParametersKey.record] as? [String: String] == record
+                    && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == recordInt))
             }
         }
         return requests.sorted(by: { $0.creationDate > $1.creationDate })
