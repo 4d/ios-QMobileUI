@@ -229,6 +229,18 @@ extension ApplicationDataSync {
         }
     }
 
+    fileprivate func syncWillStart(_ operation: DataSync.Operation) {
+        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: operation.description) {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+            self.backgroundTaskID = .invalid
+        }
+    }
+
+    fileprivate func syncHasEnded() {
+        UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+        self.backgroundTaskID = .invalid
+        ApplicationReachability.instance.refreshServerInfo()
+    }
 }
 
 public func dataSync(operation: DataSync.Operation = .sync, _ completionHandler: @escaping QMobileDataSync.DataSync.SyncCompletionHandler) -> Moya.Cancellable? {
@@ -254,10 +266,7 @@ extension ApplicationDataSync: DataSyncDelegate {
     public func willDataSyncWillBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation, cancellable: Moya.Cancellable) {
         SwiftMessages.debug("Data \(operation) will begin")
 
-        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: operation.description) {
-            UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
-            self.backgroundTaskID = .invalid
-        }
+        syncWillStart(operation)
     }
     public func willDataSyncDidBegin(tables: [QMobileAPI.Table], operation: DataSync.Operation) -> Bool {
         if applicationWillTerminate /* stop sync is app shutdown */ {
@@ -270,6 +279,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func willDataSyncBegin(for table: QMobileAPI.Table, operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) begin for \(table.name)")
+        ApplicationReachability.instance.refreshServerInfo()
     }
 
     public func dataSync(for table: QMobileAPI.Table, page: QMobileAPI.PageInfo, operation: DataSync.Operation) {
@@ -287,8 +297,7 @@ extension ApplicationDataSync: DataSyncDelegate {
     public func didDataSyncEnd(tables: [QMobileAPI.Table], operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end")
 
-        UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
-        self.backgroundTaskID = .invalid
+        syncHasEnded()
 
         // CLEAN: crappy way to update view of displayed details form. To do better, detail form must listen to its records change.
         onForeground {
@@ -315,9 +324,7 @@ extension ApplicationDataSync: DataSyncDelegate {
 
     public func didDataSyncFailed(error: DataSyncError, operation: DataSync.Operation) {
         SwiftMessages.debug("Data \(operation) did end.\n \(error)")
-
-        UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
-        self.backgroundTaskID = .invalid
+        syncHasEnded()
     }
 
 }
