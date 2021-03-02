@@ -100,7 +100,7 @@ public class ActionManager: NSObject, ObservableObject {
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
-            executeAction(action, ActionRequest.generateID(), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
+            executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
         } else {
             // Create UI according to action parameters
             var control: ActionParametersUIControl?
@@ -191,28 +191,49 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
-   /* fileprivate func onOfflineActionResult(_ result: Result<ActionResult, ActionRequest.Error>, _ request: ActionRequest, _ completionHandler: ActionManager.ActionExecutionCompletionHandler?, _ actionUI: ActionUI, _ context: ActionContext) {
-        saveActionRequests() // TODO check if sink call on element change?
+    /// Manage result of action immedately, without retry
+    fileprivate func onActionResult(_ request: ActionRequest, // swiftlint:disable:this function_parameter_count
+                                    _ actionUI: ActionUI,
+                                    _ context: ActionContext,
+                                    _ waitPresenter: ActionExecutor.WaitPresenter,
+                                    _ result: Result<ActionResult, ActionRequest.Error>,
+                                    _ completionHandler: ActionExecutor.CompletionHandler?) {
+        request.result = result
+        assert(request.action.isOnlineOnly)
         // Display result or do some actions (incremental etc...)
         switch result {
         case .failure(let error):
             logger.warning("Action error: \(error)")
 
-            // tempo code to see diff between task to relaunch or not
-            if error.mustRetry {
-                request.state = .pending
-            } else {
-                request.state = .finished // with error
+            if !Prephirences.Auth.Login.form, error.isUnauthorized {
+                ApplicationAuthenticate.retryGuestLogin { authResult in
+                    switch authResult {
+                    case .success:
+                        // XXX do not do infinite retry
+                        self.executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
+                    case .failure(let authError):
+                        SwiftMessages.showError(ActionRequest.Error(authError))
+                        _ = completionHandler?(.failure(error))
+                    }
+                }
+                return
             }
+            // tempo code to see diff between task to relaunch or not
+            /*if error.mustRetry {
+             request.state = .pending
+             } else {
+             request.state = .finished // with error
+             }*/
 
+            SwiftMessages.showError(error)
             _ = completionHandler?(.failure(error))
         case .success(let value):
             request.state = .finished
             logger.debug("\(value)")
             if let completionHandler = completionHandler {
-                let future = completionHandler(.success(value))
+                /*let waitPresenter = */completionHandler(.success(value))
                 // delay handle action result, after form finish with it
-                future.onComplete { result in
+                waitPresenter.onComplete { _ in
                     onForeground {
                         background {
                             _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
@@ -224,69 +245,6 @@ public class ActionManager: NSObject, ObservableObject {
                 onForeground {
                     background {
                         _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
-                    }
-                }
-            }
-        }
-    }*/
-
-    func onActionResult(_ request: ActionRequest, // swiftlint:disable:this function_parameter_count
-                        _ actionUI: ActionUI,
-                        _ context: ActionContext,
-                        _ waitPresenter: ActionExecutor.WaitPresenter,
-                        _ result: Result<ActionResult, ActionRequest.Error>,
-                        _ completionHandler: ActionExecutor.CompletionHandler?) {
-        request.result = result
-
-        if offlineAction {
-            // onOfflineActionResult(result, request, completionHandler, actionUI, context)
-        } else {
-            // Display result or do some actions (incremental etc...)
-            switch result {
-            case .failure(let error):
-                logger.warning("Action error: \(error)")
-
-                if !Prephirences.Auth.Login.form, error.isUnauthorized {
-                    ApplicationAuthenticate.retryGuestLogin { authResult in
-                        switch authResult {
-                        case .success:
-                            // XXX do not do infinite retry
-                            self.executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
-                        case .failure(let authError):
-                            SwiftMessages.showError(ActionRequest.Error(authError))
-                            _ = completionHandler?(.failure(error))
-                        }
-                    }
-                    return
-                }
-                // tempo code to see diff between task to relaunch or not
-                /*if error.mustRetry {
-                    request.state = .pending
-                } else {
-                    request.state = .finished // with error
-                }*/
-
-                SwiftMessages.showError(error)
-                _ = completionHandler?(.failure(error))
-            case .success(let value):
-                request.state = .finished
-                logger.debug("\(value)")
-                if let completionHandler = completionHandler {
-                    /*let waitPresenter = */completionHandler(.success(value))
-                    // delay handle action result, after form finish with it
-                    waitPresenter.onComplete { _ in
-                        onForeground {
-                            background {
-                                _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
-                            }
-                        }
-                    }.sink()
-                    .store(in: &self.bag)
-                } else {
-                    onForeground {
-                        background {
-                            _ = self.handle(result: value, for: request.action, from: actionUI, in: context)
-                        }
                     }
                 }
             }
@@ -372,7 +330,7 @@ extension ActionExecutor {
     /// Execute action if success (ie. no error in form validation
     @available(*, deprecated, message: "use executeAction(_,_,_,_,_)")
     func executeAction(_ context: ActionExecutor.Context) {
-        executeAction(context.0, ActionRequest.generateID(), context.1, context.2, context.3, context.4, context.5)
+        executeAction(context.0, ActionRequest.generateID(context.0), context.1, context.2, context.3, context.4, context.5)
     }
 
 }
@@ -398,7 +356,7 @@ extension ActionManager: ActionExecutor {
 
     fileprivate func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
 
-        if offlineAction {
+        if offlineAction && !request.action.isOnlineOnly {
             request.state = .ready
             self.requests.append(request)
             self.queue.addRequest(request, actionUI, context, waitPresenter) { result in

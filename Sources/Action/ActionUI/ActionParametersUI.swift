@@ -44,7 +44,7 @@ struct ActionParametersUIBuilder {
         self.actionUI = actionUI
         self.context = context
         self.actionExecutor = actionExecutor
-        self.id = ActionRequest.generateID()
+        self.id = ActionRequest.generateID(self.action)
     }
 
     func build<T: ActionParametersUI>(of type: T.Type) -> ActionParametersUIControl? {
