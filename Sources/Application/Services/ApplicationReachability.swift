@@ -138,11 +138,11 @@ extension ApplicationReachability {
         apiManagerObserver = nil
     }
 
-    public func refreshServerInfo() {
-        refreshServerInfo(.instance)
+    public func refreshServerInfo(_ completion: (() -> Void)? = nil) {
+        refreshServerInfo(.instance, completion)
     }
 
-    fileprivate func refreshServerInfo(_ apiManager: APIManager = .instance) {
+    fileprivate func refreshServerInfo(_ apiManager: APIManager = .instance, _ completion: (() -> Void)? = nil) {
         let apiManager = APIManager.instance // some weird issue with parameter, use singleton
         self.serverInfoTask = apiManager.loadWebTestInfo(callbackQueue: .background) { [weak self] result in
             switch result {
@@ -162,6 +162,7 @@ extension ApplicationReachability {
         self.serverStatus = .checking
         self.serverStatusTask = apiManager.status { [weak self] result in
             self?.serverStatus = .done(result)
+            completion?()
             switch result {
             case .success(let serverStatus):
                 logger.info("ServerStatus \(serverStatus)")

@@ -85,10 +85,15 @@ extension UIViewController {
                                 /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
                                 elementProvider([actionUI])
                             }
-                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
-                            barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
 
-                            /*let ellipsis = elView()
+                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
+                            // barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
+
+                            let actionByNames = actionSheet.actions.asDictionary { action in
+                                return [action.name: action]
+                            }
+
+                            let ellipsis = elView()
                             let button = UIButton()
                             button.addSubview(ellipsis)
                             ellipsis.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
@@ -97,10 +102,28 @@ extension UIViewController {
                             ellipsis.sizeToFit()
                             button.menu = menu
                             button.showsMenuAsPrimaryAction = true
-                           // barButton.customView = button*/
-                        } else {
-                            barButton = UIBarButtonItem(customView: button)
+                            button.onMenuActionTriggered(menuHandler: { currentMenu -> UIMenu in
+                                currentMenu.children.forEach { element in
+                                    guard let actionElement = element as? UIAction else { return }
+                                    guard let action = actionByNames[actionElement.identifier.rawValue] else { return }
+
+                                    if action.isOnlineOnly {
+                                        if ApplicationReachability.instance.serverStatus.isSuccess {
+                                            if actionElement.attributes.contains(.disabled) {
+                                                actionElement.attributes.remove(.disabled)
+                                            }
+                                        } else {
+                                            if !actionElement.attributes.contains(.disabled) {
+                                                actionElement.attributes.insert(.disabled)
+                                            }
+                                        }
+                                        // actionElement.state = Bool.random() ? .off : .on // checked or not checked
+                                    }
+                                }
+                                return currentMenu
+                            })
                         }
+                        barButton = UIBarButtonItem(customView: button)
                         self.navigationItem.add(where: .right, item: barButton, at: 0)
                     } else {
                         logger.warning("Could not install automatically actions into \(self) because there is no navigation bar")
@@ -166,5 +189,21 @@ extension UIViewController {
 
     @objc func dismissAnimated() {
         self.dismiss(animated: true, completion: nil)
+    }
+}
+extension UIControl {
+
+    func onMenuActionTriggered(menuHandler: @escaping (UIMenu) -> UIMenu) {
+        self.addAction(UIAction(title: "", handler: { _ in
+            ApplicationReachability.instance.refreshServerInfo {
+                DispatchQueue.main.async { [weak self] in // if done before menu visible we have "while no context menu is visible. This won't do anything."
+                    guard let contextMenuInteraction = self?.contextMenuInteraction else {
+                        logger.warning("Cannot update menu for action")
+                        return
+                    }
+                    contextMenuInteraction.updateVisibleMenu(menuHandler)
+                }
+            }
+        }), for: .menuActionTriggered)
     }
 }

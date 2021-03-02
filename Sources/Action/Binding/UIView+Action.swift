@@ -111,10 +111,34 @@ extension UIView {
                             /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
                             elementProvider([actionUI])
                         }
+                        let actionByNames = actionSheet.actions.asDictionary { action in
+                            return [action.name: action]
+                        }
 
+                        // TODO factorize code with UIViewController+Action
                         let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                         button.menu = menu
                         button.showsMenuAsPrimaryAction = true
+                        button.onMenuActionTriggered(menuHandler: { currentMenu -> UIMenu in
+                            currentMenu.children.forEach { element in
+                                guard let actionElement = element as? UIAction else { return }
+                                guard let action = actionByNames[actionElement.identifier.rawValue] else { return }
+
+                                if action.isOnlineOnly {
+                                    if ApplicationReachability.instance.serverStatus.isSuccess {
+                                        if actionElement.attributes.contains(.disabled) {
+                                            actionElement.attributes.remove(.disabled)
+                                        }
+                                    } else {
+                                        if !actionElement.attributes.contains(.disabled) {
+                                            actionElement.attributes.insert(.disabled)
+                                        }
+                                    }
+                                    // actionElement.state = Bool.random() ? .off : .on // checked or not checked
+                                }
+                            }
+                            return currentMenu
+                        })
                     } else {
                         // default behaviour: if clicked create a ui alert controller
                         addGestureRecognizer(createActionGestureRecognizer(#selector(self.actionSheetGesture(_:))))
