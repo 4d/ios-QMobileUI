@@ -91,7 +91,7 @@ extension UIView {
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
                         let actionContext: ActionContext = self
                         let actionUI = UIAction(
-                            title: "Actions log",
+                            title: "Requests log",
                             image: UIImage(systemName: "ellipsis"),
                             identifier: UIAction.Identifier(rawValue: "action.log"),
                             attributes: []) { actionUI in

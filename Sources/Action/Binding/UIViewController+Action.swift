@@ -65,7 +65,7 @@ extension UIViewController {
                                 return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
                             }
                             let actionUI = UIAction(
-                                title: "Actions log",
+                                title: "Requests log",
                                 image: UIImage(systemName: "ellipsis"),
                                 identifier: UIAction.Identifier(rawValue: "action.log"),
                                 attributes: []) { actionUI in
