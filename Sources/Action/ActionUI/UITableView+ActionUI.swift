@@ -26,25 +26,6 @@ extension UITableView: ActionSheetUI {
         }*/
     }
 
-   /* private struct AssociatedKeys {
-        static var contextualAction = "UITableView.UIContextualAction"
-    }
-
-    /// A list of context actions created from "actions" json.
-    open var contextualActions: [UIContextualAction] {
-        get {
-            var actions = objc_getAssociatedObject(self, &AssociatedKeys.contextualAction) as? [UIContextualAction]
-            if actions == nil {
-                actions = []
-                objc_setAssociatedObject(self, &AssociatedKeys.contextualAction, actions, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            return actions ?? []
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.contextualAction, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-     }*/
-
     public static var maxVisibleContextualActions: Int {
         let device: Device = .current
         if device.isPad {
@@ -77,7 +58,6 @@ extension UITableView: ActionSheetUI {
     public func swipeActionsConfiguration(with context: ActionContext, at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let actionSheet = self.actionSheet else { return .empty }
         guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
-
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
         var contextualActions = self.build(from: actionSheet, context: context, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
 
@@ -117,7 +97,7 @@ extension UITableView: ActionSheetUI {
 
 extension UIImage {
     /// More image from resource or use system one
-    static let moreImage: UIImage? = UIImage(named: "tableMore") ?? UITabBarItem(tabBarSystemItem: UITabBarItem.SystemItem.more, tag: 3).image
+    static let moreImage: UIImage? = UIImage(named: "tableMore") ?? UIImage(systemName: "ellipsis")
 }
 
 extension UISwipeActionsConfiguration {
@@ -130,6 +110,7 @@ extension UISwipeActionsConfiguration {
 extension UIContextualAction: ActionUI {
 
     public static func build(from action: Action, context: ActionContext, handler: @escaping ActionUI.Handler) -> ActionUI {
+
         let actionUI = UIContextualAction(
             style: UIContextualAction.Style.from(actionStyle: action.style),
             title: action.preferredShortLabel) { (contextualAction, _ /* buttons view children of table view, not cell*/, handle) in

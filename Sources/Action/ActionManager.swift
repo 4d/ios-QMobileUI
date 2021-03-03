@@ -70,17 +70,6 @@ public class ActionManager: NSObject, ObservableObject {
             }
         }.store(in: &bag)
         registerListener()
-
-        /*$requests.sink(receiveValue: { requests in
-            print("\(requests.map({ $0.action.name }))")
-           // self.queue.addRequests(requests) // each time so total , not by packet
-        })
-        .store(in: &subscriptions)*/
-        /*requests.publisher.sink { completion in
-            print("\(completion)")
-        } receiveValue: { request in
-            self.queue.addRequest(request)
-        }.store(in: &bag)*/
     }
 
     func sendChange() {
@@ -144,7 +133,7 @@ public class ActionManager: NSObject, ObservableObject {
         do {
             if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
                 self.requests.append(contentsOf: requests)
-                for request in requests where !request.state.isFinal {
+                for request in requests where !request.state.isFinal && !request.action.isOnlineOnly {
                         let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
                         self.queue.addRequest(request, BackgroundActionUI(), request, noWait) { result in
                             switch result {
@@ -206,29 +195,33 @@ public class ActionManager: NSObject, ObservableObject {
             logger.warning("Action error: \(error)")
 
             if !Prephirences.Auth.Login.form, error.isUnauthorized {
+                request.tryCount += 1
                 ApplicationAuthenticate.retryGuestLogin { authResult in
                     switch authResult {
                     case .success:
-                        // XXX do not do infinite retry
-                        self.executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
+                        if request.tryCount < 5 { // do not do infinite retry
+                            self.executeActionOnlineOnly(request, actionUI, context, waitPresenter, completionHandler)
+                        } else {
+                            // must not occurs, if auth result, then we must not be unauthorized
+                            request.state = .finished
+                            _ = completionHandler?(.failure(error))
+                        }
                     case .failure(let authError):
+                        request.state = .finished
                         SwiftMessages.showError(ActionRequest.Error(authError))
                         _ = completionHandler?(.failure(error))
                     }
                 }
+                sendChange()
                 return
             }
-            // tempo code to see diff between task to relaunch or not
-            /*if error.mustRetry {
-             request.state = .pending
-             } else {
-             request.state = .finished // with error
-             }*/
-
+            request.state = .finished
             SwiftMessages.showError(error)
+            sendChange()
             _ = completionHandler?(.failure(error))
         case .success(let value):
             request.state = .finished
+            sendChange()
             logger.debug("\(value)")
             if let completionHandler = completionHandler {
                 /*let waitPresenter = */completionHandler(.success(value))
@@ -317,7 +310,7 @@ protocol ActionExecutor {
     typealias Context = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutor.WaitPresenter, ActionExecutor.CompletionHandler?)
 
     func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
-                       _ id: String,
+                       _ id: String, // swiftlint:disable:this identifier_name
                        _ actionUI: ActionUI,
                        _ context: ActionContext,
                        _ actionParameters: ActionParameters?,
@@ -339,7 +332,7 @@ extension ActionManager: ActionExecutor {
 
     /// Execute the network call for action.
     func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
-                       _ id: String,
+                       _ id: String, // swiftlint:disable:this identifier_name
                        _ actionUI: ActionUI,
                        _ context: ActionContext,
                        _ actionParameters: ActionParameters?,
@@ -354,26 +347,30 @@ extension ActionManager: ActionExecutor {
         executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
     }
 
-    fileprivate func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
+    fileprivate func executeActionOnlineOnly(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ((Result<ActionResult, ActionRequest.Error>) -> Void)?) {
+        request.lastDate = Date()
+        let actionQueue: DispatchQueue = .background
+        actionQueue.async {
+            logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
+            request.state = .executing
+            request.lastDate = Date()
+            _ = APIManager.instance.action(request, callbackQueue: .background) { result in
+                self.onActionResult(request, actionUI, context, waitPresenter, result.mapError { ActionRequest.Error($0) }, completionHandler)
+            }
+        }
+    }
 
+    fileprivate func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
+        request.state = .ready
+        self.requests.append(request)
         if offlineAction && !request.action.isOnlineOnly {
-            request.state = .ready
-            self.requests.append(request)
             self.queue.addRequest(request, actionUI, context, waitPresenter) { result in
                 completionHandler?(result)
                 self.objectWillChange.send()
             }
             self.objectWillChange.send()
         } else {
-            let actionQueue: DispatchQueue = .background
-            actionQueue.async {
-                logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
-                request.state = .executing
-                request.lastDate = Date()
-                _ = APIManager.instance.action(request, callbackQueue: .background) { result in
-                    self.onActionResult(request, actionUI, context, waitPresenter, result.mapError { ActionRequest.Error($0) }, completionHandler)
-                }
-            }
+            executeActionOnlineOnly(request, actionUI, context, waitPresenter, completionHandler)
         }
     }
 

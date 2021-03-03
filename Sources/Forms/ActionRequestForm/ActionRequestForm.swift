@@ -43,7 +43,7 @@ public struct ActionRequestFormUI: View {
         var requests: [ActionRequest]
         switch sectionCase {
         case .pending:
-            requests = instance.requests.filter({ !$0.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
+            requests = instance.requests.filter({ !$0.state.isFinal }).sorted(by: { $0.creationDate > $1.creationDate })
         case .history:
             requests = instance.requests.filter({ $0.state == .finished }).sorted(by: { $0.creationDate > $1.creationDate })
         }
@@ -114,7 +114,7 @@ public struct ActionRequestFormUI: View {
                     case .pending:
                         if true /* hasRequests(for: section) */{
                             let requests = getRequests(for: section)
-                            ForEach(requests, id: \.id) { request in
+                            ForEach(requests, id: \.uniqueID) { request in
                                 if hasDetailLink && !request.action.parameters.isEmpty {
                                     ActionRequestEditableRow(request: request, actionManager: instance)
                                 } else {
@@ -131,7 +131,7 @@ public struct ActionRequestFormUI: View {
                      }*/
                     case .history:
                         if hasRequests(for: section) {
-                            ForEach(getRequests(for: section), id: \.id) { request in
+                            ForEach(getRequests(for: section), id: \.uniqueID) { request in
                                 ActionRequestRow(request: request)
                             }
                         } else {
@@ -165,6 +165,13 @@ public struct ActionRequestFormUI: View {
                 instance.remove(request)
             }
         }
+    }
+}
+
+extension ActionRequest {
+    // produce an unique id to identify request (even if id is empty)
+    var uniqueID: String {
+        return id + tableName + action.name + "\(creationDate)"
     }
 }
 

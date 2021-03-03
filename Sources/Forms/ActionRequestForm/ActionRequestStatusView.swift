@@ -12,18 +12,16 @@ import QMobileAPI
 struct ActionRequestStatusView: View {
     @State var request: ActionRequest
     var body: some View {
-        switch request.state {
-        case .executing:
-            ZStack {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                Text(" ") // to fix padding...
+        HStack(alignment: .top) {
+            switch request.state {
+            case .executing, .ready:
+                ZStack {
+                    Circle().stroke(Color.primary).frame(maxWidth: 20)
+                    Ellipsis(scale: .small, color: Color.primary)
+                }
+            default:
+                Text(request.statusImage(color: true))
             }
-        case .ready:
-            Image(systemName: "mail.stack")
-                .foregroundColor(.primary)
-        default:
-            Text(request.statusImage(color: true))
         }
     }
 }

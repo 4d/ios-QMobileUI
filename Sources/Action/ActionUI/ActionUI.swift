@@ -37,6 +37,13 @@ public struct ActionUIBuilder {
     /// Provide a color for the passed action.
     public static func actionColor(for action: Action) -> UIColor? {
         let defaultColor: UIColor? = nil
+        if action.isOnlineOnly {
+            let status = ApplicationReachability.instance.serverStatus // get status before setting it to check
+            ApplicationReachability.instance.refreshServerInfo() // just a recall, no immediat effet, must swipe again
+            if !status.isSuccess {
+                return .systemGray5
+            }
+        }
         guard let style = action.style else {
             return defaultColor
         }

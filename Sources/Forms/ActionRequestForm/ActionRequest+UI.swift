@@ -30,7 +30,7 @@ extension ActionRequest {
                         return "⚠️"
                     }
                 case .failure:
-                    return "❌"
+                    return "‼️"
                 }
             }
         }
