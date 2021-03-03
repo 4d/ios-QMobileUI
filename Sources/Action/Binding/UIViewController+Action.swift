@@ -133,7 +133,7 @@ extension UIViewController {
         }
     }
     func elView() -> UIView {
-        let ellipsis = UIHostingController(rootView: Ellipsis(scale: .large, color: Color(UIColor.foreground.cgColor)))
+        let ellipsis = UIHostingController(rootView: Ellipsis(scale: .medium, color: Color(UIColor.foreground.cgColor)))
         ellipsis.view.backgroundColor = .clear
         return ellipsis.view
     }

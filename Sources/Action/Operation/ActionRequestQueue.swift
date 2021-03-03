@@ -23,7 +23,9 @@ class ActionRequestQueue: OperationQueue {
     func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
 
         let operation = request.newOp(actionUI, context, waitUI, completionHandler)
-
+        if isSuspended {
+            operation.showPendingMessage()
+        }
         if let actionParameters = request.actionParameters {
             for (_, value) in actionParameters {
                 if let subOpInfo = value as? ActionRequestParameterWithRequest {

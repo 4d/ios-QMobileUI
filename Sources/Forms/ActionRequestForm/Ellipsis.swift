@@ -22,13 +22,19 @@ struct Ellipsis: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: scale.spacing) {
-            Circle().fill(color).frame(width: scale.pointSize, height: scale.pointSize)
+            Circle()
+                .fill(color)
+                .frame(width: scale.pointSize, height: scale.pointSize)
+                .animation(nil)
                 .opacity(shouldAnimate ? 0.0 : 1.0)
                 .animation(Animation.easeInOut(duration: 1).repeatForever())
-            Circle().fill(color).frame(width: scale.pointSize, height: scale.pointSize)
+            Circle()
+                .fill(color).frame(width: scale.pointSize, height: scale.pointSize)
+                .animation(nil)
                 .opacity(shouldAnimate ? 0.0 : 1.0)
                 .animation(Animation.easeInOut(duration: 1).repeatForever().delay(0.3))
             Circle().fill(color).frame(width: scale.pointSize, height: scale.pointSize)
+                .animation(nil)
                 .opacity(shouldAnimate ? 0.0 : 1.0)
                 .animation(Animation.easeInOut(duration: 1).repeatForever().delay(0.6))
         }.padding(1).onAppear {

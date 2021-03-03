@@ -10,6 +10,7 @@ import Foundation
 import QMobileAPI
 import Moya
 import Prephirences
+import SwiftMessages
 
 import Combine
 
@@ -93,16 +94,17 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
     }
 
     enum RetryMode {
-        case dispatch, operation/*, combine*/
+        case /*dispatch, */operation/*, combine*/
     }
 
     var retryMode: RetryMode = .operation
 
     private func retry(with result: Result<ActionResult, ActionRequest.Error>, on queue: ActionRequestQueue) {
+        self.request.result = result
         switch self.retryMode {
-        case .dispatch:
-            self.request.result = result // not finish so set it explictely
-            self.main()
+        /*case .dispatch:
+         self.request.result = result
+         self.main()*/
         case .operation:
             queue.retry(self)
             self.finish(with: result)
@@ -129,10 +131,25 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                     self.retry(with: result, on: queue)
                 }
             } else {
+                showPendingMessage()
                 retry(with: result, on: queue)
             }
         }
         ActionManager.instance.sendChange()
+    }
+
+    func showPendingMessage() {
+        guard self.request.tryCount < 1 else { return }
+        let message: String
+        if ApplicationReachability.isReachable {
+            message = "The server is not available,\n your action will be executed later"
+        } else {
+            message = "Please check your network settings and data cover...,\n your action will be executed when online."
+        }
+        SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
+            view.configureTheme(.info)
+            return config
+        }
     }
 
     override func main () {
@@ -145,16 +162,6 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             self.complete(with: result.mapError({ ActionRequest.Error($0)}), on: queue)
         }
         self.bag.insert(AnyCancellable(cancellable.cancel))
-
-      /*
-         // subscript on , receive on the operation queue?
-         NetworkLayer.requestPublihser(self.request).retry(3).sink { complete in
-            if case .failure(let error) = complete {
-                self.complete(.failure(error))
-            }
-        } receiveValue: { actionResult in
-            self.complete(.success(actionResult))
-        }*/
     }
 
     public override func cancel(with error: ActionRequest.Error) {
