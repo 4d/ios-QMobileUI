@@ -125,6 +125,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.installBackButton()
+        self.addEllipsisView()
         self.initRefreshControll()
         onWillAppear(animated)
     }
@@ -139,6 +140,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.unitRefreshControll()
+        self.removeEllipsisView()
         isViewVisible = false
         onWillDisappear(animated)
     }

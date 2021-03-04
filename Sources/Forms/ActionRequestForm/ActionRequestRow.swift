@@ -19,7 +19,7 @@ public struct ActionRequestRow: View {
             HStack(alignment: .top, spacing: 2) {
                 VStack(alignment: .leading) {
                     ActionRequestStatusView(request: request)
-                        .frame(maxWidth: 28, minHeight: 28, alignment: .top)
+                        .frame(maxWidth: 28, minHeight: 28, maxHeight: 28, alignment: .topLeading)
                     Spacer()
                     Spacer()
                 }

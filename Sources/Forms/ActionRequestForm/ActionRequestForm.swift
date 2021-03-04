@@ -45,30 +45,24 @@ public struct ActionRequestFormUI: View {
         case .pending:
             requests = instance.requests.filter({ !$0.state.isFinal }).sorted(by: { $0.creationDate > $1.creationDate })
         case .history:
-            requests = instance.requests.filter({ $0.state == .finished }).sorted(by: { $0.creationDate > $1.creationDate })
+            requests = instance.requests.filter({ $0.state.isHistory }).sorted(by: { $0.creationDate > $1.creationDate })
         }
-        if let actionContext = actionContext?.actionContextParameters() {
-            let table = actionContext[ActionParametersKey.table] as? String
-            let record = actionContext[ActionParametersKey.record] as? [String: String]
-            let recordInt = actionContext[ActionParametersKey.record] as? [String: Int]
-            let hasRecord = record != nil || recordInt != nil
-            requests = requests .filter {
-                $0.contextParameters?[ActionParametersKey.table] as? String == table
-                    && ( !hasRecord || (
-                        $0.contextParameters?[ActionParametersKey.record] as? [String: String] == record
-                    && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == recordInt))
-            }
+        if let actionContext = actionContext {
+            requests = actionContext.filter(requests)
         }
         return requests.sorted(by: { $0.creationDate > $1.creationDate })
     }
 
     func hasRequests(for sectionCase: SectionCase) -> Bool {
-        // TODO takeinto account also actionContext
+        var requests = instance.requests
+        if let actionContext = actionContext {
+            requests = actionContext.filter(requests)
+        }
         switch sectionCase {
         case .pending:
-            return instance.requests.contains(where: { !$0.isCompleted })
+            return requests.contains(where: { !$0.state.isFinal })
         case .history:
-            return instance.requests.contains(where: { $0.state == .finished })
+            return requests.contains(where: { $0.state.isHistory })
         }
     }
 
@@ -225,5 +219,33 @@ struct ActionRequestEditableRow: View {
 struct ActionRequestFormUI_Previews: PreviewProvider {
     static var previews: some View {
         ActionRequestFormUI(requests: ActionRequest.examples).environmentObject(ActionManager.instance)
+    }
+}
+
+extension ActionContext {
+
+    /// Filter requests according to context.
+    func filter(_ requests: [ActionRequest]) -> [ActionRequest] {
+        if let actionContext = self.actionContextParameters() {
+            let table = actionContext[ActionParametersKey.table] as? String
+            let record = actionContext[ActionParametersKey.record] as? [String: String]
+            let recordInt = actionContext[ActionParametersKey.record] as? [String: Int]
+            let hasRecord = record != nil || recordInt != nil
+            return requests.filter {
+                $0.contextParameters?[ActionParametersKey.table] as? String == table
+                    && ( !hasRecord || (
+                            $0.contextParameters?[ActionParametersKey.record] as? [String: String] == record
+                                && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == recordInt))
+            }
+        }
+        return requests
+    }
+
+}
+
+extension ActionRequest.State {
+
+    var isHistory: Bool {
+        return self == .finished
     }
 }

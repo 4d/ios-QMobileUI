@@ -31,13 +31,14 @@ open class DetailsFormBare: UIViewController, DetailsForm {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        self.addEllipsisView()
         installSwipeGestureRecognizer()
         onDidAppear(animated)
     }
 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.removeEllipsisView()
         onWillDisappear(animated)
     }
 

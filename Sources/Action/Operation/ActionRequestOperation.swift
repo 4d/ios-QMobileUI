@@ -142,9 +142,9 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         guard self.request.tryCount < 1 else { return }
         let message: String
         if ApplicationReachability.isReachable {
-            message = "The server is not available,\n your action will be executed later"
+            message = "The server is not available\n your action will be executed later"
         } else {
-            message = "Please check your network settings and data cover...,\n your action will be executed when online."
+            message = "Please check your network settings and data cover...\n your action will be executed when online."
         }
         SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
             view.configureTheme(.info)

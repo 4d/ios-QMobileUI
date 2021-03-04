@@ -92,7 +92,7 @@ extension UIView {
                         let actionContext: ActionContext = self
                         let actionUI = UIAction(
                             title: "Requests log",
-                            image: UIImage(systemName: "ellipsis"),
+                            image: UIImage(systemName: "ellipsis.rectangle"),
                             identifier: UIAction.Identifier(rawValue: "action.log"),
                             attributes: []) { actionUI in
                             let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
@@ -115,7 +115,6 @@ extension UIView {
                             return [action.name: action]
                         }
 
-                        // TODO factorize code with UIViewController+Action
                         let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                         button.menu = menu
                         button.showsMenuAsPrimaryAction = true

@@ -9,14 +9,17 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Combine
 
 import QMobileAPI
 
 /// Extends `UIView` to add actionSheet and action "user runtimes defined attributes" through storyboards.
 extension UIViewController {
 
-    private struct AssociatedKeys {
+    fileprivate struct AssociatedKeys {
         static var actionSheetKey = "UIViewController.ActionSheet"
+
+        static var bag = Set<AnyCancellable>()
     }
     // MARK: - ActionSheet
 
@@ -55,75 +58,11 @@ extension UIViewController {
 
                         let button = UIButton(type: .custom)
                         button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32)) // XXX get correct size
-                        button.setImage(.moreImage, for: .normal)
+                        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+                        button.actionSheet = actionSheet
 
-                        button.actionSheet = actionSheet // XXX button will be used as context by massing it. Maybe pass current controller as context...
-
-                        let barButton: UIBarButtonItem
-                        if ActionFormSettings.useMenu {
-                            let actionContext = LazyActionContext { [weak self] in
-                                return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
-                            }
-                            let actionUI = UIAction(
-                                title: "Requests log",
-                                image: UIImage(systemName: "ellipsis"),
-                                identifier: UIAction.Identifier(rawValue: "action.log"),
-                                attributes: []) { actionUI in
-                                let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
-                                let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
-                                let presentedController = UINavigationController(rootViewController: hostController)
-                                presentedController.navigationBar.tintColor = UIColor.foreground
-                                presentedController.navigationBar.isTranslucent = false
-                                presentedController.navigationBar.barTintColor = UIColor.background
-                                hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
-                                self.present(presentedController, animated: true, completion: {
-                                    logger.debug("present action more")
-                                })
-                            }
-
-                            let deferredMenuElement = UIDeferredMenuElement { (elementProvider) in
-                                /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
-                                elementProvider([actionUI])
-                            }
-
-                            let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
-                            // barButton = UIBarButtonItem(title: menu.title, image: .moreImage, primaryAction: nil, menu: menu)
-
-                            let actionByNames = actionSheet.actions.asDictionary { action in
-                                return [action.name: action]
-                            }
-
-                            let ellipsis = elView()
-                            let button = UIButton()
-                            button.addSubview(ellipsis)
-                            ellipsis.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
-                            ellipsis.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
-                            button.sizeToFit()
-                            ellipsis.sizeToFit()
-                            button.menu = menu
-                            button.showsMenuAsPrimaryAction = true
-                            button.onMenuActionTriggered(menuHandler: { currentMenu -> UIMenu in
-                                currentMenu.children.forEach { element in
-                                    guard let actionElement = element as? UIAction else { return }
-                                    guard let action = actionByNames[actionElement.identifier.rawValue] else { return }
-
-                                    if action.isOnlineOnly {
-                                        if ApplicationReachability.instance.serverStatus.isSuccess {
-                                            if actionElement.attributes.contains(.disabled) {
-                                                actionElement.attributes.remove(.disabled)
-                                            }
-                                        } else {
-                                            if !actionElement.attributes.contains(.disabled) {
-                                                actionElement.attributes.insert(.disabled)
-                                            }
-                                        }
-                                        // actionElement.state = Bool.random() ? .off : .on // checked or not checked
-                                    }
-                                }
-                                return currentMenu
-                            })
-                        }
-                        barButton = UIBarButtonItem(customView: button)
+                        let barButton = UIBarButtonItem(customView: button)
+                        barButton.tag = 777
                         self.navigationItem.add(where: .right, item: barButton, at: 0)
                     } else {
                         logger.warning("Could not install automatically actions into \(self) because there is no navigation bar")
@@ -132,11 +71,62 @@ extension UIViewController {
             }
         }
     }
-    func elView() -> UIView {
-        let ellipsis = UIHostingController(rootView: Ellipsis(scale: .medium, color: Color(UIColor.foreground.cgColor)))
-        ellipsis.view.backgroundColor = .clear
-        return ellipsis.view
+
+    func addEllipsisView() {
+        guard let barButton = self.navigationItem.rightBarButtonItems?.first(where: { $0.tag == 777 }) else {
+            return // no action
+        }
+        guard let button = barButton.customView as? UIButton else {
+            assertionFailure("No button installed in tag 777")
+            return
+        }
+        addEllipsisView(to: button)
     }
+    func removeEllipsisView() {
+        UIViewController.AssociatedKeys.bag.removeAll()
+
+        guard let barButton = self.navigationItem.rightBarButtonItems?.first(where: { $0.tag == 777 }) else {
+            return // no action
+        }
+        guard let button = barButton.customView as? UIButton else {
+            assertionFailure("No button installed in tag 777")
+            return
+        }
+        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    }
+
+    func addEllipsisView(to button: UIButton) {
+        let actionContext = LazyActionContext { [weak self] in
+            return (self as? ActionContextProvider)?.actionContext() // use Lazy because context is not available yet in controller
+        }
+        guard let ellipsisView = createEllipsisView(button.size) else { return }
+        let image = button.image(for: .normal)
+        let instance = ActionManager.instance
+
+        func updateAnimation() {
+            let hasPendingRequest = actionContext.filter(instance.requests).contains(where: { !$0.state.isFinal })
+            if hasPendingRequest {
+                if ellipsisView.superview == nil {
+                    button.addSubview(ellipsisView)
+                    ellipsisView.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
+                    ellipsisView.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+                    ellipsisView.sizeToFit()
+                    button.setImage(nil, for: .normal)
+                }
+            } else {
+                button.setImage(image, for: .normal) // restore image
+                ellipsisView.removeFromSuperview()
+            }
+        }
+        DispatchQueue.main.async {
+            updateAnimation()
+            //  listen to change of number of request
+            instance.objectWillChange.receiveOnForeground().sink { _ in
+                updateAnimation()
+            }.store(in: &UIViewController.AssociatedKeys.bag)
+        }
+    }
+
     #endif
 
     @objc func actionSheetGesture(_ recognizer: UIGestureRecognizer) {
@@ -153,6 +143,16 @@ extension UIViewController {
             logger.debug("Action pressed but not actionSheet information")
         }
     }
+}
+
+/// Create an animated ellipsis view.
+func createEllipsisView(_ size: CGSize) -> UIView? {
+    let ellipsis = Ellipsis(scale: .medium, color: Color(UIColor.foreground.cgColor))
+        .frame(width: size.width, height: size.height, alignment: .center)
+    let ellipsisVC = UIHostingController(rootView: ellipsis)
+    ellipsisVC.view.backgroundColor = .clear
+    guard let ellipsisView = ellipsisVC.view else { return nil }
+    return ellipsisView
 }
 
 extension UIBarButtonItem {

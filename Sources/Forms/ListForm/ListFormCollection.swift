@@ -128,6 +128,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     final public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.installBackButton()
+        self.addEllipsisView()
         self.initRefreshControll()
         onWillAppear(animated)
     }
@@ -140,6 +141,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
     final public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.unitRefreshControll()
+        self.removeEllipsisView()
         onWillDisappear(animated)
     }
 
