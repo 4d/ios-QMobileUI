@@ -230,13 +230,22 @@ extension ActionContext {
             let table = actionContext[ActionParametersKey.table] as? String
             let record = actionContext[ActionParametersKey.record] as? [String: String]
             let recordInt = actionContext[ActionParametersKey.record] as? [String: Int]
-            let hasRecord = record != nil || recordInt != nil
-            return requests.filter {
+            let parent = (actionContext[ActionParametersKey.parent] as? [String: Any])?.mapValues { "\($0)" }
+
+            var requests = requests.filter {
                 $0.contextParameters?[ActionParametersKey.table] as? String == table
-                    && ( !hasRecord || (
-                            $0.contextParameters?[ActionParametersKey.record] as? [String: String] == record
-                                && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == recordInt))
             }
+            if parent != nil { // filter for relation
+                requests = requests.filter {
+                    (($0.contextParameters?[ActionParametersKey.parent] as? [String: Any])?.mapValues { "\($0)" })  == parent
+                }
+            } else if record != nil || recordInt != nil { // filter for one record
+                requests = requests.filter {
+                    $0.contextParameters?[ActionParametersKey.record] as? [String: String] == record
+                        && $0.contextParameters?[ActionParametersKey.record] as? [String: Int] == recordInt
+                }
+            }
+            return requests
         }
         return requests
     }
