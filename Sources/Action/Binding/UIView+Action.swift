@@ -95,7 +95,7 @@ extension UIView {
                             image: UIImage(systemName: "ellipsis.rectangle"),
                             identifier: UIAction.Identifier(rawValue: "action.log"),
                             attributes: []) { actionUI in
-                            let view = ActionRequestFormUI(requests: ActionManager.instance.requests, actionContext: actionContext)
+                            let view = ActionRequestFormUI(actionContext: actionContext)
                             let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
                             let presentedController = UINavigationController(rootViewController: hostController)
                             presentedController.navigationBar.tintColor = UIColor.foreground

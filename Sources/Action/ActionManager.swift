@@ -74,7 +74,7 @@ public class ActionManager: NSObject, ObservableObject {
 
     func sendChange() {
         self.saveActionRequests()
-        onForeground {  // XXX use a better place , using observer pattern
+        foreground {
             self.objectWillChange.send()
         }
     }
@@ -247,6 +247,7 @@ public class ActionManager: NSObject, ObservableObject {
     // MARK: - queue based
     var pause: Bool = false {
         didSet {
+            logger.debug("Action queue is \(pause ? "paused": "started")")
             checkSuspend()
         }
     }
@@ -274,8 +275,7 @@ public class ActionManager: NSObject, ObservableObject {
 
     func requestUpdated(_ request: ActionRequest) {
         self.queue.requestUpdated(request)
-        saveActionRequests()
-        sendChange()
+        self.sendChange()
     }
 
 }

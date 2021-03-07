@@ -16,9 +16,6 @@ public struct ActionRequestFormUI: View {
     // action manager to use
     @EnvironmentObject public var instance: ActionManager // CLEAN rename instance to actionManager everywhere
 
-    // list of requests to display
-    public var requests: [ActionRequest]
-
     // context could be table or record
     public var actionContext: ActionContext?
 
@@ -112,7 +109,7 @@ public struct ActionRequestFormUI: View {
                                 if hasDetailLink && !request.action.parameters.isEmpty {
                                     ActionRequestEditableRow(request: request, actionManager: instance)
                                 } else {
-                                    ActionRequestRow(request: request)
+                                    ActionRequestRow(request: request, actionManager: instance)
                                 }
                             }
                             .onDelete { index in
@@ -126,7 +123,7 @@ public struct ActionRequestFormUI: View {
                     case .history:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.uniqueID) { request in
-                                ActionRequestRow(request: request)
+                                ActionRequestRow(request: request, actionManager: instance)
                             }
                         } else {
                             Text("Nothing has happened yet") // "0 item"
@@ -174,51 +171,53 @@ struct ActionRequestEditableRow: View {
     @State var request: ActionRequest
     @ObservedObject public var actionManager: ActionManager
 
-    @State var actionDone: Bool = false
+    @State var actionDone = false
     @State var result: Result<ActionParameters, ActionFormError>?
 
     public var body: some View {
-        let actionParametersForm = ActionFormViewControllerUI(request: request, action: $actionDone, result: $result)
-            .onChange(of: actionDone) { actionValue in
-                if actionValue {
-                    return // Just luanch action
-                } // else set to false because action finish
+        let actionParametersForm = ActionFormViewControllerUI(
+            request: request,
+            action: $actionDone,
+            result: $result.onChange(resultChanged))
 
-                // manage action request modification
-                guard let result = self.result else {
-                    showModal.toggle() // dismiss
-                    logger.warning("No result from action parameters. Maybe no change")
-                    return
-                }
-                switch result {
-                case .success(let values):
-                    // save new values to the request
-                    request.actionParameters = values
-                    request.encodeParameters()
-                    // we need here to to check if there is new image to upload to add operation on the queue
-                    // (because the operation of this request is already on the queue)
-                    actionManager.requestUpdated(request)
-
-                    showModal.toggle() // dismiss
-                case .failure(let error):
-                    logger.warning("Cannot update action request due to \(error)")
-                }
-            }
         NavigationLink(destination: actionParametersForm.toolbar {
             Button("Done") {
-                self.actionDone = true
+                self.actionDone.toggle()
             }
         }, isActive: $showModal.animation()) {
-            ActionRequestRow(request: request)
+            ActionRequestRow(request: request, actionManager: actionManager)
         }.onChange(of: showModal) { newValue in
             actionManager.pause = newValue
+        }
+    }
+
+    func resultChanged(to result: Result<ActionParameters, ActionFormError>?) {
+
+        // manage action request modification
+        guard let result = result else {
+            showModal.toggle() // dismiss
+            logger.warning("No result from action parameters. Maybe no change")
+            return
+        }
+        switch result {
+        case .success(let values):
+            // save new values to the request
+            request.actionParameters = values
+            request.encodeParameters()
+            // we need here to to check if there is new image to upload to add operation on the queue
+            // (because the operation of this request is already on the queue)
+            actionManager.requestUpdated(request)
+
+            showModal.toggle() // dismiss
+        case .failure(let error):
+            logger.warning("Cannot update action request due to \(error)")
         }
     }
 }
 
 struct ActionRequestFormUI_Previews: PreviewProvider {
     static var previews: some View {
-        ActionRequestFormUI(requests: ActionRequest.examples).environmentObject(ActionManager.instance)
+        ActionRequestFormUI().environmentObject(ActionManager.instance)
     }
 }
 
@@ -256,5 +255,16 @@ extension ActionRequest.State {
 
     var isHistory: Bool {
         return self == .finished
+    }
+}
+extension Binding {
+    func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
+        Binding(
+            get: { self.wrappedValue },
+            set: { newValue in
+                self.wrappedValue = newValue
+                handler(newValue)
+            }
+        )
     }
 }

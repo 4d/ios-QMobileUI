@@ -13,6 +13,7 @@ import QMobileAPI // action model
 
 public struct ActionRequestRow: View {
     let request: ActionRequest
+    @ObservedObject public var actionManager: ActionManager
 
     public var body: some View {
         VStack(alignment: .leading) {
@@ -44,10 +45,10 @@ public struct ActionRequestRow: View {
 struct ActionRow_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ActionRequestRow(request: ActionRequest.examples[0])
-            ActionRequestRow(request: ActionRequest.examples[1])
-            ActionRequestRow(request: ActionRequest.examples[2])
-            ActionRequestRow(request: ActionRequest.examples[3])
+            ActionRequestRow(request: ActionRequest.examples[0], actionManager: ActionManager.instance)
+            ActionRequestRow(request: ActionRequest.examples[1], actionManager: ActionManager.instance)
+            ActionRequestRow(request: ActionRequest.examples[2], actionManager: ActionManager.instance)
+            ActionRequestRow(request: ActionRequest.examples[3], actionManager: ActionManager.instance)
         }.previewLayout(.fixed(width: 300, height: 70))
     }
 }
