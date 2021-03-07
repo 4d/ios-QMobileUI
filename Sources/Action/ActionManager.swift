@@ -251,10 +251,13 @@ public class ActionManager: NSObject, ObservableObject {
             checkSuspend()
         }
     }
-
+    var isServerAccessibleCache: Bool = false
     var isServerAccessible: Bool {
         let serverStatus = ApplicationReachability.instance.serverStatus
-        return serverStatus.isSuccess
+        if serverStatus != .checking {
+            isServerAccessibleCache = serverStatus.isSuccess
+        }
+        return isServerAccessibleCache
     }
 
     private(set) var isSuspended: Bool {
