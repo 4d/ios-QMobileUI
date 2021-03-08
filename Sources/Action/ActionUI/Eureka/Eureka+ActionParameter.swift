@@ -335,28 +335,25 @@ extension BaseRow {
                 rowOf.setRequired()
             }
         case .min(let min):
-            if let rowOf = row as? RowOfComparable {
-                rowOf.setGreaterOrEqual(than: min)
-                if let timeRow = row as? _TimeIntervalFieldRow {
-                    timeRow.minimumTime = min
-                }
-            } else if let rowOf = row as? IntRow { // XXX why row are not RowOfComparable ? if put I have Conformance of 'IntRow' to protocol 'RowOfComparable' was already stated in the type's module 'Eureka'
+            if let rowOf = row as? IntRow {
                 rowOf.setGreaterOrEqual(than: Int(min))
             } else if let rowOf = row as? DecimalRow {
                 rowOf.setGreaterOrEqual(than: min)
             } else if let rowOf = row as? _TimeIntervalFieldRow {
                 rowOf.setGreaterOrEqual(than: min)
                 rowOf.minimumTime = min
+            } else if let rowOf = row as? RowOfComparable {
+                // row become  RowOfComparable now, a fix in swit language, but there issue with type casting
+                // if int, we must convert to int
+                rowOf.setGreaterOrEqual(than: min)
+                if let timeRow = row as? _TimeIntervalFieldRow {
+                    timeRow.minimumTime = min
+                }
             } else {
                 logger.warning("Rule min(\(min) applyed to non comparable data \(row)")
             }
         case .max(let max):
-            if let rowOf = row as? RowOfComparable {
-                rowOf.setSmallerOrEqual(than: max)
-                if let timeRow = row as? _TimeIntervalFieldRow {
-                    timeRow.maximumTime = max
-                }
-            } else if let rowOf = row as? IntRow {
+             if let rowOf = row as? IntRow {
                 rowOf.setSmallerOrEqual(than: Int(max))
             } else if let rowOf = row as? DecimalRow {
                 rowOf.setSmallerOrEqual(than: max)
@@ -365,6 +362,11 @@ extension BaseRow {
             } else if let rowOf = row as? _TimeIntervalFieldRow {
                 rowOf.setSmallerOrEqual(than: max)
                 rowOf.maximumTime = max
+            } else if let rowOf = row as? RowOfComparable {
+                rowOf.setSmallerOrEqual(than: max)
+                if let timeRow = row as? _TimeIntervalFieldRow {
+                    timeRow.maximumTime = max
+                }
             } else {
                 logger.warning("Rule max(\(max) applyed to non comparable data \(row)")
             }
