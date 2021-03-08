@@ -165,7 +165,11 @@ extension ApplicationReachability {
             completion?()
             switch result {
             case .success(let serverStatus):
-                logger.info("ServerStatus \(serverStatus)")
+                if serverStatus.ok {
+                    logger.info("Server Status is ok")
+                } else {
+                    logger.warning("Server Status is not ok")
+                }
                 self?.serverStatusTask = nil
             case .failure(let error):
                 if ApplicationReachability.isReachable {
