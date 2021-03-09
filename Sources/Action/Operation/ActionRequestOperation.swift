@@ -114,11 +114,13 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
     private func complete(with result: Result<ActionResult, ActionRequest.Error>, on queue: ActionRequestQueue) {
         switch result {
         case .success:
-            request.state = .finished
+            request.state = .completed
+            request.lastDate = Date()
             self.finish(with: result)
         case .failure(let error):
             guard error.mustRetry else {
-                request.state = .finished
+                request.state = .completed
+                request.lastDate = Date()
                 self.finish(with: result) // finish with error such as remote server user error
                 return
             }

@@ -84,10 +84,10 @@ open class SettingsForm: UITableViewController, Storyboardable {
         }
         let instance = ActionManager.instance
         let draftCount = instance.requests.filter({!$0.state.isFinal}).count
-        requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
+        requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) pending": "\(draftCount) pendingsd"
         instance.$requests.receiveOnForeground().sink { _ in //  listen to change of number of request
             let draftCount = instance.requests.filter({!$0.state.isFinal}).count
-            requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) draft saved": "\(draftCount) drafts saved"
+            requestDraftLabel.text = (draftCount < 2) ? "\(draftCount) pending": "\(draftCount) pendings"
         }.store(in: &bag)
     }
 
@@ -140,7 +140,8 @@ open class SettingsForm: UITableViewController, Storyboardable {
 
     @IBSegueAction open func segue2SwiftUI(_ coder: NSCoder) -> UIViewController? {
         // return ActionRequestForm(coder: coder, rootView: ActionRequestFormUI(requests: ActionManager.instance.requests).environmentObject(ActionManager.instance)) // swiftlint:disable:this force_cast
-        return UIHostingController(coder: coder, rootView: ActionRequestFormUI().environmentObject(ActionManager.instance))
+        let controller = UIHostingController(coder: coder, rootView: ActionRequestFormUI().environmentObject(ActionManager.instance))
+        return controller
     }
 
     @objc func application(didEnterBackground notification: Notification) {

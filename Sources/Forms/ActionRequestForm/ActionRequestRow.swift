@@ -20,12 +20,10 @@ public struct ActionRequestRow: View {
             HStack(alignment: .top, spacing: 2) {
                 VStack(alignment: .leading) {
                     ActionRequestStatusView(request: request)
-                        .frame(maxWidth: 28, minHeight: 28, maxHeight: 28, alignment: .topLeading)
-                    Spacer()
-                    Spacer()
+                        .frame(maxWidth: 28, minHeight: 28, maxHeight: 28, alignment: .leading)
                 }
                 VStack(alignment: .leading) {
-                    Text(request.action.preferredLongLabel)
+                    Text(request.title)
                         .font(.headline)
                         .lineLimit(1)
                     Text(request.summary)
@@ -66,9 +64,9 @@ extension ActionRequest {
         return [
             ActionRequest(action: Action.examples[0], contextParameters: ActionRequest.examplesContext[0], id: ActionRequest.generateID(Action.examples[0]), state: .ready),
             ActionRequest(action: Action.examples[1], contextParameters: ActionRequest.examplesContext[1], id: ActionRequest.generateID(Action.examples[1]), state: .executing),
-            ActionRequest(action: Action.examples[1], id: ActionRequest.generateID(Action.examples[1]), state: .finished, result: .success(.emptySuccess)),
-            ActionRequest(action: Action.examples[2], id: ActionRequest.generateID(Action.examples[2]), state: .finished, result: .success(.emptyFailure)),
-            ActionRequest(action: Action.examples[3], id: ActionRequest.generateID(Action.examples[3]), state: .finished, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))
+            ActionRequest(action: Action.examples[1], id: ActionRequest.generateID(Action.examples[1]), state: .completed, result: .success(.emptySuccess)),
+            ActionRequest(action: Action.examples[2], id: ActionRequest.generateID(Action.examples[2]), state: .completed, result: .success(.emptyFailure)),
+            ActionRequest(action: Action.examples[3], id: ActionRequest.generateID(Action.examples[3]), state: .completed, result: .failure(APIError.request(NSError(domain: "test", code: 1, userInfo: [:]))))
         ]
     }
 
@@ -83,5 +81,4 @@ extension Action {
             Action(name: "modify X")
         ]
     }
-
 }

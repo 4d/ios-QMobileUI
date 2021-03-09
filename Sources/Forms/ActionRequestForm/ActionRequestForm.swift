@@ -31,7 +31,7 @@ public struct ActionRequestFormUI: View {
     #endif
 
     enum SectionCase: String, Identifiable, CaseIterable {
-        case pending, history
+        case pending, completed
         var id: String { return rawValue } // swiftlint:disable:this identifier_name
     }
     var sections: [SectionCase] = SectionCase.allCases
@@ -41,8 +41,8 @@ public struct ActionRequestFormUI: View {
         switch sectionCase {
         case .pending:
             requests = instance.requests.filter({ !$0.state.isFinal }).sorted(by: { $0.creationDate > $1.creationDate })
-        case .history:
-            requests = instance.requests.filter({ $0.state.isHistory }).sorted(by: { $0.creationDate > $1.creationDate })
+        case .completed:
+            requests = instance.requests.filter({ $0.state.isCompleted }).sorted(by: { $0.creationDate > $1.creationDate })
         }
         if let actionContext = actionContext {
             requests = actionContext.filter(requests)
@@ -58,19 +58,16 @@ public struct ActionRequestFormUI: View {
         switch sectionCase {
         case .pending:
             return requests.contains(where: { !$0.state.isFinal })
-        case .history:
-            return requests.contains(where: { $0.state.isHistory })
+        case .completed:
+            return requests.contains(where: { $0.state.isCompleted })
         }
     }
 
     @ViewBuilder func header(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
-                .onTapGesture(perform: {
-                    ServerStatusManager.instance.checkStatus()
-                })
-        case .history:
+            Text(sectionCase.rawValue)
+        case .completed:
             Text(sectionCase.rawValue)
         }
     }
@@ -89,9 +86,12 @@ public struct ActionRequestFormUI: View {
                         .cornerRadius(5)
                 })
             } else {
-                Spacer()
+                Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
+                    .onTapGesture(perform: {
+                        ServerStatusManager.instance.checkStatus()
+                    })
             }
-        case .history:
+        case .completed:
             Spacer()
         }
     }
@@ -120,7 +120,7 @@ public struct ActionRequestFormUI: View {
                      Text("0 draft")
                      .foregroundColor(.secondary)
                      }*/
-                    case .history:
+                    case .completed:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.uniqueID) { request in
                                 ActionRequestRow(request: request, actionManager: instance)
@@ -253,8 +253,8 @@ extension ActionContext {
 
 extension ActionRequest.State {
 
-    var isHistory: Bool {
-        return self == .finished
+    var isCompleted: Bool {
+        return self == .completed
     }
 }
 extension Binding {

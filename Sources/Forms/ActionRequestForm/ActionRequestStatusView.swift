@@ -16,8 +16,8 @@ struct ActionRequestStatusView: View {
             switch request.state {
             case .executing, .ready:
                 ZStack {
-                    Circle().stroke(Color.primary).frame(maxWidth: 20)
-                    Ellipsis(scale: .small, color: Color.primary)
+                    // Circle().stroke(Color.primary).frame(maxWidth: 20)
+                    Ellipsis(scale: .small, color: Color.primary).frame(maxWidth: 20)
                 }
             default:
                 Text(request.statusImage(color: true))

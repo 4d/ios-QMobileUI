@@ -91,14 +91,16 @@ extension UIView {
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
                         let actionContext: ActionContext = self
                         let actionUI = UIAction(
-                            title: "Requests log",
+                            title: "Pending task",
                             image: UIImage(systemName: "ellipsis.rectangle"),
                             identifier: UIAction.Identifier(rawValue: "action.log"),
                             attributes: []) { actionUI in
                             let view = ActionRequestFormUI(actionContext: actionContext)
                             let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
                             let presentedController = UINavigationController(rootViewController: hostController)
+                            hostController.navigationItem.title = "Task"
                             presentedController.navigationBar.tintColor = UIColor.foreground
+                            presentedController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
                             presentedController.navigationBar.isTranslucent = false
                             presentedController.navigationBar.barTintColor = UIColor.background
                             hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))

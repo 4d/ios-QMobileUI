@@ -21,7 +21,7 @@ extension ActionRequest {
                 return "⏸"*/
             case .ready:
                 return "🆕"
-            case .finished:
+            case .completed:
                 switch result! {
                 case .success(let value):
                     if value.success {
@@ -43,7 +43,7 @@ extension ActionRequest {
             return "‖"*/
         case .ready:
             return "🆕"
-        case .finished:
+        case .completed:
             switch result! {
             case .success(let value):
                 if value.success {
@@ -73,8 +73,13 @@ extension ActionRequest {
             /*if self.contextParameters != nil {
              summary += ","
              }*/
+
             var values: [Any] = []
-            for (key, value) in parameters {
+            for parameter in self.action.parameters ?? [] {
+                let key = parameter.name
+                guard let value =  parameters[key] else {
+                    continue
+                }
                 if let definition = definitionsMap[key], let value = definition.sumary(for: value) {
                     values.append(value)
                 } else {
@@ -85,6 +90,13 @@ extension ActionRequest {
         }
         return summary
     }
+
+    var title: String {
+        var tableName = self.tableName
+        tableName = ApplicationDataStore.instance.dataStore.tableInfo(for: tableName)?.originalName ?? tableName
+        return "\(tableName.capitalized()): \(action.preferredLongLabel.replacingOccurrences(of: "...", with: "").replacingOccurrences(of: "…", with: ""))"
+    }
+
 }
 
 extension ActionParameter {

@@ -159,7 +159,7 @@ public class ActionManager: NSObject, ObservableObject {
         for (index, request) in requests.enumerated() where request.state == .cancelled {
             toRemoves.append(index)
         }
-        for (index, request) in requests.enumerated().reversed() /* old at the begining */ where request.state == .finished {
+        for (index, request) in requests.enumerated().reversed() /* old at the begining */ where request.state == .completed {
             finished += 1
             if finished > offlineActionHistoryMax {
                 toRemoves.append(index)
@@ -203,11 +203,11 @@ public class ActionManager: NSObject, ObservableObject {
                             self.executeActionOnlineOnly(request, actionUI, context, waitPresenter, completionHandler)
                         } else {
                             // must not occurs, if auth result, then we must not be unauthorized
-                            request.state = .finished
+                            request.state = .completed
                             _ = completionHandler?(.failure(error))
                         }
                     case .failure(let authError):
-                        request.state = .finished
+                        request.state = .completed
                         SwiftMessages.showError(ActionRequest.Error(authError))
                         _ = completionHandler?(.failure(error))
                     }
@@ -215,12 +215,12 @@ public class ActionManager: NSObject, ObservableObject {
                 sendChange()
                 return
             }
-            request.state = .finished
+            request.state = .completed
             SwiftMessages.showError(error)
             sendChange()
             _ = completionHandler?(.failure(error))
         case .success(let value):
-            request.state = .finished
+            request.state = .completed
             sendChange()
             logger.debug("\(value)")
             if let completionHandler = completionHandler {
@@ -351,13 +351,13 @@ extension ActionManager: ActionExecutor {
     }
 
     fileprivate func executeActionOnlineOnly(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ((Result<ActionResult, ActionRequest.Error>) -> Void)?) {
-        request.lastDate = Date()
+
         let actionQueue: DispatchQueue = .background
         actionQueue.async {
             logger.info("Launch action \(request.action.name) with context and parameters: \(request.parameters)")
             request.state = .executing
-            request.lastDate = Date()
             _ = APIManager.instance.action(request, callbackQueue: .background) { result in
+                request.lastDate = Date()
                 self.onActionResult(request, actionUI, context, waitPresenter, result.mapError { ActionRequest.Error($0) }, completionHandler)
             }
         }
@@ -369,7 +369,9 @@ extension ActionManager: ActionExecutor {
         if offlineAction && !request.action.isOnlineOnly {
             self.queue.addRequest(request, actionUI, context, waitPresenter) { result in
                 completionHandler?(result)
-                self.objectWillChange.send()
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
             }
             self.objectWillChange.send()
         } else {

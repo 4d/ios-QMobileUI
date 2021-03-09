@@ -13,8 +13,8 @@ struct MetadataView: View {
     var body: some View {
         HStack {
             ForEach(
-                [("clock", "\(timeSince(request.creationDate))", Color.primary),
-                 ("tablecells", "\(request.tableName)", Color.primary),
+                [("clock", "\(timeSince(request.lastDate ?? request.creationDate))", Color.primary),
+                 /*("tablecells", "\(request.tableName)", Color.primary),*/
                  ("key.icloud", debug ? "\(request.recordSummary)": "", Color.secondary),
                  ("arrow.counterclockwise", debug ? "\(request.tryCount)": "", Color.secondary)
                 ], id: \.0) { data in
@@ -59,7 +59,7 @@ func timeSince(_ date: Date?) -> String {
     let formatter = RelativeDateTimeFormatter()
     formatter.unitsStyle = .full
     let now = Date()
-    if date == now {
+    if Calendar.current.isDate(date, equalTo: now, toGranularity: .second) {
         formatter.dateTimeStyle = .named
     }
     return formatter.localizedString(for: date, relativeTo: now)
