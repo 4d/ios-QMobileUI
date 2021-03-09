@@ -442,7 +442,7 @@ extension ActionManager: ReachabilityListener, ServerStatusListener {
     func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.isSuccess ||  pause || APIManager.isSignIn
+        self.isSuspended = !serverStatus.isSuccess ||  pause || !APIManager.isSignIn
     }
 }
 
