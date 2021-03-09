@@ -123,14 +123,24 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                 return
             }
             logger.warning("retry: \(self.request)")
-            ApplicationReachability.instance.refreshServerInfo() // XXX maybe limit to some errors?
 
-            if !Prephirences.Auth.Login.form, error.isUnauthorized {
-                ApplicationAuthenticate.retryGuestLogin { _ in
-                    // maybe add in queue an operation to try login multiple times,because it could failed
-                    self.retry(with: result, on: queue)
+            if error.isUnauthorized {
+                if Prephirences.Auth.Login.form {
+                    ApplicationCoordinator.instance.logout()
+                } else {
+                    ApplicationAuthenticate.retryGuestLogin { authResult in
+                        // XXX maybe if failure pause the queue... do not retry for nothing... but this is a weird situation
+                        if case .failure = authResult {
+                            ActionManager.instance.checkSuspend() // XXX maybe instead actionmanager must listen to login/logout
+                        }
+
+                        // maybe add in queue an operation to try login multiple times,because it could failed
+                        self.retry(with: result, on: queue)
+                    }
                 }
             } else {
+                ApplicationReachability.instance.refreshServerInfo() // XXX maybe limit to some errors?
+
                 showPendingMessage()
                 retry(with: result, on: queue)
             }

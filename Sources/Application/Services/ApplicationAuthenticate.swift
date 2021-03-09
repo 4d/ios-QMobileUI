@@ -198,6 +198,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
             self.tryCount = 0
             return false
         }
+        ActionManager.instance.checkSuspend() // XXX maybe instead actionmanager must listen to login/logout
 
         let operation: DataSync.Operation = Prephirences.Auth.reloadData ? .reload: .sync
         /// The user have custom data. What to do?

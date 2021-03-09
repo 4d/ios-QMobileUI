@@ -439,10 +439,10 @@ extension ActionManager: ReachabilityListener, ServerStatusListener {
         checkSuspend()
     }
 
-    fileprivate func checkSuspend() {
+    func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.isSuccess ||  pause
+        self.isSuspended = !serverStatus.isSuccess ||  pause || APIManager.isSignIn
     }
 }
 

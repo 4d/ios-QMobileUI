@@ -45,7 +45,7 @@ extension ServerStatus {
     public var isSuccess: Bool {
         if case .done(let result) = self {
             if case .success(let value) = result {
-                return value.ok
+                return true // value.ok
             }
         }
         return false

@@ -596,6 +596,14 @@ extension ApplicationCoordinator {
         }
     }
 
+    func logout() {
+        guard Prephirences.Auth.Login.form else {
+            return
+        }
+        mainCoordinator.logout()
+        // TODO:  code to be able to logout from anywhere
+    }
+
 }
 
 class MainCoordinator {
@@ -625,6 +633,10 @@ class MainCoordinator {
                 loginCoordinator.afterLogin(deepLink: deepLink, completion: completion)
             }
         }
+    }
+
+    func logout() {
+        // TODO: go to first view controller
     }
 }
 
