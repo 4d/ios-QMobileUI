@@ -126,7 +126,7 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
 
             if error.isUnauthorized {
                 if Prephirences.Auth.Login.form {
-                    ApplicationCoordinator.instance.logout()
+                    ApplicationCoordinator.logout()
                 } else {
                     ApplicationAuthenticate.retryGuestLogin { authResult in
                         // XXX maybe if failure pause the queue... do not retry for nothing... but this is a weird situation

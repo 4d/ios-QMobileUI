@@ -596,7 +596,7 @@ extension ApplicationCoordinator {
         }
     }
 
-    func logout() {
+    static func logout() {
         guard Prephirences.Auth.Login.form else {
             return
         }
