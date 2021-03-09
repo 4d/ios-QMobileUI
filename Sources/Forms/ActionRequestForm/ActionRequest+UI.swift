@@ -109,6 +109,9 @@ extension ActionParameter {
             if let value = choice.choice(for: AnyCodable(castData(value))) {  // find value in list
                 return "\(value.value)"
             }
+            if let value = choice.choice(for: AnyCodable(value)) {  // find value in list
+                return "\(value.value)"
+            }
         }
 
         switch self.type {
