@@ -94,9 +94,12 @@ extension ActionRequest {
     var title: String {
         var tableName = self.tableName
         tableName = ApplicationDataStore.instance.dataStore.tableInfo(for: tableName)?.originalName ?? tableName
-        return "\(tableName.capitalized()): \(action.preferredLongLabel.replacingOccurrences(of: "...", with: "").replacingOccurrences(of: "…", with: ""))"
+        return "\(tableName.capitalized()): \(shortTitle)"
     }
 
+    var shortTitle: String {
+        return "\(action.preferredLongLabel.replacingOccurrences(of: "...", with: "").replacingOccurrences(of: "…", with: ""))"
+    }
 }
 
 extension ActionParameter {

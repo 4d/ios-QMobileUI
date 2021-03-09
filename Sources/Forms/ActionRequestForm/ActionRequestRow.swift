@@ -14,6 +14,7 @@ import QMobileAPI // action model
 public struct ActionRequestRow: View {
     let request: ActionRequest
     @ObservedObject public var actionManager: ActionManager
+    @State public var shortTitle: Bool
 
     public var body: some View {
         VStack(alignment: .leading) {
@@ -23,7 +24,7 @@ public struct ActionRequestRow: View {
                         .frame(maxWidth: 28, minHeight: 28, maxHeight: 28, alignment: .leading)
                 }
                 VStack(alignment: .leading) {
-                    Text(request.title)
+                    Text(shortTitle ? request.shortTitle: request.title)
                         .font(.headline)
                         .lineLimit(1)
                     Text(request.summary)
@@ -43,10 +44,10 @@ public struct ActionRequestRow: View {
 struct ActionRow_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ActionRequestRow(request: ActionRequest.examples[0], actionManager: ActionManager.instance)
-            ActionRequestRow(request: ActionRequest.examples[1], actionManager: ActionManager.instance)
-            ActionRequestRow(request: ActionRequest.examples[2], actionManager: ActionManager.instance)
-            ActionRequestRow(request: ActionRequest.examples[3], actionManager: ActionManager.instance)
+            ActionRequestRow(request: ActionRequest.examples[0], actionManager: ActionManager.instance, shortTitle: true)
+            ActionRequestRow(request: ActionRequest.examples[1], actionManager: ActionManager.instance, shortTitle: true)
+            ActionRequestRow(request: ActionRequest.examples[2], actionManager: ActionManager.instance, shortTitle: false)
+            ActionRequestRow(request: ActionRequest.examples[3], actionManager: ActionManager.instance, shortTitle: true)
         }.previewLayout(.fixed(width: 300, height: 70))
     }
 }

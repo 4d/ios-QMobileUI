@@ -98,7 +98,12 @@ extension UIView {
                             let view = ActionRequestFormUI(actionContext: actionContext)
                             let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
                             let presentedController = UINavigationController(rootViewController: hostController)
-                            hostController.navigationItem.title = "Task"
+                            if let table = actionContext.actionContextParameters()?[ActionParametersKey.table] {
+                                hostController.navigationItem.title = "Tasks: \(table)"
+                            } else {
+                                hostController.navigationItem.title = "Tasks"
+                            }
+
                             presentedController.navigationBar.tintColor = UIColor.foreground
                             presentedController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
                             presentedController.navigationBar.isTranslucent = false

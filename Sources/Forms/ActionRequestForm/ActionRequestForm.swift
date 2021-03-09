@@ -107,9 +107,9 @@ public struct ActionRequestFormUI: View {
                             let requests = getRequests(for: section)
                             ForEach(requests, id: \.uniqueID) { request in
                                 if hasDetailLink && !request.action.parameters.isEmpty {
-                                    ActionRequestEditableRow(request: request, actionManager: instance)
+                                    ActionRequestEditableRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
                                 } else {
-                                    ActionRequestRow(request: request, actionManager: instance)
+                                    ActionRequestRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
                                 }
                             }
                             .onDelete { index in
@@ -123,7 +123,7 @@ public struct ActionRequestFormUI: View {
                     case .completed:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.uniqueID) { request in
-                                ActionRequestRow(request: request, actionManager: instance)
+                                ActionRequestRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
                             }
                         } else {
                             Text("Nothing has happened yet") // "0 item"
@@ -170,6 +170,7 @@ struct ActionRequestEditableRow: View {
     @State var showModal = false
     @State var request: ActionRequest
     @ObservedObject public var actionManager: ActionManager
+    @State var shortTitle: Bool
 
     @State var actionDone = false
     @State var result: Result<ActionParameters, ActionFormError>?
@@ -185,7 +186,7 @@ struct ActionRequestEditableRow: View {
                 self.actionDone.toggle()
             }
         }, isActive: $showModal.animation()) {
-            ActionRequestRow(request: request, actionManager: actionManager)
+            ActionRequestRow(request: request, actionManager: actionManager, shortTitle: shortTitle)
         }.onChange(of: showModal) { newValue in
             actionManager.pause = newValue
         }
