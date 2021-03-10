@@ -34,7 +34,9 @@ public struct ActionRequestFormUI: View {
         case pending, completed
         var id: String { return rawValue } // swiftlint:disable:this identifier_name
     }
-    var sections: [SectionCase] = SectionCase.allCases
+    var sections: [SectionCase] {
+        return SectionCase.allCases.filter({ hasRequests(for: $0) })
+    }
 
     func getRequests(for sectionCase: SectionCase) -> [ActionRequest] {
         var requests: [ActionRequest]
@@ -68,7 +70,7 @@ public struct ActionRequestFormUI: View {
         case .pending:
             HStack {
                 Text(sectionCase.rawValue)
-                Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
+                Text(instance.isServerAccessible ? " (Server is online)": " (Server is not accessible)")
                     .onTapGesture(perform: {
                         ServerStatusManager.instance.checkStatus()
                     })
@@ -149,7 +151,7 @@ public struct ActionRequestFormUI: View {
             }
         })
         .listStyle(GroupedListStyle())
-
+        .tabItem {  Label("Menu", systemImage: "list.dash") }
     }
     @State private var offset = CGSize.zero
     private func onDelete(_ indexSet: IndexSet, _ requests: [ActionRequest]) {

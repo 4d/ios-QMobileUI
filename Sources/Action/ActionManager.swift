@@ -142,7 +142,9 @@ public class ActionManager: NSObject, ObservableObject {
                             case .failure(let error):
                                 logger.warning("Background action \(request) finish with error \(error)")
                             }
-                            self.objectWillChange.send()
+                            DispatchQueue.main.async {
+                                self.objectWillChange.send()
+                            }
                         }
                 }
             }

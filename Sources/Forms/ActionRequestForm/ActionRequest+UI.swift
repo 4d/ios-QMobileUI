@@ -10,55 +10,6 @@ import Foundation
 import QMobileAPI
 
 extension ActionRequest {
-    func statusImage(color: Bool) -> String {
-        if color {
-            switch state {
-            case .cancelled:
-                return "🚫"
-            case .executing:
-                return " " // replaced by spinner
-            /*case .pending:
-                return "⏸"*/
-            case .ready:
-                return "🆕"
-            case .completed:
-                switch result! {
-                case .success(let value):
-                    if value.success {
-                        return "✅"
-                    } else {
-                        return "⚠️"
-                    }
-                case .failure:
-                    return "‼️"
-                }
-            }
-        }
-        switch state {
-        case .cancelled:
-            return "⌀"
-        case .executing:
-            return " " // replaced by spinner
-        /*case .pending:
-            return "‖"*/
-        case .ready:
-            return "🆕"
-        case .completed:
-            switch result! {
-            case .success(let value):
-                if value.success {
-                    return "✓"
-                } else {
-                    return "⚠"
-                }
-            case .failure:
-                return "x"
-            }
-        }
-    }
-}
-
-extension ActionRequest {
 
     var summary: String {
         if let statusText = statusText {
@@ -101,6 +52,21 @@ extension ActionRequest {
 
     var shortTitle: String {
         return "\(action.preferredLongLabel.replacingOccurrences(of: "...", with: "").replacingOccurrences(of: "…", with: ""))"
+    }
+
+    var deepLink: DeepLink? {
+        let recordSummary = self.recordSummary
+        if recordSummary.isEmpty {
+            return .table(tableName)
+        }
+        return .record(tableName, recordSummary)
+    }
+
+    func openDeepLink() {
+        guard let deepLink = self.deepLink else { return }
+        ApplicationCoordinator.open(deepLink) { _ in
+            logger.info("Open request context form")
+        }
     }
 }
 

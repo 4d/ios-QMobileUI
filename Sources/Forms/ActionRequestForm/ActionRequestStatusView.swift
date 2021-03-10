@@ -16,11 +16,28 @@ struct ActionRequestStatusView: View {
             switch request.state {
             case .executing, .ready:
                 ZStack {
-                    // Circle().stroke(Color.primary).frame(maxWidth: 20)
-                    Ellipsis(scale: .small, color: Color.primary).frame(maxWidth: 20)
+                    Circle().stroke(Color.primary)
+                    Ellipsis(scale: .small, color: Color.primary)
+                }.frame(maxWidth: 20, maxHeight: 20)
+            case .completed:
+                switch request.result! {
+                case .success(let value):
+                    if value.success {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.system(size: 22, weight: .regular))
+                    } else {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundColor(.red)
+                            .font(.system(size: 22, weight: .regular))
+                    }
+                case .failure:
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.system(size: 22, weight: .regular))
                 }
-            default:
-                Text(request.statusImage(color: true))
+            case .cancelled:
+                Image(systemName: "multiply.circle.fill").foregroundColor(.blue).frame(maxWidth: 24)
             }
         }
     }

@@ -14,19 +14,19 @@ struct MetadataView: View {
         HStack {
             ForEach(
                 [("clock", "\(timeSince(request.lastDate ?? request.creationDate))", Color.primary),
-                 /*("tablecells", "\(request.tableName)", Color.primary),*/
                  ("key.icloud", debug ? "\(request.recordSummary)": "", Color.secondary),
                  ("arrow.counterclockwise", debug ? "\(request.tryCount)": "", Color.secondary)
                 ], id: \.0) { data in
                 Group {
                     if !data.1.isEmpty {
-                        Image(systemName: data.0)
-                        if data.0 == "clock" {
+                        switch data.0 {
+                        case "clock":
                             Text(since.isEmpty ? data.1: since)
                                 .onReceive(timer) { _ in
                                     since = "\(timeSince(request.creationDate))"
                                 }
-                        } else {
+                        default:
+                            Image(systemName: data.0)
                             Text(data.1)
                         }
                     }

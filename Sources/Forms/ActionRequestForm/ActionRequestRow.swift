@@ -24,9 +24,21 @@ public struct ActionRequestRow: View {
                         .frame(maxWidth: 28, minHeight: 28, maxHeight: 28, alignment: .leading)
                 }
                 VStack(alignment: .leading) {
-                    Text(shortTitle ? request.shortTitle: request.title)
-                        .font(.headline)
-                        .lineLimit(1)
+                    HStack {
+                        if !shortTitle {
+                            Text(request.tableName)
+                                .font(.headline)
+                                .lineLimit(1)
+                                .foregroundColor(Color(UIColor.background.cgColor))
+                                .background(Color(UIColor.foreground.cgColor))
+                                .onTapGesture {
+                                    request.openDeepLink()
+                                }
+                        }
+                        Text(request.shortTitle)
+                            .font(.headline)
+                            .lineLimit(1)
+                    }
                     Text(request.summary)
                         .foregroundColor(.secondary)
                         .font(.subheadline)
@@ -39,6 +51,7 @@ public struct ActionRequestRow: View {
                 .opacity(0.75)
         }// .padding()
     }
+
 }
 
 struct ActionRow_Previews: PreviewProvider {
