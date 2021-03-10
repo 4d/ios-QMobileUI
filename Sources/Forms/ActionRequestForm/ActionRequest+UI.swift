@@ -80,7 +80,9 @@ extension ActionRequest {
                 guard let value =  parameters[key] else {
                     continue
                 }
-                if let definition = definitionsMap[key], let value = definition.sumary(for: value) {
+                if let format = parameter.format, case .password = format {
+                    values.append("***")
+                } else if let definition = definitionsMap[key], let value = definition.sumary(for: value) {
                     values.append(value)
                 } else {
                     values.append(value)
