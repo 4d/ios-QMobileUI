@@ -66,7 +66,15 @@ public struct ActionRequestFormUI: View {
     @ViewBuilder func header(for sectionCase: SectionCase) -> some View {
         switch sectionCase {
         case .pending:
-            Text(sectionCase.rawValue)
+            HStack {
+                Text(sectionCase.rawValue)
+                Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
+                    .onTapGesture(perform: {
+                        ServerStatusManager.instance.checkStatus()
+                    })
+                    .textCase(nil)
+
+            }
         case .completed:
             Text(sectionCase.rawValue)
         }
@@ -86,10 +94,7 @@ public struct ActionRequestFormUI: View {
                         .cornerRadius(5)
                 })
             } else {
-                Text(instance.isServerAccessible ? "🟢 Server is online": "🔴 Server is not accessible")
-                    .onTapGesture(perform: {
-                        ServerStatusManager.instance.checkStatus()
-                    })
+                Spacer()
             }
         case .completed:
             Spacer()
