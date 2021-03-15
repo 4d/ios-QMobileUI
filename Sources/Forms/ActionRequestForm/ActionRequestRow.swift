@@ -30,7 +30,6 @@ public struct ActionRequestRow: View {
                                 .font(.headline)
                                 .lineLimit(1)
                                 .foregroundColor(Color(UIColor.background.cgColor))
-                                .background(Color(UIColor.foreground.cgColor))
                                 .onTapGesture {
                                     request.openDeepLink()
                                 }
