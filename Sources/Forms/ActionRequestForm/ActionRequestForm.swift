@@ -83,24 +83,7 @@ public struct ActionRequestFormUI: View {
     }
 
     @ViewBuilder func footer(for sectionCase: SectionCase) -> some View {
-        switch sectionCase {
-        case .pending:
-            if hasPauseButton {
-                Button(action: {
-                    instance.pause.toggle()
-                }, label: {
-                    Image(systemName: instance.pause ? "play": "pause")
-                        .padding(5)
-                        .foregroundColor(Color("ForegroundColor"))
-                        .background(Color("BackgroundColor"))
-                        .cornerRadius(5)
-                })
-            } else {
-                Spacer()
-            }
-        case .completed:
-            Spacer()
-        }
+        EmptyView()
     }
 
     public var body: some View {
