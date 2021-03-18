@@ -35,7 +35,7 @@ public struct ActionRequestFormUI: View {
         var id: String { return rawValue } // swiftlint:disable:this identifier_name
     }
     var sections: [SectionCase] {
-        return SectionCase.allCases.filter({ hasRequests(for: $0) })
+        return SectionCase.allCases.filter({ ($0 == .completed) || hasRequests(for: $0)   })
     }
 
     func getRequests(for sectionCase: SectionCase) -> [ActionRequest] {
