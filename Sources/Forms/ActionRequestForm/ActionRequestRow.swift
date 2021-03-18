@@ -44,6 +44,7 @@ public struct ActionRequestRow: View {
                     MetadataView(request: request)
                         .font(.caption)
                         .opacity(0.75)
+                        .padding(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                 }
                 Spacer()
                 Spacer()
