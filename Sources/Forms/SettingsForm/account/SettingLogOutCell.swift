@@ -29,7 +29,7 @@ extension SettingLogOutCell: DialogFormDelegate {
             button.startAnimation()
         }
 
-        BackGroundDataSyncManager.instance.didLogout() // cancel any sync
+        ApplicationAuthenticate.instance.didLogout() // cancel any sync
 
         // call logout
         _ = APIManager.instance.logout { result in

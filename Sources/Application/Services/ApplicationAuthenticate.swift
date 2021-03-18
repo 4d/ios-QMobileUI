@@ -16,20 +16,37 @@ import SwiftMessages
 import QMobileAPI
 import QMobileDataSync
 
+protocol AuthenticateListener: LoginFormDelegate {
+    func didLogout()
+}
+
 /// Log the step of application launching
 class ApplicationAuthenticate: NSObject {
 
-    private var observers: [NSObjectProtocol] = []
+    var observers: [AuthenticateListener] = []
     private var tryCount: Int = 0
     override init() {
     }
 
+    open func add(listener: AuthenticateListener) {
+        self.observers.append(listener)
+    }
+    func notifyLogin(result: Result<AuthToken, APIError>) {
+        for observer in observers {
+             _ = observer.didLogin(result: result)
+        }
+    }
+    func notifyLogout() {
+        for observer in observers {
+             _ = observer.didLogout()
+        }
+    }
 }
 
 extension ApplicationAuthenticate: ApplicationService {
 
     // MARK: ApplicationService
-    static var instance: ApplicationService = ApplicationAuthenticate()
+    static var instance: ApplicationAuthenticate = ApplicationAuthenticate()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         #if DEBUG
@@ -37,6 +54,7 @@ extension ApplicationAuthenticate: ApplicationService {
         if Prephirences.Auth.Logout.atStart {
             _ = APIManager.instance.logout(token: Prephirences.Auth.Logout.token) { [weak self] _ in
                 Prephirences.Auth.Logout.token = nil
+                self?.didLogout()
                 self?.login()
             }
             return
@@ -133,8 +151,9 @@ extension ApplicationAuthenticate {
 
     /// Force a logout.
     fileprivate func logout(completionHandler: @escaping () -> Void) {
-        _ = APIManager.instance.logout { _ in
+        _ = APIManager.instance.logout { [weak self] _ in
             completionHandler()
+            self?.didLogout()
         }
     }
 
@@ -198,7 +217,7 @@ extension ApplicationAuthenticate: LoginFormDelegate {
             self.tryCount = 0
             return false
         }
-        ActionManager.instance.checkSuspend() // XXX maybe instead actionmanager must listen to login/logout
+        notifyLogin(result: result)
 
         let operation: DataSync.Operation = Prephirences.Auth.reloadData ? .reload: .sync
         /// The user have custom data. What to do?
@@ -236,6 +255,11 @@ extension ApplicationAuthenticate: LoginFormDelegate {
         }
 
         return true
+    }
+
+    func didLogout() {
+        BackGroundDataSyncManager.instance.didLogout() // cancel any sync
+        notifyLogout()
     }
 
     /// Configure login message error if any
@@ -409,7 +433,7 @@ class BackGroundDataSyncManager {
         return cancellable
     }
 
-    func didLogout() {
+    fileprivate func didLogout() {
         cancellable.cancel()
     }
 }

@@ -429,10 +429,11 @@ extension SwiftMessages {
 
 // MARK: manage reachability to suspend operation
 
-extension ActionManager: ReachabilityListener, ServerStatusListener {
+extension ActionManager: ReachabilityListener, ServerStatusListener, AuthenticateListener {
 
     fileprivate func registerListener() {
         ApplicationReachability.instance.add(listener: self)
+        ApplicationAuthenticate.instance.add(listener: self)
     }
 
     public func onReachabilityChanged(status: NetworkReachabilityStatus, old: NetworkReachabilityStatus) {
@@ -443,10 +444,19 @@ extension ActionManager: ReachabilityListener, ServerStatusListener {
         checkSuspend()
     }
 
+    public func didLogin(result: Result<AuthToken, APIError>) -> Bool {
+        checkSuspend()
+        return false
+    }
+
+    public func didLogout() {
+        checkSuspend()
+    }
+
     func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.isSuccess ||  pause || !APIManager.isSignIn
+        self.isSuspended = !serverStatus.isSuccess || pause // || !APIManager.isSignIn
     }
 }
 

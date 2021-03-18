@@ -41,13 +41,20 @@ public struct ActionRequestRow: View {
                     Text(request.summary)
                         .foregroundColor(.secondary)
                         .font(.subheadline)
+                    MetadataView(request: request)
+                        .font(.caption)
+                        .opacity(0.75)
                 }
                 Spacer()
                 Spacer()
             }
-            MetadataView(request: request)
-                .font(.caption)
-                .opacity(0.75)
+           /* HStack {
+                Spacer()
+                MetadataView(request: request)
+                    .font(.caption)
+                    .opacity(0.75)
+            }*/
+
         }// .padding()
     }
 
