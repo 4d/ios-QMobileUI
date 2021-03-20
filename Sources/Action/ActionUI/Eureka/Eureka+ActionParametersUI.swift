@@ -138,8 +138,10 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                 row.remoteErrorsString = []
                 let rowIndex = settings.useSection ? indexPath.section: indexPath.row
                 self.rowHasBeenEdited.insert(rowIndex)
-                self.tableView?.reloadSections([rowIndex], with: .none)
-                // self.tableView?.reloadData()
+                DispatchQueue.main.async {
+                    self.tableView?.reloadSections([rowIndex], with: .none)
+                    // self.tableView?.reloadData()
+                }
             }
 
             // Expand text area
