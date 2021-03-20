@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import QMobileAPI
 
 /// An operation to upload images

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Protocol to provide info on relation
 public protocol RelationInfoUI {
