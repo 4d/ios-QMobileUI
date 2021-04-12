@@ -22,7 +22,7 @@ public enum DeepLink {
     static func from(_ userInfo: [AnyHashable: Any]) -> DeepLink? {
         if let table = userInfo["dataClass"] as? String ?? userInfo["table"] as? String {
             if let record = userInfo["record"] ?? ((userInfo["entity"] as? [String: Any])?["primaryKey"]) {
-                if let relationName = userInfo["relation"] as? String {
+                if let relationName = userInfo["relation"] as? String ?? userInfo["relationName"] as? String {
                     return .relation(table, record, relationName)
                 } else {
                     return .record(table, record)
@@ -42,19 +42,19 @@ public enum DeepLink {
         if let table = json["dataClass"].string ?? json["table"].string {
             if json["record"].exists() {
                 let record = json["record"].rawValue
-                if let relation = json["relation"].string {
+                if let relation = json["relation"].string ?? json["relationName"].string {
                     return .relation(table, record, relation)
                 }
                 return .record(table, record)
             } else if json["entity"].exists() {
                 let record = json["entity"]["primaryKey"].rawValue
-                if let relation = json["relation"].string {
+                if let relation = json["relation"].string ?? json["relationName"].string {
                     return .relation(table, record, relation)
                 }
                 return .record(table, record)
             } else if json["entity.primaryKey"].exists() {
                 let record = json["entity.primaryKey"].rawValue
-                if let relation = json["relation"].string {
+                if let relation = json["relation"].string ?? json["relationName"].string {
                     return .relation(table, record, relation)
                 }
                 return .record(table, record)
@@ -89,10 +89,13 @@ public enum DeepLink {
             guard let queryItems = components.queryItems else {
                 return nil
             }
-            guard let tableItem = queryItems.first(where: { $0.name == "table" || $0.name == "dataClass" }), let table = tableItem.value else {
+            guard let tableItem = queryItems.first(where: { $0.name == "table" || $0.name.lowercased() == "dataclass" }), let table = tableItem.value else {
                 return nil
             }
-            if let recordItem = queryItems.first(where: { $0.name == "record" || $0.name == "entity.primaryKey" }), let record = recordItem.value {
+            if let recordItem = queryItems.first(where: { $0.name == "record" || $0.name.lowercased() == "entity.primarykey" }), let record = recordItem.value {
+                if let relationItem = queryItems.first(where: { $0.name.lowercased() == "relationname" || $0.name == "relation"  }), let relationName = relationItem.value {
+                    return .relation(table, record, relationName)
+                }
                 return .record(table, record)
             } else {
                 return .table(table)
