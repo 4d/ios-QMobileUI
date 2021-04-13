@@ -24,6 +24,20 @@ extension UIImageView {
         }
     }
 
+    @objc dynamic public var systemImageNamed: String? {
+         get {
+             return self.image?.accessibilityIdentifier
+         }
+         set {
+             guard let name = newValue else {
+                 self.image = nil
+                 return
+             }
+             self.image = UIImage(systemName: name)
+             self.image?.accessibilityIdentifier = name
+         }
+     }
+
     /*@objc dynamic public var localizedText: String? {
         get {
             guard let localized = self.text else {

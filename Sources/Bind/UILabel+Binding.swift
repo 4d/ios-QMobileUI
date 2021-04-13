@@ -66,6 +66,24 @@ public extension UILabel {
         }
     }
 
+
+    @objc dynamic var systemImageNamed: String? {
+        get {
+            return self.text // Cannot undo it without storing...
+        }
+        set {
+            guard let name = newValue else {
+                self.text = nil
+                return
+            }
+            guard let image = UIImage(systemName: name) else {
+                self.text = nil // XXX maybe instead add a missing image, a placeholder image?
+                return
+            }
+            self.setImage(image)
+        }
+    }
+
     // MARK: - date
 
     /// Display a date with RFC 822 format

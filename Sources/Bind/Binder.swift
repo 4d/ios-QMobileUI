@@ -175,7 +175,7 @@ open class Binder: NSObject {
 
             var transformer: ValueTransformer?
             switch viewKey {
-            case "localizedText", "imageNamed":
+            case "localizedText", "imageNamed", "systemImageNamed":
                 transformer = StringPrefixer(prefix: component)
                 logger.debug("Undefined transformer \(component) or \(viewKey),\(component). Will be created.")
             default:

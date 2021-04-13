@@ -462,4 +462,14 @@ public extension UIButton {
             self.imageView?.imageNamed = newValue
         }
     }
+
+    @objc dynamic var systemImageNamed: String? {
+        get {
+            return self.imageView?.systemImageNamed
+        }
+        set {
+            // XXX create imageView?
+            self.imageView?.systemImageNamed = newValue
+        }
+    }
 }

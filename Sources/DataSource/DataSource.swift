@@ -35,6 +35,8 @@ open class DataSource: NSObject {
 
                 } else if sectionFieldFormatter.hasPrefix("imageNamed,") {
                     sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: "imageNamed,", with: ""))
+                } else if sectionFieldFormatter.hasPrefix("systemImageNamed,") {
+                    sectionFieldValueFormatter = StringPrefixer(prefix: sectionFieldFormatter.replacingOccurrences(of: "systemImageNamed,", with: ""))
                 }
             } else {
                 sectionFieldValueFormatter = nil
