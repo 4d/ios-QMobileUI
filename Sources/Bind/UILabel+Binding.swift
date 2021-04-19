@@ -66,7 +66,6 @@ public extension UILabel {
         }
     }
 
-
     @objc dynamic var systemImageNamed: String? {
         get {
             return self.text // Cannot undo it without storing...

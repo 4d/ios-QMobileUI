@@ -311,7 +311,7 @@ extension APIManager {
 /// Responsible of executing an action
 protocol ActionExecutor {
     typealias WaitPresenter = AnyPublisher<Void, Never>
-    typealias CompletionHandler = (Result<ActionResult, ActionRequest.Error>) -> Void // WaitPresenter
+    typealias CompletionHandler = (Result<ActionResult, ActionRequest.Error>) -> Void
     typealias Context = (Action, ActionUI, ActionContext, ActionParameters?, ActionExecutor.WaitPresenter, ActionExecutor.CompletionHandler?)
 
     func executeAction(_ action: Action, // swiftlint:disable:this function_parameter_count
@@ -349,7 +349,7 @@ extension ActionManager: ActionExecutor {
         let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters, id: id)
 
         // and execute it
-        executeActionRequest(request, actionUI, context, waitPresenter, completionHandler)
+        executeActionRequest(request, actionUI: actionUI, context: context, waitPresenter: waitPresenter, completionHandler)
     }
 
     fileprivate func executeActionOnlineOnly(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ((Result<ActionResult, ActionRequest.Error>) -> Void)?) {
@@ -365,11 +365,25 @@ extension ActionManager: ActionExecutor {
         }
     }
 
-    fileprivate func executeActionRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitPresenter: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
+    /// Execute an action request.
+    ///
+    /// Use at your own risk, it could change!
+    /// - Parameters:
+    ///   - request: the request to execute
+    ///   - actionUI: the origin ui element that produce the request. If none will be replaced by a mock object. This element provide graphic context.
+    ///   - context: the data context, allow to get some context values, default values etc.. but request must have already filled with it
+    ///   - waitPresenter: you could pass a wait presenter to wait on yout UI (if you want to close your UI for instance) before the managing of action results (ie. show statusText, do synchro)
+    ///   - completionHandler: receive result of the action.
+    public func executeActionRequest(_ request: ActionRequest,
+                                     actionUI: ActionUI = BackgroundActionUI.instance,
+                                     context: ActionContext? = nil,
+                                     waitPresenter: /*ActionExecutor.WaitPresenter*/ AnyPublisher<Void, Never>,
+                                     _ completionHandler: ((Result<ActionResult, ActionRequest.Error>) -> Void)? = nil) {
         request.state = .ready
+
         self.requests.append(request)
         if offlineAction && !request.action.isOnlineOnly {
-            self.queue.addRequest(request, actionUI, context, waitPresenter) { result in
+            self.queue.addRequest(request, actionUI, context ?? request, waitPresenter) { result in
                 completionHandler?(result)
                 DispatchQueue.main.async {
                     self.objectWillChange.send()
@@ -377,7 +391,7 @@ extension ActionManager: ActionExecutor {
             }
             self.objectWillChange.send()
         } else {
-            executeActionOnlineOnly(request, actionUI, context, waitPresenter, completionHandler)
+            executeActionOnlineOnly(request, actionUI, context ?? request, waitPresenter, completionHandler)
         }
     }
 
@@ -486,8 +500,9 @@ class ActionOperation: Operation {
 
 // placeholder for UI elements if no more element
 // Handlers use it mainly to present new elements, maybe remove that!
-struct BackgroundActionUI: ActionUI {
-    static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI {
+public struct BackgroundActionUI: ActionUI {
+    public static var instance: ActionUI { BackgroundActionUI() }
+    public static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI {
         // maybe object must allow to repopen a new dialog using actionmanager
         return BackgroundActionUI()
     }
