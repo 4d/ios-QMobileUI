@@ -585,9 +585,10 @@ extension UILabel {
     fileprivate func setImage(_ image: UIImage) {
         let attachmentImage = NSTextAttachment()
         attachmentImage.image = image
-        attachmentImage.setImageMaxHeight(200)
+        if attachmentImage.setImageMaxHeight(200) {
+            self.textAlignment = .center // :( if image size change, it will not be restored, we align for big image here
+        }
         self.attributedText = NSAttributedString(attachment: attachmentImage)
-        self.textAlignment = .center
     }
 
     func firstImage(textStorage: NSAttributedString) -> UIImage? {
@@ -616,12 +617,12 @@ extension UILabel {
 private var imageTaskKey: Void? // swiftlint:disable:this file_length
 
 extension NSTextAttachment {
-    func setImageMaxHeight(_ maxHeight: CGFloat) {
-        guard let image = image else { return }
+    func setImageMaxHeight(_ maxHeight: CGFloat) -> Bool {
+        guard let image = image else { return false }
         let width = image.size.width
         let height = image.size.height
         if height < maxHeight {
-            return // do nothing for little image
+            return false // do nothing for little image
         }
         let ratio = width / height
         if ratio >= 1 {
@@ -629,5 +630,6 @@ extension NSTextAttachment {
         } else {
             bounds = CGRect(x: bounds.origin.x, y: bounds.origin.y, width: maxHeight, height: maxHeight / ratio)
         }
+        return true
     }
 }
