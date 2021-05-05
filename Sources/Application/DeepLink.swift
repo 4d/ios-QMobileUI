@@ -112,8 +112,16 @@ public enum DeepLink {
     }
 }
 
+/// Protocol to define element accessible by deep linking
 public protocol DeepLinkable {
+
+    /// The deep link associated value
     var deepLink: DeepLink? { get }
+    /// Take a change to manage deep link data if already opened.
+    func manage(deepLink: DeepLink)
+}
+public extension DeepLinkable {
+    func manage(deepLink: DeepLink) {} // by default do nothing
 }
 
 import QMobileAPI // for AnyCodable

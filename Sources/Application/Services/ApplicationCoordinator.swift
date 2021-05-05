@@ -567,6 +567,7 @@ extension ApplicationCoordinator {
     public static func open(_ deepLink: DeepLink, recursive: Bool, completion: @escaping (Bool) -> Void) {
         if let deepLinkable = UIApplication.topViewController?.firstController as? DeepLinkable, deepLinkable.deepLink == deepLink {
             logger.log(recursive ? .debug: .info, "Do not open \(deepLink) because already open on top")
+            deepLinkable.manage(deepLink: deepLink)
             completion(false)
             return
         }

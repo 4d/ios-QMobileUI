@@ -424,6 +424,10 @@ open class LoginForm: UIViewController, UITextFieldDelegate, Form {
 
 extension LoginForm: DeepLinkable {
     public var deepLink: DeepLink? { return .login(["email": self.email]) }
+
+    public func manage(deepLink: DeepLink) {
+        login(deepLink)
+    }
 }
 
 private let serverCertificateCodes: [URLError.Code] = [
