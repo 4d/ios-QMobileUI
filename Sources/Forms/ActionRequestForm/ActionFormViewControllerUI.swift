@@ -20,17 +20,48 @@ struct ActionFormViewControllerUI: UIViewControllerRepresentable {
     @Binding var result: Result<ActionParameters, ActionFormError>?
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) -> ActionFormViewController {
-        return ActionFormViewController(builder: self.request.builder)
+        let form = ActionFormViewController(builder: self.request.builder)
+        form.hasValidateForm = request.result != nil // because if we have a result, its means that we have already validated the form
+        return form
     }
 
-    func updateUIViewController(_ uiViewController: ActionFormViewController, context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) {
+    func updateUIViewController(_ form: ActionFormViewController, context: UIViewControllerRepresentableContext<ActionFormViewControllerUI>) {
         if action {
             self.action = false
-            uiViewController.externalDone { (result) in
+            form.externalDone { (result) in
                 self.result = result
             }
         }
+        if let error = request.formError {
+            _ = form.fillErrors(error)
+        }
+    }
+}
 
+extension ActionRequest {
+    /// A potential error to display in form if there is already a result
+    /// It could be message from server by field in `errors` key as collection
+    var formError: ActionFormError? {
+        if let result = self.result, case .success(let actionResult) = result, let errors = actionResult.errors {
+            return ActionFormError.components(errors)
+        }
+        return nil
+    }
+
+   /* /// Return `true` if there is in `result` some error to display in form.
+    var hasFormError: Bool {
+        if let result = self.result, case .success(let actionResult) = result {
+            return actionResult.errors != nil
+        }
+        return false
+    }*/
+
+    /// Return `true` if action execution success but server reject it with success = false. Maybe we could retry it with different parameter.
+    var couldEditDoneAction: Bool {
+        if let result = self.result, case .success(let actionResult) = result {
+            return !actionResult.success
+        }
+        return false
     }
 }
 

@@ -113,7 +113,11 @@ public struct ActionRequestFormUI: View {
                     case .completed:
                         if hasRequests(for: section) {
                             ForEach(getRequests(for: section), id: \.uniqueID) { request in
-                                ActionRequestRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
+                                if  instance.editRejectedAction  && !request.action.parameters.isEmpty && request.couldEditDoneAction {
+                                    ActionRequestEditableRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
+                                } else {
+                                    ActionRequestRow(request: request, actionManager: instance, shortTitle: actionContext != nil)
+                                }
                             }
                         } else {
                             Text("Nothing has happened yet") // "0 item"
@@ -177,7 +181,8 @@ struct ActionRequestEditableRow: View {
             }
         }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request, actionManager: actionManager, shortTitle: shortTitle)
-        }.onChange(of: showModal) { newValue in
+        }
+        .onChange(of: showModal) { newValue in
             actionManager.pause = newValue
         }
     }

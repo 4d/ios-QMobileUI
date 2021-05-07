@@ -47,6 +47,7 @@ public class ActionManager: NSObject, ObservableObject {
     public var hasAction: Bool = Prephirences.sharedInstance["action"] as? Bool ?? true
     public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true // FEATURE #112750
     public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
+    public var editRejectedAction: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? false // FEATURE #125025
 
     let cache = ActionManagerCache()
 
@@ -279,7 +280,23 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     func requestUpdated(_ request: ActionRequest) {
-        self.queue.requestUpdated(request)
+        if !self.queue.requestUpdated(request) {
+
+            if editRejectedAction { // TODO make this code only if rejected action, not for simple edit
+                let newRequest = ActionRequest(
+                    action: request.action,
+                    actionParameters: request.actionParameters,
+                    contextParameters: request.contextParameters,
+                    id: ActionRequest.generateID(request.action),
+                    state: nil,
+                    result: nil)
+
+                let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
+                executeActionRequest(newRequest, actionUI: BackgroundActionUI(), context: newRequest, waitPresenter: noWait) { _ in
+
+                }
+            }
+        }
         self.sendChange()
     }
 
