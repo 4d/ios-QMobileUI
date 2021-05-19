@@ -13,6 +13,7 @@ import UserNotifications
 
 import Prephirences
 import SwiftMessages
+import DeviceKit
 
 import QMobileAPI
 
