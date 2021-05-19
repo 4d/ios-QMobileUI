@@ -280,21 +280,20 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     func requestUpdated(_ request: ActionRequest) {
-        if !self.queue.requestUpdated(request) {
+        self.queue.requestUpdated(request)
 
-            if editRejectedAction { // TODO make this code only if rejected action, not for simple edit
-                let newRequest = ActionRequest(
-                    action: request.action,
-                    actionParameters: request.actionParameters,
-                    contextParameters: request.contextParameters,
-                    id: ActionRequest.generateID(request.action),
-                    state: nil,
-                    result: nil)
+        if editRejectedAction { // TODO make this code only if rejected action, not for simple edit
+            let newRequest = ActionRequest(
+                action: request.action,
+                actionParameters: request.actionParameters,
+                contextParameters: request.contextParameters,
+                id: ActionRequest.generateID(request.action),
+                state: nil,
+                result: nil)
 
-                let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
-                executeActionRequest(newRequest, actionUI: BackgroundActionUI(), context: newRequest, waitPresenter: noWait) { _ in
+            let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
+            executeActionRequest(newRequest, actionUI: BackgroundActionUI(), context: newRequest, waitPresenter: noWait) { _ in
 
-                }
             }
         }
         self.sendChange()
