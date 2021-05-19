@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import Eureka
-// import DeviceKit
+//  
 
 public class SignatureViewCell: Cell<UIImage>, CellType, SignatureViewDelegate {
     @IBOutlet weak var clearBtn: UIImageView!

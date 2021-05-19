@@ -12,10 +12,11 @@ import UIKit
 import XCGLogger
 import Prephirences
 import FileKit
-import DeviceKit
+
 import Moya
 
 import MessageUI
+import QMobileAPI
 
 class ApplicationFeedback: NSObject {
 
@@ -346,6 +347,12 @@ extension ApplicationFeedback: MFMailComposeViewControllerDelegate {
         } else {
             message = "Make sure that you have at least one email account set up."
         }
+        #if targetEnvironment(simulator)
+          // your simulator code
+        #else
+          // your real device code
+        #endif
+
         let alert = UIAlertController(title: "Could Not Send Email",
                                       message: message,
                                       preferredStyle: .alert)

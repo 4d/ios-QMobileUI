@@ -11,7 +11,6 @@ import UIKit
 import Prephirences
 import QMobileAPI
 import QMobileDataSync
-import DeviceKit
 
 open class SettingURLForm: UIViewController, Storyboardable {
 

@@ -11,7 +11,6 @@ github "phimage/ValueTransformerKit" # format value
 github "SwiftKickMobile/SwiftMessages" # display message
 github "xmartlabs/Eureka"
 
-github "dennisweissmann/DeviceKit"
 github "IBAnimatable/IBAnimatable"
 github "nvzqz/FileKit"
 github "DaveWoodCom/XCGLogger"

@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-import DeviceKit
 import QMobileAPI
 
 // MARK: - UITableView

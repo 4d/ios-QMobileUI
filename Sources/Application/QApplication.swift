@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 import Prephirences
-import DeviceKit
+import QMobileAPI
 
 // Root class of QMobile application
 open class QApplication: UIApplication {
@@ -140,7 +140,7 @@ open class QApplication: UIApplication {
         let device = Device.current
         let realDevice = device.realDevice
         information["device.description"] = realDevice.description
-        if device.isSimulator {
+        if device.isSimulatorCase {
             information["device.simulator"] = "YES"
         }
         let versions = Bundle.main["4D"] as? [String: String] ?? [:]

@@ -23,14 +23,9 @@
          location = "group:Carthage/Checkouts/SwiftMessages/SwiftMessages.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/DeviceKit/DeviceKit.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj">
       </FileRef>
-      <FileRef
-         location = "group:Carthage/Checkouts/DeviceKit/DeviceKit.xcodeproj">
-      </FileRef>
+
       <FileRef
          location = "group:Carthage/Checkouts/FileKit/FileKit.xcodeproj">
       </FileRef>
