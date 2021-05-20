@@ -176,14 +176,21 @@ struct ActionRequestEditableRow: View {
             result: $result.onChange(resultChanged))
 
         NavigationLink(destination: actionParametersForm.toolbar {
-            Button("Done") {
+            Button(request.isFailure ? "Retry": "Done") {
                 self.actionDone.toggle()
             }
         }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request, actionManager: actionManager, shortTitle: shortTitle)
         }
         .onChange(of: showModal) { newValue in
+            if !request.isFailure, !newValue {
+                actionManager.requestUpdated(request) // update after reactive the queue
+            }
             actionManager.pause = newValue
+
+            if request.isFailure, !newValue {
+                actionManager.requestUpdated(request) // create new request so after close
+            }
         }
     }
 
@@ -202,7 +209,7 @@ struct ActionRequestEditableRow: View {
             request.encodeParameters()
             // we need here to to check if there is new image to upload to add operation on the queue
             // (because the operation of this request is already on the queue)
-            actionManager.requestUpdated(request)
+            // actionManager.requestUpdated(request)
 
             showModal.toggle() // dismiss
         case .failure(let error):

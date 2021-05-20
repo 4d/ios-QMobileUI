@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 import QMobileAPI
 
 struct ActionFormViewControllerUI: UIViewControllerRepresentable {
@@ -48,20 +49,9 @@ extension ActionRequest {
         return nil
     }
 
-   /* /// Return `true` if there is in `result` some error to display in form.
-    var hasFormError: Bool {
-        if let result = self.result, case .success(let actionResult) = result {
-            return actionResult.errors != nil
-        }
-        return false
-    }*/
-
     /// Return `true` if action execution success but server reject it with success = false. Maybe we could retry it with different parameter.
     var couldEditDoneAction: Bool {
-        if let result = self.result, case .success(let actionResult) = result {
-            return !actionResult.success
-        }
-        return false
+        return isFailure
     }
 }
 
