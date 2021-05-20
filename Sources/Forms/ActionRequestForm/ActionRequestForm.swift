@@ -182,14 +182,12 @@ struct ActionRequestEditableRow: View {
         }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request, actionManager: actionManager, shortTitle: shortTitle)
         }
-        .onChange(of: showModal) { newValue in
-            if !request.isFailure, !newValue {
-                actionManager.requestUpdated(request) // update after reactive the queue
+        .onChange(of: showModal) { open in
+            if !open {
+                actionManager.requestUpdated(request)
             }
-            actionManager.pause = newValue
-
-            if request.isFailure, !newValue {
-                actionManager.requestUpdated(request) // create new request so after close
+            if !request.isFailure {
+                actionManager.pause = open
             }
         }
     }
