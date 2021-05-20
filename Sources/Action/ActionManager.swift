@@ -247,6 +247,19 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
+    func willRefresh() {
+        if !APIManager.isSignIn && !ApplicationAuthenticate.hasLogin {
+            ApplicationAuthenticate.retryGuestLogin { authResult in
+                ServerStatusManager.instance.checkStatus()
+                if case .failure(let error) = authResult {
+                    ActionManager.instance.checkSuspend()
+                    SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
+                }
+            }
+        }
+        ServerStatusManager.instance.checkStatus()
+    }
+
     // MARK: - queue based
     var pause: Bool = false {
         didSet {
@@ -486,7 +499,7 @@ extension ActionManager: ReachabilityListener, ServerStatusListener, Authenticat
     func checkSuspend() {
         let serverStatus = ApplicationReachability.instance.serverStatus
         // could have other criteria like manual pause or ???
-        self.isSuspended = !serverStatus.isSuccess || pause // || !APIManager.isSignIn
+        self.isSuspended = !serverStatus.isSuccess || pause || !APIManager.isSignIn
     }
 }
 

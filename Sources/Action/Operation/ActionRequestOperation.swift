@@ -129,11 +129,13 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             if error.isUnauthorized {
                 if Prephirences.Auth.Login.form {
                     ApplicationCoordinator.logout()
+                    SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
                 } else {
                     ApplicationAuthenticate.retryGuestLogin { authResult in
                         // XXX maybe if failure pause the queue... do not retry for nothing... but this is a weird situation
-                        if case .failure = authResult {
+                        if case .failure(let error) = authResult {
                             ActionManager.instance.checkSuspend() // XXX maybe instead actionmanager must listen to login/logout
+                            /*SwiftMessages.warning*/logger.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
                         }
 
                         // maybe add in queue an operation to try login multiple times,because it could failed

@@ -181,17 +181,6 @@ extension ApplicationAuthenticate {
         }
     }
 }
-/*
-extension Result {
-    var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
-        }
-    }
-}*/
 
 // MARK: - did login
 

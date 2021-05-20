@@ -92,8 +92,12 @@ extension ServerStatus {
             return "No network. Please check wifi or mobile data."
         case .done (let result):
             switch result {
-            case .success:
-                return "Server is online"
+            case .success(let status):
+                if status.ok {
+                    return "Server is online"
+                } else {
+                    return "Server is online but not authenticated yet"
+                }
             case .failure:
                 return "Server is not accessible"
             }
@@ -132,7 +136,7 @@ extension ServerStatus: Equatable {
         case (.noNetwork, .noNetwork): return true
         case (.done(let result), .done (let result2)):
             switch (result, result2) {
-            case (.success, .success): return true
+            case (.success(let status), .success(let status2)): return status.ok == status2.ok
             case (.failure(let error), .failure(let error2)):
                 return error.failureReason ==  error2.failureReason
             default: return false

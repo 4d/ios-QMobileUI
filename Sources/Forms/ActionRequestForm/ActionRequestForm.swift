@@ -133,7 +133,7 @@ public struct ActionRequestFormUI: View {
         }
         .onPushToRefresh(customize: { $0.tintColor = UIColor.foreground }, refreshing: { refreshControl in
             DispatchQueue.main.after(0.2) {
-                ServerStatusManager.instance.checkStatus()
+                ActionManager.instance.willRefresh()
                 refreshControl.endRefreshing()
             }
         })
