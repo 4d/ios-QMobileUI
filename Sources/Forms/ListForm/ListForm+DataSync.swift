@@ -17,7 +17,12 @@ import QMobileAPI
 import QMobileDataStore
 import QMobileDataSync
 
-extension ListForm {
+public protocol TableOwner {
+
+    var tableName: String { get }
+}
+
+extension TableOwner {
 
     /// Return information about current table using 4D table and field naming
     public var table: Table? {
@@ -44,6 +49,10 @@ extension ListForm {
         }
         return nil
     }
+
+}
+
+extension ListForm {
 
     // MARK: - data sync refresh
 
@@ -147,7 +156,7 @@ extension ListForm {
         return { (messageView, config) in
             messageView.tapHandler = { _ in
                 SwiftMessages.hide()
-                (ApplicationAuthenticate.instance as? ApplicationAuthenticate)?.logoutUI(sender, source)
+                ApplicationAuthenticate.instance.logoutUI(sender, source)
             }
             var config = config
             config.presentationStyle = .center

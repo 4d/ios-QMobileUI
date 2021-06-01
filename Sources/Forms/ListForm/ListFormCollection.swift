@@ -272,7 +272,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         let dataStore = DataStoreFactory.dataStore // must use same in dataSync
         let fetchedResultsController = dataStore.fetchedResultsController(tableName: self.tableName,
                                                                           sectionNameKeyPath: self.sectionFieldname,
-                                                                          sortDescriptors: self.makeSortDescriptors(tableInfo: self.tableInfo))
+                                                                          sortDescriptors: self.makeSortDescriptors())
         collectionDataSource = CollectionDataSource(collectionView: collectionView, fetchedResultsController: fetchedResultsController)
         collectionDataSource?.contextPredicate = formContext?.predicate
         collectionDataSource?.showSectionBar = showSectionBar

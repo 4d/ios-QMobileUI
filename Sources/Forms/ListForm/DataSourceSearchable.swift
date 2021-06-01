@@ -11,7 +11,7 @@ import UIKit
 
 import QMobileDataStore
 
-public protocol DataSourceSearchable: class, UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
+public protocol DataSourceSearchable: UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
 
     /// The dataSource to search.
     var dataSource: DataSource? { get }
@@ -46,13 +46,23 @@ public protocol DataSourceSortable: DataSourceSearchable {
 
 extension DataSourceSortable {
 
+    var sortDescriptors: [NSSortDescriptor]? {
+        get {
+            return self.dataSource?.sortDescriptors
+        }
+        set {
+            self.dataSource?.sortDescriptors = newValue
+        }
+    }
+
     /// Return multiple sort fields if defined in `sortField` with separator `,`
     var sortFields: [String] {
         return sortField.split(separator: ",").map { String($0) }
     }
 
     /// Compute the mandatory sort descriptors.
-    func makeSortDescriptors(tableInfo: DataStoreTableInfo?) -> [NSSortDescriptor] {
+    func makeSortDescriptors() -> [NSSortDescriptor] {
+        let tableInfo: DataStoreTableInfo? = self.dataSource?.tableInfo
         var sortDescriptors: [NSSortDescriptor] = []
 
         if !sortField.isEmpty { // if sort field defined

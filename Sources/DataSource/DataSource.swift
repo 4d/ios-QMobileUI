@@ -12,7 +12,7 @@ import XCGLogger
 import ValueTransformerKit
 
 /// Class to present data to table or collection views
-open class DataSource: NSObject {
+open class DataSource: NSObject, TableOwner {
 
     // MARK: - data
     /// The controller to fetch data
