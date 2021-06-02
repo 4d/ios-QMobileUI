@@ -43,7 +43,6 @@ let package = Package(
                 "SwiftMessages",
                 "Eureka",
                 "IBAnimatable",
-                "DeviceKit",
                 "Kingfisher",
                 "QMobileAPI",
                 "QMobileDataStore",
