@@ -90,7 +90,7 @@ extension ServerStatus {
             return "Checking server accessibility..."
         case .noNetwork:
             return "No network. Please check wifi or mobile data."
-        case .done (let result):
+        case .done(let result):
             switch result {
             case .success(let status):
                 if status.ok {
@@ -106,7 +106,7 @@ extension ServerStatus {
 
     public var detailMessage: String {
         switch self {
-        case .done (let result):
+        case .done(let result):
             switch result {
             case .success:
                 return ""
@@ -134,7 +134,7 @@ extension ServerStatus: Equatable {
         case (.notValidScheme, .notValidScheme): return true
         case (.checking, .checking): return true
         case (.noNetwork, .noNetwork): return true
-        case (.done(let result), .done (let result2)):
+        case (.done(let result), .done(let result2)):
             switch (result, result2) {
             case (.success(let status), .success(let status2)): return status.ok == status2.ok
             case (.failure(let error), .failure(let error2)):

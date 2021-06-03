@@ -80,7 +80,7 @@ open class _TimeIntervalFieldRow: Row<TimeIntervalCell>, TimeIntervalPickerRowPr
 
 // MARK: cell
 
-public protocol TimeIntervalPickerRowProtocol: class {
+public protocol TimeIntervalPickerRowProtocol: AnyObject {
     var minimumTime: TimeInterval? { get set }
     var maximumTime: TimeInterval? { get set }
     var minuteInterval: Int? { get set }

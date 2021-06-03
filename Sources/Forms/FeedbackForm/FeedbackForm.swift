@@ -9,7 +9,7 @@
 import UIKit
 
 /// Feedback form delegate.
-public protocol FeedbackFormDelegate: class {
+public protocol FeedbackFormDelegate: AnyObject {
 
     func send(feedback: Feedback, dismiss: @escaping (Bool) -> Void)
     func discard(feedback: Feedback?)

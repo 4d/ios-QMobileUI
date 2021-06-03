@@ -13,7 +13,7 @@ import QMobileDataStore
 import QMobileAPI
 import QMobileDataSync
 
-public protocol DetailsForm: class, ActionContextProvider, DataSourceEntryUI, Form, Storyboardable, DeepLinkable {
+public protocol DetailsForm: AnyObject, ActionContextProvider, DataSourceEntryUI, Form, Storyboardable, DeepLinkable {
 
     // the root view of form
     var view: UIView! {get set}

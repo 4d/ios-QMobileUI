@@ -161,7 +161,7 @@ extension ActionParameterType {
 
 extension ActionParameterFormat {
 
-    func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
+    func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
         let format = self
         switch format {
         case .url:
