@@ -98,8 +98,8 @@ extension ActionParameter {
             return choiceRow.onRowEvent(eventCallback)
         }
 
-        if let format = format {
-            return format.formRow(name, onRowEvent: eventCallback)
+        if let format = format, let row = format.formRow(name, onRowEvent: eventCallback) {
+            return row
         }
         // If no format return basic one from type
         return self.type.formRow(name, onRowEvent: eventCallback)
@@ -161,7 +161,7 @@ extension ActionParameterType {
 
 extension ActionParameterFormat {
 
-    func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
+    func formRow(_ key: String, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow? { // swiftlint:disable:this function_body_length
         let format = self
         switch format {
         case .url:
@@ -229,7 +229,7 @@ extension ActionParameterFormat {
                     }
                 }
             }
-            return TextRow(key).onRowEvent(eventCallback)
+            return nil
         }
     }
 
