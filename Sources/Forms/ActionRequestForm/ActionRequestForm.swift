@@ -168,6 +168,7 @@ struct ActionRequestEditableRow: View {
 
     @State var actionDone = false
     @State var result: Result<ActionParameters, ActionFormError>?
+    @State var requestUpdated = false
 
     public var body: some View {
         let actionParametersForm = ActionFormViewControllerUI(
@@ -178,12 +179,13 @@ struct ActionRequestEditableRow: View {
         NavigationLink(destination: actionParametersForm.toolbar {
             Button(request.isFailure ? "Retry": "Done") {
                 self.actionDone.toggle()
+                self.requestUpdated = true
             }
         }, isActive: $showModal.animation()) {
             ActionRequestRow(request: request, actionManager: actionManager, shortTitle: shortTitle)
         }
         .onChange(of: showModal) { open in
-            if !open {
+            if !open && requestUpdated {
                 actionManager.requestUpdated(request)
             }
             if !request.isFailure {
