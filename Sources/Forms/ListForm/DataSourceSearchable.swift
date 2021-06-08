@@ -66,7 +66,7 @@ extension DataSourceSortable {
         var sortDescriptors: [NSSortDescriptor] = []
 
         if !sortField.isEmpty { // if sort field defined
-            sortDescriptors = sortFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
+            sortDescriptors = sortFields.map { NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) }
         } else if !searchableField.isEmpty && searchFieldAsSortField {
             sortDescriptors = searchableFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
         }
@@ -107,6 +107,20 @@ extension DataSourceSortable {
         return nil
     }
 
+}
+
+fileprivate extension String {
+    /// if start with ! character
+    var hasNot: Bool {
+       return self.first == "!"
+    }
+    /// if start with ! character, remove it
+    var noNot: String {
+        if hasNot {
+            return String(self.dropFirst())
+        }
+        return self
+    }
 }
 
 import FileKit
