@@ -75,7 +75,14 @@ struct UserDataSourceSortable {
     }
 }
 
+import QMobileAPI
+
 extension DataSourceSortable {
+
+    func isCurrent(_ action: Action) -> Bool {
+        assert(action.preset == .sort)
+        return action.parameters?.compactMap({ $0.sortDescriptor }) == self.dataSource?.sortDescriptors
+    }
 
     var sortDescriptors: [NSSortDescriptor]? {
         get {

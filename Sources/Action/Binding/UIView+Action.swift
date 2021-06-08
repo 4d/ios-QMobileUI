@@ -131,16 +131,10 @@ extension UIView {
                                 guard let action = actionByNames[actionElement.identifier.rawValue] else { return }
 
                                 if action.isOnlineOnly {
-                                    if ApplicationReachability.instance.serverStatus.isSuccess {
-                                        if actionElement.attributes.contains(.disabled) {
-                                            actionElement.attributes.remove(.disabled)
-                                        }
-                                    } else {
-                                        if !actionElement.attributes.contains(.disabled) {
-                                            actionElement.attributes.insert(.disabled)
-                                        }
-                                    }
-                                    // actionElement.state = Bool.random() ? .off : .on // checked or not checked
+                                    actionElement.isDisabled = !ApplicationReachability.instance.serverStatus.isSuccess
+                                }
+                                if action.preset == .sort {
+                                    actionElement.isDisabled = (self.owningViewController?.firstController as? DataSourceSortable)?.isCurrent(action) ?? false
                                 }
                             }
                             return currentMenu
@@ -401,6 +395,27 @@ extension UIGestureRecognizer.Kind {
         }
     }
 
+}
+
+extension UIAction {
+
+    var isDisabled: Bool {
+        get {
+            return self.attributes.contains(.disabled)
+        }
+        set {
+            if newValue {
+                if !self.attributes.contains(.disabled) {
+                    self.attributes.insert(.disabled)
+                }
+            } else {
+                if self.attributes.contains(.disabled) {
+                    self.attributes.remove(.disabled)
+                }
+
+            }
+        }
+    }
 }
 
 // MARK: - configuration of action
