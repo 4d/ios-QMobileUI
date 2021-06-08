@@ -291,7 +291,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
         let fetchedResultsController = dataStore.fetchedResultsController(
             tableName: self.tableName,
             sectionNameKeyPath: self.sectionFieldname,
-            sortDescriptors: self.makeSortDescriptors())
+            sortDescriptors: self.makeSortDescriptors(tableName: self.tableName))
         tableDataSource = TableDataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         tableDataSource?.contextPredicate = formContext?.predicate
         tableDataSource?.showSectionBar = showSectionBar

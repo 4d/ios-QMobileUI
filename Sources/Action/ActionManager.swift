@@ -90,15 +90,14 @@ public class ActionManager: NSObject, ObservableObject {
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.preset == .sort {
             // local action without server
-            let sortDescriptors = action.parameters?.compactMap { $0.sortDescriptor }
+            guard let sortDescriptors = action.parameters?.compactMap({ $0.sortDescriptor }), !sortDescriptors.isEmpty else { return }
 
             // Not clean way to get list form, maybe context could provide the "DataSource"
-            guard let listForm = ((context as? UIView)?.owningViewController?.firstController as? ListForm),
-                  let dataSource = listForm.dataSource else {
+            guard let dataSourceSortable = ((context as? UIView)?.owningViewController?.firstController as? DataSourceSortable) else {
                 logger.warning("Cound not find dataSource to apply sort action \(action)")
                 return
             }
-            dataSource.sortDescriptors = sortDescriptors
+            dataSourceSortable.setSortDescriptors(sortDescriptors)
         } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
             executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)

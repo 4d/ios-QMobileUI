@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+import Prephirences
+
 import QMobileDataStore
 
 public protocol DataSourceSearchable: UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating {
@@ -44,6 +46,35 @@ public protocol DataSourceSortable: DataSourceSearchable {
     var sectionFieldname: String? {get}
 }
 
+struct UserDataSourceSortable {
+    @MutablePreference(key: "sortFields") static var sortFieldsByTable: [String: String]?
+
+    static func getSortFields(for tableName: String) -> String? {
+        let value = self.sortFieldsByTable?[tableName]
+        logger.debug("Load from user setting sort order \(String(describing: value)) for \(tableName)")
+        return value
+    }
+
+    private static func getSortFields(for dataSourceSortable: DataSourceSortable) -> String? {
+        guard let dataSource = dataSourceSortable.dataSource else {
+            logger.warning("Cannot load sort fields yet, no data source yet")
+            assertionFailure("Cannot load sort fields yet, no data source yet")
+            return nil
+        }
+        return getSortFields(for: dataSource.tableName)
+    }
+
+    static func setSortFields(for dataSourceSortable: DataSourceSortable, value: String) {
+        guard let dataSource = dataSourceSortable.dataSource else {
+            return
+        }
+        if self.sortFieldsByTable == nil {
+            self.sortFieldsByTable = [:]
+        }
+        self.sortFieldsByTable?[dataSource.tableName] = value
+    }
+}
+
 extension DataSourceSortable {
 
     var sortDescriptors: [NSSortDescriptor]? {
@@ -55,18 +86,30 @@ extension DataSourceSortable {
         }
     }
 
-    /// Return multiple sort fields if defined in `sortField` with separator `,`
-    var sortFields: [String] {
-        return sortField.split(separator: ",").map { String($0) }
+    func setSortDescriptors(_ sortDescriptors: [NSSortDescriptor]) {
+        let tableInfo: DataStoreTableInfo? = self.dataSource?.tableInfo
+        guard let fields = tableInfo?.fields.filter({$0.type.isSortable}),
+           let filtered = filter(sortDescriptors: sortDescriptors, by: fields),
+           !filtered.isEmpty else {
+            return
+        }
+
+        self.dataSource?.sortDescriptors = filtered
+        let sortFieldAsString = sortDescriptors
+            .map({ $0.ascending ? "\($0.key ?? "")" : "!\($0.key ?? "")" })
+            .joined(separator: ",")
+        UserDataSourceSortable.setSortFields(for: self, value: sortFieldAsString)
     }
 
     /// Compute the mandatory sort descriptors.
-    func makeSortDescriptors() -> [NSSortDescriptor] {
+    func makeSortDescriptors(tableName: String) -> [NSSortDescriptor] {
         let tableInfo: DataStoreTableInfo? = self.dataSource?.tableInfo
         var sortDescriptors: [NSSortDescriptor] = []
 
-        if !sortField.isEmpty { // if sort field defined
-            sortDescriptors = sortFields.map { NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) }
+        let sortFields: [String] = (UserDataSourceSortable.getSortFields(for: tableName) ?? self.sortField).split(separator: ",").map { String($0) }
+
+        if !sortFields.isEmpty { // if sort field defined
+            sortDescriptors = sortFields.map({ NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) })
         } else if !searchableField.isEmpty && searchFieldAsSortField {
             sortDescriptors = searchableFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
         }
