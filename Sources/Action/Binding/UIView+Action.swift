@@ -121,6 +121,7 @@ extension UIView {
                         let actionByNames = actionSheet.actions.asDictionary { action in
                             return [action.name: action]
                         }
+                        let sortActionAcount = actionSheet.actions.filter({$0.preset == .sort}).count
 
                         let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                         button.menu = menu
@@ -135,6 +136,9 @@ extension UIView {
                                 }
                                 if action.preset == .sort {
                                     actionElement.isDisabled = (self.owningViewController?.firstController as? DataSourceSortable)?.isCurrent(action) ?? false
+                                    if sortActionAcount == 1 {
+                                        actionElement.isHidden = true
+                                    }
                                 }
                             }
                             return currentMenu
@@ -405,14 +409,22 @@ extension UIAction {
         }
         set {
             if newValue {
-                if !self.attributes.contains(.disabled) {
-                    self.attributes.insert(.disabled)
-                }
+                self.attributes.insert(.disabled)
             } else {
-                if self.attributes.contains(.disabled) {
-                    self.attributes.remove(.disabled)
-                }
+                self.attributes.remove(.disabled)
+            }
+        }
+    }
 
+    var isHidden: Bool {
+        get {
+            return self.attributes.contains(.hidden)
+        }
+        set {
+            if newValue {
+                self.attributes.insert(.hidden)
+            } else {
+                self.attributes.remove(.hidden)
             }
         }
     }
