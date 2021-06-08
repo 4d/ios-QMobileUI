@@ -88,7 +88,18 @@ public class ActionManager: NSObject, ObservableObject {
 
     /// Execute the action or if there is at least one parameter show a form.
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
-        if action.parameters.isEmpty {
+        if action.preset == .sort {
+            // local action without server
+            let sortDescriptors = action.parameters?.compactMap { $0.sortDescriptor }
+
+            // Not clean way to get list form, maybe context could provide the "DataSource"
+            guard let listForm = ((context as? UIView)?.owningViewController?.firstController as? ListForm),
+                  let dataSource = listForm.dataSource else {
+                logger.warning("Cound not find dataSource to apply sort action \(action)")
+                return
+            }
+            dataSource.sortDescriptors = sortDescriptors
+        } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
             executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
         } else {
@@ -542,5 +553,12 @@ public struct BackgroundActionUI: ActionUI {
     public static func build(from action: Action, context: ActionContext, handler: @escaping Handler) -> ActionUI {
         // maybe object must allow to repopen a new dialog using actionmanager
         return BackgroundActionUI()
+    }
+}
+
+extension ActionParameter {
+    var sortDescriptor: NSSortDescriptor? {
+        // XXX could return nil if we check if not Database or maybe if format is not correct ie. ascending OR descending
+        return NSSortDescriptor(key: self.defaultField ?? self.name, ascending: self.format == .custom("ascending"))
     }
 }
