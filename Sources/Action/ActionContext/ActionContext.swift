@@ -106,7 +106,7 @@ extension ActionParameter {
                 case .time:
                     return value
                 case .image, .picture:
-                    if let value = value as? ImageUploadOperationInfo {
+                    if let value = value as? ImageRetrieval {
                         let result = value.awaitRetrieve()
                         switch result {
                         case .success(let imageResult):

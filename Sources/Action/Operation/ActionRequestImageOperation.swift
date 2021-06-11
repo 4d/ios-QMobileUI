@@ -30,7 +30,7 @@ class ActionRequestImageOperation: AsynchronousResultOperation<UploadResult, Act
                 logger.debug("Image uploaded \(uploadResult)")
                 self.parentOperation.request.setActionParameters(key: info.key, value: uploadResult)
                 ActionManager.instance.saveActionRequests()
-                info.remove()
+                info.transfer(to: uploadResult)
                 self.finish(with: .success(uploadResult))
             case .failure:
                 queue.retry(self)
@@ -91,7 +91,12 @@ extension ImageUploadOperationInfo: Equatable {
 }
 
 import Kingfisher
-extension ImageUploadOperationInfo {
+
+protocol ImageRetrieval {
+    var cacheId: String { get }
+}
+
+extension ImageRetrieval {
 
     func retrieve(callbackQueue: CallbackQueue = .mainCurrentOrAsync, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
         ActionManager.instance.cache.retrieve(cacheId: cacheId, callbackQueue: callbackQueue, completionHandler)
@@ -114,7 +119,23 @@ extension ImageUploadOperationInfo {
         ActionManager.instance.cache.remove(cacheId: cacheId)
     }
 
+    func transfer(to: ImageRetrieval) { // swiftlint:disable:this identifier_name
+        ActionManager.instance.cache.transfer(from: cacheId, to: to.cacheId)
+    }
+
     func store(image: UIImage) {
         ActionManager.instance.cache.store(cacheId: cacheId, image: image)
+    }
+}
+extension ImageUploadOperationInfo: ImageRetrieval {}
+extension UploadResult: ImageRetrieval {
+    var cacheId: String { id }
+}
+
+extension ActionRequest {
+    func clean() {
+        for parameter in (self.actionParameters ?? [:]).compactMap({ $0.value as? ImageRetrieval }) {
+            parameter.remove()
+        }
     }
 }

@@ -52,7 +52,9 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                         }
                     }
                 }
-
+                if value.success {
+                    request.clean()
+                }
                 completionHandler?(.success(value)) // close UI or display some info
                 // delay handle action result, after form finish with it
                 waitUI.onComplete { _ in

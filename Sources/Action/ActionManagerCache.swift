@@ -30,4 +30,18 @@ class ActionManagerCache {
     func remove(cacheId: String) {
         imageCache.removeImage(forKey: cacheId)
     }
+
+    func transfer(from: String, to: String) { // swiftlint:disable:this identifier_name
+        imageCache.retrieveImage(forKey: from) { result in
+            switch result {
+            case .success(let imageResult):
+                if let image = imageResult.image {
+                    self.imageCache.store(image, forKey: to)
+                }
+            case .failure(_):
+                logger.warning("No image to transfert in cache")
+            }
+            self.imageCache.removeImage(forKey: from)
+        }
+    }
 }
