@@ -61,6 +61,10 @@ open class SettingsForm: UITableViewController, Storyboardable {
     @IBOutlet weak var requestDraftLabel: UILabel?
     @IBInspectable open var sectionHeaderForegroundColor: UIColor = /*UIColor(named: "BackgroundColor") ??*/ .clear
     fileprivate var bag = Set<AnyCancellable>()
+
+    // swiftui clear and change tab bar item value when transitionning with views so cache it and restore it
+    fileprivate var tabBarItemTitle: String = ""
+
     // MARK: event
 
     final public override func viewDidLoad() {
@@ -93,6 +97,13 @@ open class SettingsForm: UITableViewController, Storyboardable {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if let tabBarItem = self.navigationController?.tabBarItem ?? self.tabBarItem {
+            if tabBarItemTitle.isEmpty {
+                tabBarItemTitle = tabBarItem.title ?? ""
+            } else {
+                tabBarItem.title = tabBarItemTitle
+            }
+        }
         ServerStatusManager.instance.checkStatus()
         onDidAppear(animated)
     }
