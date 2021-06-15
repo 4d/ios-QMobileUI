@@ -260,12 +260,20 @@ public class ActionManager: NSObject, ObservableObject {
     }
 
     func willRefresh() {
+        logger.verbose("SignIn:\(APIManager.isSignIn), hasLogin:\(ApplicationAuthenticate.hasLogin) ")
         if !APIManager.isSignIn && !ApplicationAuthenticate.hasLogin {
             ApplicationAuthenticate.retryGuestLogin { authResult in
                 ServerStatusManager.instance.checkStatus()
                 if case .failure(let error) = authResult {
                     ActionManager.instance.checkSuspend()
-                    SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        logger.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
+                        SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)") { (_, config) in
+                            var config = config
+                            config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                            return config
+                        }
+                    }
                 }
             }
         }
