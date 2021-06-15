@@ -163,9 +163,14 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             message = "Please check your network settings and data cover...\n your action will be executed when online."
         }
         logger.info(message)
-        SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
-            view.configureTheme(.info)
-            return config
+        DispatchQueue.main.async {
+            SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
+                view.configureTheme(.info)
+                var config = config
+                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                logger.debug("configure: " + message)
+                return config
+            }
         }
     }
 
