@@ -162,6 +162,7 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
         } else {
             message = "Please check your network settings and data cover...\n your action will be executed when online."
         }
+        logger.info(message)
         SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
             view.configureTheme(.info)
             return config

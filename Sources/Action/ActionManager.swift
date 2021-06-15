@@ -44,10 +44,10 @@ public class ActionManager: NSObject, ObservableObject {
     /// Operation queue.
     fileprivate let queue = ActionRequestQueue()
 
-    public var hasAction: Bool = Prephirences.sharedInstance["action"] as? Bool ?? true
-    public var offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true // FEATURE #112750
-    public var offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
-    public var editRejectedAction: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? true // FEATURE #125025
+    public let hasAction: Bool = Prephirences.sharedInstance["action"] as? Bool ?? true
+    public let offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true // FEATURE #112750
+    public let offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
+    public let editRejectedAction: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? true // FEATURE #125025
 
     let cache = ActionManagerCache()
 
@@ -59,6 +59,8 @@ public class ActionManager: NSObject, ObservableObject {
         if offlineAction {
             initOfflineAction()
         }
+        logger.debug("Feature offline action \(offlineAction ? "activated": "deactivated")")
+        logger.debug("Feature edit rejected action \(editRejectedAction ? "activated": "deactivated")")
     }
 
     fileprivate func initOfflineAction() {
