@@ -207,7 +207,12 @@ class FieldOriginalNode: Node {
             let value = object.value(forKeyPath: field.name) {
             return "\(value)"
         }
-        return name
+        logger.warning("No value for format node \(name) and record \(object)")
+        #if DEBUG
+        return "%"+name+"%"
+        #else
+        return ""
+        #endif
     }
 
 }

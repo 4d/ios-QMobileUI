@@ -9,6 +9,8 @@
 import Foundation
 
 import QMobileAPI
+import QMobileDataStore
+import QMobileDataSync
 
 /// Represent a choice in choice list
 struct ChoiceList {
@@ -50,24 +52,59 @@ struct ChoiceList {
                 }
             }
         } else if let choiceDictionary = choiceList.value as? [AnyHashable: Any] {
-            options = choiceDictionary.map { (arg) -> ChoiceListItem in
-                let (key, value) = arg
+            if ActionManager.customFormat, let dataClass = choiceDictionary["dataClass"] as? String ?? choiceDictionary["table"] as? String,
+               let dataFieldOriginal = choiceDictionary["field"] as? String,
+               let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
+               let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
 
-                if let string = key as? String {
-                    switch type {
-                    case .bool, .boolean:
-                        return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
-                    case .integer:
-                        return ChoiceListItem(key: Int(string) as Any, value: value)
-                    case .number:
-                        return ChoiceListItem(key: Double(string) as Any, value: value)
-                    default:
+                var recordFormatter: RecordFormatter? = nil
+                if let dataFormat = choiceDictionary["format"] as? String {
+                    recordFormatter = RecordFormatter(format: dataFormat, tableInfo: tableInfo)
+                }
+                
+                var sortDescriptors = [NSSortDescriptor(key: dataField, ascending: true)]
+                if let dataSort = choiceDictionary["sort"] as? String {
+                    // XXX maybe split if contains / like sort in table, maybe factorize code to parse string to nssortdescriptos
+                    sortDescriptors = [NSSortDescriptor(key: dataSort, ascending: true)]
+                }
+ 
+                let fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
+                var records: [Record] = []
+                var optionsFromRecords: [ChoiceListItem] = []
+                _ = DataStoreFactory.dataStore.perform(.background, wait: true, blockName: "ChoiceList") { context in
+                    records = (try? context.fetch(fetchedRequest)) ?? []
+                    
+                    optionsFromRecords = records.compactMap { record in
+                        guard let key = record[dataField] else { return nil }
+                        // XXX maybe see if need to convert key to specific type
+                        if let recordFormatter = recordFormatter {
+                            return ChoiceListItem(key: key, value: recordFormatter.format(record))
+                        } else {
+                            return ChoiceListItem(key: key, value: "\(key)")
+                        }
+                    }
+                }
+                options = optionsFromRecords
+            } else {
+                options = choiceDictionary.map { (arg) -> ChoiceListItem in
+                    let (key, value) = arg
+                    
+                    if let string = key as? String {
+                        switch type {
+                        case .bool, .boolean:
+                            return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
+                        case .integer:
+                            return ChoiceListItem(key: Int(string) as Any, value: value)
+                        case .number:
+                            return ChoiceListItem(key: Double(string) as Any, value: value)
+                        default:
+                            return ChoiceListItem(key: key, value: value)
+                        }
+                    } else {
+                        // must not occurs but in case...
+                        assertionFailure("key for action parameter choice is not a string \(key)")
                         return ChoiceListItem(key: key, value: value)
                     }
-                } else {
-                    // must not occurs but in case...
-                    assertionFailure("key for action parameter choice is not a string \(key)")
-                    return ChoiceListItem(key: key, value: value)
                 }
             }
         } else {
