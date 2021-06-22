@@ -77,25 +77,30 @@ extension ActionParameter {
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
     private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
         if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
-
-            // XXX multiple interface to choose between list
-            // let choiceRow = SegmentedRow<String>(name)
-            // let choiceRow = MultipleSelectorRow<String>(name)
-            // let choiceRow = PopoverSelectorRow<String>(name)
-            // let actionSheet = ActionSheetRow<String>(name)
-            let choiceRow = PushRow<ChoiceListItem>(name)
-            choiceRow.selectorTitle = self.preferredShortLabel
-
-            switch type {
-            case .bool, .boolean:
-                choiceRow.options = choice.boolOptions
+            switch defaultChoiceFormat(format) {
+            case .popover:
+                return PopoverSelectorRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
+            case .segmented:
+                return SegmentedRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
+            case .push:
+                return PushRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
+            case .sheet:
+                return ActionSheetRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
             default:
-                choiceRow.options = choice.options
+                assertionFailure("Must not occurs, a correct default type must have been chosen")
+                return PushRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
+                
             }
-            if let value = self.default, let defaultChoice = choice.choice(for: value) {
-                choiceRow.value = defaultChoice
-            }
-            return choiceRow.onRowEvent(eventCallback)
         }
 
         if let format = format, let row = format.formRow(name, onRowEvent: eventCallback) {
@@ -105,6 +110,47 @@ extension ActionParameter {
         return self.type.formRow(name, onRowEvent: eventCallback)
     }
 
+    
+    private func defaultChoiceFormat(_ format: ActionParameterFormat?) -> ActionParameterFormat {
+        if let format = format, format.isChoiceList {
+            return format
+        }
+        return ActionParameterFormat.defaultChoiceListFormat
+    }
+}
+
+import Prephirences
+extension ActionParameterFormat {
+    var isChoiceList: Bool {
+        switch self {
+        case .push, .popover, .segmented, .sheet:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static var defaultChoiceListFormat: ActionParameterFormat {
+        let value: ActionParameterFormat? = Prephirences.sharedInstance.rawRepresentable(forKey: "action.choiceList.defaultFormatter")
+        return value ?? .push
+    }
+}
+
+extension OptionsProviderRow where Self: Eureka.BaseRow, Self.OptionsProviderType.Option == ChoiceListItem, Self.Cell.Value == ChoiceListItem {
+
+    /// Fill this type of row with choice list
+    func fillOptions(choiceList: ChoiceList, parameter: ActionParameter) -> Self {
+        switch parameter.type {
+        case .bool, .boolean:
+            self.options = choiceList.boolOptions
+        default:
+            self.options = choiceList.options
+        }
+        if let value = parameter.default, let defaultChoice = choiceList.choice(for: value) {
+            self.value = defaultChoice
+        }
+        return self
+    }
 }
 
 // MARK: Manage row event
@@ -214,6 +260,8 @@ extension ActionParameterFormat {
             return DecimalRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
         case .longDate, .shortDate, .mediumDate, .fullDate:
             return DateWheelRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
+        case .push, .segmented, .popover, .sheet: // isChoiceList
+            return nil // must have been taken into account before if ChoiceList defined
         case .custom(let string):
             if let builder = UIApplication.shared.delegate as? ActionParameterCustomFormatRowBuilder {
                 if let row = builder.buildActionParameterCustomFormatRow(key: key, format: string, onRowEvent: eventCallback) {
