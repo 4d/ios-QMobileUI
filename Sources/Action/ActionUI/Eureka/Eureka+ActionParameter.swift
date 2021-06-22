@@ -94,6 +94,10 @@ extension ActionParameter {
                 return ActionSheetRow<ChoiceListItem>(name)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
+            case .picker:
+                return PickerRow<ChoiceListItem>(name)
+                    .fillOptions(choiceList: choice, parameter: self)
+                    .onRowEvent(eventCallback)
             default:
                 assertionFailure("Must not occurs, a correct default type must have been chosen")
                 return PushRow<ChoiceListItem>(name)
@@ -123,7 +127,7 @@ import Prephirences
 extension ActionParameterFormat {
     var isChoiceList: Bool {
         switch self {
-        case .push, .popover, .segmented, .sheet:
+        case .push, .popover, .segmented, .sheet, .picker:
             return true
         default:
             return false
@@ -150,6 +154,24 @@ extension OptionsProviderRow where Self: Eureka.BaseRow, Self.OptionsProviderTyp
             self.value = defaultChoice
         }
         return self
+    }
+}
+extension PickerRow: OptionsProviderRow {
+    public typealias OptionsProviderType = OptionsProvider<Cell.Value>
+    public var optionsProvider: OptionsProvider<Cell.Value>? {
+        get {
+            return .array(self.options)
+        }
+        set(newValue) {
+            switch newValue {
+            case .array(let array):
+                if let array = array {
+                    self.options = array
+                }
+            default:
+                break
+            }
+        }
     }
 }
 
@@ -260,7 +282,7 @@ extension ActionParameterFormat {
             return DecimalRow(key) { $0.formatter = format.formatter }.onRowEvent(eventCallback)
         case .longDate, .shortDate, .mediumDate, .fullDate:
             return DateWheelRow(key) { $0.dateFormatter = format.dateFormatter }.onRowEvent(eventCallback)
-        case .push, .segmented, .popover, .sheet: // isChoiceList
+        case .push, .segmented, .popover, .sheet, .picker: // isChoiceList
             return nil // must have been taken into account before if ChoiceList defined
         case .custom(let string):
             if let builder = UIApplication.shared.delegate as? ActionParameterCustomFormatRowBuilder {
