@@ -8,7 +8,7 @@ github "phimage/CallbackURLKit" # action using url
 
 github "phimage/ValueTransformerKit" # format value
 
-github "SwiftKickMobile/SwiftMessages" # display message
+github "mesopelagique/SwiftMessages" # display message
 github "xmartlabs/Eureka"
 
 github "IBAnimatable/IBAnimatable"
