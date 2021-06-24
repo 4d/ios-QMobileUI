@@ -288,3 +288,11 @@ extension SettingsForm: DeepLinkable {
     public var deepLink: DeepLink? { return .settings }
 
 }
+
+/// workaround bug on tabbar item name change
+public class SettingsNavigationController: UINavigationController {
+    public override var title: String? {
+        get { tabBarItem.title }
+        set { navigationItem.title = newValue }
+    }
+}
