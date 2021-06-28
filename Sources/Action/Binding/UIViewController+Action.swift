@@ -114,8 +114,8 @@ extension UIViewController {
                     button.setImage(nil, for: .normal)
                 }
             } else {
-                button.setImage(image, for: .normal) // restore image
                 ellipsisView.removeFromSuperview()
+                button.setImage(image, for: .normal) // restore image
             }
         }
         DispatchQueue.main.async {

@@ -135,7 +135,8 @@ extension UIView {
                                     actionElement.isDisabled = !ApplicationReachability.instance.serverStatus.isSuccess
                                 }
                                 if action.preset == .sort {
-                                    actionElement.isDisabled = (self.owningViewController?.firstController as? DataSourceSortable)?.isCurrent(action) ?? false
+                                    let isCurrent = (self.owningViewController?.firstController as? DataSourceSortable)?.isCurrent(action) ?? false
+                                    actionElement.state = isCurrent ? .on: .off
                                     if sortActionAcount == 1 {
                                         actionElement.isHidden = true
                                     }
