@@ -137,7 +137,7 @@ extension UIView {
                                 if action.preset == .sort {
                                     let isCurrent = (self.owningViewController?.firstController as? DataSourceSortable)?.isCurrent(action) ?? false
                                     actionElement.state = isCurrent ? .on: .off
-                                    if sortActionAcount == 1 {
+                                    if (sortActionAcount == 1) || (action.parameters?.isEmpty ?? true) {
                                         actionElement.isHidden = true
                                     }
                                 }
