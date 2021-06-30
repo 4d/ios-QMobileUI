@@ -39,7 +39,7 @@ extension UIAlertController: ActionParametersUI {
         switch parameter.type {
         case .string, .text:
             alertController.addOneTextField { textField in
-                textField.left(image: UIImage(named: "next"), color: .black)
+                textField.left(image: UIImage(named: "next"), color: .label)
                 textField.leftViewPadding = 12
 
                 textField.becomeFirstResponder()
@@ -48,7 +48,7 @@ extension UIAlertController: ActionParametersUI {
                 textField.borderColor = ColorCompatibility.systemGray2.withAlphaComponent(0.5)
                 textField.layer.cornerRadius = 8
                 textField.backgroundColor = nil
-                textField.textColor = .black
+                textField.textColor = .label
 
                 textField.keyboardAppearance = .default
                 textField.returnKeyType = .done

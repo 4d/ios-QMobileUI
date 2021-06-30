@@ -173,7 +173,7 @@ extension UITextField {
 
     public typealias TextFieldConfig = (UITextField) -> Swift.Void
 
-    func left(image: UIImage?, color: UIColor = .black) {
+    func left(image: UIImage?, color: UIColor = .label) {
         if let image = image {
             leftViewMode = .always
             let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
