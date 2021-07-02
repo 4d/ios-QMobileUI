@@ -17,6 +17,7 @@ import Combine
 import Alamofire
 
 import QMobileAPI
+import QMobileDataSync
 
 /// Class to execute actions and manage result.
 ///
@@ -93,7 +94,16 @@ public class ActionManager: NSObject, ObservableObject {
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
         if action.preset == .sort {
             // local action without server
-            guard let sortDescriptors = action.parameters?.compactMap({ $0.sortDescriptor }), !sortDescriptors.isEmpty else { return }
+            guard let tableName = context.actionContextParameters()?[ActionParametersKey.table] as? String else {
+                logger.warning("Cannot sort without table name \(action)")
+                return
+            }
+            guard let tableInfo = ApplicationDataSync.instance.dataSync.dataStore.tableInfo(forOriginalName: tableName) else {
+                logger.warning("Cannot find table info for \(tableName) to sort")
+                return
+            }
+            
+            guard let sortDescriptors = action.parameters?.compactMap({ $0.sortDescriptor(tableInfo: tableInfo) }), !sortDescriptors.isEmpty else { return }
 
             // Not clean way to get list form, maybe context could provide the "DataSource"
             guard let dataSourceSortable = ((context as? UIView)?.owningViewController?.firstController as? DataSourceSortable) else {
@@ -565,10 +575,13 @@ public struct BackgroundActionUI: ActionUI {
         return BackgroundActionUI()
     }
 }
+import QMobileDataStore
 
 extension ActionParameter {
-    var sortDescriptor: NSSortDescriptor? {
-        // XXX could return nil if we check if not Database or maybe if format is not correct ie. ascending OR descending
-        return NSSortDescriptor(key: self.defaultField ?? self.name, ascending: self.format == .custom("ascending"))
+    func sortDescriptor(tableInfo: DataStoreTableInfo) -> NSSortDescriptor? {
+        if let fieldInfo = tableInfo.fieldInfo(for: self.defaultField ?? self.name) {
+            return fieldInfo.sortDescriptor(ascending: self.format == nil || self.format == .custom("ascending"))
+        }
+        return nil
     }
 }

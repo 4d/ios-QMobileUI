@@ -81,7 +81,10 @@ extension DataSourceSortable {
 
     func isCurrent(_ action: Action) -> Bool {
         assert(action.preset == .sort)
-        return action.parameters?.compactMap({ $0.sortDescriptor }) == self.dataSource?.sortDescriptors
+        if let tableInfo = self.dataSource?.tableInfo {
+            return action.parameters?.compactMap({ $0.sortDescriptor(tableInfo: tableInfo) }) == self.dataSource?.sortDescriptors
+        }
+        return false
     }
 
     var sortDescriptors: [NSSortDescriptor]? {
