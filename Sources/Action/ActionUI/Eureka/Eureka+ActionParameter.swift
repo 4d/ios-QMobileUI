@@ -73,21 +73,30 @@ extension ActionParameter {
         }
     }
 
+    var isImageNamed: Bool {
+        return false // TODO must read it from json data feature #128195 task #128985
+    }
+
     // Create a row according to format and type
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
     private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
         if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+
             switch defaultChoiceFormat(format) {
             case .popover:
                 return PopoverSelectorRow<ChoiceListItem>(name)
+                    .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .segmented:
+                //var choice = choice
                 return SegmentedRow<ChoiceListItem>(name)
+                    //.imageNamed(isImageNamed, choiceList: &choice)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .push:
                 return PushRow<ChoiceListItem>(name)
+                    .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .sheet:
@@ -101,6 +110,7 @@ extension ActionParameter {
             default:
                 assertionFailure("Must not occurs, a correct default type must have been chosen")
                 return PushRow<ChoiceListItem>(name)
+                    .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
                 
@@ -121,6 +131,28 @@ extension ActionParameter {
         }
         return ActionParameterFormat.defaultChoiceListFormat
     }
+}
+
+extension SelectorRow {
+
+    func onPresent(_ callback: ((FormViewController, SelectorViewController<SelectorRow<Cell>>) -> Void)?) -> Self {
+        self.onPresentCallback = callback
+        return self
+    }
+
+    func imageNamed(_ imageNamed: Bool) -> Self {
+        guard imageNamed else { return self }
+        return self.onPresent({ form, controller in
+            controller.selectableRowCellUpdate = { cell, row in // not in selectableRowCellSetup, because replaced after data update
+                if let text = row.tag, let image = UIImage(named: "\(text)") {
+                    cell.textLabel?.setImage(image)
+                } else {
+                    cell.textLabel?.text = ""
+                }
+            }
+        })
+    }
+
 }
 
 import Prephirences

@@ -582,7 +582,7 @@ extension UILabel {
         }
     }
 
-    fileprivate func setImage(_ image: UIImage) {
+    func setImage(_ image: UIImage) {
         let attachmentImage = NSTextAttachment()
         attachmentImage.image = image
         if attachmentImage.setImageMaxHeight(200) {

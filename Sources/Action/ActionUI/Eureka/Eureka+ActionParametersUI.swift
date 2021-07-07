@@ -132,7 +132,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
     func onRowEvent(cell: BaseCell?, row: BaseRow, event: RowEvent) {
         // behaviours when selecting element
-        if case .onCellHighlightChanged = event {
+        
+        switch event {
+        case .onCellHighlightChanged:
             // Focus, remove errors
             if !row.isHighlighted, let indexPath = row.indexPath {
                 row.remoteErrorsString = []
@@ -174,14 +176,39 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             if let updatableRow = row as? DetailHighlightedRow {
                 updatableRow.updateHighlighted()
             }
-        }
-        if case .cellSetup = event {
+        case .cellSetup:
             if let row = row as? RatingRow {
                 row.text = ""
             } else if let row = row as? _DateFieldRow {
                 row.cell?.datePicker.timeZone = .greenwichMeanTime
             }
+        case .cellUpdate:
+            if let tag = row.tag, let parameter = self.builder.action.parameters?.first(where: { $0.name == tag }), parameter.isImageNamed {
+                if let row = row as? PushRow<ChoiceListItem> {
+                    if let text = row.value, let image = UIImage(named: "\(text)") {
+                        row.cell.detailTextLabel?.setImage(image)
+                    } else {
+                        row.cell.detailTextLabel?.text = ""
+                    }
+                } else if let row = row as? PopoverSelectorRow<ChoiceListItem> {
+                    if let text = row.value, let image = UIImage(named: "\(text)") {
+                        row.cell.detailTextLabel?.setImage(image)
+                    } else {
+                        row.cell.detailTextLabel?.text = ""
+                    }
+                } else if let row = row as? SegmentedRow<ChoiceListItem> {
+                    for (index, option) in ((row.options ?? []).enumerated()) {
+                        if let text = option.value.wrapped, let image = UIImage(named: "\(text)") {
+                            row.cell.segmentedControl.setImage(image, forSegmentAt: index)
+                        }
+                    }
+                }
+            }
+        default:
+            // nothing
+            break
         }
+
        /* if let listener = listener {
             if case .onChange = event {
                 self.formValues { result in
