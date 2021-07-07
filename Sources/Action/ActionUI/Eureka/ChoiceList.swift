@@ -21,96 +21,95 @@ struct ChoiceList {
     /// Create a choice list frm decoded data and parameter type.
     init?(choiceList: AnyCodable, type: ActionParameterType) {
         if let choiceArray = choiceList.value as? [Any] {
-            options = choiceArray.enumerated().map { (arg) -> ChoiceListItem in
-                let (key, value) = arg
-                if let entry = value as? [String: Any], let key = entry["key"], let value = entry["value"] {
-                    if let string = key as? String {
-                        switch type {
-                        case .bool, .boolean:
-                            return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
-                        case .integer:
-                            return ChoiceListItem(key: Int(string) as Any, value: value)
-                        case .number:
-                            return ChoiceListItem(key: Double(string) as Any, value: value)
-                        default:
-                            return ChoiceListItem(key: key, value: value)
-                        }
-                    } else {
-                        return ChoiceListItem(key: key, value: value)
-                    }
-                } else {
-                    switch type {
-                    case .bool, .boolean:
-                        return ChoiceListItem(key: key == 1, value: value)
-                    case .string:
-                        return ChoiceListItem(key: "\(key)", value: value)
-                    case .number:
-                        return ChoiceListItem(key: Double(key), value: value)
-                    default:
-                        return ChoiceListItem(key: key, value: value)
-                    }
-                }
-            }
+            options = choiceArray.enumerated().map { ChoiceListItem(index: $0.0, value: $0.1, type: type) }
         } else if let choiceDictionary = choiceList.value as? [AnyHashable: Any] {
-            if ActionManager.customFormat, let dataClass = choiceDictionary["dataClass"] as? String ?? choiceDictionary["table"] as? String,
-               let dataFieldOriginal = choiceDictionary["field"] as? String,
-               let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
-               let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
-
-                var recordFormatter: RecordFormatter? = nil
-                if let dataFormat = choiceDictionary["format"] as? String {
-                    recordFormatter = RecordFormatter(format: dataFormat, tableInfo: tableInfo)
-                }
-                
-                var sortDescriptors = [NSSortDescriptor(key: dataField, ascending: true)]
-                if let dataSort = choiceDictionary["sort"] as? String {
-                    // XXX maybe split if contains / like sort in table, maybe factorize code to parse string to nssortdescriptos
-                    sortDescriptors = [NSSortDescriptor(key: dataSort, ascending: true)]
-                }
- 
-                let fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
-                var records: [Record] = []
-                var optionsFromRecords: [ChoiceListItem] = []
-                _ = DataStoreFactory.dataStore.perform(.background, wait: true, blockName: "ChoiceList") { context in
-                    records = (try? context.fetch(fetchedRequest)) ?? []
-                    
-                    optionsFromRecords = records.compactMap { record in
-                        guard let key = record[dataField] else { return nil }
-                        // XXX maybe see if need to convert key to specific type
-                        if let recordFormatter = recordFormatter {
-                            return ChoiceListItem(key: key, value: recordFormatter.format(record))
-                        } else {
-                            return ChoiceListItem(key: key, value: "\(key)")
-                        }
-                    }
-                }
-                options = optionsFromRecords
+            if ActionManager.customFormat, let optionsFromDataSource = ChoiceList.fromDataSource(choiceDictionary: choiceDictionary, type: type) {
+                options = optionsFromDataSource
             } else {
-                options = choiceDictionary.map { (arg) -> ChoiceListItem in
-                    let (key, value) = arg
-                    
-                    if let string = key as? String {
-                        switch type {
-                        case .bool, .boolean:
-                            return ChoiceListItem(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
-                        case .integer:
-                            return ChoiceListItem(key: Int(string) as Any, value: value)
-                        case .number:
-                            return ChoiceListItem(key: Double(string) as Any, value: value)
-                        default:
-                            return ChoiceListItem(key: key, value: value)
-                        }
-                    } else {
-                        // must not occurs but in case...
-                        assertionFailure("key for action parameter choice is not a string \(key)")
-                        return ChoiceListItem(key: key, value: value)
-                    }
-                }
+                options = choiceDictionary.map { ChoiceListItem(key: $0.0, value: $0.1, type: type) }
             }
         } else {
             options = []
             return nil
         }
+    }
+
+    fileprivate static func isSortAscending(_ dataSortObject: [String : Any]) -> Bool {
+        return ((dataSortObject["order"] == nil) || (dataSortObject["order"] as? String == "ascending") || (dataSortObject["ascending"] as? Bool ?? false))
+            && !(dataSortObject["descending"] as? Bool ?? false)
+    }
+    
+    /// Create sort descriptors from data source info
+    fileprivate static func createSortDescriptor(_ dataSort: Any, _ tableInfo: DataStoreTableInfo) -> [NSSortDescriptor]? {
+        var result: [NSSortDescriptor]?
+        if let dataSortString = dataSort as? String { // one string with one or many fields, ascending by default
+            result = dataSortString.split(separator: ",")
+                .compactMap { tableInfo.existingFieldInfo(String($0).trimmed) }
+                .map { $0.sortDescriptor(ascending: true) }
+        }
+        else if let dataSortObject =  dataSort as? [String: Any],
+                let dataSortOriginal = dataSortObject["field"] as? String,
+                let dataSortFieldInfo = tableInfo.existingFieldInfo(dataSortOriginal) { // one existing property
+            result = [dataSortFieldInfo.sortDescriptor(ascending: isSortAscending(dataSortObject))]
+        }
+        else if let dataSortCollection = dataSort as? [[String: Any]] { // a list of property
+            result = dataSortCollection.compactMap { dataSortObject in
+                if let dataSortOriginal = dataSortObject["field"] as? String,
+                   let dataSortFieldInfo = tableInfo.existingFieldInfo(dataSortOriginal) {
+                    return dataSortFieldInfo.sortDescriptor(ascending: isSortAscending(dataSortObject))
+                }
+                return nil
+            }
+        }
+        if result.isEmpty {
+            result = nil // empty, is not supported, let caller use a default one
+        }
+        return result
+    }
+
+    /// Create choice list from data Source
+    fileprivate static func fromDataSource(choiceDictionary: [AnyHashable: Any], type: ActionParameterType) -> [ChoiceListItem]? {
+        guard let dataSource = choiceDictionary["dataSource"] as? [String: Any] else {
+            return nil // no data source defined, skip
+        }
+
+        if let dataClass = dataSource["dataClass"] as? String ?? dataSource["table"] as? String,
+           let dataFieldOriginal = dataSource["field"] as? String,
+           let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
+           let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
+            // Well defined data source from database
+            
+            var recordFormatter: RecordFormatter? = nil
+            if let dataFormat = dataSource["entityFormat"] as? String ?? dataSource["format"] as? String {
+                recordFormatter = RecordFormatter(format: dataFormat, tableInfo: tableInfo)
+            }
+
+            var sortDescriptors = [NSSortDescriptor(key: dataField, ascending: true)]
+            if let dataSort = dataSource["sort"], let customSort = createSortDescriptor(dataSort, tableInfo) {
+                sortDescriptors = customSort
+            }
+
+            let fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
+            var records: [Record] = []
+            var optionsFromRecords: [ChoiceListItem] = []
+            _ = DataStoreFactory.dataStore.perform(.background, wait: true, blockName: "ChoiceList") { context in
+                records = (try? context.fetch(fetchedRequest)) ?? []
+                // /!\ get record info in data store context, do not move out the code!
+                optionsFromRecords = records.compactMap { record in
+                    guard let key = record[dataField] else { return nil }
+                    // XXX maybe see if need to convert key to specific type
+                    if let recordFormatter = recordFormatter {
+                        return ChoiceListItem(key: key, value: recordFormatter.format(record), type: type)
+                    } else {
+                        return ChoiceListItem(key: key, value: "\(key)", type: type)
+                    }
+                }
+            }
+            return optionsFromRecords
+        }
+        // not correct data source defined
+        logger.warning("Unknown data source definition \(dataSource)")
+        return nil
     }
 
     /// Get choice list item by key.
@@ -132,4 +131,10 @@ struct ChoiceList {
         return options
     }
 
+}
+
+extension DataStoreTableInfo {
+    fileprivate func existingFieldInfo(_ name: String) -> DataStoreFieldInfo? {
+        return self.fieldInfo(forOriginalName: name) ?? self.fieldInfo(for: name)
+    }
 }

@@ -49,7 +49,7 @@ public class ActionManager: NSObject, ObservableObject {
     public let offlineAction: Bool = Prephirences.sharedInstance["action.offline"] as? Bool ?? true // FEATURE #112750
     public let offlineActionHistoryMax: Int = Prephirences.sharedInstance["action.offline.history.max"] as? Int ?? 10
     public let editRejectedAction: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? true // FEATURE #125025
-    public static let customFormat: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? false // FEATURE ##128195
+    public static let customFormat: Bool = Prephirences.sharedInstance["action.customFormat"] as? Bool ?? true // FEATURE ##128195
 
     let cache = ActionManagerCache()
 

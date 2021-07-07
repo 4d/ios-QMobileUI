@@ -10,6 +10,7 @@ import Foundation
 
 import struct QMobileAPI.AnyCodable
 import protocol QMobileAPI.ActionParameterEncodable
+import enum QMobileAPI.ActionParameterType
 
 /// Represent a choice in choice list
 struct ChoiceListItem: Equatable {
@@ -32,6 +33,42 @@ struct ChoiceListItem: Equatable {
             self.value = value.codable
         default:
             self.value = AnyCodable(value)
+        }
+    }
+    
+    init(index: Int, value: Any, type: ActionParameterType) {
+        if let entry = value as? [String: Any], let key = entry["key"], let value = entry["value"] {
+            self.init(key: key, value: value, type: type)
+        } else {
+            // positioned collection
+            switch type {
+            case .bool, .boolean:
+                self.init(key: index == 1, value: value)
+            case .string:
+                self.init(key: "\(index)", value: value)
+            case .number:
+                self.init(key: Double(index), value: value)
+            default:
+                self.init(key: index, value: value)
+            }
+        }
+    }
+
+    init(key: Any, value: Any, type: ActionParameterType) {
+        if let string = key as? String {
+            switch type {
+            case .bool, .boolean:
+                self.init(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
+            case .integer:
+                self.init(key: Int(string) as Any, value: value)
+            case .number:
+                self.init(key: Double(string) as Any, value: value)
+            default:
+                self.init(key: key, value: value)
+            }
+        } else {
+            // could create other convertsion?
+            self.init(key: key, value: value)
         }
     }
 
