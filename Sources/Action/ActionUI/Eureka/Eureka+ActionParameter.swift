@@ -74,7 +74,7 @@ extension ActionParameter {
     }
 
     var isImageNamed: Bool {
-        return false // TODO must read it from json data feature #128195 task #128985
+        return self.binding == "imageNamed"
     }
 
     // Create a row according to format and type
@@ -89,9 +89,7 @@ extension ActionParameter {
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .segmented:
-                //var choice = choice
                 return SegmentedRow<ChoiceListItem>(name)
-                    //.imageNamed(isImageNamed, choiceList: &choice)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .push:

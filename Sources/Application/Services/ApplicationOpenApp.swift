@@ -15,7 +15,7 @@ import Prephirences
 open class ApplicationOpenApp: NSObject {
     
     /// setting: if no scheme when opening url, add http(s) scheme to URL. By default `https`, to change set value in setting for key `open.defaultURLScheme`.
-    public let preferedDefaultScheme: String = Prephirences.sharedInstance["open.defaultURLScheme"] as? String ?? "https"
+    public static let preferedDefaultScheme: String = Prephirences.sharedInstance["open.defaultURLScheme"] as? String ?? "https"
 
     public static var window: UIWindow?
 
