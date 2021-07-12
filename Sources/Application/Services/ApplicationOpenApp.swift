@@ -8,10 +8,14 @@
 
 import Foundation
 import UIKit
+import Prephirences
 
 /// Open native app
 /// https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html
 open class ApplicationOpenApp: NSObject {
+    
+    /// setting: if no scheme when opening url, add http(s) scheme to URL. By default `https`, to change set value in setting for key `open.defaultURLScheme`.
+    public let preferedDefaultScheme: String = Prephirences.sharedInstance["open.defaultURLScheme"] as? String ?? "https"
 
     public static var window: UIWindow?
 
@@ -45,6 +49,10 @@ open class ApplicationOpenApp: NSObject {
     }
 
     public static func openSafari(url: String) {
+        var url = url.trimmed
+        if !url.contains(":/") {
+            url = "\(preferedDefaultScheme)://\(url)"
+        }
         self.openURL(url.trimmed)
     }
 
