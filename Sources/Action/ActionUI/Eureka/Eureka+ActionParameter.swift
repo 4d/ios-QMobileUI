@@ -13,6 +13,8 @@ import Eureka
 
 import QMobileAPI
 
+let kPrefixImageNamed = "input_"
+
 // MARK: ActionParameter as Row
 extension ActionParameter {
 
@@ -118,6 +120,7 @@ extension ActionParameter {
         if let format = format, let row = format.formRow(name, onRowEvent: eventCallback) {
             return row
         }
+
         // If no format return basic one from type
         return self.type.formRow(name, onRowEvent: eventCallback)
     }
@@ -142,7 +145,7 @@ extension SelectorRow {
         guard imageNamed else { return self }
         return self.onPresent({ form, controller in
             controller.selectableRowCellUpdate = { cell, row in // not in selectableRowCellSetup, because replaced after data update
-                if let text = row.tag, let image = UIImage(named: "\(text)") {
+                if let text = row.tag, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                     cell.textLabel?.setImage(image)
                 } else {
                     cell.textLabel?.text = ""
@@ -152,7 +155,6 @@ extension SelectorRow {
     }
 
 }
-
 import Prephirences
 extension ActionParameterFormat {
     var isChoiceList: Bool {

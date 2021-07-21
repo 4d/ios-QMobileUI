@@ -22,6 +22,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     var builder: ActionParametersUIBuilder!
     /// static configuration fom preferences
     var settings: ActionFormSettings = ActionFormSettings()
+    
 
     /// a bag for async op
     fileprivate var cancellables = Set<AnyCancellable>()
@@ -185,20 +186,20 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         case .cellUpdate:
             if let tag = row.tag, let parameter = self.builder.action.parameters?.first(where: { $0.name == tag }), parameter.isImageNamed {
                 if let row = row as? PushRow<ChoiceListItem> {
-                    if let text = row.value, let image = UIImage(named: "\(text)") {
+                    if let text = row.value, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                         row.cell.detailTextLabel?.setImage(image)
                     } else {
                         row.cell.detailTextLabel?.text = ""
                     }
                 } else if let row = row as? PopoverSelectorRow<ChoiceListItem> {
-                    if let text = row.value, let image = UIImage(named: "\(text)") {
+                    if let text = row.value, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                         row.cell.detailTextLabel?.setImage(image)
                     } else {
                         row.cell.detailTextLabel?.text = ""
                     }
                 } else if let row = row as? SegmentedRow<ChoiceListItem> {
                     for (index, option) in ((row.options ?? []).enumerated()) {
-                        if let text = option.value.wrapped, let image = UIImage(named: "\(text)") {
+                        if let text = option.value.wrapped, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                             row.cell.segmentedControl.setImage(image, forSegmentAt: index)
                         }
                     }
