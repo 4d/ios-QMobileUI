@@ -31,8 +31,8 @@ class ApplicationReachability: NSObject {
     var listeners: [ReachabilityListener] = []
 
     var apiManagerObserver: NSObjectProtocol?
-    var serverInfoTask: Moya.Cancellable?
-    var serverInfo: WebTestInfo?
+    var webTestInfoTask: Moya.Cancellable?
+    var webTestInfo: WebTestInfo?
     var serverStatusTask: Moya.Cancellable?
     var serverStatus: ServerStatus = .unknown {
         didSet {
@@ -85,7 +85,7 @@ extension ApplicationReachability: ApplicationService {
     }
 
     public func applicationWillEnterForeground(_ application: UIApplication) {
-        refreshServerInfo(APIManager.instance)
+        refreshServerInfo()
     }
 
 }
@@ -104,7 +104,7 @@ extension ApplicationReachability {
             switch status {
             case .reachable(let type):
                 logger.debug("Server is reachable using \(type)")
-                self.refreshServerInfo(APIManager.instance)
+                self.refreshServerInfo()
             case .notReachable, .unknown:
                 logger.debug("Server not reachable")
                 self.serverStatus = .noNetwork
@@ -126,58 +126,81 @@ extension ApplicationReachability {
             guard apiManager === APIManager.instance else {
                 return // maybe already changed too times
             }
-            self?.refreshServerInfo(apiManager)
+            self?.refreshServerInfo()
         }
     }
     fileprivate func stopMonitorigAPIManager() {
-        serverInfoTask?.cancel()
-        serverInfoTask = nil
+        webTestInfoTask?.cancel()
+        webTestInfoTask = nil
         if let apiManagerObserver = apiManagerObserver {
             APIManager.unobserve(apiManagerObserver)
         }
         apiManagerObserver = nil
     }
 
-    public func refreshServerInfo(_ completion: (() -> Void)? = nil) {
-        refreshServerInfo(.instance, completion)
+    /// Refresh server and web test info.
+    /// - parameters completion: will receive two notification of refresh done or already processing
+    public func refreshServerInfo(_ completion: (()->Void)? = nil) {
+        refreshWebTestInfo(completion)
+        refreshServerStatus(completion)
     }
 
-    fileprivate func refreshServerInfo(_ apiManager: APIManager = .instance, _ completion: (() -> Void)? = nil) {
-        let apiManager = APIManager.instance // some weird issue with parameter, use singleton
-        self.serverInfoTask = apiManager.loadWebTestInfo(callbackQueue: .background) { [weak self] result in
-            switch result {
-            case .success(let serverInfo):
-                logger.info("ServerInfo \(serverInfo)")
-                self?.serverInfo = serverInfo
-                self?.serverInfoTask = nil
-            case .failure(let error):
-                if ApplicationReachability.isReachable {
-                    logger.warning("Error when getting server info \(error)")
-                } else {
-                    logger.debug("Error when getting server info \(error)")
-                }
+    fileprivate func logServerStatus(_ result: Result<Status, APIError>, _ completion: (()->Void)? = nil) {
+        switch result {
+        case .success(let serverStatus):
+            if serverStatus.ok {
+                logger.info("Server Status is ok")
+            } else {
+                logger.warning("Server Status is not ok")
+            }
+        case .failure(let error):
+            if ApplicationReachability.isReachable {
+                logger.warning("Error when getting server status \(error)")
+            } else {
+                logger.debug("Error when getting server status \(error)")
             }
         }
+    }
 
+    fileprivate func refreshServerStatus(_ completion: (()->Void)? = nil) {
+        if serverStatusTask != nil && self.serverStatus == .checking {
+            completion?() // XXX will receice too soon, must register instead
+            return
+        }
         self.serverStatus = .checking
-        self.serverStatusTask = apiManager.status { [weak self] result in
-            self?.serverStatus = .done(result)
+        self.serverStatusTask = APIManager.instance.status { [weak self] result in
+            guard let this = self else { return }
+            this.serverStatus = .done(result)
+            this.logServerStatus(result)
             completion?()
-            switch result {
-            case .success(let serverStatus):
-                if serverStatus.ok {
-                    logger.info("Server Status is ok")
-                } else {
-                    logger.warning("Server Status is not ok")
-                }
-                self?.serverStatusTask = nil
-            case .failure(let error):
-                if ApplicationReachability.isReachable {
-                    logger.warning("Error when getting server status \(error)")
-                } else {
-                    logger.debug("Error when getting server status \(error)")
-                }
+            this.serverStatusTask = nil
+        }
+    }
+
+    fileprivate func logWebTestInfo(_ result: Result<WebTestInfo, APIError>) {
+        switch result {
+        case .success(let webTestInfo):
+            logger.info("ServerInfo \(webTestInfo)")
+        case .failure(let error):
+            if ApplicationReachability.isReachable {
+                logger.warning("Error when getting server info \(error)")
+            } else {
+                logger.debug("Error when getting server info \(error)")
             }
+        }
+    }
+    
+    fileprivate func refreshWebTestInfo(_ completion: (()->Void)? = nil) {
+        if webTestInfoTask != nil {
+            completion?() // XXX will receice too soon, must register instead
+            return
+        }
+        self.webTestInfoTask = APIManager.instance .loadWebTestInfo(callbackQueue: .background) { [weak self] result in
+            guard let this = self else { return }
+            this.webTestInfo =  result.value
+            this.logWebTestInfo(result)
+            completion?()
+            this.webTestInfoTask = nil
         }
     }
 
