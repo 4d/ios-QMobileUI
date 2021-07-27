@@ -119,7 +119,11 @@ open class SettingURLForm: UIViewController, Storyboardable {
 
     func message(_ message: String) {
         logger.info(message)
+    }
 
+    /// Go to next form/screen
+    open func performTransition(_ sender: Any?) {
+        self.presentingViewController?.dismiss(animated: false, completion: nil)
     }
 
     @IBAction open func connect(_ sender: Any?) {
@@ -142,7 +146,7 @@ open class SettingURLForm: UIViewController, Storyboardable {
                         ApplicationDataSync.instance.dataSync.dataStore = newDataStore
                         self?.stopLoginUI {
                             DispatchQueue.main.async {
-                                self?.presentingViewController?.dismiss(animated: false, completion: nil)
+                                self?.performTransition(sender)
                             }
                         }
                     }
