@@ -189,7 +189,12 @@ class Node: CustomStringConvertible, Equatable {
 
 class UndefinedNode: Node {}
 
-class FieldNode: Node {
+protocol FieldNodeType {
+    
+    func fieldName(tableInfo: DataStoreTableInfo) -> String
+}
+
+class FieldNode: Node, FieldNodeType {
 
     override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
         if let value = object.value(forKeyPath: name) {
@@ -198,9 +203,13 @@ class FieldNode: Node {
         return name
     }
 
+    func fieldName(tableInfo: DataStoreTableInfo) -> String {
+        return name
+    }
+
 }
 
-class FieldOriginalNode: Node {
+class FieldOriginalNode: Node, FieldNodeType {
 
     override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
         if let field = tableInfo.fields.filter({ $0.originalName == self.name}).first,
@@ -215,4 +224,10 @@ class FieldOriginalNode: Node {
         #endif
     }
 
+    func fieldName(tableInfo: DataStoreTableInfo) -> String {
+        if let field = tableInfo.fields.filter({ $0.originalName == self.name}).first {
+            return field.name
+        }
+        return ""
+    }
 }

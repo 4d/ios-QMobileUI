@@ -40,7 +40,7 @@ extension ActionParameter {
         if let placeholder = self.placeholder {
             if let field = row as? FieldRowConformance {
                 field.placeholder = placeholder
-            } else if let field = row as? TextAreaRow /*TextAreaConformance private ;(*/ {
+            } else if let field = row as? _TextAreaRow /*TextAreaConformance private ;(*/ {
                 field.placeholder = placeholder
             } else if let field = row as? NoValueDisplayTextConformance {
                 field.noValueDisplayText = placeholder
@@ -95,10 +95,18 @@ extension ActionParameter {
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .push:
-                return PushRow<ChoiceListItem>(name)
+                if choice.isSearchable {
+                    return SearchPushRow<ChoiceListItem>(name)
                     .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
+                    
+                } else {
+                    return PushRow<ChoiceListItem>(name)
+                        .imageNamed(isImageNamed)
+                        .fillOptions(choiceList: choice, parameter: self)
+                        .onRowEvent(eventCallback)
+                }
             case .sheet:
                 return ActionSheetRow<ChoiceListItem>(name)
                     .fillOptions(choiceList: choice, parameter: self)
@@ -131,6 +139,12 @@ extension ActionParameter {
             return format
         }
         return ActionParameterFormat.defaultChoiceListFormat
+    }
+}
+
+extension ChoiceListItem: SearchItem {
+    func matchesSearchQuery(_ query: String) -> Bool {
+        return self.description.lowercased().contains(query.lowercased())
     }
 }
 
@@ -231,6 +245,7 @@ public extension RowType where Self: Eureka.BaseRow {
             .onChange { callback(nil, $0 as BaseRow, .onChange) }
             .onCellSelection { callback($0 as BaseCell, $1 as BaseRow, .onCellSelection) }
     }
+    
 }
 
 // MARK: Create rows from type and formats

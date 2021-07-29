@@ -17,16 +17,29 @@ struct ChoiceList {
 
     /// the choice list
     var options: [ChoiceListItem]
+    
+    /// Indicate if could search
+    var isSearchable: Bool = false
+
+    /// Activate search if there is more items than this value
+    static var isSearchableActionCount: Int = 10
 
     /// Create a choice list frm decoded data and parameter type.
     init?(choiceList: AnyCodable, type: ActionParameterType) {
         if let choiceArray = choiceList.value as? [Any] {
             options = choiceArray.enumerated().map { ChoiceListItem(index: $0.0, value: $0.1, type: type) }
+            isSearchable = options.count > ChoiceList.isSearchableActionCount
         } else if let choiceDictionary = choiceList.value as? [AnyHashable: Any] {
             if ActionManager.customFormat, let optionsFromDataSource = ChoiceList.fromDataSource(choiceDictionary: choiceDictionary, type: type) {
                 options = optionsFromDataSource
+                if let dataSource = choiceDictionary["dataSource"] as? [String: Any], let searchValue = dataSource["search"] as? Bool {
+                    isSearchable = searchValue
+                } else {
+                    isSearchable = options.count > ChoiceList.isSearchableActionCount
+                }
             } else {
                 options = choiceDictionary.map { ChoiceListItem(key: $0.0, value: $0.1, type: type) }
+                isSearchable = options.count > ChoiceList.isSearchableActionCount
             }
         } else {
             options = []
@@ -38,7 +51,7 @@ struct ChoiceList {
         return ((dataSortObject["order"] == nil) || (dataSortObject["order"] as? String == "ascending") || (dataSortObject["ascending"] as? Bool ?? false))
             && !(dataSortObject["descending"] as? Bool ?? false)
     }
-    
+
     /// Create sort descriptors from data source info
     fileprivate static func createSortDescriptor(_ dataSort: Any, _ tableInfo: DataStoreTableInfo) -> [NSSortDescriptor]? {
         var result: [NSSortDescriptor]?
@@ -67,6 +80,43 @@ struct ChoiceList {
         return result
     }
 
+    /*fileprivate static func searchFields(choiceDictionary: [AnyHashable: Any], type: ActionParameterType) -> [String]? {
+        guard let dataSource = choiceDictionary["dataSource"] as? [String: Any] else {
+            return nil // no data source defined, skip
+        }
+        guard dataSource["search"] != nil else {
+            return nil
+        }
+        // search is activated
+        if let searchFieldString = dataSource["search"] as? String {
+            return searchFieldString.split(separator: ",").map { String($0) }
+        } else if let searchFields = dataSource["search"] as? [String] {
+            return searchFields
+        }
+        // else bool compute it:
+        
+        guard let dataClass = dataSource["dataClass"] as? String ?? dataSource["table"] as? String,
+              let dataFieldOriginal = dataSource["field"] as? String,
+              let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
+              let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name else {
+            return nil // no field to search
+        }
+
+        // Get from format if any
+        if let dataFormat = dataSource["entityFormat"] as? String ?? dataSource["format"] as? String {
+            var searchFields = RecordFormatter(format: dataFormat, tableInfo: tableInfo)?.nodes
+                .compactMap({$0 as? FieldNodeType})
+                .map({$0.fieldName(tableInfo: tableInfo)})
+                .filter({!$0.isEmpty}) ?? []
+            
+            searchFields.append(dataField)
+            return searchFields
+            
+        } else {
+            return [dataField]
+        }
+    }*/
+
     /// Create choice list from data Source
     fileprivate static func fromDataSource(choiceDictionary: [AnyHashable: Any], type: ActionParameterType) -> [ChoiceListItem]? {
         guard let dataSource = choiceDictionary["dataSource"] as? [String: Any] else {
@@ -89,7 +139,10 @@ struct ChoiceList {
                 sortDescriptors = customSort
             }
 
-            let fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
+            var fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
+            if let filter = dataSource["filter"] as? String {
+                fetchedRequest.predicate = NSPredicate(format: filter) // must be coredata but if orda?
+            }
             var records: [Record] = []
             var optionsFromRecords: [ChoiceListItem] = []
             _ = DataStoreFactory.dataStore.perform(.background, wait: true, blockName: "ChoiceList") { context in
