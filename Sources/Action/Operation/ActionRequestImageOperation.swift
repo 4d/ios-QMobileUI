@@ -65,44 +65,48 @@ protocol ActionRequestParameterWithRequest {
 
 }
 
-struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, VeryCodable {
+public struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, VeryCodable {
 
-    var id: String = UUID().uuidString // add an id to make not equal too different image to upload associated to same field (we could when edit change the image) // swiftlint:disable:this identifier_name
-    var cacheId: String
+    public var id: String = UUID().uuidString // add an id to make not equal too different image to upload associated to same field (we could when edit change the image) // swiftlint:disable:this identifier_name
+    public var cacheId: String
 
-    var key: String {
+    public var key: String {
         if let range = cacheId.range(of: "_") {
             return String(cacheId[range.upperBound...])
         }
         return cacheId
+    }
+    
+    public init(cacheId: String) {
+        self.cacheId = cacheId
     }
 
     func newOperation(_ operation: ActionRequestOperation) -> Operation {
         return ActionRequestImageOperation(self, operation)
     }
 
-    static var codableClassStoreKey: String { return "ImageUploadOperationInfo" }
+    public static var codableClassStoreKey: String { return "ImageUploadOperationInfo" }
 }
 
 extension ImageUploadOperationInfo: Equatable {
-    static func == (left: ImageUploadOperationInfo, right: ImageUploadOperationInfo) -> Bool {
+    public static func == (left: ImageUploadOperationInfo, right: ImageUploadOperationInfo) -> Bool {
         return left.cacheId == right.cacheId && left.id == right.id
     }
 }
 
 import Kingfisher
 
-protocol ImageRetrieval {
+public protocol ImageRetrieval {
     var cacheId: String { get }
 }
 
 extension ImageRetrieval {
 
-    func retrieve(callbackQueue: CallbackQueue = .mainCurrentOrAsync, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
+    public func retrieve(callbackQueue: CallbackQueue = .mainCurrentOrAsync, _ completionHandler: @escaping (Result<ImageCacheResult, KingfisherError>) -> Void) {
         ActionManager.instance.cache.retrieve(cacheId: cacheId, callbackQueue: callbackQueue, completionHandler)
     }
 
-    func awaitRetrieve() -> Result<ImageCacheResult, KingfisherError> {
+    public func awaitRetrieve() -> Result<ImageCacheResult, KingfisherError> {
         let semaphore = DispatchSemaphore(value: 0)
         var theResult: Result<ImageCacheResult, KingfisherError>?
         DispatchQueue.userInitiated.async {
@@ -115,21 +119,21 @@ extension ImageRetrieval {
         return theResult!
     }
 
-    func remove() {
+    public func remove() {
         ActionManager.instance.cache.remove(cacheId: cacheId)
     }
 
-    func transfer(to: ImageRetrieval) { // swiftlint:disable:this identifier_name
+    public func transfer(to: ImageRetrieval) { // swiftlint:disable:this identifier_name
         ActionManager.instance.cache.transfer(from: cacheId, to: to.cacheId)
     }
 
-    func store(image: UIImage) {
+    public func store(image: UIImage) {
         ActionManager.instance.cache.store(cacheId: cacheId, image: image)
     }
 }
 extension ImageUploadOperationInfo: ImageRetrieval {}
 extension UploadResult: ImageRetrieval {
-    var cacheId: String { id }
+    public var cacheId: String { id }
 }
 
 extension ActionRequest {
