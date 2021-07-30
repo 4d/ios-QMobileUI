@@ -100,7 +100,7 @@ extension ActionParameter {
                     .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
-                    
+
                 } else {
                     return PushRow<ChoiceListItem>(name)
                         .imageNamed(isImageNamed)
@@ -121,7 +121,7 @@ extension ActionParameter {
                     .imageNamed(isImageNamed)
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
-                
+
             }
         }
 
@@ -133,7 +133,6 @@ extension ActionParameter {
         return self.type.formRow(name, onRowEvent: eventCallback)
     }
 
-    
     private func defaultChoiceFormat(_ format: ActionParameterFormat?) -> ActionParameterFormat {
         if let format = format, format.isChoiceList {
             return format
@@ -157,7 +156,7 @@ extension SelectorRow {
 
     func imageNamed(_ imageNamed: Bool) -> Self {
         guard imageNamed else { return self }
-        return self.onPresent({ form, controller in
+        return self.onPresent({ _, controller in
             controller.selectableRowCellUpdate = { cell, row in // not in selectableRowCellSetup, because replaced after data update
                 if let text = row.tag, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                     cell.textLabel?.setImage(image)
@@ -245,7 +244,7 @@ public extension RowType where Self: Eureka.BaseRow {
             .onChange { callback(nil, $0 as BaseRow, .onChange) }
             .onCellSelection { callback($0 as BaseCell, $1 as BaseRow, .onCellSelection) }
     }
-    
+
 }
 
 // MARK: Create rows from type and formats

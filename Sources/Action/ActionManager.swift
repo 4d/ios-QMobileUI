@@ -102,7 +102,7 @@ public class ActionManager: NSObject, ObservableObject {
                 logger.warning("Cannot find table info for \(tableName) to sort")
                 return
             }
-            
+
             guard let sortDescriptors = action.parameters?.compactMap({ $0.sortDescriptor(tableInfo: tableInfo) }), !sortDescriptors.isEmpty else { return }
 
             // Not clean way to get list form, maybe context could provide the "DataSource"

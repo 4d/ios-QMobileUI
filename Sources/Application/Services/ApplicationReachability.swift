@@ -140,12 +140,12 @@ extension ApplicationReachability {
 
     /// Refresh server and web test info.
     /// - parameters completion: will receive two notification of refresh done or already processing
-    public func refreshServerInfo(_ completion: (()->Void)? = nil) {
+    public func refreshServerInfo(_ completion: (() -> Void)? = nil) {
         refreshWebTestInfo(completion)
         refreshServerStatus(completion)
     }
 
-    fileprivate func logServerStatus(_ result: Result<Status, APIError>, _ completion: (()->Void)? = nil) {
+    fileprivate func logServerStatus(_ result: Result<Status, APIError>, _ completion: (() -> Void)? = nil) {
         switch result {
         case .success(let serverStatus):
             if serverStatus.ok {
@@ -162,7 +162,7 @@ extension ApplicationReachability {
         }
     }
 
-    fileprivate func refreshServerStatus(_ completion: (()->Void)? = nil) {
+    fileprivate func refreshServerStatus(_ completion: (() -> Void)? = nil) {
         if serverStatusTask != nil && self.serverStatus == .checking {
             completion?() // XXX will receice too soon, must register instead
             return
@@ -189,8 +189,8 @@ extension ApplicationReachability {
             }
         }
     }
-    
-    fileprivate func refreshWebTestInfo(_ completion: (()->Void)? = nil) {
+
+    fileprivate func refreshWebTestInfo(_ completion: (() -> Void)? = nil) {
         if webTestInfoTask != nil {
             completion?() // XXX will receice too soon, must register instead
             return

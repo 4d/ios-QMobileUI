@@ -22,7 +22,6 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     var builder: ActionParametersUIBuilder!
     /// static configuration fom preferences
     var settings: ActionFormSettings = ActionFormSettings()
-    
 
     /// a bag for async op
     fileprivate var cancellables = Set<AnyCancellable>()
@@ -133,7 +132,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
 
     func onRowEvent(cell: BaseCell?, row: BaseRow, event: RowEvent) {
         // behaviours when selecting element
-        
+
         switch event {
         case .onCellHighlightChanged:
             // Focus, remove errors

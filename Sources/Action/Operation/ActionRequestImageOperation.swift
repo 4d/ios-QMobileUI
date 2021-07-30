@@ -76,7 +76,7 @@ public struct ImageUploadOperationInfo: ActionRequestParameterWithRequest, VeryC
         }
         return cacheId
     }
-    
+
     public init(cacheId: String) {
         self.cacheId = cacheId
     }

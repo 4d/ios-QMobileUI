@@ -9,7 +9,7 @@
 import Foundation
 import Eureka
 
-open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: OptionsProviderRow>: SelectorViewController<OptionsRow>, UISearchResultsUpdating, UISearchBarDelegate where Row.Cell.Value: SearchItem {
+open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: OptionsProviderRow>: SelectorViewController<OptionsRow>, UISearchResultsUpdating, UISearchBarDelegate where Row.Cell.Value: SearchItem { // swiftlint:disable:this type_name
 
     let searchController = UISearchController(searchResultsController: nil)
 
@@ -24,7 +24,7 @@ open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: Opt
 
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-       
+
         definesPresentationContext = true
 
         if let scopes = scopeTitles {
@@ -59,7 +59,7 @@ open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: Opt
         } else {
             currentOptions = originalOptions.filter { item in
                 guard let value = item.selectableValue else { return false }
-                
+
                 let doesScopeMatch = (scope == allScopeTitle) || value.matchesScope(scope!)
                 return doesScopeMatch && value.matchesSearchQuery(searchText)
             }
@@ -73,7 +73,7 @@ open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: Opt
         if query.isEmpty {
             return
         }
-        
+
         filterOptionsForSearchText(query, scope: scope)
         tableView.reloadData()
     }
@@ -115,7 +115,7 @@ open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: Opt
 open class SearchSelectorViewController<OptionsRow: OptionsProviderRow>: _SearchSelectorViewController<ListCheckRow<OptionsRow.OptionsProviderType.Option>, OptionsRow> where OptionsRow.OptionsProviderType.Option: SearchItem {
 }
 
-open class _SearchPushRow<Cell: CellType> : SelectorRow<Cell> where Cell: BaseCell, Cell.Value : SearchItem {
+open class _SearchPushRow<Cell: CellType>: SelectorRow<Cell> where Cell: BaseCell, Cell.Value: SearchItem { // swiftlint:disable:this type_name
     /// The scopes to use for additional filtering
     open var scopeTitles: [String]?
 
@@ -128,12 +128,12 @@ open class _SearchPushRow<Cell: CellType> : SelectorRow<Cell> where Cell: BaseCe
             let svc = SearchSelectorViewController<SelectorRow<Cell>> { _ in }
             svc.scopeTitles = self.scopeTitles
             svc.showAllScope = self.showAllScope
-            return  svc }, onDismiss: { vc in let _ = vc.navigationController?.popViewController(animated: true)
+            return  svc }, onDismiss: { viewController in _ = viewController.navigationController?.popViewController(animated: true)
         })
     }
 }
 
-public final class SearchPushRow<T: Equatable> : _SearchPushRow<PushSelectorCell<T>>, RowType where T: SearchItem {
+public final class SearchPushRow<T: Equatable>: _SearchPushRow<PushSelectorCell<T>>, RowType where T: SearchItem {
 
     public required init(tag: String?) {
         super.init(tag: tag)

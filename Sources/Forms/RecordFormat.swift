@@ -190,7 +190,7 @@ class Node: CustomStringConvertible, Equatable {
 class UndefinedNode: Node {}
 
 protocol FieldNodeType {
-    
+
     func fieldName(tableInfo: DataStoreTableInfo) -> String
 }
 

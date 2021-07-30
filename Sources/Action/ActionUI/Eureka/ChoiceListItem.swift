@@ -35,7 +35,7 @@ struct ChoiceListItem: Equatable {
             self.value = AnyCodable(value)
         }
     }
-    
+
     init(index: Int, value: Any, type: ActionParameterType) {
         if let entry = value as? [String: Any], let key = entry["key"], let value = entry["value"] {
             self.init(key: key, value: value, type: type)

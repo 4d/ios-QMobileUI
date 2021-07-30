@@ -17,7 +17,7 @@ struct ChoiceList {
 
     /// the choice list
     var options: [ChoiceListItem]
-    
+
     /// Indicate if could search
     var isSearchable: Bool = false
 
@@ -47,7 +47,7 @@ struct ChoiceList {
         }
     }
 
-    fileprivate static func isSortAscending(_ dataSortObject: [String : Any]) -> Bool {
+    fileprivate static func isSortAscending(_ dataSortObject: [String: Any]) -> Bool {
         return ((dataSortObject["order"] == nil) || (dataSortObject["order"] as? String == "ascending") || (dataSortObject["ascending"] as? Bool ?? false))
             && !(dataSortObject["descending"] as? Bool ?? false)
     }
@@ -59,13 +59,11 @@ struct ChoiceList {
             result = dataSortString.split(separator: ",")
                 .compactMap { tableInfo.existingFieldInfo(String($0).trimmed) }
                 .map { $0.sortDescriptor(ascending: true) }
-        }
-        else if let dataSortObject =  dataSort as? [String: Any],
+        } else if let dataSortObject =  dataSort as? [String: Any],
                 let dataSortOriginal = dataSortObject["field"] as? String,
                 let dataSortFieldInfo = tableInfo.existingFieldInfo(dataSortOriginal) { // one existing property
             result = [dataSortFieldInfo.sortDescriptor(ascending: isSortAscending(dataSortObject))]
-        }
-        else if let dataSortCollection = dataSort as? [[String: Any]] { // a list of property
+        } else if let dataSortCollection = dataSort as? [[String: Any]] { // a list of property
             result = dataSortCollection.compactMap { dataSortObject in
                 if let dataSortOriginal = dataSortObject["field"] as? String,
                    let dataSortFieldInfo = tableInfo.existingFieldInfo(dataSortOriginal) {
@@ -128,8 +126,8 @@ struct ChoiceList {
            let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
            let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
             // Well defined data source from database
-            
-            var recordFormatter: RecordFormatter? = nil
+
+            var recordFormatter: RecordFormatter?
             if let dataFormat = dataSource["entityFormat"] as? String ?? dataSource["format"] as? String {
                 recordFormatter = RecordFormatter(format: dataFormat, tableInfo: tableInfo)
             }
