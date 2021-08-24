@@ -177,19 +177,16 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
     }*/
 
     // MARK: - UITableViewUISwipeActionsConfigurationRowAction
-    // or leadingSwipeActionsConfigurationForRowAt?
+    
+    /// Provide action as swipe action
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
-        guard let context = dataSource?.entry() else { return nil }
-        context.indexPath = indexPath
-
-        if let formContext = self.formContext {
-            let compoundContext = DataSourceParentEntry(actionContext: context, formContext: formContext)
-            return tableView.swipeActionsConfiguration(with: compoundContext, at: indexPath)
-        } else {
-            return tableView.swipeActionsConfiguration(with: context, at: indexPath)
-        }
+        guard let actionContext = self.actionContext(forRowAt: indexPath),
+              let contextualActions = tableView.swipeActions(with: actionContext, at: indexPath, withMore: true) else { return nil }
+        let configuration = UISwipeActionsConfiguration(actions: contextualActions)
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
     }
+    // or leadingSwipeActionsConfigurationForRowAt?
 
     // MARK: - segue
 

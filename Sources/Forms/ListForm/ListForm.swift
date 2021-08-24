@@ -90,11 +90,23 @@ extension ListForm {
 
 extension ListForm {
 
+    /// Get an action context for the list form ie. the table (and maybe its relation)
     public func actionContext() -> ActionContext? {
         if let formContext = self.formContext {
             return DataSourceParentEntry(actionContext: self.dataSource, formContext: formContext)
         } else {
             return self.dataSource
+        }
+    }
+
+    /// Get an action context for a specific row ie a record/entity
+    public func actionContext(forRowAt indexPath: IndexPath) -> ActionContext? {
+        guard let context = self.dataSource?.entry() else { return nil }
+        context.indexPath = indexPath
+        if let formContext = self.formContext {
+            return DataSourceParentEntry(actionContext: context, formContext: formContext)
+        } else {
+            return context
         }
     }
 
