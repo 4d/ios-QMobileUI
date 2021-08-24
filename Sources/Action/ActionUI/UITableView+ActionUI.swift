@@ -52,45 +52,50 @@ extension UITableView: ActionSheetUI {
         }
     }
 
-    /// Create UISwipeActionsConfiguration from self 'contextualActions'
-    /// with "more" menu item if more than `maxVisibleContextualActions` itemsb
-    public func swipeActionsConfiguration(with context: ActionContext, at indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let actionSheet = self.actionSheet else { return .empty }
-        guard !actionSheet.actions.isEmpty else { return .empty /* no actions */}
-        // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
-        var contextualActions = self.build(from: actionSheet, context: context, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
-
-        guard contextualActions.count > UITableView.maxVisibleContextualActions else {
-            gradientBackgroundColor(contextualActions)
-            let configuration = UISwipeActionsConfiguration(actions: contextualActions)
-            configuration.performsFirstActionWithFullSwipe = false
-            return configuration
+    /// Create `UISwipeActionsConfiguration` from action on table row
+    /// with "more" menu item if more than `maxVisibleContextualActions` items
+    public func swipeActionsConfiguration(with context: ActionContext, at indexPath: IndexPath) -> UISwipeActionsConfiguration {
+        guard let contextualActions = self.swipeActions(with: context, at: indexPath) else {
+            return .empty
         }
-        // swipe action more "..."
-        contextualActions = contextualActions[0..<(UITableView.maxVisibleContextualActions-1)].array
-        gradientBackgroundColor(contextualActions) // more not recolorized if here
-
-        let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, contextualView, handle) in
-            let actions = actionSheet.actions
-            let moreSheet = ActionSheet(title: nil,
-                                        subtitle: nil,
-                                        dismissLabel: "Cancel",
-                                        actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
-            var alertController = UIAlertController.build(from: moreSheet, context: context, handler: ActionManager.instance.prepareAndExecuteAction)
-            alertController = alertController.checkPopUp(contextualView)
-            alertController.show {
-                handle(false) // to dismiss immediatly or in completion handler of alertController
-            }
-        })
-        let oneHasImage = contextualActions.contains(where: { $0.image != nil })
-        if oneHasImage {
-            moreItem.image = .moreImage
-        }
-        contextualActions.append(moreItem)
-
         let configuration = UISwipeActionsConfiguration(actions: contextualActions)
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
+    }
+
+    /// Create contextual actions from `actionSheet`
+    /// with "more" menu item if more than `maxVisibleContextualActions` items
+    public func swipeActions(with context: ActionContext, at indexPath: IndexPath, withMore: Bool = true) -> [UIContextualAction]? {
+        // Get actions data
+        guard let actionSheet = self.actionSheet, !actionSheet.actions.isEmpty else { return nil }
+
+        // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
+        var contextualActions = self.build(from: actionSheet, context: context, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
+        gradientBackgroundColor(contextualActions)
+
+        // Check if we need more "..." action
+        if withMore && contextualActions.count > UITableView.maxVisibleContextualActions {
+            contextualActions = contextualActions[0..<(UITableView.maxVisibleContextualActions-1)].array
+
+            let moreItem = UIContextualAction(style: .normal, title: "More", handler: { (_, contextualView, handle) in
+                let actions = actionSheet.actions
+                let moreSheet = ActionSheet(title: nil,
+                                            subtitle: nil,
+                                            dismissLabel: "Cancel",
+                                            actions: actions[UITableView.maxVisibleContextualActions-1..<actions.count].array)
+                var alertController = UIAlertController.build(from: moreSheet, context: context, handler: ActionManager.instance.prepareAndExecuteAction)
+                alertController = alertController.checkPopUp(contextualView)
+                alertController.show {
+                    handle(false) // to dismiss immediatly or in completion handler of alertController
+                }
+            })
+            // if one action has image, put also an image on more button
+            if contextualActions.contains(where: { $0.image != nil }) {
+                moreItem.image = .moreImage
+            }
+            contextualActions.append(moreItem)
+        }
+        return contextualActions
     }
 }
 

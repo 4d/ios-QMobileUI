@@ -119,7 +119,7 @@ extension DataSourceSortable {
         let sortFields: [String] = (UserDataSourceSortable.getSortFields(for: tableName) ?? self.sortField).split(separator: ",").map { String($0) }
 
         if !sortFields.isEmpty { // if sort field defined
-            sortDescriptors = sortFields.filter({!$0.noNot.isEmpty}).map({ NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) })
+            sortDescriptors = sortFields.filter({ !$0.noNot.isEmpty }).map({ NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) })
         } else if !searchableField.isEmpty && searchFieldAsSortField {
             sortDescriptors = searchableFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
         }
