@@ -177,7 +177,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
     }*/
 
     // MARK: - UITableViewUISwipeActionsConfigurationRowAction
-    
+
     /// Provide action as swipe action
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let actionContext = self.actionContext(forRowAt: indexPath),
