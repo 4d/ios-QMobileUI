@@ -579,7 +579,10 @@ import QMobileDataStore
 
 extension ActionParameter {
     func sortDescriptor(tableInfo: DataStoreTableInfo) -> NSSortDescriptor? {
-        if let fieldInfo = tableInfo.fieldInfo(for: self.defaultField ?? self.name) {
+        if let name = self.defaultField, let fieldInfo = tableInfo.fieldInfo(for: name) {
+            return fieldInfo.sortDescriptor(ascending: self.format == nil || self.format == .custom("ascending"))
+        }
+        if let fieldInfo = tableInfo.fieldInfo(forOriginalName: self.name) ?? tableInfo.fieldInfo(for: self.name) {
             return fieldInfo.sortDescriptor(ascending: self.format == nil || self.format == .custom("ascending"))
         }
         return nil
