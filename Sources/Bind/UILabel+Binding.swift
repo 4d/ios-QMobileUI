@@ -565,6 +565,26 @@ public extension UILabel {
             }
         }
     }
+
+    @objc dynamic var jsonValues: [String: Any]? {
+        get {
+            if let text = self.text, !text.isEmpty {
+                return [:] // TODO decode json
+            }
+            return nil
+        }
+        set {
+            if let newValue = newValue {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: newValue.values, options: []) {
+                    self.text = String(data: jsonData, encoding: .utf8)
+                } else {
+                    self.text = nil
+                }
+            } else {
+                self.text = nil
+            }
+        }
+    }
 }
 
 // MARK: image
