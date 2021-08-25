@@ -525,6 +525,46 @@ public extension UILabel {
         }
     }
 
+    @objc dynamic var jsonPrettyPrinted: [String: Any]? {
+        get {
+            if let text = self.text, !text.isEmpty {
+                return [:] // TODO decode json
+            }
+            return nil
+        }
+        set {
+            if let newValue = newValue {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted) {
+                    self.text = String(data: jsonData, encoding: .utf8)
+                    self.text = self.text
+                } else {
+                    self.text = nil
+                }
+            } else {
+                self.text = nil
+            }
+        }
+    }
+
+    @objc dynamic var json: [String: Any]? {
+        get {
+            if let text = self.text, !text.isEmpty {
+                return [:] // TODO decode json
+            }
+            return nil
+        }
+        set {
+            if let newValue = newValue {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: newValue, options: []) {
+                    self.text = String(data: jsonData, encoding: .utf8)
+                } else {
+                    self.text = nil
+                }
+            } else {
+                self.text = nil
+            }
+        }
+    }
 }
 
 // MARK: image
@@ -532,6 +572,7 @@ public extension UILabel {
 import QMobileDataSync
 import Kingfisher
 extension UILabel {
+
     @objc dynamic public var restImage: [String: Any]? {
         get {
             if let text = self.text {
