@@ -262,29 +262,64 @@ extension ApplicationCoordinator {
             assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
             return
         }
-        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName && $0.destinationTable?.name == source.tableName })
+        if relationName.contains(".") {
+            // find inverse relation path to create predicate
+            let relationsToSearch = relationName.split(separator: ".").reversed()
+            var relationsInfo: [DataStoreRelationInfo] = []
+            var tableInfo = destination.tableInfo
+            // var relationTableName = source.tableName
+            for relationToSearch in relationsToSearch {
+                if let inverseRelationInfo = tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == String(relationToSearch) /*&& $0.destinationTable?.name == relationTableName*/ }) {
+
+                    relationsInfo.append(inverseRelationInfo)
+                    tableInfo = inverseRelationInfo.destinationTable
+                } else {
+                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
+                    logger.warning("Current table info \(String(describing: destination.tableInfo))")
+                    return
+                }
+
+            }
+            let predicatString = relationsInfo.map({$0.name}).joined(separator: ".")+" = %@"
+
+            // TODO factorize with under code
+            let previousTitle: String? = "TODO: must be implemented"
+            let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".") // ?? relationName // TODO original ?
+            let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".") // TODO original ?
+
+            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
+                                                  actionContext: source.actionContext(),
+                                                  previousTitle: previousTitle,
+                                                  relationName: relationOriginalName,
+                                                  inverseRelationName: inverseRelationName)
+
+            logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
+
+        } else {
+            guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName && $0.destinationTable?.name == source.tableName })
             else {
                 logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
                 logger.warning("Current table info \(String(describing: destination.tableInfo))")
                 return
+            }
+
+            let relationOriginalName = destination.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
+
+            var previousTitle: String?
+            if let tableInfo = destination.tableInfo,
+               let relationFormat = relationInfoUI.relationFormat,
+               let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
+                previousTitle = formatter.format(record)
+            }
+            let predicatString = "(\(inverseRelationInfo.name) = %@)"
+            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
+                                                  actionContext: source.actionContext(),
+                                                  previousTitle: previousTitle,
+                                                  relationName: relationOriginalName,
+                                                  inverseRelationName: inverseRelationInfo.originalName)
+
+            logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
         }
-
-        let relationOriginalName = destination.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
-
-        var previousTitle: String?
-        if let tableInfo = destination.tableInfo,
-            let relationFormat = relationInfoUI.relationFormat,
-            let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
-            previousTitle = formatter.format(record)
-        }
-        let predicatString = "(\(inverseRelationInfo.name) = %@)"
-        destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                              actionContext: source.actionContext(),
-                                              previousTitle: previousTitle,
-                                              relationName: relationOriginalName,
-                                              inverseRelationName: inverseRelationInfo.originalName)
-
-        logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
     }
 
     /// Prepare data for N->1 relation from ListForm
