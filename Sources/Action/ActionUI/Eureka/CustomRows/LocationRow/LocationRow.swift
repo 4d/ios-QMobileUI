@@ -68,7 +68,7 @@ public final class LocationRow: Eureka.OptionsRow<PushSelectorCell<Coordinate>>,
 extension LocationRow: RowInitializable {
     func rowInitialize() {
         let locationManager = CLLocationManager()
-        if locationManager.authorizationStatus == .authorizedWhenInUse||locationManager.authorizationStatus == .authorizedAlways {
+        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
             self.value = locationManager.location?.coordinate.toStruct()
         }
     }

@@ -164,29 +164,30 @@ open class Binder: NSObject {
     }
 
     fileprivate func transformer(for components: [String], viewKey: String) -> ValueTransformer? {
-        if let component  = components.first {
-            if let transformer = ValueTransformer(forName: NSValueTransformerName(component)) {
-                return transformer
-            }
-            let name = NSValueTransformerName(viewKey + component)
-            if let transformer = ValueTransformer(forName: name) {
-                return transformer
-            }
+        guard let component  = components.first else { return nil }
 
-            var transformer: ValueTransformer?
-            switch viewKey {
-            case "localizedText", "imageNamed", "systemImageNamed":
-                transformer = StringPrefixer(prefix: component)
-                logger.debug("Undefined transformer \(component) or \(viewKey),\(component). Will be created.")
-            default:
-                transformer = nil
-            }
-            if let transformer = transformer {
-                ValueTransformer.setValueTransformer(transformer, forName: name)
-            }
+        if let transformer = ValueTransformer(forName: NSValueTransformerName(component)) {
             return transformer
         }
-        return nil
+        let name = NSValueTransformerName(viewKey + component)
+        if let transformer = ValueTransformer(forName: name) {
+            return transformer
+        }
+
+        var transformer: ValueTransformer?
+        switch viewKey {
+        case "localizedText", "imageNamed", "systemImageNamed":
+            transformer = StringPrefixer(prefix: component)
+            logger.debug("Undefined transformer \(component) or \(viewKey),\(component). Will be created.")
+        case "objectFormat":
+            transformer = DictionaryFormatTransformer(format: component)
+        default:
+            transformer = nil
+        }
+        if let transformer = transformer {
+            ValueTransformer.setValueTransformer(transformer, forName: name)
+        }
+        return transformer
     }
     /*open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
      if let context = context {

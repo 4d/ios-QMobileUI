@@ -585,6 +585,15 @@ public extension UILabel {
             }
         }
     }
+
+    @objc dynamic var objectFormat: String? {
+        get {
+            return self.text
+        }
+        set {
+            self.text = newValue
+        }
+    }
 }
 
 // MARK: image
@@ -693,4 +702,4 @@ extension NSTextAttachment {
         }
         return true
     }
-}
+}// swiftlint:disable:this file_length

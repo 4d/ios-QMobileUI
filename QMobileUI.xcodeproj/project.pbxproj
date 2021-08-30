@@ -95,12 +95,14 @@
 		4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4859D9551F827E4800C8A020 /* DialogForm.swift */; };
 		48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48657A36203590A900000D45 /* UIButton+Binding.swift */; };
 		4867450C20221BD20029924D /* WebAreaForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867450B20221BD20029924D /* WebAreaForm.swift */; };
+		4867E60E26DCB42E00717821 /* DictionaryFormatTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867E60D26DCB42E00717821 /* DictionaryFormatTransformer.swift */; };
+		4867E61026DCB44A00717821 /* RecordFormatter+QMobileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4867E60F26DCB44A00717821 /* RecordFormatter+QMobileDataStore.swift */; };
 		4868D8CE26B2732D00CC3B06 /* SearchablePushRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4868D8CD26B2732D00CC3B06 /* SearchablePushRow.swift */; };
 		4869D606223BA2920042379F /* DataSource+ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D605223BA2920042379F /* DataSource+ActionContext.swift */; };
 		4869D608223BA4110042379F /* ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D607223BA4110042379F /* ActionContext.swift */; };
 		4869D60B223BA4410042379F /* ActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60A223BA4410042379F /* ActionManager.swift */; };
 		4869D60D223BA47F0042379F /* UIView+ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60C223BA47F0042379F /* UIView+ActionContext.swift */; };
-		486BC3CA231935710059B66C /* RecordFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486BC3C9231935710059B66C /* RecordFormat.swift */; };
+		486BC3CA231935710059B66C /* RecordFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486BC3C9231935710059B66C /* RecordFormatter.swift */; };
 		48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* MainForm.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
@@ -354,12 +356,14 @@
 		485CCDB11E79781700CDB2B3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		48657A36203590A900000D45 /* UIButton+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Binding.swift"; sourceTree = "<group>"; };
 		4867450B20221BD20029924D /* WebAreaForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAreaForm.swift; sourceTree = "<group>"; };
+		4867E60D26DCB42E00717821 /* DictionaryFormatTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryFormatTransformer.swift; sourceTree = "<group>"; };
+		4867E60F26DCB44A00717821 /* RecordFormatter+QMobileDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecordFormatter+QMobileDataStore.swift"; sourceTree = "<group>"; };
 		4868D8CD26B2732D00CC3B06 /* SearchablePushRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchablePushRow.swift; sourceTree = "<group>"; };
 		4869D605223BA2920042379F /* DataSource+ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSource+ActionContext.swift"; sourceTree = "<group>"; };
 		4869D607223BA4110042379F /* ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionContext.swift; sourceTree = "<group>"; };
 		4869D60A223BA4410042379F /* ActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionManager.swift; sourceTree = "<group>"; };
 		4869D60C223BA47F0042379F /* UIView+ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActionContext.swift"; sourceTree = "<group>"; };
-		486BC3C9231935710059B66C /* RecordFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFormat.swift; path = Sources/Forms/RecordFormat.swift; sourceTree = SOURCE_ROOT; };
+		486BC3C9231935710059B66C /* RecordFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFormatter.swift; path = Sources/Bind/RecordFormatter.swift; sourceTree = SOURCE_ROOT; };
 		48708B5C2195B36E005C9C4A /* MainForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainForm.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
@@ -657,7 +661,6 @@
 				483FDA8A1E82842000FAF84B /* DetailsFormBare.swift */,
 				480392C61E929DA3008CF992 /* DetailsFormTable.swift */,
 				48D3F98F1F7D178D00B96947 /* DetailsForm+DataSync.swift */,
-				486BC3C9231935710059B66C /* RecordFormat.swift */,
 			);
 			path = DetailsForm;
 			sourceTree = "<group>";
@@ -685,6 +688,7 @@
 		48268C5A1E8136D1000F7719 /* Bind */ = {
 			isa = PBXGroup;
 			children = (
+				4867E60C26DCB40D00717821 /* RecordFormat */,
 				480392A71E928C4F008CF992 /* Extensions */,
 				48268C5B1E8136E9000F7719 /* Binder.swift */,
 				C4B2CDBD224A2C0D00E1B902 /* Binded.swift */,
@@ -810,6 +814,16 @@
 				48112D491E9FB11000A3A88C /* .slather.yml */,
 			);
 			name = Quality;
+			sourceTree = "<group>";
+		};
+		4867E60C26DCB40D00717821 /* RecordFormat */ = {
+			isa = PBXGroup;
+			children = (
+				486BC3C9231935710059B66C /* RecordFormatter.swift */,
+				4867E60D26DCB42E00717821 /* DictionaryFormatTransformer.swift */,
+				4867E60F26DCB44A00717821 /* RecordFormatter+QMobileDataStore.swift */,
+			);
+			name = RecordFormat;
 			sourceTree = "<group>";
 		};
 		4868D8CC26B2731200CC3B06 /* SearchablePushRow */ = {
@@ -1539,6 +1553,7 @@
 				48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */,
 				487EC33E20AD83B500646B5B /* SettingLogOutCell.swift in Sources */,
 				48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */,
+				4867E60E26DCB42E00717821 /* DictionaryFormatTransformer.swift in Sources */,
 				480B435F1E842EF9007C90DD /* UIViewCell.swift in Sources */,
 				48A3018925DBFDD700D86BD0 /* ActionManagerCache.swift in Sources */,
 				483FDA891E8283DA00FAF84B /* DetailsForm.swift in Sources */,
@@ -1599,6 +1614,7 @@
 				48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */,
 				48087E4F22C4F5F90008A3D6 /* AnyWrapped.swift in Sources */,
 				483FDA8F1E82886D00FAF84B /* UIApplication+QMobile.swift in Sources */,
+				4867E61026DCB44A00717821 /* RecordFormatter+QMobileDataStore.swift in Sources */,
 				48A62CDF1E9E78FD002A76C2 /* UIGestureRecognizer+QMobile.swift in Sources */,
 				4846083820AF070000EE4696 /* SpinerLayer.swift in Sources */,
 				48A1E5E41FE13F7600C6E0B0 /* ApplicationUpdate.swift in Sources */,
@@ -1645,7 +1661,7 @@
 				480392AC1E9292C0008CF992 /* String+QMobile.swift in Sources */,
 				48EE07801E7AED7100A8546E /* ListFormCollection.swift in Sources */,
 				480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */,
-				486BC3CA231935710059B66C /* RecordFormat.swift in Sources */,
+				486BC3CA231935710059B66C /* RecordFormatter.swift in Sources */,
 				48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */,
 				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
 				48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */,

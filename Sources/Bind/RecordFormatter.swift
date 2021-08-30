@@ -10,9 +10,21 @@ import Foundation
 import QMobileDataStore
 import QMobileDataSync
 
-// XXX to move
+/// Protocol to provide allowed field name for key path
+protocol FieldNodeInfo {
+    func fieldName(name: String) -> String?
+}
 
-/// a formatter for record name attributes
+/// All fields are ok.
+private struct OkFieldNodeInfo: FieldNodeInfo {
+    static let instance = OkFieldNodeInfo()
+    private init() {}
+    func fieldName(name: String) -> String? {
+        return name
+    }
+}
+
+/// A formatter for record name attributes using KVO
 struct RecordFormatter {
 
     enum Token {
@@ -25,7 +37,7 @@ struct RecordFormatter {
         typealias TokenBuilder = (String, CountableRange<Int>) -> Token? // swiftlint:disable:this nesting
         static let tokenStringList: [String: TokenBuilder] = [
             ":[a-zA-Z][a-zA-Z0-9]*": ({ .field($0, $1) }),
-            "%[\\w ]*%": ({ .fieldOriginal($0, $1) })
+            "%[\\w. ]*%": ({ .fieldOriginal($0, $1) })
         ]
         typealias TokenRegularExpression = (NSRegularExpression, TokenBuilder) // swiftlint:disable:this nesting
         static let tokenList: [TokenRegularExpression] = tokenStringList.map {
@@ -119,21 +131,75 @@ struct RecordFormatter {
     }
 
     var nodes: [Node]
-    var tableInfo: DataStoreTableInfo
-    init?(format: String, tableInfo: DataStoreTableInfo) {
+    var fieldNodeInfo: FieldNodeInfo
+    init?(format: String, fieldNodeInfo: FieldNodeInfo = OkFieldNodeInfo.instance) {
         guard let nodes = try? Parser(tokens: Lexer.tokenize(format)).parse() else {
             return nil
         }
-        self.tableInfo = tableInfo
+        self.fieldNodeInfo = fieldNodeInfo
         self.nodes = nodes.compact() // XXX better lexer or merge simple node?
     }
 
     func format(_ object: AnyObject) -> String {
         var string = ""
         for node in nodes {
-            string += node.format(object, tableInfo: tableInfo)
+            string += node.format(object, fieldNodeInfo: fieldNodeInfo)
         }
         return string
+    }
+
+}
+
+// MARK: - nodes
+
+class Node: CustomStringConvertible, Equatable {
+    var range: CountableRange<Int> = 0..<0
+    let name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    var description: String {
+        return "\(type(of: self))(name: \"\(name)\")"
+    }
+
+    static func == (lhs: Node, rhs: Node) -> Bool {
+        return lhs.description == rhs.description
+    }
+
+    func format(_ object: AnyObject, fieldNodeInfo: FieldNodeInfo) -> String {
+        return name
+    }
+
+}
+
+class UndefinedNode: Node {}
+
+class FieldNode: Node {
+
+    override func format(_ object: AnyObject, fieldNodeInfo: FieldNodeInfo) -> String {
+        if let value = object.value(forKeyPath: name) {
+            return "\(value)"
+        }
+        return name
+    }
+
+}
+
+class FieldOriginalNode: Node {
+
+    override func format(_ object: AnyObject, fieldNodeInfo: FieldNodeInfo) -> String {
+        if let name = fieldNodeInfo.fieldName(name: self.name),
+            let value = object.value(forKeyPath: name) {
+            return "\(value)"
+        }
+        logger.warning("No value for format node \(name) and record \(object)")
+        #if DEBUG
+        return "%"+name+"%"
+        #else
+        return ""
+        #endif
     }
 
 }
@@ -162,72 +228,5 @@ extension Array where Element: Node {
             newNodes.append(toAppend)
         }
         return newNodes
-    }
-}
-
-class Node: CustomStringConvertible, Equatable {
-    var range: CountableRange<Int> = 0..<0
-    let name: String
-
-    init(name: String) {
-        self.name = name
-    }
-
-    var description: String {
-        return "\(type(of: self))(name: \"\(name)\")"
-    }
-
-    static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.description == rhs.description
-    }
-
-    func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
-        return name
-    }
-
-}
-
-class UndefinedNode: Node {}
-
-protocol FieldNodeType {
-
-    func fieldName(tableInfo: DataStoreTableInfo) -> String
-}
-
-class FieldNode: Node, FieldNodeType {
-
-    override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
-        if let value = object.value(forKeyPath: name) {
-            return "\(value)"
-        }
-        return name
-    }
-
-    func fieldName(tableInfo: DataStoreTableInfo) -> String {
-        return name
-    }
-
-}
-
-class FieldOriginalNode: Node, FieldNodeType {
-
-    override func format(_ object: AnyObject, tableInfo: DataStoreTableInfo) -> String {
-        if let field = tableInfo.fields.filter({ $0.originalName == self.name}).first,
-            let value = object.value(forKeyPath: field.name) {
-            return "\(value)"
-        }
-        logger.warning("No value for format node \(name) and record \(object)")
-        #if DEBUG
-        return "%"+name+"%"
-        #else
-        return ""
-        #endif
-    }
-
-    func fieldName(tableInfo: DataStoreTableInfo) -> String {
-        if let field = tableInfo.fields.filter({ $0.originalName == self.name}).first {
-            return field.name
-        }
-        return ""
     }
 }
