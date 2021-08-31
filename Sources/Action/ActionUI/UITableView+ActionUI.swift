@@ -40,14 +40,17 @@ extension UITableView: ActionSheetUI {
 
     fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = UIColor.background) {
         if var color = color {
-            for _ in contextualActions {
-                color = color.lighter() ?? color
-            }
-            for contextualAction in contextualActions {
+            let brightness = color.brightness
+            let percentage: CGFloat = brightness < 0.5 ? 10 : 4
+            for contextualAction in contextualActions.reversed() {
                 if contextualAction.backgroundColor == UIContextualAction.defaultBackgroundColor {
                     contextualAction.backgroundColor = color
                 }
-                color = color.darker() ?? color
+                if brightness > 0.8 {
+                    color = color.darker(by: percentage) ?? color
+                } else {
+                    color = color.lighter(by: percentage) ?? color
+                }
             }
         }
     }
@@ -71,7 +74,6 @@ extension UITableView: ActionSheetUI {
 
         // To get current context, we rebuild the actions here, could not be done before if context could not be injected in handler
         var contextualActions = self.build(from: actionSheet, context: context, moreActions: nil, handler: ActionManager.instance.prepareAndExecuteAction).compactMap { $0 as? UIContextualAction }
-        gradientBackgroundColor(contextualActions)
 
         // Check if we need more "..." action
         if withMore && contextualActions.count > UITableView.maxVisibleContextualActions {
@@ -95,6 +97,7 @@ extension UITableView: ActionSheetUI {
             }
             contextualActions.append(moreItem)
         }
+        gradientBackgroundColor(contextualActions)
         return contextualActions
     }
 }

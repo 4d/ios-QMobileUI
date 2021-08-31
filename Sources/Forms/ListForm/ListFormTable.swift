@@ -110,6 +110,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
 
     final public override func viewDidLoad() {
         super.viewDidLoad()
+        UITableViewCell.swizzle_adjustSwipeActionTextColors()
         initDataSource()
         initComponents()
         onLoad()
@@ -119,7 +120,6 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
         logger.verbose({
             return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
         })
-
     }
 
     final public override func viewWillAppear(_ animated: Bool) {
@@ -181,12 +181,34 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
     /// Provide action as swipe action
     override open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let actionContext = self.actionContext(forRowAt: indexPath),
-              let contextualActions = tableView.swipeActions(with: actionContext, at: indexPath, withMore: true) else { return nil }
+              let contextualActions = tableView.swipeActions(with: actionContext, at: indexPath, withMore: true) else { return .empty }
         let configuration = UISwipeActionsConfiguration(actions: contextualActions)
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
     }
     // or leadingSwipeActionsConfigurationForRowAt?
+
+    /// Fix text color of swipe actions
+    fileprivate func fixSwipeActionTextColor(_ tableView: UITableView, _ indexPath: IndexPath) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            tableView.cellForRow(at: indexPath)?.layoutIfNeeded()
+        }
+    }
+
+    override open func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        super.tableView(tableView, willBeginEditingRowAt: indexPath)
+        fixSwipeActionTextColor(tableView, indexPath)
+    }
+
+    // override open func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {}
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if isEditing {
+            // we close editing(swipe action) as workaround to text color fix (alternative could be get edited row index path and call fixSwipeActionTextColor
+            self.tableView.setEditing(false, animated: true)
+        }
+    }
 
     // MARK: - segue
 

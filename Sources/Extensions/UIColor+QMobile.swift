@@ -63,6 +63,17 @@ extension UIColor {
 
         return (red, green, blue, alpha)
     }
+
+    /// Return color brightness, algorithm from: http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+    var brightness: CGFloat {
+        var red: CGFloat = 0.0
+        var green: CGFloat = 0.0
+        var blue: CGFloat = 0.0
+        var alpha: CGFloat = 0.0
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return ((red * 299) + (green * 587) + (blue * 114)) / 1000
+    }
+
 }
 
 // MARK: - result
