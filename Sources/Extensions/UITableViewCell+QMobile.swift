@@ -30,11 +30,13 @@ extension UITableViewCell {
                 }
                 let isLight = currentBrightness > 0.5
                 $0.textColor = isLight ? .black: .white
+                $0.superview?.tintColor = isLight ? .black: .white
 
                 let isPreviousLight = previousBrightness > 0.5
                 if isPreviousLight != isLight { // we change color, but could we accept to not change?
                     if currentBrightness < 0.75 && currentBrightness > 0.25 {
                         $0.textColor = isPreviousLight ? .black: .white
+                        $0.superview?.tintColor = isPreviousLight ? .black: .white
                     } // else we change color
                 } else {
                     previousBrightness = currentBrightness
