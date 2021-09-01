@@ -174,152 +174,73 @@ extension ApplicationCoordinator {
 
 extension ApplicationCoordinator {
 
-    /// Prepare data for 1->N relation from DetailForm
-    static func prepare(from source: DetailsForm, to destination: ListForm, relationInfoUI: RelationInfoUI) {
-        guard let relationName = relationInfoUI.relationName else {
-            logger.error("No relation info to transition between in \(source) to  \(destination)")
-            return
+    fileprivate static func getRelationInfos(_ firstTableInfo: DataStoreTableInfo?, _ relationName: String) -> [DataStoreRelationInfo] {
+        var tableInfo = firstTableInfo
+        var relationsInfo: [DataStoreRelationInfo] = []
+        let relationsToSearch = relationName.split(separator: ".").reversed()
+        for relationToSearch in relationsToSearch {
+            if let inverseRelationInfo = tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == String(relationToSearch) }) {
+
+                relationsInfo.append(inverseRelationInfo)
+                tableInfo = inverseRelationInfo.destinationTable
+            } else {
+                logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
+                // return
+            }
         }
-        guard let record = source._record else {
-            logger.error("Cannot get source record in \(source) to display its relation \(relationName)")
-            return
-        }
+        return relationsInfo
+    }
+
+    fileprivate static func prepare(from actionContextProvider: ActionContextProvider, to destination: ListForm, relationInfoUI: RelationInfoUI, record: Record) {
         guard destination.dataSource == nil else {
-            logger.info(" data source \(String(describing: destination.dataSource))")
+            logger.info("data source \(String(describing: destination.dataSource)), must not be filled yet")
             assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
             return
         }
-
-        var relationToSeach = relationName
-        if let lastIndex = relationName.lastIndex(of: ".") {
-            relationToSeach = String(relationName[relationName.index(lastIndex, offsetBy: 1)...]) // CHECK: if more than one path, it will not work?
+        guard let relationName = relationInfoUI.relationName else {
+            logger.error("No relation info to transition between in \(actionContextProvider) to  \(destination)")
+            return
         }
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
 
-        guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationToSeach && $0.destinationTable?.name == source.tableName })
-            else {
-                logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
-                logger.warning("Current table info \(String(describing: destination.tableInfo))")
-                return
-        }
-
-        let relationOriginalName = destination.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName // BUG check this value, with . too (why do not take from previsous search?)
-
-        var recordSearch: RecordBase?
-        if relationToSeach != relationName { // multilevel, we must find element instead of current record
-            if let lastIndex = relationName.lastIndex(of: ".") {
-                if let intermediateRecord = record.value(forKeyPath: String(relationName[..<lastIndex])) as? RecordBase {
-                    recordSearch = intermediateRecord
-                } else {
-                    logger.debug("No record to related for relation. no record linked for \(record) with relation \(relationName)")
-                }
-            }// else must not occurs (asert?)
-        } else {
-            recordSearch = record.store
-        }
+        let predicatString = "ANY \(relationsInfo.map({ $0.name }).joined(separator: ".")) = %@" // current record id as parameter
+        let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
+        let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
 
         var previousTitle: String?
         if let relationFormat = relationInfoUI.relationFormat,
-            !relationFormat.isEmpty,
-            let record = recordSearch,
-            let tableInfo = recordSearch?.tableInfo,
-            let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo) {
+           !relationFormat.isEmpty,
+           let formatter = RecordFormatter(format: relationFormat, tableInfo: record.store.tableInfo) {
             previousTitle = formatter.format(record)
         }
-        let predicatString = "(\(inverseRelationInfo.name) = %@)"
 
-        guard let recordID = recordSearch?.objectID else {
-            logger.warning("No record to check database relation")
-            return
-        }
-        destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                              actionContext: source.actionContext(), // TODO check action context if deep relation
+        destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, record.store.objectID),
+                                              actionContext: actionContextProvider.actionContext(),
                                               previousTitle: previousTitle,
                                               relationName: relationOriginalName,
-                                              inverseRelationName: inverseRelationInfo.originalName)
+                                              inverseRelationName: inverseRelationName)
 
         logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
     }
 
-    /// Prepare data for 1->N relation from ListForm
+    /// Prepare data for 1->N relation from `DetailForm`
+    static func prepare(from source: DetailsForm, to destination: ListForm, relationInfoUI: RelationInfoUI) {
+        guard let record = source._record else {
+            logger.error("Cannot get source record in \(source) to display its relation \(String(describing: relationInfoUI.relationName))")
+            return
+        }
+        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record)
+    }
+
+    /// Prepare data for 1->N relation from `ListForm`
     static func prepare(from source: ListForm, at indexPath: IndexPath, to destination: ListForm, relationInfoUI: RelationInfoUI) {
         guard let entry = source.dataSource?.entry() else { return }
         entry.indexPath = indexPath
-
-        guard let relationName = relationInfoUI.relationName else {
-            logger.error("No relation info to transition between in \(source) to  \(destination)")
-            return
-        }
-
-        // CLEAN: factorize code with DetailForm for relation segue
         guard let record = entry.record as? Record else {
             logger.warning("No record to check database relation")
             return
         }
-        let recordID = record.store.objectID
-
-        guard destination.dataSource == nil else {
-            logger.info(" data source \(String(describing: destination.dataSource))")
-            assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
-            return
-        }
-        if relationName.contains(".") {
-            // find inverse relation path to create predicate
-            let relationsToSearch = relationName.split(separator: ".").reversed()
-            var relationsInfo: [DataStoreRelationInfo] = []
-            var tableInfo = destination.tableInfo
-            // var relationTableName = source.tableName
-            for relationToSearch in relationsToSearch {
-                if let inverseRelationInfo = tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == String(relationToSearch) /*&& $0.destinationTable?.name == relationTableName*/ }) {
-
-                    relationsInfo.append(inverseRelationInfo)
-                    tableInfo = inverseRelationInfo.destinationTable
-                } else {
-                    logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
-                    logger.warning("Current table info \(String(describing: destination.tableInfo))")
-                    return
-                }
-
-            }
-            let predicatString = relationsInfo.map({$0.name}).joined(separator: ".")+" = %@"
-
-            // TODO factorize with under code
-            let previousTitle: String? = "TODO: must be implemented"
-            let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".") // ?? relationName // TODO original ?
-            let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".") // TODO original ?
-
-            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                                  actionContext: source.actionContext(),
-                                                  previousTitle: previousTitle,
-                                                  relationName: relationOriginalName,
-                                                  inverseRelationName: inverseRelationName)
-
-            logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
-
-        } else {
-            guard let inverseRelationInfo = destination.tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == relationName && $0.destinationTable?.name == source.tableName })
-            else {
-                logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
-                logger.warning("Current table info \(String(describing: destination.tableInfo))")
-                return
-            }
-
-            let relationOriginalName = destination.tableInfo?.relationshipsByName[relationName]?.originalName ?? relationName
-
-            var previousTitle: String?
-            if let tableInfo = destination.tableInfo,
-               let relationFormat = relationInfoUI.relationFormat,
-               let formatter = RecordFormatter(format: relationFormat, tableInfo: tableInfo), !relationFormat.isEmpty {
-                previousTitle = formatter.format(record)
-            }
-            let predicatString = "(\(inverseRelationInfo.name) = %@)"
-            destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, recordID),
-                                                  actionContext: source.actionContext(),
-                                                  previousTitle: previousTitle,
-                                                  relationName: relationOriginalName,
-                                                  inverseRelationName: inverseRelationInfo.originalName)
-
-            logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
-        }
+        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record)
     }
 
     /// Prepare data for N->1 relation from ListForm
@@ -330,12 +251,10 @@ extension ApplicationCoordinator {
             logger.error("No relation info to transition between in \(source) to  \(destination)")
             return
         }
-
         guard let record = entry.record as? Record else {
             logger.warning("Cannot get source record in \(source) to display its relation \(relationName)")
             return
         }
-
         guard let relationRecord = record[relationName] as? RecordBase else {
             logger.warning("Cannot display relation \(relationName) of record \(record)")
             return
