@@ -117,9 +117,9 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
         logger.info("ListForm for '\(self.tableName)' table loaded.")
 
         self.dataSource?.performFetch()
-        logger.verbose({
-            return "source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))"
-        })
+        if logger.isEnabledFor(level: .verbose) {
+            logger.verbose("source: \(String(describing: self.dataSource)) , count: \(String(describing: self.dataSource?.count))")
+        }
     }
 
     final public override func viewWillAppear(_ animated: Bool) {

@@ -38,12 +38,32 @@ extension UITableView: ActionSheetUI {
         return 3
     }
 
+    fileprivate static func swipeActionColors() -> [UIColor?] {
+        struct Once {
+            static let once = Once()
+            var colors: [UIColor?]
+            init() {
+                colors = [UIColor?](repeating: nil, count: UITableView.maxVisibleContextualActions)
+                for index in 0..<UITableView.maxVisibleContextualActions {
+                    colors[index] = UIColor(named: "SwipeAction\(index)")
+                }
+                while colors.last == nil && !colors.isEmpty {
+                    colors.removeLast()
+                }
+            }
+        }
+        return Once.once.colors
+    }
+
     fileprivate func gradientBackgroundColor(_ contextualActions: [UIContextualAction], color: UIColor? = UIColor.background) {
         if var color = color {
+            let colors = UITableView.swipeActionColors()
             let brightness = color.brightness
             let percentage: CGFloat = brightness < 0.5 ? 10 : 4
-            for contextualAction in contextualActions.reversed() {
-                if contextualAction.backgroundColor == UIContextualAction.defaultBackgroundColor {
+            for (index, contextualAction) in contextualActions.reversed().enumerated() {
+                if colors.count > index, let forceColor = colors[index] {
+                    contextualAction.backgroundColor = forceColor
+                } else if contextualAction.backgroundColor == UIContextualAction.defaultBackgroundColor {
                     contextualAction.backgroundColor = color
                 }
                 if brightness > 0.8 {
