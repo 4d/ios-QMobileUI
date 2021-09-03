@@ -53,6 +53,7 @@ extension ApplicationPreferences: ApplicationService {
         let keyChain = KeychainPreferences.sharedInstance
         keyChain.clearAll() // keyChain.lastStatus allow to see that not work
         APIManager.removeAuthToken()
+        ActionManager.instance.requests.removeAll()
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {

@@ -533,6 +533,9 @@ extension ActionManager: ReachabilityListener, ServerStatusListener, Authenticat
 
     public func didLogout() {
         checkSuspend()
+        if ApplicationAuthenticate.hasLogin {
+            self.requests.removeAll()
+        }
     }
 
     func checkSuspend() {

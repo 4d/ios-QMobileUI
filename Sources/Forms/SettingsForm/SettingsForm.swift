@@ -137,6 +137,11 @@ open class SettingsForm: UITableViewController, Storyboardable {
             let identifier = segue.identifier,
             let button = sender as? UIButton,
             let cell = button.parentCellView as? DialogFormDelegate {
+            let instance = ActionManager.instance
+            instance.$requests.receiveOnForeground().sink { _ in //  listen to change of number of request
+                let draftCount = instance.requests.filter({!$0.state.isFinal}).count
+                dialogForm.message?.text =  "8mX-Hn-Puh.\((draftCount > 0) ? "warningPendingTask.": "")text".localized(tableName: "SettingLogOutDialog", bundle: .main)
+            }.store(in: &bag)
             switch identifier {
             case "confirmLogOut":
                 dialogForm.delegate = cell

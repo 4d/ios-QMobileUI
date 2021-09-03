@@ -28,7 +28,7 @@ extension String {
         return NSLocalizedString(self, bundle: Bundle(for: Binder.self), comment: "")
     }
 
-    func localized(with comment: String = "", bundle: Bundle = Bundle(for: Binder.self)) -> String {
-        return NSLocalizedString(self, bundle: bundle, comment: comment)
+    func localized(with comment: String = "", tableName: String? = nil, bundle: Bundle = Bundle(for: Binder.self)) -> String {
+        return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
     }
 }
