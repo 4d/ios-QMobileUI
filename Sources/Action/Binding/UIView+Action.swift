@@ -122,6 +122,7 @@ extension UIView {
                             return [action.name: action]
                         }
                         let sortActionAcount = actionSheet.actions.filter({$0.preset == .sort}).count
+                        button.isHidden = actionSheet.actions.count == 1 && sortActionAcount == 1
 
                         let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
                         button.menu = menu
