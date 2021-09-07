@@ -184,7 +184,7 @@ extension ApplicationCoordinator {
                 relationsInfo.append(inverseRelationInfo)
                 tableInfo = inverseRelationInfo.destinationTable
             } else {
-                logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation")
+                logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation: \(relationToSearch)")
                 // return
             }
         }
@@ -203,7 +203,6 @@ extension ApplicationCoordinator {
         }
         let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
 
-        let predicatString = "ANY \(relationsInfo.map({ $0.name }).joined(separator: ".")) = %@" // current record id as parameter
         let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
         let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
 
@@ -214,13 +213,66 @@ extension ApplicationCoordinator {
             previousTitle = formatter.format(record)
         }
 
-        destination.formContext = FormContext(predicate: NSPredicate(format: predicatString, record.store.objectID),
+        var predicatString: String = ""
+        switch relationsInfo.count {
+        case 0:
+            logger.warning("No relation info found in database for \(relationName) ")
+            assertionFailure("No relation info provided")
+        case 1:
+            predicatString = "\(relationsInfo.map({ $0.name }).joined(separator: ".")) = %@" // clean: could take first and remove join
+        case 2:
+            predicatString = "ANY \(relationsInfo.map({ $0.name }).joined(separator: ".")) = %@"
+        default:
+            subquery(relationsInfo: relationsInfo.reversed(), predicatString: &predicatString)
+        }
+
+        let predicate = NSPredicate(format: predicatString, record.store.objectID)
+
+        destination.formContext = FormContext(predicate: predicate,
                                               actionContext: actionContextProvider.actionContext(),
                                               previousTitle: previousTitle,
                                               relationName: relationOriginalName,
                                               inverseRelationName: inverseRelationName)
 
         logger.debug("Will display relation \(relationName) of record \(record) using predicat \(predicatString) : \(String(describing: record[relationName]))")
+    }
+
+    /// Produce imbricated relation information
+    /// ex: SUBQUERY(inverseRight, $x, SUBQUERY($x.inverseSame, $y, $y.left = %@).@count > 0).@count > 0
+    static func subquery(relationsInfo: [DataStoreRelationInfo], predicatString: inout String, varName: String = "") {
+        var copy = relationsInfo
+        if let relationInfo = copy.popLast() {
+            if copy.isEmpty { // we are the last query
+                predicatString += "ANY $\(varName).\(relationInfo.name) = %@"
+            } else {
+                predicatString += "SUBQUERY("
+                if !varName.isEmpty {
+                    predicatString += "$\(varName)."
+                }
+                predicatString += "\(relationInfo.name)"
+                let newVarName = incrementName(varName)
+                predicatString += ", $\(newVarName), "
+                subquery(relationsInfo: copy, predicatString: &predicatString, varName: newVarName)
+                predicatString += ").@count > 0"
+            }
+        }
+    }
+
+    /// Recursive function that increments a name
+    fileprivate static func incrementName(_ name: String) -> String { // move to String ext?
+        var previousName = name
+        if let lastScalar = previousName.unicodeScalars.last {
+            let lastChar = previousName.remove(at: previousName.index(before: previousName.endIndex))
+            if lastChar == "z" {
+                let newName = incrementName(previousName) + "a"
+                return newName
+            } else {
+                let incrementedChar = String(Character(Unicode.Scalar(lastScalar.value + 1) ?? "a"))
+                return previousName + incrementedChar
+            }
+        } else {
+            return "a"
+        }
     }
 
     /// Prepare data for 1->N relation from `DetailForm`
