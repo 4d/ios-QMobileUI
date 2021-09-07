@@ -113,41 +113,46 @@ extension DataSourceSortable {
 
     /// Compute the mandatory sort descriptors.
     func makeSortDescriptors(tableName: String) -> [NSSortDescriptor] {
-        let tableInfo: DataStoreTableInfo? = self.dataSource?.tableInfo
-        var sortDescriptors: [NSSortDescriptor] = []
+        guard let tableInfo: DataStoreTableInfo = ApplicationDataSync.instance.dataSync.dataStore.tableInfo(for: tableName) else {
+            logger.warning("Cannot get table info for \(tableName), maybe too soon.")
+            return []
+        }
+        var sortDescriptors: [(String, Bool)] = []
 
         let sortFields: [String] = (UserDataSourceSortable.getSortFields(for: tableName) ?? self.sortField).split(separator: ",").map { String($0) }
 
         if !sortFields.isEmpty { // if sort field defined
-            sortDescriptors = sortFields.filter({ !$0.noNot.isEmpty }).map({ NSSortDescriptor(key: $0.noNot, ascending: $0.hasNot ? !sortAscending : sortAscending) })
+            sortDescriptors = sortFields.filter({ !$0.noNot.isEmpty }).map({ ($0.noNot, $0.hasNot ? !sortAscending : sortAscending) })
         } else if !searchableField.isEmpty && searchFieldAsSortField {
-            sortDescriptors = searchableFields.map { NSSortDescriptor(key: $0, ascending: sortAscending) }
+            sortDescriptors = searchableFields.map { ($0, sortAscending) }
         }
 
         // for the moment take the first in data store
         if sortDescriptors.isEmpty {
             if let sectionFieldname = self.sectionFieldname, !sectionFieldname.isEmpty {
-                sortDescriptors = [NSSortDescriptor(key: sectionFieldname, ascending: sortAscending)]
-            } else if let firstField = tableInfo?.fields.filter({$0.type.isSortable}).first {
-                logger.warning("There is no valid sort field for \(tableInfo?.name ?? "") list form. Please fill sortField.")
-                sortDescriptors = [firstField.sortDescriptor(ascending: true)]
+                return [NSSortDescriptor(key: sectionFieldname, ascending: sortAscending)]
+            } else if let firstField = tableInfo.fields.filter({$0.type.isSortable}).first {
+                logger.warning("There is no valid sort field for \(tableInfo.name) list form. Please fill sortField.")
+                return [firstField.sortDescriptor(ascending: true)]
             } else {
                 // XXX Find in UI Cell first/main field?
                 // assertionFailure("No sort field. Please fill sortField with a field name")
             }
         } else {
             if let sectionFieldname = self.sectionFieldname, !sectionFieldname.isEmpty { // Section must sorted first it seems
-                sortDescriptors.insert(NSSortDescriptor(key: sectionFieldname, ascending: sortAscending), at: 0)
+                sortDescriptors.insert((sectionFieldname, sortAscending), at: 0)
             }
-            if let fields = tableInfo?.fields.filter({$0.type.isSortable}),
-                let filtered = filter(sortDescriptors: sortDescriptors, by: fields) { // remove not valable sort field ie. field not exit in data model
-                sortDescriptors = filtered
+            return sortDescriptors.compactMap { (name, ascending) in
+                // remove if not sortable field and not exists in database
+                guard let field = tableInfo.fields.first(where: { $0.name == name}), field.type.isSortable else {
+                    return nil
+                }
+                return field.sortDescriptor(ascending: ascending)
             }
         }
-        return sortDescriptors
+        return []
     }
 
-    /// remove if not sortable field
     private func filter(sortDescriptors: [NSSortDescriptor], by fields: [DataStoreFieldInfo]) -> [NSSortDescriptor]? {
         let sortDescriptors = sortDescriptors.filter {
             let name = $0.key
@@ -159,7 +164,6 @@ extension DataSourceSortable {
         }
         return nil
     }
-
 }
 
 fileprivate extension String {
