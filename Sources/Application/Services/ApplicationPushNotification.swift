@@ -221,7 +221,7 @@ extension ApplicationPushNotification: UNUserNotificationCenterDelegate {
                             SwiftMessages.loading()
                             _ = dataSyncInstance.sync(operation: .record(tableName, primaryKeyValue), in: context.type) { recordResult in
                                 // TODO #123012 if notExists and failed, -> error cannot display
-                                logger.debug("Record \(deepLink) synchronised after push notfification: \(recordResult)")
+                                logger.debug("Record \(deepLink) synchronised after push notifification: \(recordResult)")
                                 DispatchQueue.main.after(1) { // XXX instead of 1, check if time already superior to one
                                     SwiftMessages.hide()
                                     if case .failure(let error) = recordResult {

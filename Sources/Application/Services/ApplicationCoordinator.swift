@@ -16,6 +16,7 @@ import QMobileAPI
 import XCGLogger
 import Prephirences
 import SwiftyJSON
+import SwiftMessages
 
 open class ApplicationCoordinator: NSObject {}
 
@@ -427,7 +428,36 @@ extension ApplicationCoordinator {
             let entry = DataSourceEntry(dataSource: relationDataSource)
             entry.indexPath = IndexPath(item: 0, section: 0)
 
+            // If no record, try to sync it
+            if entry.record == nil {
+                // try to download it
+                SwiftMessages.loading()
+                let dataSyncInstance = ApplicationDataSync.instance.dataSync
+                _ = dataSyncInstance.sync(operation: .record(tableName, primaryKeyValue), in: context.type) { recordResult in
+                    logger.debug("Record \(tableName)(\(primaryKeyValue)) synchronised after request to display it: \(recordResult)")
+
+                    switch recordResult {
+                    case .success:
+                        // retry
+                        foreground {
+                            open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
+                        }
+                        DispatchQueue.userInitiated.async {
+                            _ = dataSync { _ in } // do full sync too
+                        }
+                    case .failure(let error):
+                        logger.warning("Could not find the record \(tableName)(\(primaryKeyValue)) on server: \(error)")
+                        completion(false)
+                    }
+                    DispatchQueue.main.after(1) {
+                        SwiftMessages.hide()
+                    }
+                }
+                return
+            }
+
             guard entry.record != nil else {
+                assertionFailure("Code must now not be reachable")
                 logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
                 completion(false)
                 return
@@ -441,7 +471,6 @@ extension ApplicationCoordinator {
                     completion(presented)
                 }
             }
-
         }
     }
 
