@@ -394,6 +394,45 @@ extension ApplicationCoordinator {
         }
     }
 
+    fileprivate static func checkRecord(tableName: String, primaryKeyValue: Any, entry: DataSourceEntry, relationName: String? = nil, context: DataStoreContext, completion: @escaping (Bool) -> Void) -> Bool {
+        // If no record, try to sync it
+        guard entry.record == nil else {
+            logger.verbose("Record found to display it or its relation \(String(describing: entry.record))")
+            return true // all is ok
+        }
+        // try to download it
+        SwiftMessages.loading()
+        let dataSyncInstance = ApplicationDataSync.instance.dataSync
+        _ = dataSyncInstance.sync(operation: .record(tableName, primaryKeyValue), in: context.type) { recordResult in
+            logger.debug("Record \(tableName)(\(primaryKeyValue)) synchronised after request to display it: \(recordResult)")
+
+            switch recordResult {
+            case .success:
+                // retry
+                foreground {
+                    let newCompletion: (Bool) -> Void = { value in
+                        completion(value)
+                        DispatchQueue.userInitiated.async {
+                            _ = dataSync { _ in } // do full sync too
+                        }
+                    }
+                    if let relationName = relationName {
+                        open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: newCompletion)
+                    } else {
+                        open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: newCompletion)
+                    }
+                }
+            case .failure(let error):
+                logger.warning("Could not find the record \(tableName)(\(primaryKeyValue)) on server: \(error)")
+                completion(false)
+            }
+            DispatchQueue.main.after(1) {
+                SwiftMessages.hide()
+            }
+        }
+        return false
+    }
+
     public static func open(tableName: String, primaryKeyValue: Any, completion: @escaping (Bool) -> Void) {
         let storyboardName = "\(storyboardTableName(tableName))DetailsForm" // TODO maybe here make some translation between name in 4D and name autorized for swift and core data
 
@@ -420,46 +459,16 @@ extension ApplicationCoordinator {
                 return
             }
 
-            guard let relationDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore) else {
+            guard let recordDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore) else {
                 logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
                 completion(false)
                 return
             }
-            let entry = DataSourceEntry(dataSource: relationDataSource)
-            entry.indexPath = IndexPath(item: 0, section: 0)
+            let entry = DataSourceEntry(dataSource: recordDataSource)
+            entry.indexPath = .zero
 
-            // If no record, try to sync it
-            if entry.record == nil {
-                // try to download it
-                SwiftMessages.loading()
-                let dataSyncInstance = ApplicationDataSync.instance.dataSync
-                _ = dataSyncInstance.sync(operation: .record(tableName, primaryKeyValue), in: context.type) { recordResult in
-                    logger.debug("Record \(tableName)(\(primaryKeyValue)) synchronised after request to display it: \(recordResult)")
-
-                    switch recordResult {
-                    case .success:
-                        // retry
-                        foreground {
-                            open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
-                        }
-                        DispatchQueue.userInitiated.async {
-                            _ = dataSync { _ in } // do full sync too
-                        }
-                    case .failure(let error):
-                        logger.warning("Could not find the record \(tableName)(\(primaryKeyValue)) on server: \(error)")
-                        completion(false)
-                    }
-                    DispatchQueue.main.after(1) {
-                        SwiftMessages.hide()
-                    }
-                }
-                return
-            }
-
-            guard entry.record != nil else {
-                assertionFailure("Code must now not be reachable")
+            guard checkRecord(tableName: tableName, primaryKeyValue: primaryKeyValue, entry: entry, context: context, completion: completion) else {
                 logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
-                completion(false)
                 return
             }
 
@@ -491,13 +500,19 @@ extension ApplicationCoordinator {
                 return
             }
 
-            guard let relationDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore, context: context, fetchLimit: 1) else {
+            guard let recordDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore, context: context, fetchLimit: 1) else {
                 logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
                 completion(false)
                 return
             }
-            let entry = DataSourceEntry(dataSource: relationDataSource)
+            let entry = DataSourceEntry(dataSource: recordDataSource)
             entry.indexPath = .zero
+
+            guard checkRecord(tableName: tableName, primaryKeyValue: primaryKeyValue, entry: entry, relationName: relationName, context: context, completion: completion) else {
+                logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
+                return
+            }
+
             guard let record = entry.record as? Record else {
                 logger.warning("Could not find the record \(tableName) \(primaryKeyValue)")
                 completion(false)
