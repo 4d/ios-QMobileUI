@@ -594,6 +594,20 @@ public extension UILabel {
             self.text = newValue
         }
     }
+
+    @objc dynamic var yaml: [String: Any]? {
+        get {
+            return [:]
+        }
+        set {
+            if let newValue = newValue {
+                self.text = SimpleYAMLEncoder.default.encode(newValue)
+            } else {
+                self.text = nil
+            }
+        }
+    }
+
 }
 
 // MARK: image
