@@ -47,7 +47,7 @@ extension ApplicationCoordinator: ApplicationService {
 
     public static func manageConnectionOptions(_ connectionOptions: UIScene.ConnectionOptions) {
         // if scene launchOptions could be nil
-        guard let url = connectionOptions.urlContexts.first?.url, let deepLink = DeepLink.from(url) else {
+        guard let url = connectionOptions.urlContexts.first?.url ?? connectionOptions.userActivities.first(where: { $0.webpageURL != nil })?.webpageURL, let deepLink = DeepLink.from(url) else {
             return
         }
         DispatchQueue.main.async {
