@@ -444,7 +444,7 @@ extension ApplicationCoordinator {
         }
 
         let dataStore = ApplicationDataStore.instance.dataStore
-        _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
+        let ready = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
             guard let tableInfo = context.tableInfo(forOriginalName: tableName) ?? context.tableInfo(for: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
@@ -481,11 +481,17 @@ extension ApplicationCoordinator {
                 }
             }
         }
+        if !ready {
+            logger.debug("Could not open \(tableName) \(primaryKeyValue), data store not ready, reschedule it")
+            DispatchQueue.main.after(3) {
+                open(tableName: tableName, primaryKeyValue: primaryKeyValue, completion: completion)
+            }
+        }
     }
 
     public static func open(tableName: String, primaryKeyValue: Any, relationName: String, completion: @escaping (Bool) -> Void) { // swiftlint:disable:this function_body_length
         let dataStore = ApplicationDataStore.instance.dataStore
-        _ = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
+        let ready = dataStore.perform(.foreground, wait: false, blockName: "Presenting \(tableName) record") { (context) in
 
             guard let tableInfo = context.tableInfo(forOriginalName: tableName) ?? context.tableInfo(for: tableName) else {
                 logger.warning("Failed to get table info of table \(tableName) to present form")
@@ -575,6 +581,12 @@ extension ApplicationCoordinator {
                 }
             }
 
+        }
+        if !ready {
+            logger.debug("Could not open \(tableName) \(primaryKeyValue) relation \(relationName), data store not ready, reschedule it")
+            DispatchQueue.main.after(3) {
+                open(tableName: tableName, primaryKeyValue: primaryKeyValue, relationName: relationName, completion: completion)
+            }
         }
     }
 
