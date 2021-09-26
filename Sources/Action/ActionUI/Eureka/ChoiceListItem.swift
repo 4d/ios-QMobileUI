@@ -13,7 +13,7 @@ import protocol QMobileAPI.ActionParameterEncodable
 import enum QMobileAPI.ActionParameterType
 
 /// Represent a choice in choice list
-struct ChoiceListItem: Equatable {
+struct ChoiceListItem: Equatable, Hashable {
     /// the database value, key to identify the choice
     var key: AnyCodable
     /// the value displayed to user, not real data value
@@ -73,7 +73,13 @@ struct ChoiceListItem: Equatable {
     }
 
     static func == (left: ChoiceListItem, right: ChoiceListItem) -> Bool {
-        return left.key == right.key // && left.value == right.value, only on key
+        return left.key == right.key && left.value == right.value
+    }
+
+    func hash(into hasher: inout Hasher) {
+        if let hashable = key as? AnyHashable {
+            hasher.combine(hashable)
+        }
     }
 }
 
@@ -87,7 +93,7 @@ extension ChoiceListItem: Encodable {
 extension ChoiceListItem: CustomStringConvertible {
 
     var description: String {
-        return "\(value)"
+        return "\(key)$\(value)" // unique key used as tag in option row
     }
 }
 

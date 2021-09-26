@@ -97,9 +97,9 @@ extension ActionParameter {
             case .push:
                 if choice.isSearchable {
                     return SearchPushRow<ChoiceListItem>(name)
-                    .imageNamed(isImageNamed)
-                    .fillOptions(choiceList: choice, parameter: self)
-                    .onRowEvent(eventCallback)
+                        .imageNamed(isImageNamed)
+                        .fillOptions(choiceList: choice, parameter: self)
+                        .onRowEvent(eventCallback)
 
                 } else {
                     return PushRow<ChoiceListItem>(name)
@@ -117,11 +117,17 @@ extension ActionParameter {
                     .onRowEvent(eventCallback)
             default:
                 assertionFailure("Must not occurs, a correct default type must have been chosen")
-                return PushRow<ChoiceListItem>(name)
-                    .imageNamed(isImageNamed)
-                    .fillOptions(choiceList: choice, parameter: self)
-                    .onRowEvent(eventCallback)
-
+                if choice.isSearchable {
+                    return SearchPushRow<ChoiceListItem>(name)
+                        .imageNamed(isImageNamed)
+                        .fillOptions(choiceList: choice, parameter: self)
+                        .onRowEvent(eventCallback)
+                } else {
+                    return PushRow<ChoiceListItem>(name)
+                        .imageNamed(isImageNamed)
+                        .fillOptions(choiceList: choice, parameter: self)
+                        .onRowEvent(eventCallback)
+                }
             }
         }
 
@@ -185,7 +191,7 @@ extension ActionParameterFormat {
     }
 }
 
-extension OptionsProviderRow where Self: Eureka.BaseRow, Self.OptionsProviderType.Option == ChoiceListItem, Self.Cell.Value == ChoiceListItem {
+extension OptionsProviderRow where Self: RowOf<ChoiceListItem>, Self.OptionsProviderType.Option == ChoiceListItem, Self.Cell.Value == ChoiceListItem {
 
     /// Fill this type of row with choice list
     func fillOptions(choiceList: ChoiceList, parameter: ActionParameter) -> Self {
@@ -198,9 +204,17 @@ extension OptionsProviderRow where Self: Eureka.BaseRow, Self.OptionsProviderTyp
         if let value = parameter.default, let defaultChoice = choiceList.choice(for: value) {
             self.value = defaultChoice
         }
+        self.displayValueFor = { (item: ChoiceListItem?) -> String? in
+            guard let item = item else {
+                return nil
+            }
+            return "\(item.value)"
+        }
+
         return self
     }
 }
+
 extension PickerRow: OptionsProviderRow {
     public typealias OptionsProviderType = OptionsProvider<Cell.Value>
     public var optionsProvider: OptionsProvider<Cell.Value>? {

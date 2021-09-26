@@ -49,3 +49,17 @@ func filter<T, U>(value: T, childrenClosure: (T) -> [T]) -> [U] {
     }
     return result
 }
+
+extension Array where Element: Hashable {
+    func uniqued() -> Array {
+        var buffer = Array()
+        var added = Set<Element>()
+        for elem in self {
+            if !added.contains(elem) {
+                buffer.append(elem)
+                added.insert(elem)
+            }
+        }
+        return buffer
+    }
+}

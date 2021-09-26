@@ -69,7 +69,7 @@ open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: Opt
     public func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
         let scope = searchBar.scopeButtonTitles?[searchBar.selectedScopeButtonIndex]
-    
+
         filterOptionsForSearchText(searchBar.text ?? "", scope: scope)
         tableView.reloadData()
     }

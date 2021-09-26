@@ -122,7 +122,7 @@ struct ChoiceList {
         }
 
         if let dataClass = dataSource["dataClass"] as? String ?? dataSource["table"] as? String,
-           let dataFieldOriginal = dataSource["field"] as? String,
+           let dataFieldOriginal = dataSource["field"] as? String ?? dataSource["key"] as? String ?? dataSource["attribute"] as? String,
            let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
            let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
             // Well defined data source from database
@@ -156,7 +156,7 @@ struct ChoiceList {
                     }
                 }
             }
-            return optionsFromRecords
+            return optionsFromRecords.uniqued()
         }
         // not correct data source defined
         logger.warning("Unknown data source definition \(dataSource)")
