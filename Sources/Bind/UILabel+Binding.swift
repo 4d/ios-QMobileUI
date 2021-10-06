@@ -575,7 +575,7 @@ public extension UILabel {
         }
         set {
             if let newValue = newValue {
-                if let jsonData = try? JSONSerialization.data(withJSONObject: newValue.values, options: []) {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: Array(newValue.values), options: []) {
                     self.text = String(data: jsonData, encoding: .utf8)
                 } else {
                     self.text = nil
