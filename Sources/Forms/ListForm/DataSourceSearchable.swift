@@ -111,6 +111,32 @@ extension DataSourceSortable {
         UserDataSourceSortable.setSortFields(for: self, value: sortFieldAsString)
     }
 
+    /// Compute the sort descriptor according to name if field exist.
+    fileprivate func makeSortDescriptor(_ tableInfo: DataStoreTableInfo, _ name: String, _ ascending: Bool) -> NSSortDescriptor? {
+        // "name" must be in local database format
+
+        if name.contains(".") { // is it a relation?
+            var keyPaths = name.split(separator: ".")
+            var relationTableInfo: DataStoreTableInfo? = tableInfo
+            if let fieldName = keyPaths.popLast() {
+                for relationName in keyPaths {
+                    guard let relationInfo = relationTableInfo?.relationInfo(for: String(relationName)) else {
+                        return nil // remove if not exists in database
+                    }
+                    relationTableInfo = relationInfo.destinationTable
+                }
+                if let field = relationTableInfo?.fieldInfo(for: String(fieldName)), field.type.isSortable {
+                    return field.sortDescriptor(name: name, ascending: ascending)
+                }
+            }
+            return nil // wrong relation format
+        }
+        if let field = tableInfo.fieldInfo(for: name), field.type.isSortable {
+            return field.sortDescriptor(ascending: ascending)
+        }
+        return nil // remove if not sortable field and not exists in database
+    }
+
     /// Compute the mandatory sort descriptors.
     func makeSortDescriptors(tableName: String) -> [NSSortDescriptor] {
         guard let tableInfo: DataStoreTableInfo = ApplicationDataSync.instance.dataSync.dataStore.tableInfo(for: tableName) else {
@@ -143,11 +169,7 @@ extension DataSourceSortable {
                 sortDescriptors.insert((sectionFieldname, sortAscending), at: 0)
             }
             return sortDescriptors.compactMap { (name, ascending) in
-                // remove if not sortable field and not exists in database
-                guard let field = tableInfo.fields.first(where: { $0.name == name}), field.type.isSortable else {
-                    return nil
-                }
-                return field.sortDescriptor(ascending: ascending)
+                return makeSortDescriptor(tableInfo, name, ascending)
             }
         }
         return []
