@@ -142,6 +142,19 @@ extension UIViewController {
         return self
     }
 
+    public var displayableHierachy: [UIViewController]? {
+        let presentationStyle = self.modalPresentationStyle
+        if presentationStyle == .automatic || presentationStyle == .pageSheet {
+            if let parent = self.parent {
+                return [parent] + (parent.hierarchy ?? [])
+            }
+            if let presentingViewController = self.presentingViewController {
+                return [presentingViewController] + (presentingViewController.hierarchy ?? [])
+            }
+        }
+        return nil
+    }
+
     /// Add a gesture recognizer to main view of controller.
     func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer?) {
         if let gestureRecognizer = gestureRecognizer {
