@@ -134,6 +134,7 @@ open class ListFormTable: UITableViewController, ListFormSearchable { // swiftli
         super.viewDidAppear(animated)
         isViewVisible = true
         inDataSync = !ApplicationDataSync.instance.dataSync.isCancelled
+        initBackButton()
         onDidAppear(animated)
     }
 

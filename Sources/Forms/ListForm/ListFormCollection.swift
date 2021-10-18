@@ -135,6 +135,9 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        isViewVisible = true
+        inDataSync = !ApplicationDataSync.instance.dataSync.isCancelled
+        initBackButton()
         onDidAppear(animated)
     }
 
@@ -142,6 +145,7 @@ open class ListFormCollection: UICollectionViewController, ListFormSearchable { 
         super.viewWillDisappear(animated)
         self.unitRefreshControll()
         self.removeEllipsisView()
+        isViewVisible = false
         onWillDisappear(animated)
     }
 

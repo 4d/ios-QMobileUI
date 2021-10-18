@@ -180,6 +180,50 @@ extension UIViewController {
         }
     }
 
+    /// init back button menu
+    func initBackButton() {
+        guard let navigationController = self.navigationController else {
+            return
+        }
+        let navigationBar = navigationController.navigationBar
+        guard let previousButton = navigationBar.topItem?.leftBarButtonItems?.first else {
+            return
+        }
+        guard let target = previousButton.target, let selector: Selector = previousButton.action else {
+            return
+        }
+
+        let action = UIAction { _ in
+            target.performSelector(onMainThread: selector, with: nil, waitUntilDone: true)
+        }
+
+        let deferred = UIDeferredMenuElement { callback in
+            guard let hierarchy: [UIViewController] = self.displayableHierachy else { return }
+            var children: [UIMenuElement] = []
+            for vcInHierarchy in hierarchy {
+                let firstController = vcInHierarchy.firstController
+                let title = firstController.navigationItem.title
+                if firstController == self {
+                    // ignore current level
+                } else if vcInHierarchy == firstController { // last one main?, ie. stop to last one...
+                    let action = UIAction(title: vcInHierarchy.firstSelectedController.navigationItem.title ?? "Dismiss all", image: nil) { _ in
+                        vcInHierarchy.firstSelectedController.dismiss(animated: true)
+                    }
+                    children.append(action)
+                } else {
+                    let action = UIAction(title: title ?? "\(firstController)", image: nil) { _ in
+                        firstController.dismiss(animated: true)
+                    }
+                    children.append(action)
+                }
+            }
+            callback(children)
+        }
+
+        let menu = UIMenu(title: "", image: nil, identifier: nil, options: [], children: [deferred])
+        navigationBar.topItem?.leftBarButtonItems = [UIBarButtonItem(title: previousButton.title, image: previousButton.image, primaryAction: action, menu: menu)]
+    }
+
     /// Instanciate a controller using its storyboard name and add it as a child.
     /// - parameter:
     ///

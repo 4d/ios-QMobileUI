@@ -33,6 +33,7 @@ open class DetailsFormBare: UIViewController, DetailsForm {
         super.viewDidAppear(animated)
         self.addEllipsisView()
         installSwipeGestureRecognizer()
+        initBackButton()
         onDidAppear(animated)
     }
 
