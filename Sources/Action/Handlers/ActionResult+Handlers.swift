@@ -154,6 +154,9 @@ extension ActionResult {
                                 }
                                 return url
                             }
+                            if let string = value.rawValue as? String, let data = Data(base64Encoded: string) {
+                                return UIImage(data: data)
+                            }
                             return value.rawValue
                         default:
                             return value.rawValue
