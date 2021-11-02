@@ -24,10 +24,12 @@ extension SwiftMessages {
     public static var errorForegroundColor = UIColor(named: "MessageErrorForegroundColor")
     public static var errorDuration: TimeInterval = Prephirences.sharedInstance["alert.error.duration"] as? TimeInterval ?? 20.0
 
+    public typealias Configure = (_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config
+
     /// Hide message when tap.
     public static var defaultTapHandler: ((_ view: BaseView) -> Void) = { _ in SwiftMessages.hide() }
 
-    public static func debug(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+    public static func debug(_ message: String, configure: Configure? = nil) {
         #if DEBUG
         let enabled = Prephirences.sharedInstance["alert.debug.enabled"] as? Bool ?? true
         guard enabled else { return }
@@ -77,7 +79,7 @@ extension SwiftMessages {
         #endif
     }
 
-    public static func info(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+    public static func info(_ message: String, configure: Configure? = nil) {
         onForeground {
             var layout: MessageView.Layout = .statusLine
             let lineDelimiterPos = message.firstIndex(of: "\n")
@@ -103,7 +105,7 @@ extension SwiftMessages {
 
             var config = SwiftMessages.Config()
            /* if case .statusLine = layout {
-                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                config.presentationContext = .window(windowLevel: .statusBar)
             } else {*/
                 config.presentationContext = .window(windowLevel: .normal)
            /* }*/
@@ -116,7 +118,7 @@ extension SwiftMessages {
         }
     }
 
-    public static func warning(_ message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+    public static func warning(_ message: String, configure: Configure? = nil) {
         onForeground {
             var layout: MessageView.Layout = .statusLine
             let lineDelimiterPos = message.firstIndex(of: "\n")
@@ -160,7 +162,7 @@ extension SwiftMessages {
         SwiftMessages.error(title: error.errorDescription ?? "", message: error.failureReason ?? "", configure: configure)
     }
 
-    public static func error(title: String, message: String, configure: ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config)? = nil) {
+    public static func error(title: String, message: String, configure: Configure? = nil) {
         onForeground {
             var layout: MessageView.Layout = .cardView
             if title.isEmpty {
@@ -241,4 +243,12 @@ extension SwiftMessages {
         }
     }
 
+}
+
+extension SwiftMessages.Config {
+    func viewController(_ viewController: UIViewController)-> SwiftMessages.Config {
+        var config = self
+        config.presentationContext = .viewController(viewController)
+        return config
+    }
 }

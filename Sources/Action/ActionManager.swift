@@ -42,6 +42,9 @@ public class ActionManager: NSObject, ObservableObject {
     /// List of requests
     @Published public var requests: [ActionRequest] = []
 
+    /// List of avaiable handlers
+    var handlers: [ActionResultHandler] = []
+
     /// Operation queue.
     fileprivate let queue = ActionRequestQueue()
 
@@ -54,6 +57,7 @@ public class ActionManager: NSObject, ObservableObject {
     let cache = ActionManagerCache()
 
     private var bag = Set<AnyCancellable>()
+    private var window: UIWindow? // keep ref to present on top vc or it will dismiss immediately (do not forget to remove on dismiss or transparent window will remain)
 
     override init() {
         super.init()
@@ -83,10 +87,6 @@ public class ActionManager: NSObject, ObservableObject {
             self.objectWillChange.send()
         }
     }
-    // MARK: handlers
-
-    /// List of avaiable handlers
-    var handlers: [ActionResultHandler] = []
 
     // MARK: - Action execution
 
@@ -111,7 +111,22 @@ public class ActionManager: NSObject, ObservableObject {
                 return
             }
             dataSourceSortable.setSortDescriptors(sortDescriptors)
-        } else if action.parameters.isEmpty {
+        } else if action.preset == .url {
+#if(DEBUG)
+            let style = action.style ?? .custom(["url": APIManager.instance.base.url.appendingPathComponent("$/action").absoluteString])
+            if case .custom(let data) = style, let urlString = data["url"] as? String {
+
+                let controlAction = ActionWebAreaControler()
+                controlAction.urlString = urlString
+                controlAction.context = context
+                controlAction.action = action
+                controlAction.dismissHandler = {
+                    self.window = nil
+                }
+                self.window = controlAction.presentOnTop()
+            }
+#endif
+       } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
             executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
         } else {
@@ -281,7 +296,7 @@ public class ActionManager: NSObject, ObservableObject {
                         logger.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
                         SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)") { (_, config) in
                             var config = config
-                            config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                            config.presentationContext = .window(windowLevel: .statusBar)
                             return config
                         }
                     }

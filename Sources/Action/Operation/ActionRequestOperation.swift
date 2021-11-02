@@ -167,7 +167,7 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             SwiftMessages.info(message) { (view, config) -> SwiftMessages.Config in
                 view.configureTheme(.info)
                 var config = config
-                config.presentationContext = .window(windowLevel: UIWindow.Level.statusBar)
+                config.presentationContext = .window(windowLevel: .statusBar)
                 logger.debug("configure: " + message)
                 return config
             }
