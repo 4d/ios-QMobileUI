@@ -66,6 +66,7 @@ open class WebAreaForm: UIViewController {
         webArea.navigationDelegate = self
         webArea.uiDelegate = self
         webArea.allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures
+        webArea.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
     }
 
     // MARK: Events
@@ -139,9 +140,17 @@ open class WebAreaForm: UIViewController {
 }
 
 extension WebAreaForm: WKNavigationDelegate {
-
 }
 
 extension WebAreaForm: WKUIDelegate {
+}
+
+extension WKHTTPCookieStore {
+
+    public func injectSharedCookies() {
+        for cookie in HTTPCookieStorage.shared.cookies ?? [] {
+            setCookie(cookie)
+        }
+    }
 
 }

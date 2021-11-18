@@ -34,6 +34,7 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
     }
 
     func loadURL() {
+        webView.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
         if let url = self.url {
             self.reloadButton?.isEnabled = true
             let request = URLRequest(url: url)
