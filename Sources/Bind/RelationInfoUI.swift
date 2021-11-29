@@ -15,6 +15,10 @@ public protocol RelationInfoUI {
     var relation: Any? { get }
     /// The relation name
     var relationName: String? { get }
+    /// The relation label
+    var relationLabel: String? { get }
+    /// The relation short label
+    var relationShortLabel: String? { get }
     /// The relation format
     var relationFormat: String? { get }
     /// The inverse relation name.
@@ -25,11 +29,19 @@ public protocol RelationInfoUI {
     var addRelationSegueAction: Bool { get }
 }
 
+extension RelationInfoUI {
+
+    var relationPreferredLongLabel: String? {
+        return relationLabel.isEmpty ? relationShortLabel: relationLabel
+    }
+}
+
 struct RelationInfoUIAssociatedKeys {
     static var relation = "RelationInfoUI.relation"
     static var relationName = "RelationInfoUI.relationName"
     static var relationFormat = "RelationInfoUI.relationFormat"
     static var relationLabel = "RelationInfoUI.relationLabel"
+    static var relationShortLabel = "RelationInfoUI.relationShortLabel"
     static var relationIsToMany = "RelationInfoUI.relationIsToMany"
     // static var inverseRelationName = "RelationInfoUI.inverseRelationName"
     static var addRelationSegueAction = "RelationInfoUI.addRelationSegueAction"
@@ -54,6 +66,10 @@ open class RelationContainerView: UIView, RelationInfoUI {
         set {} // swiftlint:disable:this unused_setter_value
     }
     @objc dynamic open var relationLabel: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
+    @objc dynamic open var relationShortLabel: String? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
@@ -99,7 +115,15 @@ open class RelationContainerView: UIView, RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
 
+    @objc dynamic open var relationShortLabel: String? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationShortLabel) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationShortLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
 

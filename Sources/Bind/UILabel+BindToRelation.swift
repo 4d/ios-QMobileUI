@@ -30,6 +30,10 @@ extension UILabel: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    @objc dynamic open var relationShortLabel: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     @objc dynamic open var relationIsToMany: Bool {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
@@ -74,7 +78,16 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            //checkRelationFormat()
+        }
+    }
 
+    @objc dynamic open var relationShortLabel: String? {
+        get {
+            return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationShortLabel) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationShortLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
 
@@ -84,7 +97,6 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationIsToMany, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-
         }
     }
 
@@ -156,7 +168,7 @@ extension UILabel: RelationInfoUI {
                     self.text = relationLabel
                 }
             } else if let set = newValue as? NSMutableSet { // -> N
-                if var relationLabel = relationLabel, !relationLabel.isEmpty {
+                if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
                     relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
                     self.text = relationLabel
                 } else {
