@@ -64,10 +64,7 @@ extension UIControl: RelationInfoUI {
             return objc_getAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat) as? String
         }
         set {
-            let format = newValue ?? ""
-            if !format.isEmpty {
-                objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-            }
+            objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             checkRelationFormat()
         }
     }
@@ -78,7 +75,7 @@ extension UIControl: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-            //checkRelationFormat()
+            checkRelationFormat()
         }
     }
 
@@ -148,13 +145,15 @@ extension UIControl: RelationInfoUI {
         if let newValue = self.relation {
             self.isEnabled = true
             if let record = newValue as? RecordBase { // -> 1
-                if let relationFormat = self.relationFormat,
+                if let relationFormat = self.relationPreferredLongLabel,
                    !relationFormat.isEmpty,
                    let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
 
                     button.setTitle(formatter.format(record), for: .normal)
-                } else if let relationLabel = relationLabel {
+                } else if let relationLabel = relationPreferredLongLabel {
                     button.setTitle(relationLabel, for: .normal)
+                } else {
+                    button.setTitle("", for: .normal)
                 }
             } else if let set = self.relation as? NSMutableSet { // -> N
                 if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
@@ -171,8 +170,8 @@ extension UIControl: RelationInfoUI {
         } else {
             // If no data to bind, empty the widget (this is done one time before binding)
             self.isEnabled = false
-            if self.relationLabel.isEmpty, let title = button.title(for: .normal), !title.isEmpty {
-                self.relationLabel = title // Backup to restore it
+            if self.relationPreferredLongLabel.isEmpty, let title = button.title(for: .normal), !title.isEmpty {
+                self.relationLabel = title // here we try to get label from graphical component if there is no definition (could have reentrance)
             }
             button.setTitle("", for: .normal)
             removeRelationSegue()

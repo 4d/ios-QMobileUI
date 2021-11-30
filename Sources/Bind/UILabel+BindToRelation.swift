@@ -78,7 +78,7 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-            //checkRelationFormat()
+            checkRelationFormat()
         }
     }
 
@@ -160,12 +160,12 @@ extension UILabel: RelationInfoUI {
     func checkRelationFormat() {
         if let newValue = self.relation {
             if let record = newValue as? RecordBase { // -> 1
-                if let relationFormat = relationFormat,
+                if let relationFormat = relationPreferredLongLabel,
                    !relationFormat.isEmpty,
                    let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
                     self.text = formatter.format(record)
                 } else {
-                    self.text = relationLabel
+                    self.text = relationLabel // will be empty
                 }
             } else if let set = newValue as? NSMutableSet { // -> N
                 if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
@@ -182,8 +182,8 @@ extension UILabel: RelationInfoUI {
             addRelationSegue()
         } else {
             // If no data to bind, empty the widget (this is done one time before binding)
-            if self.relationLabel.isEmpty, !self.text.isEmpty {
-                self.relationLabel = self.text
+            if self.relationPreferredLongLabel.isEmpty, !self.text.isEmpty {
+                self.relationLabel = self.text // here we try to get label from graphical component if there is no definition (could have reentrance)
             }
             self.text = ""
             removeRelationSegue()
