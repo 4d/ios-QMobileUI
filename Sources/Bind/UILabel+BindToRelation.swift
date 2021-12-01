@@ -50,7 +50,6 @@ extension UILabel: RelationInfoUI {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
-
     #else
     @objc dynamic open var relation: Any? {
         get {
@@ -68,7 +67,7 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-            checkRelationFormat()
+            // checkRelationFormat()
         }
     }
 
@@ -88,6 +87,7 @@ extension UILabel: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationShortLabel, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            // checkRelationFormat()
         }
     }
 
@@ -126,7 +126,23 @@ extension UILabel: RelationInfoUI {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationName, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
         }
     }
+
     #endif
+
+    open var relationDisplayedValue: String? {
+        get {
+            return self.text
+        }
+        set {
+            self.text = newValue
+        }
+    }
+
+    open func setRelationDisclosure() {
+        let attachmentImage = NSTextAttachment()
+        attachmentImage.image = UIImage.disclosureRelationImage
+        self.attributedText = NSAttributedString(attachment: attachmentImage)
+    }
 
     @objc open func relationTapped(_ sender: UITapGestureRecognizer) {
         guard let currentViewController = self.owningViewController else { // break MVC paradigm...
@@ -141,7 +157,7 @@ extension UILabel: RelationInfoUI {
         currentViewController.performSegue(withIdentifier: relationName, sender: self)
     }
 
-    fileprivate func addRelationSegue() {
+    open func addRelationSegue() {
         if addRelationSegueAction && self.relationTapGesture == nil { // to deactivate set addRelationSegueAction before relationName
             self.isUserInteractionEnabled = true
             let gesture = UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
@@ -151,44 +167,12 @@ extension UILabel: RelationInfoUI {
         }
     }
 
-    fileprivate func removeRelationSegue() {
+    open func removeRelationSegue() {
         if let relationTapGesture = self.relationTapGesture {
             self.removeGestureRecognizer(relationTapGesture)
         }
     }
 
-    func checkRelationFormat() {
-        if let newValue = self.relation {
-            if let record = newValue as? RecordBase { // -> 1
-                if let relationFormat = relationPreferredLongLabel,
-                   !relationFormat.isEmpty,
-                   let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
-                    self.text = formatter.format(record)
-                } else {
-                    self.text = relationLabel // will be empty
-                }
-            } else if let set = newValue as? NSMutableSet { // -> N
-                if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
-                    relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
-                    self.text = relationLabel
-                } else {
-                    // we have no label, no info
-                    assertionFailure("Why relation label is empty? see storyboard metadata")
-                    let attachmentImage = NSTextAttachment()
-                    attachmentImage.image = UIImage.disclosureRelationImage
-                    self.attributedText = NSAttributedString(attachment: attachmentImage)
-                }
-            }
-            addRelationSegue()
-        } else {
-            // If no data to bind, empty the widget (this is done one time before binding)
-            if self.relationPreferredLongLabel.isEmpty, !self.text.isEmpty {
-                self.relationLabel = self.text // here we try to get label from graphical component if there is no definition (could have reentrance)
-            }
-            self.text = ""
-            removeRelationSegue()
-        }
-    }
 }
 
 extension String {

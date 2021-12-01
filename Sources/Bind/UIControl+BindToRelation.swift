@@ -46,7 +46,10 @@ extension UIControl: RelationInfoUI {
         get { return false }
         set {} // swiftlint:disable:this unused_setter_value
     }
-
+    @objc dynamic open var relationDisplayedValue: String? {
+        get { return nil }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     #else
 
     @objc dynamic open  var relationName: String? {
@@ -65,7 +68,7 @@ extension UIControl: RelationInfoUI {
         }
         set {
             objc_setAssociatedObject(self, &RelationInfoUIAssociatedKeys.relationFormat, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
-            checkRelationFormat()
+            // checkRelationFormat()
         }
     }
 
@@ -116,9 +119,24 @@ extension UIControl: RelationInfoUI {
         }
     }
 
-    #endif
+#endif
 
-    fileprivate func addRelationSegue() {
+    @objc dynamic open var relationDisplayedValue: String? {
+        get {
+            return (self as? UIButton)?.title(for: .normal) // Manage only button from now, override to do something else
+        }
+        set {
+            (self as? UIButton)?.setTitle(newValue, for: .normal)
+        }
+    }
+
+    open func setRelationDisclosure() {
+        self.relationDisplayedValue = ""
+        (self as? UIButton)?.setImage(UIImage.disclosureRelationImage, for: .normal)
+    }
+
+    open func addRelationSegue() {
+        self.isEnabled = true
         if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
             self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
 
@@ -128,53 +146,13 @@ extension UIControl: RelationInfoUI {
         }
     }
 
-    fileprivate func removeRelationSegue() {
+    open func removeRelationSegue() {
+        self.isEnabled = false
         if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
             self.removeTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
 
             self.removeTarget(self, action: #selector(self.touchDown(sender:)), for: .touchDown)
             self.removeTarget(self, action: #selector(self.touchUp(sender:)), for: .touchUpOutside)
-        }
-    }
-
-    func checkRelationFormat() {
-        guard let button = self as? UIButton else {
-            // we manage only button now
-            return
-        }
-        if let newValue = self.relation {
-            self.isEnabled = true
-            if let record = newValue as? RecordBase { // -> 1
-                if let relationFormat = self.relationPreferredLongLabel,
-                   !relationFormat.isEmpty,
-                   let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
-
-                    button.setTitle(formatter.format(record), for: .normal)
-                } else if let relationLabel = relationPreferredLongLabel {
-                    button.setTitle(relationLabel, for: .normal)
-                } else {
-                    button.setTitle("", for: .normal)
-                }
-            } else if let set = self.relation as? NSMutableSet { // -> N
-                if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
-                    relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
-                    button.setTitle(relationLabel, for: .normal)
-                } else {
-                    // we have no label, no info
-                    assertionFailure("Why relation label is empty? see storyboard metadata")
-                    button.setTitle("", for: .normal)
-                    button.setImage(UIImage.disclosureRelationImage, for: .normal)
-                }
-            }
-            addRelationSegue()
-        } else {
-            // If no data to bind, empty the widget (this is done one time before binding)
-            self.isEnabled = false
-            if self.relationPreferredLongLabel.isEmpty, let title = button.title(for: .normal), !title.isEmpty {
-                self.relationLabel = title // here we try to get label from graphical component if there is no definition (could have reentrance)
-            }
-            button.setTitle("", for: .normal)
-            removeRelationSegue()
         }
     }
 

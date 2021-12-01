@@ -8,15 +8,17 @@
 
 import Foundation
 import UIKit
+import QMobileDataStore
+import QMobileAPI // emptyable protocol
 
 /// Protocol to provide info on relation
-public protocol RelationInfoUI {
+public protocol RelationInfoUI: NSObjectProtocol {
     /// Relation object data.
     var relation: Any? { get }
     /// The relation name
     var relationName: String? { get }
     /// The relation label
-    var relationLabel: String? { get }
+    var relationLabel: String? { get set }
     /// The relation short label
     var relationShortLabel: String? { get }
     /// The relation format
@@ -27,12 +29,67 @@ public protocol RelationInfoUI {
     var relationIsToMany: Bool { get }
     /// Add action to launch segue.
     var addRelationSegueAction: Bool { get }
+
+    /// Value displayed computed from other field and data
+    var relationDisplayedValue: String? { get set }
+    /// In case of miss configuration of template add something to show error
+    func setRelationDisclosure()
+    /// Add transition segue to go to relation form
+    func addRelationSegue()
+    /// Desactivate relation transition segue.
+    func removeRelationSegue()
 }
 
 extension RelationInfoUI {
 
     var relationPreferredLongLabel: String? {
         return relationLabel.isEmpty ? relationShortLabel: relationLabel
+    }
+}
+
+extension RelationInfoUI where Self: UIView {
+
+    func checkRelationFormat() {
+        if let relation = self.relation {
+            if let record = relation as? RecordBase { // -> 1
+                assert(!relationIsToMany)
+                if let relationFormat = self.relationPreferredLongLabel,
+                   !relationFormat.isEmpty,
+                   let formatter = RecordFormatter(format: relationFormat, tableInfo: record.tableInfo) {
+                    relationDisplayedValue = formatter.format(record)
+                } else if let relationLabel = relationPreferredLongLabel {
+                    relationDisplayedValue = relationLabel
+                } else {
+                    // button.setTitle("", for: .normal)
+                }
+            } else if let set = self.relation as? NSMutableSet { // -> N
+                assert(relationIsToMany)
+                if var relationLabel = relationPreferredLongLabel, !relationLabel.isEmpty {
+                    relationLabel = relationLabel.replacingOccurrences(of: "%length%", with: String(set.count))
+                    relationDisplayedValue = relationLabel
+                } else {
+                    // we have no label, no info
+                    assertionFailure("Why relation label is empty? see storyboard metadata")
+                    setRelationDisclosure()
+                }
+            } else {
+                logger.warning("Unknown data type for relation \(relation)")
+            }
+            addRelationSegue()
+        } else {
+            if logger.isEnabledFor(level: .verbose) {
+                logger.verbose("relation not yet data: \(relationIsToMany), \(Thread.callStackSymbols[6]) \(self)")
+            }
+            // If no data to bind, empty the widget (this is done one time before binding)
+            if self.relationPreferredLongLabel.isEmpty, !self.relationDisplayedValue.isEmpty {
+                relationLabel = self.relationDisplayedValue // here we try to get label from graphical component if there is no definition (could have reentrance)
+                logger.debug("No relation label binding information in UDRA, so use \(String(describing: self.relationDisplayedValue))")
+            }
+            if !relationIsToMany {
+                relationDisplayedValue = ""
+            }
+            removeRelationSegue()
+        }
     }
 }
 
@@ -164,6 +221,22 @@ open class RelationContainerView: UIView, RelationInfoUI {
         }
     }
     #endif
+    open var relationDisplayedValue: String? {
+        get {
+            return nil
+        }
+        set { // swiftlint:disable:this unused_setter_value
+        }
+    }
+
+    open func setRelationDisclosure() {
+    }
+
+    open func addRelationSegue() {
+    }
+
+    open func removeRelationSegue() {
+    }
 
 }
 
