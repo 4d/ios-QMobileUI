@@ -85,9 +85,7 @@ extension RelationInfoUI where Self: UIView {
                 relationLabel = self.relationDisplayedValue // here we try to get label from graphical component if there is no definition (could have reentrance)
                 logger.debug("No relation label binding information in UDRA, so use \(String(describing: self.relationDisplayedValue))")
             }
-            if !relationIsToMany {
-                relationDisplayedValue = ""
-            }
+            relationDisplayedValue = "" // empty data if no data from db
             removeRelationSegue()
         }
     }
