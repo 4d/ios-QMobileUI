@@ -195,6 +195,7 @@ extension UIViewController {
 
     /// init back button menu
     func initBackButton() {
+#if DEBUG
         guard let navigationController = self.navigationController else {
             return
         }
@@ -235,6 +236,7 @@ extension UIViewController {
 
         let menu = UIMenu(title: "", image: nil, identifier: nil, options: [], children: [deferred])
         navigationBar.topItem?.leftBarButtonItems = [UIBarButtonItem(title: previousButton.title, image: previousButton.image, primaryAction: action, menu: menu)]
+#endif
     }
 
     /// Instanciate a controller using its storyboard name and add it as a child.
