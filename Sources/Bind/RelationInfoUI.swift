@@ -85,9 +85,29 @@ extension RelationInfoUI where Self: UIView {
                 relationLabel = self.relationDisplayedValue // here we try to get label from graphical component if there is no definition (could have reentrance)
                 logger.debug("No relation label binding information in UDRA, so use \(String(describing: self.relationDisplayedValue))")
             }
-            relationDisplayedValue = "" // empty data if no data from db
+            if let relationLabel = self.relationPreferredLongLabel, !relationLabel.hasRecordFormatter {
+                relationDisplayedValue = relationLabel
+            } else if let relationLabel = self.relationShortLabel, !relationLabel.hasRecordFormatter {
+                relationDisplayedValue = relationLabel
+            } else {
+                relationDisplayedValue = ""
+            }
             removeRelationSegue()
         }
+    }
+}
+
+extension String {
+
+    fileprivate var hasRecordFormatter: Bool {
+        var cpt = 0
+        for cha in self where cha == "%" {
+            cpt += 1
+            if cpt>1 {
+                return true
+            }
+        }
+        return false
     }
 }
 
