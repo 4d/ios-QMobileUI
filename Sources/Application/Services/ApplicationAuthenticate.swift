@@ -277,7 +277,7 @@ extension Prephirences {
 
         /// Login authentification preferences.
         public struct Login: Prephirencable { // swiftlint:disable:this nesting
-            public static let parent = Auth.instance
+            public static let parent: PreferencesType = Auth.mutableInstance ?? Auth.instance
             /// Save or not log in information for next log in. (save email).
             public static let save: Bool = instance["save"] as? Bool ?? true
             /// Email saved to log
