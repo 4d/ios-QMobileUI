@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/phimage/CallbackURLKit.git", .revision("HEAD")),
         .package(url: "https://github.com/nvzqz/FileKit.git", from: "6.0.0"),
         .package(url: "https://github.com/DaveWoodCom/XCGLogger.git", from: "7.0.0"),
-        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.9"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.14"),
         .package(url: "https://github.com/phimage/ValueTransformerKit.git", from: "1.2.3"),
         .package(url: "https://github.com/phimage/Prephirences.git", from: "5.3.1"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "6.2.1"),

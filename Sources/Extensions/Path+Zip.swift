@@ -71,21 +71,26 @@ extension Archive {
     }
 
     /// Extract an entry to `path`
-    public func extract(_ entry: Entry, to path: Path, bufferSize: UInt32 = defaultReadChunkSize) throws -> CRC32 {
+    public func extract(_ entry: Entry, to path: Path, bufferSize: Int = defaultReadChunkSize) throws -> CRC32 {
         return try self.extract(entry, to: path.url, bufferSize: bufferSize)
     }
 
     /// Add a path to zip archive.
     public func addEntry(with path: Path, type: Entry.EntryType, permissions: UInt16? = nil,
-                         compressionMethod: CompressionMethod = .none, bufferSize: UInt32 = defaultWriteChunkSize,
+                         compressionMethod: CompressionMethod = .none, bufferSize: Int = defaultWriteChunkSize,
                          progress: Progress? = nil) throws {
-        let data = try File<Data>(path: path).read()
-        try addEntry(with: path.fileName, type: type, uncompressedSize: UInt32(data.count),
-                     modificationDate: path.modificationDate ?? path.creationDate ?? Date(), permissions: permissions,
-                     compressionMethod: compressionMethod, bufferSize: bufferSize,
-                     progress: progress) { position, size in
-                        return data.subdata(in: position..<(position+size))
-        }
+        l/Users/emarchand/perforce/ericm/depot/4eDimension/main/QMobile/QMobileUI/Package.swiftet data = try File<Data>(path: path).read()
+        try self.addEntry(with: path.fileName,
+                          type: type,
+                          uncompressedSize: Int64(data.count),
+                          modificationDate: path.modificationDate ?? path.creationDate ?? Date(),
+                          permissions: permissions,
+                          compressionMethod: compressionMethod,
+                          bufferSize: bufferSize,
+                          progress: progress,
+                          provider: { (position: Int64, size: Int) in
+            return data.subdata(in: Int(position)..<(Int(position)+size))
+        })
     }
 }
 
