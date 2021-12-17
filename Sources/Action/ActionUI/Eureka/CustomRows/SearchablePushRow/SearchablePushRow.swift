@@ -8,6 +8,7 @@
 
 import Foundation
 import Eureka
+import UIKit
 
 open class _SearchSelectorViewController<Row: SelectableRowType, OptionsRow: OptionsProviderRow>: SelectorViewController<OptionsRow>, UISearchResultsUpdating, UISearchBarDelegate where Row.Cell.Value: SearchItem { // swiftlint:disable:this type_name
 
