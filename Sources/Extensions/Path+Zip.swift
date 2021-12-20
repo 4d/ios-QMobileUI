@@ -79,7 +79,7 @@ extension Archive {
     public func addEntry(with path: Path, type: Entry.EntryType, permissions: UInt16? = nil,
                          compressionMethod: CompressionMethod = .none, bufferSize: Int = defaultWriteChunkSize,
                          progress: Progress? = nil) throws {
-        l/Users/emarchand/perforce/ericm/depot/4eDimension/main/QMobile/QMobileUI/Package.swiftet data = try File<Data>(path: path).read()
+        data = try File<Data>(path: path).read()
         try self.addEntry(with: path.fileName,
                           type: type,
                           uncompressedSize: Int64(data.count),
