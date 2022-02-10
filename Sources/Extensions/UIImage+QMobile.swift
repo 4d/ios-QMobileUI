@@ -11,7 +11,7 @@ import UIKit
 
 extension UIImage {
 
-    class func image(from text: String, size: CGSize, textSize: CGFloat = 24, color: UIColor = UIColor.black) -> UIImage {
+    class func image(from text: String, size: CGSize, textSize: CGFloat = 24, color: UIColor = UIColor.label) -> UIImage {
 
         let data = text.data(using: .utf8, allowLossyConversion: true)
         let drawText = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)

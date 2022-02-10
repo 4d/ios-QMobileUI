@@ -23,6 +23,7 @@ extension UIView {
         static var actionSheetKey = "UIView.ActionSheet"
         static var actionKey = "UIView.Action"
         static var actionTouchKey = "UIView.ActionTouch"
+        static var actionHasDeferred = "UIView.ActionHasDeffered"
     }
     // MARK: - ActionSheet
 
@@ -44,11 +45,23 @@ extension UIView {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
+    open var actionHasDeferred: Bool {
+        get { return true }
+        set {} // swiftlint:disable:this unused_setter_value
+    }
     open var actionIndex: NSNumber? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
+    open var actionHasDeferred: Bool {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.actionHasDeferred) as? Bool ?? true
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.actionHasDeferred, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
     @objc
     open var actionIndex: NSNumber? {
         get {
@@ -90,41 +103,47 @@ extension UIView {
                     }
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
                         let actionContext: ActionContext = self
-                        let actionUI = UIAction(
-                            title: "Pending task",
-                            image: UIImage(systemName: "ellipsis.rectangle"),
-                            identifier: UIAction.Identifier(rawValue: "action.log"),
-                            attributes: []) { actionUI in
-                            let view = ActionRequestFormUI(actionContext: actionContext)
-                            let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
-                            let presentedController = UINavigationController(rootViewController: hostController)
-                            if let table = actionContext.actionContextParameters()?[ActionParametersKey.table] {
-                                hostController.navigationItem.title = "Tasks: \(table)"
-                            } else {
-                                hostController.navigationItem.title = "Tasks"
+
+                        var moreActions: [ActionUI]? = nil
+                        if actionHasDeferred {
+                            let actionUI = UIAction(
+                                title: "Pending task",
+                                image: UIImage(systemName: "ellipsis.rectangle"),
+                                identifier: UIAction.Identifier(rawValue: "action.log"),
+                                attributes: []) { actionUI in
+                                    let view = ActionRequestFormUI(actionContext: actionContext)
+                                    let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
+                                    let presentedController = UINavigationController(rootViewController: hostController)
+                                    if let table = actionContext.actionContextParameters()?[ActionParametersKey.table] {
+                                        hostController.navigationItem.title = "Tasks: \(table)"
+                                    } else {
+                                        hostController.navigationItem.title = "Tasks"
+                                    }
+
+                                    presentedController.navigationBar.tintColor = UIColor.foreground
+                                    presentedController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
+                                    presentedController.navigationBar.isTranslucent = false
+                                    presentedController.navigationBar.barTintColor = UIColor.background
+                                    hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
+                                    (self.owningViewController ?? UIApplication.topViewController)?.present(presentedController, animated: true, completion: {
+                                        logger.debug("present action more")
+                                    })
+                                }
+
+                            let deferredMenuElement = UIDeferredMenuElement { (elementProvider) in
+                                /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
+                                elementProvider([actionUI])
                             }
-
-                            presentedController.navigationBar.tintColor = UIColor.foreground
-                            presentedController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
-                            presentedController.navigationBar.isTranslucent = false
-                            presentedController.navigationBar.barTintColor = UIColor.background
-                            hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
-                            (self.owningViewController ?? UIApplication.topViewController)?.present(presentedController, animated: true, completion: {
-                                logger.debug("present action more")
-                            })
+                            moreActions =  [deferredMenuElement]
                         }
 
-                        let deferredMenuElement = UIDeferredMenuElement { (elementProvider) in
-                            /*if !ActionManager.instance.requests.filter({ !$0.state.isFinal }).isEmpty {*/ // not called at each display, there is a cache, we cannot update it
-                            elementProvider([actionUI])
-                        }
                         let actionByNames = actionSheet.actions.asDictionary { action in
                             return [action.name: action]
                         }
                         let sortActionAcount = actionSheet.actions.filter({$0.preset == .sort}).count
                         button.isHidden = actionSheet.actions.count == 1 && sortActionAcount == 1
 
-                        let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: [deferredMenuElement], handler: ActionManager.instance.prepareAndExecuteAction)
+                        let menu = UIMenu.build(from: actionSheet, context: actionContext, moreActions: moreActions, handler: ActionManager.instance.prepareAndExecuteAction)
                         button.menu = menu
                         button.showsMenuAsPrimaryAction = true
                         button.onMenuActionTriggered(menuHandler: { currentMenu -> UIMenu in
