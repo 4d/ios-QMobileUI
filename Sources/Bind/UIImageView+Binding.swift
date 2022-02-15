@@ -51,8 +51,25 @@ extension UIImageView {
                 return
             }
             self.text = string.localizedBinding
+     }
+     }*/
+
+    public var text: String? {
+        get {
+            guard let image = self.image else {
+                return nil
+            }
+            return "an image \(image)"
         }
-    }*/
+        set {
+            if let text = newValue {
+                logger.warning("A text data field has been binded too this image widget with data \(text)")
+                self.image = UIImage.image(from: text, size: self.frame.size)
+            } else {
+                self.image = nil
+            }
+        }
+    }
 
 }
 
