@@ -67,8 +67,7 @@ import QMobileAPI
 class ActionTabBarButton: UIButton, ActionContextProvider {
 
     func actionContext() -> ActionContext? {
-        // let action = self.actionSheet?.actions.first
-        return nil
+        return nil // If nil, let action provide its context
     }
 
 }

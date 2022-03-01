@@ -28,6 +28,13 @@ public extension ActionContext {
     }
 }
 
+extension Action: ActionContext {
+    public func actionContextParameters() -> ActionParameters? {
+        guard let tableName = self.tableName else { return nil }
+        return [ActionParametersKey.table: tableName]
+    }
+}
+
 /// Protocol to define class which could provide `ActionContext`
 public protocol ActionContextProvider {
 

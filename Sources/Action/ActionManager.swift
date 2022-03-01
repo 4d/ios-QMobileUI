@@ -428,7 +428,7 @@ extension ActionManager: ActionExecutor {
                        _ completionHandler: ActionExecutor.CompletionHandler?) {
 
         // Create the action request
-        let contextParameters: ActionParameters? = context.actionContextParameters()
+        let contextParameters: ActionParameters? = context.actionContextParameters() ?? action.actionContextParameters()
         let request = action.newRequest(actionParameters: actionParameters, contextParameters: contextParameters, id: id)
 
         // and execute it
