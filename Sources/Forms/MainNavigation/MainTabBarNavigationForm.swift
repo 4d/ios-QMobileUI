@@ -84,8 +84,8 @@ open class MainTabBarNavigationForm: UITabBarController, MainNavigationForm, UIT
             self.selectedIndex = 0
         }
         if tabBar is MainTabBar {
-            for (index, viewController) in (self.viewControllers ?? []).enumerated() where ((viewController.firstController is ActionViewController) && (self.selectedIndex == index)) {
-                self.selectedIndex += 1 // do not let ActionViewController selectable at first try
+            for (index, viewController) in (self.viewControllers ?? []).enumerated() where ((viewController.firstController is ActionsViewController) && (self.selectedIndex == index)) {
+                self.selectedIndex += 1 // do not let ActionsViewController selectable at first try
             }
         }
     }
@@ -93,7 +93,7 @@ open class MainTabBarNavigationForm: UITabBarController, MainNavigationForm, UIT
     func initActions() {
         if let mainBar = tabBar as? MainTabBar {
             for (index, viewController) in (self.viewControllers ?? []).enumerated() {
-                if let acC = viewController.firstController as? ActionViewController {
+                if let acC = viewController.firstController as? ActionsViewController {
                     mainBar.setupActionButton(acC, index: index)
                 }
             }
@@ -106,7 +106,7 @@ open class MainTabBarNavigationForm: UITabBarController, MainNavigationForm, UIT
         let tabCount = tabBarController.tabBar.items?.count ?? 0
         let children = tabBarController.viewControllers?[tabCount - 1 + indexPath.row]
 
-        if children is ActionViewController {
+        if children is ActionsViewController {
             let button = MoreListActionButton(frame: CGRect(origin: .zero, size: cell.frame.size).insetBy(dx: 5, dy: 5))
             button.actionSheet = children?.actionSheet
             button.showsMenuAsPrimaryAction = true
@@ -138,7 +138,7 @@ open class MainTabBarNavigationForm: UITabBarController, MainNavigationForm, UIT
         let tabCount = tabBarController.tabBar.items?.count ?? 0
         let children = tabBarController.viewControllers?[tabCount - 1 + indexPath.row]
 
-        if children is ActionViewController {
+        if children is ActionsViewController {
             // nothing to do
         } else {
             // normal behaviour, calling original delegate
