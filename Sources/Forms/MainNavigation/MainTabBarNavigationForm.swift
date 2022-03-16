@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// The main navigation controller of your application. Which use tab bar as navigation mode.
 /// see https://developer.apple.com/documentation/uikit/uitabbarcontroller
