@@ -218,7 +218,7 @@ open class MainTabBar: UITabBar {
                 tabBarButton?.subviews.forEach({ $0.removeFromSuperview() })
             } else {
                 // we let default button item but add some background
-                button.backgroundColor = .label.withAlphaComponent(0.1)
+                button.backgroundColor = UIColor.label.withAlphaComponent(0.1)
                 button.layer.cornerRadius = 5
             }
         }
