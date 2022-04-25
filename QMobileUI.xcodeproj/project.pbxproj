@@ -118,7 +118,6 @@
 		4888ACD022EB083100219E63 /* NSSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4888ACCF22EB083100219E63 /* NSSetTests.swift */; };
 		4888E4D222CCA24D002C7BBE /* DetailHighlightedRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4888E4D122CCA24D002C7BBE /* DetailHighlightedRow.swift */; };
 		488BA85123829F5A000BD44B /* BioAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B267241FB30D3F00C79323 /* BioAuthenticator.swift */; };
-		488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */; };
 		489322C01E815D6E007CD6F2 /* UIView+BindTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5D1E8136F8000F7719 /* UIView+BindTo.swift */; };
 		489322C11E815D7A007CD6F2 /* Binder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48268C5B1E8136E9000F7719 /* Binder.swift */; };
 		489489F224BEF1F600D6D0C6 /* MainNavigationForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489489F124BEF1F600D6D0C6 /* MainNavigationForm.swift */; };
@@ -192,6 +191,7 @@
 		48E49CFE1EB9DC65002B60AF /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFC1EB9DC65002B60AF /* SwiftyJSON.framework */; };
 		48E49D001EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
 		48E49D011EB9DC8A002B60AF /* ValueTransformerKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E49CFF1EB9DC8A002B60AF /* ValueTransformerKit.framework */; };
+		48E5896D2816DABF00CEEC9B /* UIViewController+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488D40362236BEDB00F0E0B2 /* UIViewController+Action.swift */; };
 		48E5CEC122BBC7E40025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
 		48E5CEC222BBC7F30025E692 /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48E5CEC022BBC7E40025E692 /* Eureka.framework */; };
 		48E655E0229EA6770060568B /* RowOfEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E655DF229EA6770060568B /* RowOfEquatable.swift */; };
@@ -1369,9 +1369,9 @@
 			buildConfigurationList = 48D584661E7830E1006F56B5 /* Build configuration list for PBXNativeTarget "QMobileUI" */;
 			buildPhases = (
 				48AE2C5C1F455C850013FDEE /* swiftlint autocorrect */,
+				48D5845B1E7830E1006F56B5 /* Headers */,
 				48D584591E7830E1006F56B5 /* Sources */,
 				48D5845A1E7830E1006F56B5 /* Frameworks */,
-				48D5845B1E7830E1006F56B5 /* Headers */,
 				48D5845C1E7830E1006F56B5 /* Resources */,
 				485CCDAF1E796EBC00CDB2B3 /* swiftlint */,
 			);
@@ -1550,6 +1550,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48E5896D2816DABF00CEEC9B /* UIViewController+Action.swift in Sources */,
 				4846083C20AF07DD00EE4696 /* LoadingButton.swift in Sources */,
 				C4B2CDBE224A2C0D00E1B902 /* Binded.swift in Sources */,
 				48D43CEF22CE48160013432C /* RowOfComparable.swift in Sources */,
@@ -1624,7 +1625,6 @@
 				4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */,
 				488BA85123829F5A000BD44B /* BioAuthenticator.swift in Sources */,
 				C4B5E6A725A41FEB007678F4 /* ActionResult+Handlers.swift in Sources */,
-				488D40372236BEDB00F0E0B2 /* UIViewController+Action.swift in Sources */,
 				4888ACCE22EB077C00219E63 /* NSSet+Binding.swift in Sources */,
 				484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */,
 				48F8E2C91F7D0F3E000080FB /* ServerStatus+Color.swift in Sources */,

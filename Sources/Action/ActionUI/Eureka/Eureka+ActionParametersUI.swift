@@ -319,9 +319,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     open override var customNavigationAccessoryView: (UIView & NavigationAccessory)? {
         if let image = UIImage(named: "keyboardDismiss") {
             let accessoryView = NavigationAccessoryView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 44.0))
-            let originalButton = accessoryView.doneButton
-            accessoryView.doneButton = UIBarButtonItem(image: image, style: .done, target: originalButton.target, action: originalButton.action)
-
+            if let originalButton = accessoryView.doneButton {
+                accessoryView.doneButton = UIBarButtonItem(image: image, style: .done, target: originalButton.target, action: originalButton.action)
+            }
             // reset all the items
             var items = accessoryView.items ?? []
             items[items.count-1] = accessoryView.doneButton // done is last
