@@ -24,7 +24,7 @@ let package = Package(
 
 //        .package(url: "https://github.com/SwiftKickMobile/SwiftMessages.git", from: "7.0.0"), // No Package.swift file
         .package(url: "https://github.com/phimage/SwiftMessages.git", .revision("HEAD")), // https://github.com/SwiftKickMobile/SwiftMessages/pull/297
-        .package(url: "https://github.com/xmartlabs/Eureka.git", from: "5.3.5"),
+        .package(url: "https://github.com/xmartlabs/Eureka.git", from: "5.3.6"),
         .package(url: "https://github.com/IBAnimatable/IBAnimatable.git", from: "6.1.0"),
 
         .package(url: "https://gitlab-4d.private.4d.fr/qmobile/QMobileAPI.git", .revision("HEAD")),
