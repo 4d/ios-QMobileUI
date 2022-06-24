@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import WebKit
+import Prephirences
+import QMobileAPI
 
 @IBDesignable
 open class WebAreaForm: UIViewController {
@@ -150,6 +152,17 @@ extension WKHTTPCookieStore {
     public func injectSharedCookies() {
         for cookie in HTTPCookieStorage.shared.cookies ?? [] {
             setCookie(cookie)
+
+            if cookie.domain == "localhost" {
+                // dispatch localhost cookies to all server urls
+                for serverURL in Prephirences.serverURLs ?? [] {
+                    var properties = cookie.properties ?? [:]
+                    properties[.domain] = serverURL
+                    if let serverCookie = HTTPCookie(properties: properties) {
+                        setCookie(serverCookie)
+                    }
+                }
+            }
         }
     }
 
