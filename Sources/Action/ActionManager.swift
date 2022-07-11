@@ -111,8 +111,7 @@ public class ActionManager: NSObject, ObservableObject {
                 return
             }
             dataSourceSortable.setSortDescriptors(sortDescriptors)
-        } else if action.preset == .url {
-#if(DEBUG)
+        } else if action.preset == .openURL {
             let style = action.style ?? .custom(["url": APIManager.instance.base.url.appendingPathComponent("$/action").absoluteString])
             if case .custom(let data) = style, let urlString = data["url"] as? String {
 
@@ -125,7 +124,6 @@ public class ActionManager: NSObject, ObservableObject {
                 }
                 self.window = controlAction.presentOnTop()
             }
-#endif
        } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
             executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)
