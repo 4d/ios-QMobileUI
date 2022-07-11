@@ -171,8 +171,23 @@ var $4d = {
                 logger.debug("action web view dismissed")
             }
         case "status":
-            if let text = body["statusText"] as? String ?? body["message"] as? String {
-                if body["success"] as? Bool ?? true {
+            if let text = body["message"] as? String {
+                SwiftMessages.info(text, configure: { _, config in return config.viewController(self)})
+            } else if let messageInfo = body["message"] as? [String: Any], let text = messageInfo["statusText"] as? String ?? messageInfo["message"] as? String {
+                if let level = body["level"] as? String {
+                    switch level {
+                    case "debug":
+                        SwiftMessages.debug(text, configure: { _, config in return config.viewController(self)})
+                    case "info":
+                        SwiftMessages.info(text, configure: { _, config in return config.viewController(self)})
+                    case "warning":
+                        SwiftMessages.warning(text, configure: { _, config in return config.viewController(self)})
+                    case "error":
+                        SwiftMessages.error(title: "", message: text, configure: { _, config in return config.viewController(self)})
+                    default:
+                        break
+                    }
+                } else if messageInfo["success"] as? Bool ?? true {
                     SwiftMessages.info(text, configure: { _, config in return config.viewController(self)})
                 } else {
                     SwiftMessages.warning(text, configure: { _, config in return config.viewController(self)})
