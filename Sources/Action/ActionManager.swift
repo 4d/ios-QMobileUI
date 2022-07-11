@@ -112,18 +112,15 @@ public class ActionManager: NSObject, ObservableObject {
             }
             dataSourceSortable.setSortDescriptors(sortDescriptors)
         } else if action.preset == .openURL {
-            let style = action.style ?? .custom(["url": APIManager.instance.base.url.appendingPathComponent("$/action").absoluteString])
-            if case .custom(let data) = style, let urlString = data["url"] as? String {
-
-                let controlAction = ActionWebAreaControler()
-                controlAction.urlString = urlString
-                controlAction.context = context
-                controlAction.action = action
-                controlAction.dismissHandler = {
-                    self.window = nil
-                }
-                self.window = controlAction.presentOnTop()
+            let urlString = action.url ?? APIManager.instance.base.url.appendingPathComponent("$/action").absoluteString
+            let controlAction = ActionWebAreaControler()
+            controlAction.urlString = urlString
+            controlAction.context = context
+            controlAction.action = action
+            controlAction.dismissHandler = {
+                self.window = nil
             }
+            self.window = controlAction.presentOnTop()
        } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
             executeAction(action, ActionRequest.generateID(action), actionUI, context, nil /*without parameters*/, Just(()).eraseToAnyPublisher(), nil)

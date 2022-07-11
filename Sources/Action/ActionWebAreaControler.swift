@@ -5,7 +5,7 @@
 //  Created by emarchand on 01/11/2021.
 //  Copyright © 2021 Eric Marchand. All rights reserved.
 //
-#if(DEBUG)
+
 import Foundation
 import WebKit
 
@@ -217,4 +217,3 @@ var $4d = {
     }
 
 }
-#endif
