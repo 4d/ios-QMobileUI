@@ -28,9 +28,34 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
 
     // MARK: URL
     var url: URL? {
-        // TODO replace data in url string according to action context, ie. record info or table etc...
-        // var string = urlString.replacingOccurrences(of: "test", with: "ttoto")
-        return URL(string: urlString)
+        guard var urlString = urlString else { return nil }
+        // replace data in url string according to action context, ie. record info or table etc...
+        if let actionContext = context.actionContextParameters() {
+            let table = actionContext[ActionParametersKey.table] as? String ?? ""
+            let primaryKey = (actionContext[ActionParametersKey.record] as? [String: String])?[ActionParametersKey.primaryKey]
+            ?? ((actionContext[ActionParametersKey.record] as? [String: Int])?[ActionParametersKey.primaryKey])?.toString()
+            ?? ""
+            /*let parent = (actionContext[ActionParametersKey.parent] as? [String: Any])?.mapValues { "\($0)" }
+            if parent != nil {
+            }*/
+            urlString = urlString.replacingOccurrences(of: "{{dataClass}}", with: table)
+            urlString = urlString.replacingOccurrences(of: "{{entity.primaryKey}}", with: primaryKey)
+            urlString = urlString.replacingOccurrences(of: "{{table}}", with: table)
+            urlString = urlString.replacingOccurrences(of: "{{record}}", with: primaryKey)
+        }
+
+        if urlString.hasPrefix("http") {
+            return URL(string: urlString)
+        } else if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
+            // if no scheme add 4D Server URL, so data is a relative url
+            if urlString.hasPrefix("/") {
+                components.path = urlString
+            } else {
+                components.path = "/\(urlString)"
+            }
+            return components.url
+        }
+        return nil
     }
 
     func loadURL() {
@@ -216,4 +241,10 @@ var $4d = {
 
     }
 
+}
+
+extension Int {
+    fileprivate func toString() -> String {
+        return String(self)
+    }
 }
