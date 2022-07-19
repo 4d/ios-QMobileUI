@@ -96,15 +96,14 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
         // Do any additional setup after loading the view.
         if webView == nil {
             let configuration = WKWebViewConfiguration()
-            let contentController = WKUserContentController()
             let scriptSource = """
 var $4d = {
   mobile: {
     dismiss: function () {
-        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'dismiss'})
+        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'dismiss'});
     },
     status: function (message) {
-        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'status', 'message': message})
+        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'status', 'message': message});
     },
     action: {
         name: '\(action.name)',
@@ -113,29 +112,27 @@ var $4d = {
     },
     logger: {
         log: function (level, message) {
-            window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'log', 'level': level, 'message': message})
+            window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'log', 'level': level, 'message': message});
         },
         info: function (message) {
-            this.log('info', message)
+            this.log('info', message);
         },
         debug: function (message) {
-            this.log('debug', message)
+            this.log('debug', message);
         },
         warning: function (message) {
-            this.log('warning', message)
+            this.log('warning', message);
         },
         error: function (message) {
-            this.log('error', message)
+            this.log('error', message);
         }
     }
   }
 };
 """
-            let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-            contentController.addUserScript(script)
-            contentController.add(self, name: kActionHandler)
-            configuration.userContentController = contentController
-            // configuration.userContentController.add(self, name: kMessageListener)
+            let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+            configuration.userContentController.addUserScript(script)
+            configuration.userContentController.add(self, name: kActionHandler)
 
             webView = WKWebView(frame: view.bounds, configuration: configuration)
             view.addSubview(webView)
@@ -180,6 +177,14 @@ var $4d = {
             webView.load(navigationAction.request)
         }
         return nil
+    }
+
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
+       /* let alert = UIAlertController.create(title: frame.request.url?.host, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            completionHandler()
+        }))
+        present(alert, animated: true, completion: nil)*/
     }
 
     @objc func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
