@@ -15,6 +15,8 @@ import SwiftMessages
 class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
 
     let kActionHandler = "mobile"
+    let kTagPrefix = "{{"
+    let kTagSuffix = "}}"
 
     var urlString: String!
     var action: Action!
@@ -27,7 +29,7 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
     @IBOutlet weak var reloadButton: UIBarButtonItem!
 
     // MARK: URL
-    var url: URL? {
+    lazy var url: URL? = {
         guard var urlString = urlString else { return nil }
         // replace data in url string according to action context, ie. record info or table etc...
         if let actionContext = context.actionContextParameters() {
@@ -38,25 +40,26 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
             /*let parent = (actionContext[ActionParametersKey.parent] as? [String: Any])?.mapValues { "\($0)" }
             if parent != nil {
             }*/
-            urlString = urlString.replacingOccurrences(of: "{{dataClass}}", with: table)
-            urlString = urlString.replacingOccurrences(of: "{{entity.primaryKey}}", with: primaryKey)
-            urlString = urlString.replacingOccurrences(of: "{{table}}", with: table)
-            urlString = urlString.replacingOccurrences(of: "{{record}}", with: primaryKey)
+            urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)dataClass\(kTagSuffix)", with: table)
+            urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)entity.primaryKey\(kTagSuffix)", with: primaryKey)
+            urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)able\(kTagSuffix)", with: table)
+            urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)record\(kTagSuffix)", with: primaryKey)
         }
 
-        if urlString.hasPrefix("http") {
-            return URL(string: urlString)
-        } else if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
-            // if no scheme add 4D Server URL, so data is a relative url
-            if urlString.hasPrefix("/") {
-                components.path = urlString
-            } else {
-                components.path = "/\(urlString)"
+        if urlString.starts(with: "/") || urlString.starts(with: "\(kTagPrefix)server\(kTagSuffix)") { // append server url
+            urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)server\(kTagSuffix)", with: "")
+            if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
+                components.path = urlString.hasPrefix("/")? urlString: "/\(urlString)"
+                return components.url
             }
-            return components.url
+        } else if !urlString.hasPrefix("http") {
+            return URL(string: "https://"+urlString)
+        } else {
+            return URL(string: urlString)
         }
+
         return nil
-    }
+    }()
 
     func loadURL() {
         webView.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
