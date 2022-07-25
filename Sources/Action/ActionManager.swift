@@ -117,6 +117,16 @@ public class ActionManager: NSObject, ObservableObject {
             controlAction.urlString = urlString
             controlAction.context = context
             controlAction.action = action
+
+            if case .custom(let styleInfo) = action.style {
+                if let transitionString = styleInfo["transition"] as? String, let transition = UIModalTransitionStyle(string: transitionString) {
+                    controlAction.modalTransitionStyle = transition
+                }
+                if let presentationString = styleInfo["presentation"] as? String, let presentation = UIModalPresentationStyle(string: presentationString) {
+                    controlAction.modalPresentationStyle = presentation
+                }
+            }
+
             controlAction.dismissHandler = {
                 self.window = nil
             }
@@ -600,4 +610,33 @@ extension ActionParameter {
         }
         return nil
     }
+}
+
+fileprivate extension UIModalTransitionStyle {
+
+    init?(string: String) {
+        switch string {
+        case "coverVertical": self = .coverVertical
+        case "flipHorizontal": self = .flipHorizontal
+        case "crossDissolve": self = .crossDissolve
+        case "partialCurl": self = .partialCurl
+        default: self.init(rawValue: 0)
+        }
+    }
+
+}
+
+fileprivate extension UIModalPresentationStyle {
+
+    init?(string: String) {
+        switch string {
+        case "fullScreen": self = .fullScreen
+        case "pageSheet": self = .pageSheet
+        case "formSheet": self = .formSheet
+        case "overFullScreen": self = .overFullScreen
+        case "automatic": self = .automatic
+        default: self = .automatic
+        }
+    }
+
 }

@@ -49,7 +49,7 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
         if urlString.starts(with: "/") || urlString.starts(with: "\(kTagPrefix)server\(kTagSuffix)") { // append server url
             urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)server\(kTagSuffix)", with: "")
             if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
-                components.path = urlString.hasPrefix("/")? urlString: "/\(urlString)"
+                components.path = urlString.hasPrefix("/") ? urlString: "/\(urlString)"
                 return components.url
             }
         } else if !urlString.hasPrefix("http") {
