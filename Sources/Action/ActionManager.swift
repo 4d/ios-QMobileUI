@@ -615,11 +615,11 @@ extension ActionParameter {
 fileprivate extension UIModalTransitionStyle {
 
     init?(string: String) {
-        switch string {
-        case "coverVertical": self = .coverVertical
-        case "flipHorizontal": self = .flipHorizontal
-        case "crossDissolve": self = .crossDissolve
-        case "partialCurl": self = .partialCurl
+        switch string.lowercased() {
+        case "coververtical": self = .coverVertical
+        case "fliphorizontal": self = .flipHorizontal
+        case "crossdissolve": self = .crossDissolve
+        case "partialcurl": self = .partialCurl
         default: self.init(rawValue: 0)
         }
     }
@@ -629,12 +629,12 @@ fileprivate extension UIModalTransitionStyle {
 fileprivate extension UIModalPresentationStyle {
 
     init?(string: String) {
-        switch string {
-        case "fullScreen": self = .fullScreen
-        case "pageSheet": self = .pageSheet
-        case "formSheet": self = .formSheet
-        case "overFullScreen": self = .overFullScreen
-        case "automatic": self = .automatic
+        switch string.lowercased() {
+        case "fullscreen": self = .fullScreen
+        case "pagesheet", "card", "page": self = .pageSheet
+        case "formsheet": self = .formSheet
+        case "overfullscreen": self = .overFullScreen
+        case "automatic", "auto": self = .automatic
         default: self = .automatic
         }
     }

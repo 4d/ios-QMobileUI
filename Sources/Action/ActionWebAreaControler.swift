@@ -12,21 +12,40 @@ import WebKit
 import QMobileAPI
 import SwiftMessages
 
-class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
+protocol ActivityIndicator {
+    func startAnimating()
+    func stopAnimating()
+}
 
-    let kActionHandler = "mobile"
-    let kTagPrefix = "{{"
-    let kTagSuffix = "}}"
+class ActivityIndicatorBar: ActivityIndicator {
+    var view: UIView
+    init(view: UIView) {
+        self.view = view
+    }
+    func startAnimating() {
+        LinearProgressBar.showProgressBar(self.view)
+    }
+    func stopAnimating() {
+        LinearProgressBar.removeAllProgressBars(self.view)
+    }
+}
+
+private let kTagPrefix = "{{"
+private let kTagSuffix = "}}"
+
+class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
 
     var urlString: String!
     var action: Action!
     // var actionUI: ActionUI
     var context: ActionContext!
 
-    var dismissHandler: (() -> Void)?
+    fileprivate var activityIndicator: ActivityIndicator?
+    fileprivate var tapOutsideRecognizer: UITapGestureRecognizer!
+    var webView: WKWebView?
+    fileprivate var reloadButton: UIButton?
 
-    @IBOutlet var webView: WKWebView!
-    @IBOutlet weak var reloadButton: UIBarButtonItem!
+    var dismissHandler: (() -> Void)?
 
     // MARK: URL
     lazy var url: URL? = {
@@ -62,11 +81,13 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
     }()
 
     func loadURL() {
-        webView.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
+        webView?.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
         if let url = self.url {
-            self.reloadButton?.isEnabled = true
             let request = URLRequest(url: url)
-            webView.load(request)
+            webView?.load(request)
+
+            LinearProgressBar.removeAllProgressBars(self.view)
+            LinearProgressBar.showProgressBar(self.view) // DO not show animated bar in not visible controller, 100%cpu
         } else {
             logger.debug("No valid url to load")
         }
@@ -85,28 +106,139 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
         }
     }
 
-    @IBAction func reload(_ sender: Any) {
-        if self.webView.isLoading {
-            self.webView.stopLoading()
-        } else {
-            self.webView.reload()
-        }
-    }
-
     // MARK: Events
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         if webView == nil {
-            let configuration = WKWebViewConfiguration()
-            let scriptSource = """
+            self.initWebView()
+        }
+        webView?.frame = view.bounds
+        webView?.uiDelegate = self
+        webView?.navigationDelegate = self
+        webView?.scrollView.delegate = self
+
+        self.initActivityIndicator()
+        self.initReloadControl()
+        self.initReloadButton()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Called when the view has been fully transitioned onto the screen. Default does nothing
+
+        self.initCloseControl()
+
+        // there is no refresh is URL change, you must close this webview and open it again
+        foreground {
+            self.loadURL()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        uninitCloseControl()
+        dismissHandler?()
+    }
+
+    // MARK: WKNavigationDelegate
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        self.navigationItem.title = webView.title ?? ""
+        activityIndicator?.stopAnimating()
+        self.uninitReloadControl()
+        self.initReloadControl()
+    }
+
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        activityIndicator?.stopAnimating()
+    }
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        activityIndicator?.startAnimating()
+    }
+
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil { // open blank link too here
+            webView.load(navigationAction.request)
+        }
+        return nil
+    }
+
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        let code = URLError.Code(rawValue: (error as NSError).code)
+        switch code {
+        case .badURL, .unsupportedURL:
+            logger.error("Bad url \(String(describing: self.webView?.url))")
+            SwiftMessages.error(title: "", message: "Bad URL.\nPlease provide log to app support.", configure: { _, config in return config.viewController(self)})
+        case .cannotFindHost, .cannotConnectToHost: // -1004
+            SwiftMessages.warning("Not available.", configure: { _, config in return config.viewController(self)})
+        case .notConnectedToInternet, .dataNotAllowed:
+            SwiftMessages.warning("No network.\nPlease check wifi or mobile data and try again.", configure: { _, config in return config.viewController(self)})
+        case .fileDoesNotExist:
+            SwiftMessages.warning("Trying to load a non existing file.", configure: { _, config in return config.viewController(self)})
+        default:
+            SwiftMessages.warning("Unknown error receive \((error as NSError).code).\n \((error as NSError))", configure: { _, config in return config.viewController(self)})
+        }
+        self.webView?.stopLoading()
+        self.activityIndicator?.stopAnimating()
+        self.showReloadButton()
+    }
+
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
+        let alert = UIAlertController(
+            title: ""/* frame.request.url?.host */,
+            message: message,
+            preferredStyle: .alert)
+        alert.show()
+    }
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        manageScriptMessage(message)
+    }
+
+}
+
+extension Int {
+    fileprivate func toString() -> String {
+        return String(self)
+    }
+}
+
+// MARK: init webview
+
+private let kActionHandler = "mobile"
+private let kActionDismiss = "dismiss"
+private let kActionStatus = "status"
+private let kActionLog = "log"
+private let kActionParameterMessage = "message"
+
+extension ActionWebAreaControler {
+
+    fileprivate func initActivityIndicator() {
+        self.activityIndicator = ActivityIndicatorBar(view: self.view)
+    }
+
+    fileprivate func initWebView() {
+        let configuration = WKWebViewConfiguration()
+        let script = WKUserScript(source: self.jsScript(), injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        configuration.userContentController.addUserScript(script)
+        configuration.userContentController.add(self, name: kActionHandler)
+
+        let webView = WKWebView(frame: view.bounds, configuration: configuration)
+        view.addSubview(webView)
+        self.webView = webView
+    }
+
+    fileprivate func jsScript() -> String {
+        return """
 var $4d = {
   mobile: {
-    dismiss: function () {
-        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'dismiss'});
+    \(kActionDismiss): function () {
+        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': '\(kActionDismiss)'});
     },
-    status: function (message) {
-        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'status', 'message': message});
+    \(kActionStatus): function (message) {
+        window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': '\(kActionStatus)', '\(kActionParameterMessage)': message});
     },
     action: {
         name: '\(action.name)',
@@ -115,7 +247,7 @@ var $4d = {
     },
     logger: {
         log: function (level, message) {
-            window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': 'log', 'level': level, 'message': message});
+            window.webkit.messageHandlers.\(kActionHandler).postMessage({'action': '\(kActionLog)', 'level': level, '\(kActionParameterMessage)': message});
         },
         info: function (message) {
             this.log('info', message);
@@ -133,80 +265,25 @@ var $4d = {
   }
 };
 """
-            let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: false)
-            configuration.userContentController.addUserScript(script)
-            configuration.userContentController.add(self, name: kActionHandler)
-
-            webView = WKWebView(frame: view.bounds, configuration: configuration)
-            view.addSubview(webView)
-        }
-        webView.frame = view.bounds
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
-        webView.scrollView.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Called when the view has been fully transitioned onto the screen. Default does nothing
-
-        // there is no refresh is URL change, you must close this webview and open it again
-        foreground {
-            self.loadURL()
-        }
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dismissHandler?()
-    }
-    // MARK: WKNavigationDelegate
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        reloadButton?.image = UIImage(systemName: "arrow.clockwise")
-        self.navigationItem.title = webView.title ?? ""
-        // activityIndicator.stopAnimating()
-    }
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        reloadButton?.image = UIImage(systemName: "arrow.clockwise")
-        // activityIndicator.stopAnimating()
-    }
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        reloadButton?.image = UIImage(systemName: "xmark")
-        // activityIndicator.startAnimating()
-    }
-
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.targetFrame == nil { // open blank link too here
-            webView.load(navigationAction.request)
-        }
-        return nil
-    }
-
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
-       /* let alert = UIAlertController.create(title: frame.request.url?.host, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-            completionHandler()
-        }))
-        present(alert, animated: true, completion: nil)*/
-    }
-
-    @objc func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    @objc fileprivate func manageScriptMessage(_ message: WKScriptMessage) {
         guard message.name == kActionHandler else {
             return // ignore
         }
         guard let body = message.body as? [String: Any], let action = body["action"] as? String else {
             return // ignore
         }
-
         switch action {
-        case "dismiss":
+        case kActionDismiss:
             self.dismiss(animated: true) {
                 logger.debug("action web view dismissed")
             }
-        case "status":
+        case kActionStatus:
             if let text = body["message"] as? String {
                 SwiftMessages.info(text, configure: { _, config in return config.viewController(self)})
-            } else if let messageInfo = body["message"] as? [String: Any], let text = messageInfo["statusText"] as? String ?? messageInfo["message"] as? String {
+            } else if let messageInfo = body[kActionParameterMessage] as? [String: Any],
+                      let text = messageInfo["statusText"] as? String ?? messageInfo[kActionParameterMessage] as? String {
                 if let level = body["level"] as? String {
                     switch level {
                     case "debug":
@@ -226,8 +303,8 @@ var $4d = {
                     SwiftMessages.warning(text, configure: { _, config in return config.viewController(self)})
                 }
             }
-        case "log":
-            if let text = body["message"] as? String, let level = body["level"] as? String {
+        case kActionLog:
+            if let text = body[kActionParameterMessage] as? String, let level = body["level"] as? String {
                 switch level {
                 case "verbose":
                     logger.verbose(text)
@@ -246,13 +323,110 @@ var $4d = {
         default:
             logger.debug("Unknown message \(message.name )")
         }
-
     }
 
 }
 
-extension Int {
-    fileprivate func toString() -> String {
-        return String(self)
+// MARK: reload with swipe
+extension ActionWebAreaControler {
+
+    func initReloadControl() {
+        guard let webView = webView else { return }
+        if !webView.scrollView.subviews.filter({ $0 is UIRefreshControl}).isEmpty {
+            return
+        }
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshWebView(_:)), for: UIControl.Event.valueChanged)
+        webView.scrollView.addSubview(refreshControl)
+        webView.scrollView.bounces = true
+        self.isModalInPresentation = true
+    }
+
+    func uninitReloadControl() {
+        guard let webView = webView else { return }
+        for refresh in webView.scrollView.subviews.compactMap({ $0 as? UIRefreshControl}) {
+            refresh.removeFromSuperview()
+        }
+    }
+
+    @objc
+    func refreshWebView(_ sender: UIRefreshControl) {
+        self.webView?.reload()
+        sender.endRefreshing()
+    }
+
+    func initReloadButton() {
+        let reloadButton = UIButton()
+        reloadButton.backgroundColor = .background
+        reloadButton.setTitleColor(.foreground, for: .normal)
+        reloadButton.setTitle("Try again", for: .normal)
+        reloadButton.isHidden = true
+
+        reloadButton.translatesAutoresizingMaskIntoConstraints = false
+        self.webView?.addSubview(reloadButton)
+        NSLayoutConstraint.activate([
+            reloadButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            reloadButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            reloadButton.heightAnchor.constraint(equalToConstant: 50),
+            reloadButton.widthAnchor.constraint(equalToConstant: 100)
+        ])
+        reloadButton.addTarget(self, action: #selector(reload), for: .touchUpInside)
+        self.reloadButton = reloadButton
+    }
+
+    func showReloadButton() {
+        self.reloadButton?.isHidden = false
+    }
+
+    func hideReloadButton() {
+        self.reloadButton?.isHidden = true
+    }
+
+    @IBAction func reload(_ sender: Any) {
+        guard let webView = webView else { return }
+        hideReloadButton()
+        if webView.isLoading {
+            webView.stopLoading()
+        } else {
+            if webView.url != nil {
+                webView.reload()
+            } else {
+                loadURL()
+            }
+        }
+    }
+
+}
+
+// MARK: close with tap gesture
+extension ActionWebAreaControler: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    func initCloseControl() {
+        tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapBehind))
+        tapOutsideRecognizer.numberOfTapsRequired = 1
+        tapOutsideRecognizer.cancelsTouchesInView = false
+        tapOutsideRecognizer.delegate = self
+        self.view.window?.addGestureRecognizer(tapOutsideRecognizer)
+    }
+
+    func uninitCloseControl() {
+        if self.tapOutsideRecognizer != nil {
+            self.view.window?.removeGestureRecognizer(self.tapOutsideRecognizer)
+            self.tapOutsideRecognizer = nil
+        }
+    }
+
+    @objc
+    func handleTapBehind(_ sender: UITapGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
+            let location: CGPoint = sender.location(in: self.view)
+            if !self.view.point(inside: location, with: nil) {
+                self.dismissAnimated()
+            }
+        }
     }
 }
