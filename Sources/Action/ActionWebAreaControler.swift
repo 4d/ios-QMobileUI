@@ -33,6 +33,9 @@ class ActivityIndicatorBar: ActivityIndicator {
 private let kTagPrefix = "{{"
 private let kTagSuffix = "}}"
 
+private let kHeaderTable = "X-DataClass"
+private let kHeaderEntityPrimaryKey = "X-Primary-Key-Value"
+
 class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
 
     var urlString: String!
@@ -80,10 +83,26 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
         return nil
     }()
 
+    lazy var headerFields: [String: String]? = {
+        if let actionContext = context.actionContextParameters() {
+            var fields: [String: String] = [:]
+            if let table = actionContext[ActionParametersKey.table] as? String {
+                fields[kHeaderTable] = table
+            }
+            if let primaryKeyValue = (actionContext[ActionParametersKey.record] as? [String: String])?[ActionParametersKey.primaryKey]
+                ?? ((actionContext[ActionParametersKey.record] as? [String: Int])?[ActionParametersKey.primaryKey])?.toString() {
+                fields[kHeaderEntityPrimaryKey] = primaryKeyValue
+            }
+            return fields
+        }
+        return nil
+    }()
+
     func loadURL() {
         webView?.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
         if let url = self.url {
-            let request = URLRequest(url: url)
+            var request = URLRequest(url: url)
+            request.allHTTPHeaderFields = self.headerFields
             webView?.load(request)
 
             LinearProgressBar.removeAllProgressBars(self.view)
