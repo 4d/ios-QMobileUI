@@ -45,7 +45,7 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
     fileprivate var activityIndicator: ActivityIndicator?
     fileprivate var tapOutsideRecognizer: UITapGestureRecognizer!
     var webView: WKWebView?
-    fileprivate var reloadButton: UIButton?
+    fileprivate var reloadDialog: DialogForm?
 
     var dismissHandler: (() -> Void)?
 
@@ -134,7 +134,7 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
 
         self.initActivityIndicator()
         self.initReloadControl()
-        self.initReloadButton()
+        self.initReloadUI()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -184,19 +184,18 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
         switch code {
         case .badURL, .unsupportedURL:
             logger.error("Bad url \(String(describing: self.webView?.url))")
-            SwiftMessages.error(title: "", message: "Bad URL.\nPlease provide log to app support.", configure: { _, config in return config.viewController(self)})
         case .cannotFindHost, .cannotConnectToHost: // -1004
-            SwiftMessages.warning("Not available.", configure: { _, config in return config.viewController(self)})
+            logger.warning("Not available.")
         case .notConnectedToInternet, .dataNotAllowed:
-            SwiftMessages.warning("No network.\nPlease check wifi or mobile data and try again.", configure: { _, config in return config.viewController(self)})
+            logger.warning("No network.\nPlease check wifi or mobile data and try again.")
         case .fileDoesNotExist:
-            SwiftMessages.warning("Trying to load a non existing file.", configure: { _, config in return config.viewController(self)})
+            logger.warning("Trying to load a non existing file.")
         default:
-            SwiftMessages.warning("Unknown error receive \((error as NSError).code).\n \((error as NSError))", configure: { _, config in return config.viewController(self)})
+            logger.warning("Unknown error receive \((error as NSError).code).\n \((error as NSError))")
         }
         self.webView?.stopLoading()
         self.activityIndicator?.stopAnimating()
-        self.showReloadButton()
+        self.showReloadUI()
     }
 
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
@@ -369,36 +368,30 @@ extension ActionWebAreaControler {
         sender.endRefreshing()
     }
 
-    func initReloadButton() {
-        let reloadButton = UIButton()
-        reloadButton.backgroundColor = .background
-        reloadButton.setTitleColor(.foreground, for: .normal)
-        reloadButton.setTitle("Try again", for: .normal)
-        reloadButton.isHidden = true
+    func initReloadUI() {
+        let dialog = DialogForm(nibName: "ReloadWebArea", bundle: Bundle(for: ActionWebAreaControler.self))
+        dialog.delegate = self
+        dialog.cornerRadius = 12
+        dialog.dismissOnTap = false
+        dialog.modalPosition = .center
+        dialog.modalSize = (.threeQuarters, .custom(size: 128))
 
-        reloadButton.translatesAutoresizingMaskIntoConstraints = false
-        self.webView?.addSubview(reloadButton)
-        NSLayoutConstraint.activate([
-            reloadButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            reloadButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            reloadButton.heightAnchor.constraint(equalToConstant: 50),
-            reloadButton.widthAnchor.constraint(equalToConstant: 100)
-        ])
-        reloadButton.addTarget(self, action: #selector(reload), for: .touchUpInside)
-        self.reloadButton = reloadButton
+        self.reloadDialog = dialog
     }
 
-    func showReloadButton() {
-        self.reloadButton?.isHidden = false
+    func showReloadUI() {
+        self.reloadDialog?.show(self, animated: true) {
+            logger.debug("Reload dialog shown")
+        }
     }
 
-    func hideReloadButton() {
-        self.reloadButton?.isHidden = true
+    func hideReloadUI() {
+        self.reloadDialog?.dismissAnimated()
     }
 
     @IBAction func reload(_ sender: Any) {
         guard let webView = webView else { return }
-        hideReloadButton()
+        hideReloadUI()
         if webView.isLoading {
             webView.stopLoading()
         } else {
@@ -410,6 +403,21 @@ extension ActionWebAreaControler {
         }
     }
 
+}
+
+// MARK: reload and close using dialog
+extension ActionWebAreaControler: DialogFormDelegate {
+
+    func onOK(dialog: DialogForm, sender: Any) {
+        assert(dialog == self.reloadDialog)
+        reload(sender)
+    }
+
+    func onCancel(dialog: DialogForm, sender: Any) {
+        assert(dialog == self.reloadDialog)
+        hideReloadUI()
+        self.dismissAnimated()
+    }
 }
 
 // MARK: close with tap gesture
