@@ -33,8 +33,7 @@ class ActivityIndicatorBar: ActivityIndicator {
 private let kTagPrefix = "{{"
 private let kTagSuffix = "}}"
 
-private let kHeaderTable = "X-DataClass"
-private let kHeaderEntityPrimaryKey = "X-Primary-Key-Value"
+private let kHeaderContext = "X-QMobile-Context"
 
 class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
 
@@ -85,15 +84,11 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
 
     lazy var headerFields: [String: String]? = {
         if let actionContext = context.actionContextParameters() {
-            var fields: [String: String] = [:]
-            if let table = actionContext[ActionParametersKey.table] as? String {
-                fields[kHeaderTable] = table
+            guard let data = try? JSONSerialization.data(withJSONObject: actionContext, options: []) else {
+                logger.warning("Failed to encode context for web are \(actionContext)")
+                return nil
             }
-            if let primaryKeyValue = (actionContext[ActionParametersKey.record] as? [String: String])?[ActionParametersKey.primaryKey]
-                ?? ((actionContext[ActionParametersKey.record] as? [String: Int])?[ActionParametersKey.primaryKey])?.toString() {
-                fields[kHeaderEntityPrimaryKey] = primaryKeyValue
-            }
-            return fields
+            return [kHeaderContext: data.base64EncodedString()]
         }
         return nil
     }()
