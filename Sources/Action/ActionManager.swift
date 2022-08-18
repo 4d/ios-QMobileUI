@@ -92,6 +92,7 @@ public class ActionManager: NSObject, ObservableObject {
 
     /// Execute the action or if there is at least one parameter show a form.
     public func prepareAndExecuteAction(_ action: Action, _ actionUI: ActionUI, _ context: ActionContext) {
+        logger.info("Prepare and execute \(action)")
         if action.preset == .sort {
             // local action without server
             guard let tableName = context.actionContextParameters()?[ActionParametersKey.table] as? String else {
@@ -128,8 +129,10 @@ public class ActionManager: NSObject, ObservableObject {
             }
 
             controlAction.dismissHandler = {
+                logger.info("Dismiss web area \(action.url)")
                 self.window = nil
             }
+            logger.info("Present web area \(action.url)")
             self.window = controlAction.presentOnTop()
        } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely

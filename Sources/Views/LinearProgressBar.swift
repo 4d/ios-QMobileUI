@@ -190,6 +190,7 @@ open class LinearProgressBar: UIView {
 
     @discardableResult
     open class func showProgressBar(_ parentView: UIView) -> UIView {
+        logger.verbose("showProgressBar")
         let progressBar = LinearProgressBar(frame: parentView.frame)
         progressBar.tag = progressBarViewTag
         progressBar.attachToTop(of: parentView)
@@ -198,6 +199,7 @@ open class LinearProgressBar: UIView {
     }
 
     open class func removeAllProgressBars(_ parentView: UIView) {
+        logger.verbose("removeAllProgressBars")
         parentView.subviews
             .filter { $0.tag == progressBarViewTag }
             .forEach { view in

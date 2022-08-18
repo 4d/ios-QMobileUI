@@ -71,9 +71,12 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
             urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)server\(kTagSuffix)", with: "")
             if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
                 components.path = urlString.hasPrefix("/") ? urlString: "/\(urlString)"
-                return components.url
+                let url = components.url
+                logger.debug("ActionWebAreaControler url is \(String(describing: url))")
+                return url
             }
         } else if !urlString.hasPrefix("http") {
+            logger.debug("ActionWebAreaControler url is https://\(urlString)")
             return URL(string: "https://"+urlString)
         } else {
             return URL(string: urlString)
@@ -88,12 +91,14 @@ class ActionWebAreaControler: UIViewController, WKUIDelegate, WKNavigationDelega
                 logger.warning("Failed to encode context for web are \(actionContext)")
                 return nil
             }
+            logger.debug("headerFields is \(data.base64EncodedString())")
             return [kHeaderContext: data.base64EncodedString()]
         }
         return nil
     }()
 
     func loadURL() {
+        logger.debug("loadURL \(String(describing: action.url))")
         webView?.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
         if let url = self.url {
             var request = URLRequest(url: url)
@@ -229,10 +234,12 @@ private let kActionParameterMessage = "message"
 extension ActionWebAreaControler {
 
     fileprivate func initActivityIndicator() {
+        logger.debug("initActivityIndicator \(String(describing: action.url))")
         self.activityIndicator = ActivityIndicatorBar(view: self.view)
     }
 
     fileprivate func initWebView() {
+        logger.debug("initWebView \(String(describing: action.url))")
         let configuration = WKWebViewConfiguration()
         let script = WKUserScript(source: self.jsScript(), injectionTime: .atDocumentStart, forMainFrameOnly: false)
         configuration.userContentController.addUserScript(script)
@@ -344,6 +351,7 @@ var $4d = {
 extension ActionWebAreaControler {
 
     func initReloadControl() {
+        logger.debug("initReloadControl \(String(describing: action.url))")
         guard let webView = webView else { return }
         if !webView.scrollView.subviews.filter({ $0 is UIRefreshControl}).isEmpty {
             return
@@ -356,6 +364,7 @@ extension ActionWebAreaControler {
     }
 
     func uninitReloadControl() {
+        logger.debug("uninitReloadControl \(String(describing: action.url))")
         guard let webView = webView else { return }
         for refresh in webView.scrollView.subviews.compactMap({ $0 as? UIRefreshControl}) {
             refresh.removeFromSuperview()
@@ -369,6 +378,7 @@ extension ActionWebAreaControler {
     }
 
     func initReloadUI() {
+        logger.debug("initReloadUI \(String(describing: action.url))")
         let dialog = DialogForm(nibName: "ReloadWebArea", bundle: Bundle(for: ActionWebAreaControler.self))
         dialog.delegate = self
         dialog.cornerRadius = 12
@@ -380,16 +390,19 @@ extension ActionWebAreaControler {
     }
 
     func showReloadUI() {
+        logger.debug("showReloadUI \(String(describing: action.url))")
         self.reloadDialog?.show(self, animated: true) {
             logger.debug("Reload dialog shown")
         }
     }
 
     func hideReloadUI() {
+        logger.debug("hideReloadUI \(String(describing: action.url))")
         self.reloadDialog?.dismissAnimated()
     }
 
     @IBAction func reload(_ sender: Any) {
+        logger.debug("reload \(String(describing: action.url))")
         guard let webView = webView else { return }
         hideReloadUI()
         if webView.isLoading {
@@ -409,11 +422,13 @@ extension ActionWebAreaControler {
 extension ActionWebAreaControler: DialogFormDelegate {
 
     func onOK(dialog: DialogForm, sender: Any) {
+        logger.verbose("try again \(String(describing: action.url))")
         assert(dialog == self.reloadDialog)
         reload(sender)
     }
 
     func onCancel(dialog: DialogForm, sender: Any) {
+        logger.verbose("cancel \(String(describing: action.url))")
         assert(dialog == self.reloadDialog)
         hideReloadUI()
         self.dismissAnimated()
