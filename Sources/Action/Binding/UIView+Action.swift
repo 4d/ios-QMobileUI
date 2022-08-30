@@ -105,7 +105,7 @@ extension UIView {
                         let actionContext: ActionContext = self
 
                         var moreActions: [ActionUI]? = nil
-                        if actionHasDeferred {
+                        if actionHasDeferred  && /*has action with pending feature*/!actionSheet.actions.filter({ !($0.preset?.couldNotBePending ?? false)}).isEmpty {
                             let actionUI = UIAction(
                                 title: "Pending task",
                                 image: UIImage(systemName: "ellipsis.rectangle"),
@@ -124,6 +124,7 @@ extension UIView {
                                     presentedController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.foreground]
                                     presentedController.navigationBar.isTranslucent = false
                                     presentedController.navigationBar.barTintColor = UIColor.background
+                                    presentedController.navigationBar.backgroundColor = UIColor.background
                                     hostController.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: hostController, action: #selector(hostController.dismissAnimated))
                                     (self.owningViewController ?? UIApplication.topViewController)?.present(presentedController, animated: true, completion: {
                                         logger.debug("present action more")
