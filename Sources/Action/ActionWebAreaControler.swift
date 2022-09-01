@@ -304,7 +304,7 @@ var $4d = {
                 SwiftMessages.info(text, configure: { _, config in return config.viewController(self)})
             } else if let messageInfo = body[kActionParameterMessage] as? [String: Any],
                       let text = messageInfo["statusText"] as? String ?? messageInfo[kActionParameterMessage] as? String {
-                if let level = body["level"] as? String {
+                if let level = messageInfo["level"] as? String {
                     switch level {
                     case "debug":
                         SwiftMessages.debug(text, configure: { _, config in return config.viewController(self)})
