@@ -5,7 +5,7 @@ rm -Rf ~/Library/Caches/org.carthage.CarthageKit/dependencies/QMobile*
 # rm -f Cartfile.resolved
 
 file=Cartfile.resolved
-url=https://gitlab-4d.private.4d.fr/qmobile/ios/
+url=https://gitlab-4d.private.4d.fr/4d/qmobile/ios/
 
 echo "- before:"
 cat $file

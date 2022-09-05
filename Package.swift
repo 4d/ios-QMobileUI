@@ -27,9 +27,9 @@ let package = Package(
         .package(url: "https://github.com/xmartlabs/Eureka.git", from: "5.3.6"),
         .package(url: "https://github.com/IBAnimatable/IBAnimatable.git", from: "6.1.0"),
 
-        .package(url: "https://gitlab-4d.private.4d.fr/qmobile/ios/QMobileAPI.git", .revision("HEAD")),
-        .package(url: "https://gitlab-4d.private.4d.fr/qmobile/ios/QMobileDataStore.git", .revision("HEAD")),
-        .package(url: "https://gitlab-4d.private.4d.fr/qmobile/ios/QMobileDataSync.git", .revision("HEAD"))
+        .package(url: "https://gitlab-4d.private.4d.fr/4d/qmobile/ios/QMobileAPI.git", .revision("HEAD")),
+        .package(url: "https://gitlab-4d.private.4d.fr/4d/qmobile/ios/QMobileDataStore.git", .revision("HEAD")),
+        .package(url: "https://gitlab-4d.private.4d.fr/4d/qmobile/ios/QMobileDataSync.git", .revision("HEAD"))
     ],
     targets: [
         .target(
