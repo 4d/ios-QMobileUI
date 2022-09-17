@@ -95,11 +95,12 @@ public class ActionManager: NSObject, ObservableObject {
         logger.info("Prepare and execute \(action)")
         if action.preset == .sort {
             // local action without server
-            guard let tableName = context.actionContextParameters()?[ActionParametersKey.table] as? String else {
+            guard let tableName = action.tableName ?? context.actionContextParameters()?[ActionParametersKey.table] as? String else {
                 logger.warning("Cannot sort without table name \(action)")
                 return
             }
-            guard let tableInfo = ApplicationDataSync.instance.dataSync.dataStore.tableInfo(forOriginalName: tableName) else {
+            let dataStore = ApplicationDataSync.instance.dataSync.dataStore
+            guard let  tableInfo = dataStore.tableInfo(forOriginalName: tableName) ?? dataStore.tableInfo(for: tableName) else {
                 logger.warning("Cannot find table info for \(tableName) to sort")
                 return
             }

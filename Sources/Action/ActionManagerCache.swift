@@ -38,7 +38,7 @@ class ActionManagerCache {
                 if let image = imageResult.image {
                     self.imageCache.store(image, forKey: to)
                 }
-            case .failure(_):
+            case .failure:
                 logger.warning("No image to transfert in cache")
             }
             self.imageCache.removeImage(forKey: from)
