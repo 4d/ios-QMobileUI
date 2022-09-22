@@ -226,7 +226,7 @@ open class Binder: NSObject {
    */
 
     /// If put an image or data into restImage, manage it
-    fileprivate func fix(key: inout String, accordingTo extractedValue: Any?) {
+    fileprivate func fix(key: inout String, accordingTo extractedValue: Any?, info: String) {
         if key == "restImage" { // for test purpose, fix type
             // logger.debug("The view '\(view)'  \(key). \(String(unwrappedDescrib: extractedValue))")
             if extractedValue is Data {
@@ -234,6 +234,31 @@ open class Binder: NSObject {
             } else if extractedValue is UIImage {
                 key = "image"
             }
+        } else if key.isEmpty {
+            // assert(false, "binding key empty, error in storyboard")
+            logger.error("Storyboad seems to not define correctly the binding value in \"user defined attribute\" of button or label for field path \"\(info)\". Value is empty, so fallback to default display for \(extractedValue ?? "<null>")")
+            if let extractedValue = extractedValue {
+                if extractedValue is String {
+                    key = "text"
+                } else if extractedValue is Bool {
+                    key = "bool"
+                } else if let number = extractedValue as? NSNumber {
+                    let type: CFNumberType = CFNumberGetType(number)
+                    switch type {
+                    case  .intType, .cfIndexType, .nsIntegerType, .sInt8Type, .charType, .sInt16Type, .shortType, .sInt32Type, .longType, .sInt64Type, .longLongType:
+                        key = "integer"
+                    case .float32Type, .floatType, .float64Type, .doubleType, .cgFloatType:
+                        key = "real"
+                    @unknown default:
+                        key = "integer"
+                    }
+                } else {
+                    key = "unknown"
+                }
+            } else {
+                key = "unknown"
+            }
+
         }
     }
 
@@ -260,7 +285,7 @@ open class Binder: NSObject {
         // Get the view key and check it
         var key = entry.viewKey
         assert(!view.hasProperty(name: key), "The view '\(view)' has no property \(key). Check right part of binding.") // maybe inherited field could not be checked, and assert must be modified
-        fix(key: &key, accordingTo: extractedValue)
+        fix(key: &key, accordingTo: extractedValue, info: entry.keyPath)
 
         // Set value to view
         view.setProperty(name: key, value: extractedValue)
