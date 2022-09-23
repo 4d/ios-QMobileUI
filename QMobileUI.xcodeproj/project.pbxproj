@@ -142,7 +142,7 @@
 		48AE2C5E1F455DD90013FDEE /* ApplicationDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AE2C5D1F455DD90013FDEE /* ApplicationDataSync.swift */; };
 		48AEA33725E1243500433361 /* OCRRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AEA33625E1243500433361 /* OCRRow.swift */; };
 		48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */; };
-		48B1E498272FF5EC00205721 /* ActionWebAreaControler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B1E497272FF5EC00205721 /* ActionWebAreaControler.swift */; };
+		48B1E498272FF5EC00205721 /* ActionWebAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B1E497272FF5EC00205721 /* ActionWebAreaController.swift */; };
 		48B23D022231154C00F6D94C /* UIView+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFA2231154C00F6D94C /* UIView+Action.swift */; };
 		48B23D052231154C00F6D94C /* UITableView+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */; };
 		48B23D062231154C00F6D94C /* Floaty+ActionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */; };
@@ -409,7 +409,7 @@
 		48AE2C611F4577A40013FDEE /* BrightFutures.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightFutures.framework; path = Carthage/Build/iOS/BrightFutures.framework; sourceTree = "<group>"; };
 		48AEA33625E1243500433361 /* OCRRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OCRRow.swift; sourceTree = "<group>"; };
 		48AFA0E025CD683F000CDB5D /* ActionRequestStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRequestStatusView.swift; sourceTree = "<group>"; };
-		48B1E497272FF5EC00205721 /* ActionWebAreaControler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionWebAreaControler.swift; sourceTree = "<group>"; };
+		48B1E497272FF5EC00205721 /* ActionWebAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionWebAreaController.swift; sourceTree = "<group>"; };
 		48B23CFA2231154C00F6D94C /* UIView+Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Action.swift"; sourceTree = "<group>"; };
 		48B23CFE2231154C00F6D94C /* UITableView+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+ActionUI.swift"; sourceTree = "<group>"; };
 		48B23CFF2231154C00F6D94C /* Floaty+ActionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Floaty+ActionUI.swift"; sourceTree = "<group>"; };
@@ -957,7 +957,7 @@
 				4869D609223BA4200042379F /* ActionContext */,
 				48BC8568226EF61200D548B2 /* Alert */,
 				C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */,
-				48B1E497272FF5EC00205721 /* ActionWebAreaControler.swift */,
+				48B1E497272FF5EC00205721 /* ActionWebAreaController.swift */,
 				4825C0FE28AD0D6C00CBA78F /* ReloadWebArea.xib */,
 			);
 			path = Action;
@@ -1709,7 +1709,7 @@
 				C489F5BA255D203300EED0C1 /* AsynchronousOperation.swift in Sources */,
 				48B23D072231154C00F6D94C /* UIAlertController+ActionUI.swift in Sources */,
 				48BC856C226EF96400D548B2 /* UIAlertController+TextView.swift in Sources */,
-				48B1E498272FF5EC00205721 /* ActionWebAreaControler.swift in Sources */,
+				48B1E498272FF5EC00205721 /* ActionWebAreaController.swift in Sources */,
 				4881205D20FDEF510041D774 /* LogForm.swift in Sources */,
 				48AFA0E125CD683F000CDB5D /* ActionRequestStatusView.swift in Sources */,
 				C489F5BD255D203300EED0C1 /* ActionRequestOperation.swift in Sources */,

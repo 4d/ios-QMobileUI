@@ -28,6 +28,7 @@ extension SwiftMessages {
 
     /// Hide message when tap.
     public static var defaultTapHandler: ((_ view: BaseView) -> Void) = { _ in SwiftMessages.hide() }
+    public static var defaultButtonTapHandler: ((_ button: UIButton) -> Void) = { _ in SwiftMessages.hide() }
 
     public static func debug(_ message: String, configure: Configure? = nil) {
         #if DEBUG

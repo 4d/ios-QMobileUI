@@ -115,7 +115,7 @@ public class ActionManager: NSObject, ObservableObject {
             dataSourceSortable.setSortDescriptors(sortDescriptors)
         } else if action.preset == .openURL {
             let urlString = action.url ?? APIManager.instance.base.url.appendingPathComponent("$/action").absoluteString
-            let controlAction = ActionWebAreaControler()
+            let controlAction = ActionWebAreaController()
             controlAction.urlString = urlString
             controlAction.context = context
             controlAction.action = action
@@ -130,10 +130,10 @@ public class ActionManager: NSObject, ObservableObject {
             }
 
             controlAction.dismissHandler = {
-                logger.info("Dismiss web area \(action.url)")
+                logger.info("Dismiss web area \(action.url ?? "<null>")")
                 self.window = nil
             }
-            logger.info("Present web area \(action.url)")
+            logger.info("Present web area \(action.url ?? "<null>")")
             self.window = controlAction.presentOnTop()
        } else if action.parameters.isEmpty {
             // Execute action without any parameters immedialtely
