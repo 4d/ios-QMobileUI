@@ -163,7 +163,11 @@ extension UIView {
                                     }
                                 }
                             }
-                            return currentMenu
+                            return UIMenu(title: currentMenu.title,
+                                          image: currentMenu.image,
+                                          identifier: currentMenu.identifier,
+                                          options: currentMenu.options,
+                                          children: currentMenu.children) // create new menu to force updatereturn currentMenu
                         })
                     } else {
                         // default behaviour: if clicked create a ui alert controller
