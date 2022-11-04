@@ -174,6 +174,8 @@
 		48D584831E783447006F56B5 /* TableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847D1E783447006F56B5 /* TableDataSource.swift */; };
 		48D584841E783447006F56B5 /* DataSourceCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */; };
 		48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */; };
+		48D87A8C29155C18005FE300 /* ImagePickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D87A8B29155C18005FE300 /* ImagePickerRow.swift */; };
+		48D87A8F2915676B005FE300 /* ImageActionSheetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D87A8E2915676B005FE300 /* ImageActionSheetRow.swift */; };
 		48DCEAE3212C528A00473910 /* ValueTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DCEAE2212C528A00473910 /* ValueTransformers.swift */; };
 		48E4726B20333373002194C7 /* ApplicationImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E4726A20333373002194C7 /* ApplicationImageCache.swift */; };
 		48E49CEA1EB9CA70002B60AF /* ApplicationLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */; };
@@ -446,6 +448,8 @@
 		48D5847D1E783447006F56B5 /* TableDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableDataSource.swift; sourceTree = "<group>"; };
 		48D5847E1E783447006F56B5 /* DataSourceCollectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceCollectionHeaderView.swift; sourceTree = "<group>"; };
 		48D5847F1E783447006F56B5 /* DataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSourceDelegate.swift; sourceTree = "<group>"; };
+		48D87A8B29155C18005FE300 /* ImagePickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerRow.swift; sourceTree = "<group>"; };
+		48D87A8E2915676B005FE300 /* ImageActionSheetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageActionSheetRow.swift; sourceTree = "<group>"; };
 		48DCEAE2212C528A00473910 /* ValueTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueTransformers.swift; sourceTree = "<group>"; };
 		48E4726A20333373002194C7 /* ApplicationImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationImageCache.swift; sourceTree = "<group>"; };
 		48E49CE41EB9CA70002B60AF /* ApplicationLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationLogger.swift; sourceTree = "<group>"; };
@@ -746,6 +750,8 @@
 		483192512297F8000041B41A /* CustomRows */ = {
 			isa = PBXGroup;
 			children = (
+				48D87A8D29156763005FE300 /* ImageActionSheetRow */,
+				48D87A8A29155C0A005FE300 /* ImagePickerRow */,
 				4868D8CC26B2731200CC3B06 /* SearchablePushRow */,
 				48AEA33525E1243500433361 /* OCRRow */,
 				C4F2208B254356F70063653A /* SignatureViewRow */,
@@ -1121,6 +1127,22 @@
 				4888ACCF22EB083100219E63 /* NSSetTests.swift */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		48D87A8A29155C0A005FE300 /* ImagePickerRow */ = {
+			isa = PBXGroup;
+			children = (
+				48D87A8B29155C18005FE300 /* ImagePickerRow.swift */,
+			);
+			path = ImagePickerRow;
+			sourceTree = "<group>";
+		};
+		48D87A8D29156763005FE300 /* ImageActionSheetRow */ = {
+			isa = PBXGroup;
+			children = (
+				48D87A8E2915676B005FE300 /* ImageActionSheetRow.swift */,
+			);
+			path = ImageActionSheetRow;
 			sourceTree = "<group>";
 		};
 		48E49CE31EB9CA15002B60AF /* Services */ = {
@@ -1675,6 +1697,7 @@
 				4859D9611F827FD200C8A020 /* DialogForm.swift in Sources */,
 				48A9CB2F20348B40007183B4 /* UINavigationController+QMobile.swift in Sources */,
 				483FDA851E82745200FAF84B /* IndexPath+QMobile.swift in Sources */,
+				48D87A8F2915676B005FE300 /* ImageActionSheetRow.swift in Sources */,
 				48E49CEE1EB9CA70002B60AF /* ApplicationPreferences.swift in Sources */,
 				4848E0EF21B181E800DB65A2 /* LoadingView.swift in Sources */,
 				48F8E2CB1F7D0FA2000080FB /* UITextInput+QMobile.swift in Sources */,
@@ -1696,6 +1719,7 @@
 				480392A61E928C4B008CF992 /* UILabel+Binding.swift in Sources */,
 				48D4AF67290943DA00CB299A /* UILabel+QMobile.swift in Sources */,
 				486BC3CA231935710059B66C /* RecordFormatter.swift in Sources */,
+				48D87A8C29155C18005FE300 /* ImagePickerRow.swift in Sources */,
 				48F8E2C41F7D0EC1000080FB /* RawRepresentable+IndexSet.swift in Sources */,
 				483FDA8D1E82851E00FAF84B /* DataSourceEntry.swift in Sources */,
 				48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */,

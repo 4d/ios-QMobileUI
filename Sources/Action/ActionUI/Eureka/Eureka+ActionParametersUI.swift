@@ -184,24 +184,25 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             }
         case .cellUpdate:
             if let tag = row.tag, let parameter = self.builder.action.parameters?.first(where: { $0.name == tag }), parameter.isImageNamed {
-                if let row = row as? PushRow<ChoiceListItem> {
-                    if let text = row.value, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
-                        row.cell.detailTextLabel?.setImage(image)
-                    } else {
-                        row.cell.detailTextLabel?.text = ""
-                    }
-                } else if let row = row as? PopoverSelectorRow<ChoiceListItem> {
-                    if let text = row.value, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
-                        row.cell.detailTextLabel?.setImage(image)
-                    } else {
-                        row.cell.detailTextLabel?.text = ""
-                    }
-                } else if let row = row as? SegmentedRow<ChoiceListItem> {
+                if let row = row as? SegmentedRow<ChoiceListItem> {
                     for (index, option) in ((row.options ?? []).enumerated()) {
-                        if let text = option.value.wrapped, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
+                        if let text = option.imageNameKey, var image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
+                            if image.renderingMode == .automatic {
+                                image = image.withRenderingMode(.alwaysOriginal)
+                            }
                             row.cell.segmentedControl.setImage(image, forSegmentAt: index)
                         }
                     }
+                } else if let row = row as? ActionSheetRow<ChoiceListItem> {
+                    row.imageNamedCurrentvalue()
+                } /*else if let row = row as? PickerRow<ChoiceListItem> {
+                   // nothing to change, pickerrow is inline
+                } */ else if let row = row as? PushRow<ChoiceListItem> { // all SelectorRow (find a way to not duplicate?)
+                    row.imageNamedCurrentvalue()
+                } else if let row = row as? SearchPushRow<ChoiceListItem> {
+                    row.imageNamedCurrentvalue()
+                } else if let row = row as? PopoverSelectorRow<ChoiceListItem> {
+                    row.imageNamedCurrentvalue()
                 }
             }
         default:

@@ -92,6 +92,7 @@ extension ActionParameter {
                     .onRowEvent(eventCallback)
             case .segmented:
                 return SegmentedRow<ChoiceListItem>(name)
+                    .changeControl()
                     .fillOptions(choiceList: choice, parameter: self)
                     .onRowEvent(eventCallback)
             case .push:
@@ -108,12 +109,22 @@ extension ActionParameter {
                         .onRowEvent(eventCallback)
                 }
             case .sheet:
+                if isImageNamed {
+                    return ImageActionSheetRow<ChoiceListItem>(name)
+                        .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                        .onRowEvent(eventCallback)
+                }
                 return ActionSheetRow<ChoiceListItem>(name)
-                    .fillOptions(choiceList: choice, parameter: self)
+                    .fillOptions(choiceList: choice, parameter: self, addDefault: true)
                     .onRowEvent(eventCallback)
             case .picker:
+                if isImageNamed {
+                    return ImagePickerRow<ChoiceListItem>(name)
+                        .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                        .onRowEvent(eventCallback)
+                }
                 return PickerRow<ChoiceListItem>(name)
-                    .fillOptions(choiceList: choice, parameter: self)
+                    .fillOptions(choiceList: choice, parameter: self, addDefault: true)
                     .onRowEvent(eventCallback)
             default:
                 assertionFailure("Must not occurs, a correct default type must have been chosen")
@@ -147,6 +158,52 @@ extension ActionParameter {
     }
 }
 
+extension SegmentedRow {
+
+    func changeControl() -> Self {
+        self.cell.segmentedControl.removeFromSuperview()
+        let segmentedControl = UIDeselectableSegmentedControl()
+
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.setContentHuggingPriority(UILayoutPriority(rawValue: 250), for: .horizontal)
+        self.cell.segmentedControl = segmentedControl
+        let contentView = self.cell.contentView
+        contentView.addSubview(segmentedControl)
+        contentView.addConstraint(NSLayoutConstraint(item: segmentedControl, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0))
+        self.cell.setup()
+
+        segmentedControl.callbackNoSegment = { [weak self] _ in
+            self?.value = nil
+        }
+
+        return self
+    }
+
+}
+
+class UIDeselectableSegmentedControl: UISegmentedControl {
+
+    var callbackNoSegment: ((UISegmentedControl) -> Void) = { control in
+        control.sendActions(for: .valueChanged) // bug in eureka, so will be not called
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let previousSelectedSegmentIndex = self.selectedSegmentIndex
+
+        super.touchesEnded(touches, with: event)
+
+        if previousSelectedSegmentIndex == self.selectedSegmentIndex {
+
+            self.selectedSegmentIndex = UISegmentedControl.noSegment
+            let touch = touches.first!
+            let touchLocation = touch.location(in: self)
+            if bounds.contains(touchLocation) {
+                callbackNoSegment(self)
+            }
+        }
+    }
+}
+
 extension ChoiceListItem: SearchItem {
     func matchesSearchQuery(_ query: String) -> Bool {
         return self.description.lowercased().contains(query.lowercased())
@@ -160,11 +217,26 @@ extension SelectorRow {
         return self
     }
 
+}
+
+public protocol ChoiceListItemImageNamed {
+
+    var imageNameKey: String? { get }
+
+}
+extension ChoiceListItem: ChoiceListItemImageNamed {
+    var imageNameKey: String? {
+        return "\(self.value.value)"
+    }
+}
+
+extension SelectorRow where Cell: BaseCell, Cell.Value: ChoiceListItemImageNamed {
+
     func imageNamed(_ imageNamed: Bool) -> Self {
         guard imageNamed else { return self }
         return self.onPresent({ _, controller in
             controller.selectableRowCellUpdate = { cell, row in // not in selectableRowCellSetup, because replaced after data update
-                if let text = row.tag, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
+                if let text = row.selectableValue?.imageNameKey, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
                     cell.textLabel?.setImage(image)
                 } else {
                     cell.textLabel?.text = ""
@@ -172,8 +244,18 @@ extension SelectorRow {
             }
         })
     }
-
 }
+
+extension Row where Cell: BaseCell, Cell.Value: ChoiceListItemImageNamed {
+    func imageNamedCurrentvalue() {
+        if let text = self.value?.imageNameKey, let image = UIImage(named: "\(kPrefixImageNamed)\(text)") {
+            self.cell.detailTextLabel?.setImage(image)
+        } else {
+            self.cell.detailTextLabel?.text = ""
+        }
+    }
+}
+
 import Prephirences
 extension ActionParameterFormat {
     var isChoiceList: Bool {
@@ -194,12 +276,13 @@ extension ActionParameterFormat {
 extension OptionsProviderRow where Self: RowOf<ChoiceListItem>, Self.OptionsProviderType.Option == ChoiceListItem, Self.Cell.Value == ChoiceListItem {
 
     /// Fill this type of row with choice list
-    func fillOptions(choiceList: ChoiceList, parameter: ActionParameter) -> Self {
+    func fillOptions(choiceList: ChoiceList, parameter: ActionParameter, addDefault: Bool = false) -> Self {
+        let toAdd: [ChoiceListItem] = addDefault ? [ChoiceListItem.emptyValue]: []
         switch parameter.type {
         case .bool, .boolean:
-            self.options = choiceList.boolOptions
+            self.options = toAdd + choiceList.boolOptions
         default:
-            self.options = choiceList.options
+            self.options = toAdd + choiceList.options
         }
         if let value = parameter.default, let defaultChoice = choiceList.choice(for: value) {
             self.value = defaultChoice
@@ -215,11 +298,36 @@ extension OptionsProviderRow where Self: RowOf<ChoiceListItem>, Self.OptionsProv
     }
 }
 
+extension ChoiceListItem {
+    static var emptyValue: ChoiceListItem {
+        return ChoiceListItem(key: NSNull(), value: "")
+    }
+}
+
 extension PickerRow: OptionsProviderRow {
     public typealias OptionsProviderType = OptionsProvider<Cell.Value>
     public var optionsProvider: OptionsProvider<Cell.Value>? {
         get {
             return .array(self.options)
+        }
+        set(newValue) {
+            switch newValue {
+            case .array(let array):
+                if let array = array {
+                    self.options = array
+                }
+            default:
+                break
+            }
+        }
+    }
+}
+
+extension ImagePickerRow: OptionsProviderRow {
+    public typealias OptionsProviderType = OptionsProvider<Cell.Value>
+    public var optionsProvider: OptionsProvider<Cell.Value>? {
+        get {
+            return .array(self.options ?? [])
         }
         set(newValue) {
             switch newValue {
@@ -570,4 +678,4 @@ extension Sequence where Element == ActionParameterRule {
         }
         return nil
     }
-}
+} // swiftlint:disable:this file_length
