@@ -17,12 +17,12 @@ public final class ImageActionSheetRow<T>: _ImageActionSheetRow<AlertSelectorCel
 
 open class _ImageActionSheetRow<Cell: CellType>: AlertOptionsRow<Cell>, PresenterRowType where Cell: BaseCell { // swiftlint:disable:this type_name
 
-    public typealias ProviderType = ImageSelectorAlertController<_ActionSheetRow<Cell>>
+    public typealias ProviderType = ImageSelectorAlertController<_ImageActionSheetRow<Cell>>
 
     public var onPresentCallback: ((FormViewController, ProviderType) -> Void)?
     lazy public var presentationMode: PresentationMode<ProviderType>? = {
         return .presentModally(controllerProvider: ControllerProvider.callback { [weak self] in
-            let vc = ImageSelectorAlertController<_ActionSheetRow<Cell>>(title: self?.selectorTitle, message: nil, preferredStyle: .actionSheet) // swiftlint:disable:this identifier_name
+            let vc = ImageSelectorAlertController<_ImageActionSheetRow<Cell>>(title: self?.selectorTitle, message: nil, preferredStyle: .actionSheet) // swiftlint:disable:this identifier_name
             if let popView = vc.popoverPresentationController {
                 guard let cell = self?.cell, let tableView = cell.formViewController()?.tableView else { fatalError() }
                 popView.sourceView = tableView
