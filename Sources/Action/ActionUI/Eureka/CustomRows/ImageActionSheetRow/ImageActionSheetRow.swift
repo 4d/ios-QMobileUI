@@ -99,7 +99,7 @@ where ImageAlertOptionsRow.OptionsProviderType.Option == ImageAlertOptionsRow.Ce
                 self?.onDismissCallback?(self!)
             })
 
-            if var image = UIImage(named: "\(kPrefixImageNamed)\(action.title ?? "")") {
+            if let choice = option as? ChoiceListItemImageNamed, var image = UIImage(named: "\(kPrefixImageNamed)\(choice.imageNameKey ?? "")") {
                 if image.renderingMode == .automatic {
                     image = image.withRenderingMode(.alwaysOriginal)
                 }

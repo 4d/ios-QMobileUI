@@ -193,9 +193,9 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
                             row.cell.segmentedControl.setImage(image, forSegmentAt: index)
                         }
                     }
-                } else if let row = row as? ActionSheetRow<ChoiceListItem> {
+                } else if let row = row as? ImageActionSheetRow<ChoiceListItem> {
                     row.imageNamedCurrentvalue()
-                } /*else if let row = row as? PickerRow<ChoiceListItem> {
+                } /*else if let row = row as? ImagePickerRow<ChoiceListItem> {
                    // nothing to change, pickerrow is inline
                 } */ else if let row = row as? PushRow<ChoiceListItem> { // all SelectorRow (find a way to not duplicate?)
                     row.imageNamedCurrentvalue()
