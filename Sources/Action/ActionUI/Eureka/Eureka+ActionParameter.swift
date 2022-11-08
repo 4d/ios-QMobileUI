@@ -111,20 +111,20 @@ extension ActionParameter {
             case .sheet:
                 if isImageNamed {
                     return ImageActionSheetRow<ChoiceListItem>(name)
-                        .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                        .fillOptions(choiceList: choice, parameter: self, addDefault: !self.mandatory)
                         .onRowEvent(eventCallback)
                 }
                 return ActionSheetRow<ChoiceListItem>(name)
-                    .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                    .fillOptions(choiceList: choice, parameter: self, addDefault: !self.mandatory)
                     .onRowEvent(eventCallback)
             case .picker:
                 if isImageNamed {
                     return ImagePickerRow<ChoiceListItem>(name)
-                        .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                        .fillOptions(choiceList: choice, parameter: self, addDefault: !self.mandatory)
                         .onRowEvent(eventCallback)
                 }
                 return PickerRow<ChoiceListItem>(name)
-                    .fillOptions(choiceList: choice, parameter: self, addDefault: true)
+                    .fillOptions(choiceList: choice, parameter: self, addDefault: !self.mandatory)
                     .onRowEvent(eventCallback)
             default:
                 assertionFailure("Must not occurs, a correct default type must have been chosen")
