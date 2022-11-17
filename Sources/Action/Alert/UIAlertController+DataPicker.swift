@@ -30,6 +30,9 @@ final class DatePickerViewController: UIViewController {
         datePicker.minimumDate = minimumDate
         datePicker.maximumDate = maximumDate
         datePicker.preferredDatePickerStyle = style
+        datePicker.locale = .current
+        datePicker.calendar = .current
+        datePicker.timeZone = .greenwichMeanTime
         self.action = action
     }
 

@@ -74,9 +74,28 @@ extension UIAlertController: ActionParametersUI {
             var date = Date(timeInterval: 0)
             if let defaultValue = parameter.defaultValue(with: context) as? Date {
                 date = defaultValue
+            } else if let defaultValue = parameter.defaultValue(with: context) as? TimeInterval {
+                date = Date(timeInterval: defaultValue)
+            } else if let defaultValue = parameter.defaultValue(with: context) as? String {
+                let formatters: [TimeFormatter] = [.simple, .hourMinute, .full, .long, .medium, .short]
+                for formatter in formatters {
+                    if let timeInterval = formatter.time(from: defaultValue) {
+                        date = Date(timeInterval: timeInterval)
+                        break
+                    }
+                }
             }
-            alertController.addDatePicker(mode: .time, date: date) { date in
-                actionParametersValue[parameter.name] = date
+            var minimumDate: Date?
+            var maximumDate: Date?
+            if let min = parameter.rules?.min {
+                minimumDate = Date(timeInterval: min)
+            }
+            if let max = parameter.rules?.max {
+                maximumDate = Date(timeInterval: max)
+            }
+
+            alertController.addDatePicker(mode: .time, date: date, minimumDate: minimumDate, maximumDate: maximumDate) { date in
+                actionParametersValue[parameter.name] = date.timeInterval
             }
         /*case .picture, .image:
             // XXX list of images from library?
