@@ -180,6 +180,32 @@ extension ApplicationAuthenticate {
             }
         }
     }
+
+    // az:7418 permanent red banner
+    static func showGuestNolicenses() {
+        onForeground {
+            let title = ""
+            let message = "You have exceeded the number of available licenses, please contact your server administrator"
+
+            let view = MessageView.viewFromNib(layout: .messageView)
+            if let backgroundColor = SwiftMessages.errorColor, let foregroundColor = SwiftMessages.errorForegroundColor {
+                view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
+            } else {
+                view.configureTheme(.error)
+            }
+            view.configureContent(title: title, body: message)
+            view.button?.isHidden = true
+            view.tapHandler = { _ in }  // do nothing
+
+            var config = SwiftMessages.Config()
+            config.duration = .forever
+            config.dimMode = .none
+            config.presentationStyle = .top
+            config.interactiveHide = false
+
+            SwiftMessages.show(config: config, view: view)
+        }
+    }
 }
 
 // MARK: - did login
@@ -236,9 +262,13 @@ extension ApplicationAuthenticate: LoginFormDelegate {
                         }
                     }
                 } else {
-                    SwiftMessages.error(title: error.errorDescription ?? title,
-                                        message: error.failureReason ?? "",
-                                        configure: self.configureErrorDisplay())
+                    if error.isNoLicenses {
+                        ApplicationAuthenticate.showGuestNolicenses()
+                    } else {
+                        SwiftMessages.error(title: error.errorDescription ?? title,
+                                            message: error.failureReason ?? "",
+                                            configure: self.configureErrorDisplay())
+                    }
                 }
             }
         }
@@ -357,6 +387,9 @@ extension DataSyncError {
     /// Return true if the error need a retry after relogin
     var mustRetry: Bool {
         if case .apiError(let apiError) = self {
+            if let restErrors = apiError.restErrors, restErrors.match(.mobile_no_licenses) {
+                return false
+            }
             if apiError.isHTTPResponseWith(code: .unauthorized) {
                 return true
             }
@@ -378,6 +411,16 @@ extension DataSyncError {
             }
         }
         return ""
+    }
+
+    /// True if no licenses
+    var isNoLicenses: Bool {
+        if case .apiError(let apiError) = self {
+            if let restErrors = apiError.restErrors, restErrors.match(.mobile_no_licenses) {
+                return false
+            }
+        }
+        return false
     }
 }
 

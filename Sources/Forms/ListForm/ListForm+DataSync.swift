@@ -89,6 +89,8 @@ extension ListForm {
                         }
                     }
                 }
+            } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && !ApplicationAuthenticate.hasLogin {
+                ApplicationAuthenticate.showGuestNolicenses()
             } else {
                 complementionHandler(result)
             }

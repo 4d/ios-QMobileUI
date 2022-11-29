@@ -132,6 +132,8 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
                 if Prephirences.Auth.Login.form {
                     ApplicationCoordinator.logout()
                     SwiftMessages.warning("Authentication failure.\n\(error.restErrors?.statusText ?? error.localizedDescription)")
+                } else if error.isNoLicences {
+                    ApplicationAuthenticate.showGuestNolicenses()
                 } else {
                     ApplicationAuthenticate.retryGuestLogin { authResult in
                         // XXX maybe if failure pause the queue... do not retry for nothing... but this is a weird situation
