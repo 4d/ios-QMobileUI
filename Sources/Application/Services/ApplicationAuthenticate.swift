@@ -183,11 +183,17 @@ extension ApplicationAuthenticate {
 
     // az:7418 permanent red banner
     static func showGuestNolicenses() {
+        if UIApplication.shared.topWindowScene == nil { // Need window for tab bar marges
+            DispatchQueue.main.after(2) {
+                ApplicationAuthenticate.showGuestNolicenses()
+            }
+            return
+        }
         onForeground {
             let title = ""
             let message = "You have exceeded the number of available licenses, please contact your server administrator"
 
-            let view = MessageView.viewFromNib(layout: .messageView)
+            let view = MessageView.viewFromNib(layout: .cardView)
             if let backgroundColor = SwiftMessages.errorColor, let foregroundColor = SwiftMessages.errorForegroundColor {
                 view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
             } else {
@@ -196,11 +202,13 @@ extension ApplicationAuthenticate {
             view.configureContent(title: title, body: message)
             view.button?.isHidden = true
             view.tapHandler = { _ in }  // do nothing
+            view.bottomLayoutMarginAddition = UIApplication.shared.topWindow?.rootViewController?.tabBarController?.tabBar.height ?? 100
 
             var config = SwiftMessages.Config()
             config.duration = .forever
             config.dimMode = .none
-            config.presentationStyle = .top
+            config.presentationStyle = .bottom
+            config.presentationContext = .window(windowLevel: .normal)
             config.interactiveHide = false
 
             SwiftMessages.show(config: config, view: view)
