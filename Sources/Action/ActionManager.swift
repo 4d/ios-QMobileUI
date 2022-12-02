@@ -54,6 +54,9 @@ public class ActionManager: NSObject, ObservableObject {
     public let editRejectedAction: Bool = Prephirences.sharedInstance["action.rejectedEdit"] as? Bool ?? true // FEATURE #125025
     public static let customFormat: Bool = Prephirences.sharedInstance["action.customFormat"] as? Bool ?? true // FEATURE ##128195
 
+    public static let kStoreActionRequestsKey = "action.requests"
+    public static let kStoreActionRequestsOwnerKey = "action.requests.owner"
+
     let cache = ActionManagerCache()
 
     private var bag = Set<AnyCancellable>()
@@ -179,7 +182,13 @@ public class ActionManager: NSObject, ObservableObject {
     func loadActionRequests() {
         let store: PreferencesType = Prephirences.sharedInstance
         do {
-            if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: "action.requests") {
+            if let mail = APIManager.instance.authToken?.email {
+                if let owner = store.string(forKey: ActionManager.kStoreActionRequestsOwnerKey), owner != mail {
+                    (store as? MutablePreferencesType)?.removeObject(forKey: ActionManager.kStoreActionRequestsOwnerKey)
+                    (store as? MutablePreferencesType)?.removeObject(forKey: ActionManager.kStoreActionRequestsKey)
+                }
+            } // else could be furst login
+            if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: ActionManager.kStoreActionRequestsKey) {
                 self.requests.append(contentsOf: requests)
                 for request in requests where !request.state.isFinal && !request.action.isOnlineOnly {
                         let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
@@ -224,9 +233,12 @@ public class ActionManager: NSObject, ObservableObject {
         // if possible call it when list published change (and any element)
         let store: MutablePreferencesType? = Prephirences.sharedMutableInstance
         do {
-            try store?.set(encodable: requests ?? self.requests, forKey: "action.requests")
+            try store?.set(encodable: requests ?? self.requests, forKey: ActionManager.kStoreActionRequestsKey)
         } catch {
             logger.warning("Failed to save actions history and draft \(error)")
+        }
+        if let mail = APIManager.instance.authToken?.email {
+            store?.set(mail, forKey: ActionManager.kStoreActionRequestsOwnerKey)
         }
     }
 
@@ -552,12 +564,16 @@ extension ActionManager: ReachabilityListener, ServerStatusListener, Authenticat
 
     public func didLogin(result: Result<AuthToken, APIError>) -> Bool {
         checkSuspend()
+        if ApplicationAuthenticate.hasLogin {
+            loadActionRequests()
+        }
         return false
     }
 
     public func didLogout() {
         checkSuspend()
         if ApplicationAuthenticate.hasLogin {
+            saveActionRequests()
             self.requests.removeAll()
         }
     }
