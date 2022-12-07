@@ -153,7 +153,7 @@ extension UIApplication {
         }
     }
 
-    open var topViewController: UIViewController? {
+    public var topViewController: UIViewController? {
         guard let rootController = self.topWindow?.rootViewController else {
             return nil
         }

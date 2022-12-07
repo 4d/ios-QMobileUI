@@ -66,7 +66,7 @@ extension ListForm {
                     // Display error before logout
                     SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
                                         message: dataSyncError.mustRetryMessage,
-                                        configure: self.configureLogoutMessage(sender, source))
+                                        configure: configureLogoutMessage(sender, source))
 
                 } else {
                     ApplicationAuthenticate.retryGuestLogin { authResult in
@@ -91,6 +91,11 @@ extension ListForm {
                 }
             } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && !ApplicationAuthenticate.hasLogin {
                 ApplicationAuthenticate.showGuestNolicenses()
+            } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && ApplicationAuthenticate.hasLogin {
+                // Display error before logout
+                SwiftMessages.error(title: "",
+                                    message: "You have been logged out,\nplease log in again",
+                                    configure: configureLogoutMessage(sender, source))
             } else {
                 complementionHandler(result)
             }
@@ -153,20 +158,20 @@ extension ListForm {
         }
     }
 
-    // Configure logout dialog and action
-    fileprivate func configureLogoutMessage(_ sender: Any? = nil, _ source: UIViewController) -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
-        return { (messageView, config) in
-            messageView.tapHandler = { _ in
-                SwiftMessages.hide()
-                ApplicationAuthenticate.instance.logoutUI(sender, source)
-            }
-            var config = config
-            config.presentationStyle = .center
-            config.duration = .forever
-            // no interactive because there is no way yet to get background tap handler to make logout
-            config.dimMode = .gray(interactive: false)
-            return config
-        }
-    }
+}
 
+// Configure logout dialog and action
+func configureLogoutMessage(_ sender: Any? = nil, _ source: UIViewController) -> ((_ view: MessageView, _ config: SwiftMessages.Config) -> SwiftMessages.Config) {
+    return { (messageView, config) in
+        messageView.tapHandler = { _ in
+            SwiftMessages.hide()
+            ApplicationAuthenticate.instance.logoutUI(sender, source)
+        }
+        var config = config
+        config.presentationStyle = .center
+        config.duration = .forever
+        // no interactive because there is no way yet to get background tap handler to make logout
+        config.dimMode = .gray(interactive: false)
+        return config
+    }
 }

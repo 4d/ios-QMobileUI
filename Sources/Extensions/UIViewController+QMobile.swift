@@ -119,7 +119,7 @@ extension UIViewController {
 
     /// If in navigation controller, get the first one of its' child
     /// else return `self`.
-    open var firstController: UIViewController {
+    public var firstController: UIViewController {
         guard let navigation = self as? UINavigationController else {
             return self
         }
