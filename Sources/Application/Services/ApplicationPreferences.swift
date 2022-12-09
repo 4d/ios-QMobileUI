@@ -45,14 +45,15 @@ extension ApplicationPreferences: ApplicationService {
         logger.info("Reset settings")
         userDefaults.clearAll()
         userDefaults.synchronize()
-        // remove also keychain.
+
+        // remove also auth token
         if Prephirences.Auth.Logout.atStart {
             Prephirences.Auth.Logout.token = APIManager.instance.authToken?.token // keep a token for logout
         }
         APIManager.instance.authToken = nil
-        let keyChain = KeychainPreferences.sharedInstance
-        keyChain.clearAll() // keyChain.lastStatus allow to see that not work
         APIManager.removeAuthToken()
+
+        // remove cookies and requests
         HTTPCookieStorage.shared.deleteCookies()
         ActionManager.instance.requests.removeAll()
     }
