@@ -52,6 +52,9 @@ class ApplicationReachability: NSObject {
     open func add(serverStatusListener listener: ServerStatusListener) {
         self.serverStatusListener.append(listener)
     }
+    open func remove(serverStatusListener listener: ServerStatusListener) {
+        self.serverStatusListener.removeAll(where: { $0 === listener})
+    }
     func notifyStatusChanged(status: ServerStatus, old: ServerStatus) {
         for listener in serverStatusListener {
             listener.onServerStatusChanged(status: status, old: old)

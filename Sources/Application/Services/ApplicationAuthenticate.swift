@@ -110,6 +110,10 @@ extension ApplicationAuthenticate {
    fileprivate func autoLogin() {
         if let token = APIManager.instance.authToken, token.isValidToken {
             logger.info("Application already logged with session \(token.id)")
+
+            if !ApplicationAuthenticate.hasLogin {
+                licenseCheck()
+            }
         } else {
             login()
         }
@@ -231,7 +235,31 @@ extension Result where Success == AuthToken {
 }
 
 // MARK: LoginFormDelegate
-extension ApplicationAuthenticate: LoginFormDelegate {
+extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
+
+    func onServerStatusChanged(status: ServerStatus, old: ServerStatus) {
+        if status.isSuccess {
+            licenseCheck()
+            ApplicationReachability.instance.remove(serverStatusListener: ApplicationAuthenticate.instance)
+        }
+    }
+    fileprivate func licenseCheck() {
+        _ = APIManager.instance.licenseCheck { result in
+            print("\(result)")
+            switch result {
+            case .success(let status):
+                logger.debug("license \(status)")
+            case .failure(let apiError):
+                if apiError.isNoLicences {
+                    ApplicationAuthenticate.showGuestNolicenses()
+                } else if apiError.isNoNetworkError {
+                    ApplicationReachability.instance.add(serverStatusListener: ApplicationAuthenticate.instance)
+                } else {
+                    logger.warning("\(apiError): \(String(describing: apiError.restErrors)) \(apiError.urlError)")
+                }
+            }
+        }
+    }
 
     /// What to after login.
     func didLogin(result: Result<AuthToken, APIError>) -> Bool {
@@ -241,6 +269,10 @@ extension ApplicationAuthenticate: LoginFormDelegate {
             return false
         }
         notifyLogin(result: result)
+
+        if !ApplicationAuthenticate.hasLogin {
+            licenseCheck()
+        }
 
         let operation: DataSync.Operation = Prephirences.Auth.reloadData ? .reload: .sync
         /// The user have custom data. What to do?
@@ -302,6 +334,16 @@ extension ApplicationAuthenticate: LoginFormDelegate {
         }
     }
 
+}
+
+extension APIError {
+    var isNoLicences: Bool {
+        self.restErrors?.match(.mobile_no_licenses) ?? false
+    }
+
+    var isNoNetworkError: Bool {
+        self.isUrlError(with: Array(URLError.retryableLookUpErrorCodes))
+    }
 }
 
 // MARK: Preferences
