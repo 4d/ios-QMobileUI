@@ -90,7 +90,8 @@ extension ListForm {
                     }
                 }
             } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && !ApplicationAuthenticate.hasLogin {
-                ApplicationAuthenticate.showGuestNolicenses()
+                // ApplicationAuthenticate.showGuestNolicenses()
+                logger.warning("no licences? when refreshing")
             } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && ApplicationAuthenticate.hasLogin {
                 // Display error before logout
                 SwiftMessages.error(title: "",

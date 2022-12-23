@@ -255,7 +255,7 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
                 } else if apiError.isNoNetworkError {
                     ApplicationReachability.instance.add(serverStatusListener: ApplicationAuthenticate.instance)
                 } else {
-                    logger.warning("\(apiError): \(String(describing: apiError.restErrors)) \(apiError.urlError)")
+                    logger.warning("\(apiError): \(String(describing: apiError.restErrors)) \(String(describing: apiError.urlError))")
                 }
             }
         }
@@ -303,7 +303,8 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
                     }
                 } else {
                     if error.isNoLicenses {
-                        ApplicationAuthenticate.showGuestNolicenses()
+                        // ApplicationAuthenticate.showGuestNolicenses()
+                        logger.warning("no licences? when syncing")
                     } else {
                         SwiftMessages.error(title: error.errorDescription ?? title,
                                             message: error.failureReason ?? "",
