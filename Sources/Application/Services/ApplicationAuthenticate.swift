@@ -206,7 +206,13 @@ extension ApplicationAuthenticate {
             }
             view.configureContent(title: title, body: message)
             view.button?.isHidden = true
-            view.tapHandler = { _ in }  // do nothing
+            view.tapHandler = { _ in
+                ApplicationAuthenticate.instance.licenseCheck { isItOk in
+                    if isItOk {
+                        SwiftMessages.hide(id: view.id)
+                    }
+                }
+            }  // do nothing
             view.bottomLayoutMarginAddition = UIApplication.shared.topWindow?.rootViewController?.tabBarController?.tabBar.height ?? 100
 
             var config = SwiftMessages.Config()
@@ -244,13 +250,18 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
             ApplicationReachability.instance.remove(serverStatusListener: ApplicationAuthenticate.instance)
         }
     }
-    fileprivate func licenseCheck() {
+    fileprivate func licenseCheck(_ callback: ((Bool)->Void)? = nil) {
         _ = APIManager.instance.licenseCheck { result in
             print("\(result)")
             switch result {
             case .success(let status):
                 logger.debug("license \(status)")
+                callback?(status.ok)
             case .failure(let apiError):
+                if let callback = callback {
+                    callback(false)
+                    return
+                }
                 if apiError.isNoLicences {
                     ApplicationAuthenticate.showGuestNolicenses()
                 } else if apiError.isNoNetworkError {
