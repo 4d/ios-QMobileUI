@@ -196,7 +196,7 @@ extension ApplicationAuthenticate {
         }
         onForeground {
             let title = ""
-            let message = "You have exceeded the number of available licenses, please contact your server administrator"
+            let message = "The number of available licenses has been exceeded, please contact your server administrator."
 
             let view = MessageView.viewFromNib(layout: .cardView)
             if let backgroundColor = SwiftMessages.errorColor, let foregroundColor = SwiftMessages.errorForegroundColor {
