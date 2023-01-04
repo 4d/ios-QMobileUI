@@ -307,9 +307,13 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
                         // ApplicationAuthenticate.showGuestNolicenses()
                         logger.warning("no licences? when syncing")
                     } else {
-                        SwiftMessages.error(title: error.errorDescription ?? title,
-                                            message: error.failureReason ?? "",
-                                            configure: self.configureErrorDisplay())
+                        if error.isUnauthorized {
+                            SwiftMessages.warning("You have been logged out.\nPlease log in again")
+                        } else {
+                            SwiftMessages.error(title: error.errorDescription ?? title,
+                                                message: error.failureReason ?? "",
+                                                configure: self.configureErrorDisplay())
+                        }
                     }
                 }
             }
@@ -471,6 +475,13 @@ extension DataSyncError {
             if let restErrors = apiError.restErrors, restErrors.match(.mobile_no_licenses) {
                 return false
             }
+        }
+        return false
+    }
+
+    var isUnauthorized: Bool {
+        if case .apiError(let apiError) = self {
+            return apiError.isHTTPResponseWith(code: .unauthorized)
         }
         return false
     }

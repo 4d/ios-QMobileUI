@@ -64,10 +64,14 @@ extension ListForm {
             if case .failure(let dataSyncError) = result, dataSyncError.mustRetry {
                 if ApplicationAuthenticate.hasLogin {
                     // Display error before logout
-                    SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
-                                        message: dataSyncError.mustRetryMessage,
-                                        configure: configureLogoutMessage(sender, source))
-
+                    if dataSyncError.isUnauthorized {
+                        SwiftMessages.warning("You have been logged out.\nPlease log in again",
+                                              configure: configureLogoutMessage(sender, source))
+                    } else {
+                        SwiftMessages.error(title: dataSyncError.errorDescription ?? title,
+                                            message: dataSyncError.mustRetryMessage,
+                                            configure: configureLogoutMessage(sender, source))
+                    }
                 } else {
                     ApplicationAuthenticate.retryGuestLogin { authResult in
                         switch authResult {
