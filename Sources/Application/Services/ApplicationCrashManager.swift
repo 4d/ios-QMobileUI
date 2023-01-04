@@ -112,10 +112,8 @@ extension ApplicationCrashManager {
         // clean tmp
         self.deleteCrashFile(pathCrash: data, zipPath: .userTemporary + "data.zip")
         // add log files corresponding to the crash files
-        for crash in crashs {
-            if zipFile(crashFile: crash) {
-                getLogFromCrach(crashFile: crash)
-            }
+        for crash in crashs where zipFile(crashFile: crash) {
+            getLogFromCrach(crashFile: crash)
         }
         // zip folder tmp and send
         zipAndSend(crashFile: data, crashsFiles: crashs)

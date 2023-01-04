@@ -39,7 +39,7 @@ public protocol ListFormSearchable: ListForm/*, DataSourceSearchable*/ {
 extension ListFormSearchable where Self: UIViewController {
 
     func installNatigationMenu() {
-        if #available(iOS 13.0, *) {
+        //if #available(iOS 13.0, *) {
             /*if let titleView = self.navigationBarTitleView {
                 let interaction = UIContextMenuInteraction(delegate: self)
                 titleView.addInteraction(interaction)
@@ -47,7 +47,7 @@ extension ListFormSearchable where Self: UIViewController {
             } else {
                 logger.debug("Cannot get navigation bar title for \(self)")
             }*/
-        } // else Fallback on earlier versions
+        //} // else Fallback on earlier versions
     }
 
     func doInstallSearchBar() {
