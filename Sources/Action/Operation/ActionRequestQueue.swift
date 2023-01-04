@@ -21,8 +21,33 @@ class ActionRequestQueue: OperationQueue {
     }
 
     func reset() {
-        self.cancelAllOperations()
+        // self.cancelAllOperations() // remove cancel also?
+        self.removeAllOperations()
         self.lastOperation = nil
+#if DEBUG
+        self.waitUntilAllOperationsAreFinished()
+#endif
+    }
+
+    #if DEBUG
+    func debugInfo() {
+        print("isSuspended=\(self.isSuspended)")
+        print("count=\(self.operations.count)")
+        for operation in operations {
+            print("⚙️ \(operation.debugDescription)")
+            if let operation = operation as? ActionRequestOperation { // XXX instead implement debug info for op
+                print("⚙️ \(operation.request.debugDescription)")
+            }
+        }
+    }
+    #endif
+
+    open func removeAllOperations() {
+        for operation in operations {
+            if let operation = operation as? ActionRequestOperation {
+                _ = self.remove(operation)
+            }
+        }
     }
 
     open override func cancelAllOperations() {
@@ -99,6 +124,7 @@ class ActionRequestQueue: OperationQueue {
         }
         // cancel current task
         operation.cancel(with: .cancelError)
+        operation.state = .finished
         for dependency in dependencies {
             operation.removeDependency(dependency)
         }

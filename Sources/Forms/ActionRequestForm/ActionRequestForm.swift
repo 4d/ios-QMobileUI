@@ -70,6 +70,11 @@ public struct ActionRequestFormUI: View {
         case .pending:
             HStack {
                 Text(sectionCase.rawValue)
+                #if DEBUG
+                    .onTapGesture(perform: {
+                        ActionManager.instance.debugInfo()
+                    })
+                #endif
                 Text(instance.isServerAccessible ? " (Server is online)": " (Server is not accessible)")
                     .onTapGesture(perform: {
                         ServerStatusManager.instance.checkStatus()

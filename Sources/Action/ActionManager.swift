@@ -91,6 +91,12 @@ public class ActionManager: NSObject, ObservableObject {
         }
     }
 
+    #if DEBUG
+    func debugInfo() {
+        self.queue.debugInfo()
+    }
+    #endif
+
     // MARK: - Action execution
 
     /// Execute the action or if there is at least one parameter show a form.
