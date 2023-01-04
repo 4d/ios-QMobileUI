@@ -20,6 +20,23 @@ class ActionRequestQueue: OperationQueue {
         self.name = "ActionRequestQueue"
     }
 
+    func reset() {
+        self.cancelAllOperations()
+        self.lastOperation = nil
+    }
+
+    open override func cancelAllOperations() {
+        for operation in operations {
+            if let operation = operation as? ActionRequestOperation {
+                operation.cancel(with: .cancelError)
+            } else if let operation = operation as? ActionRequestImageOperation {
+                operation.cancel(with: ActionFormError.request(.cancelError))
+            } else {
+                operation.cancel()
+            }
+        }
+    }
+
     func addRequest(_ request: ActionRequest, _ actionUI: ActionUI, _ context: ActionContext, _ waitUI: ActionExecutor.WaitPresenter, _ completionHandler: ActionExecutor.CompletionHandler?) {
 
         let operation = request.newOp(actionUI, context, waitUI, completionHandler)
@@ -56,6 +73,7 @@ class ActionRequestQueue: OperationQueue {
 
                     #if DEBUG
                     logger.verbose("\(previousOperation.request.action.name) -> \(operation.request.action.name) ")
+                    logger.verbose("\(previousOperation.request) -> \(operation.request) ")
                     #endif
                 }
                 if mustSendSuspended { // dirty way to send error to action next in queue, to stop UI

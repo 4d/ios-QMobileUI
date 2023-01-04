@@ -699,11 +699,13 @@ class MainCoordinator {
     }
 
     func logout() {
-        guard let form = UIApplication.topViewController else {
-            logger.warning("Failed to find UI root to logout")
-            return
+        foreground {
+            guard let form = UIApplication.topViewController else {
+                logger.warning("Failed to find UI root to logout")
+                return
+            }
+            ApplicationAuthenticate.instance.logoutUI(self, form)
         }
-        ApplicationAuthenticate.instance.logoutUI(self, form)
     }
 }
 

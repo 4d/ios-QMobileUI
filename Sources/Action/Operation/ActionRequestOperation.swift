@@ -131,14 +131,14 @@ class ActionRequestOperation: AsynchronousResultOperation<ActionResult, ActionRe
             if error.isUnauthorized {
                 if Prephirences.Auth.Login.form {
                     if error.isNoLicences, let viewController = UIApplication.topViewController {
-                        SwiftMessages.warning("You have been logged out,\nplease log in again",
+                        SwiftMessages.warning("You have been logged out.\nPlease log in again",
                                               configure: configureLogoutMessage(nil, viewController))
                     } else if error.isNoLicences {
                         ApplicationCoordinator.logout()
-                        SwiftMessages.warning("You have been logged out,\n please log in again")
+                        SwiftMessages.warning("You have been logged out.\nPlease log in again")
                     } else {
                         ApplicationCoordinator.logout()
-                        SwiftMessages.warning("You have been logged out,\n please log in again")
+                        SwiftMessages.warning("You have been logged out.\nPlease log in again")
                         logger.warning("Authentication failure: \(error.restErrors?.statusText ?? error.localizedDescription)")
                     }
                 } else if error.isNoLicences {

@@ -95,7 +95,7 @@ extension ListForm {
             } else if case .failure(let dataSyncError) = result, dataSyncError.isNoLicenses && ApplicationAuthenticate.hasLogin {
                 // Display error before logout
                 SwiftMessages.error(title: "",
-                                    message: "You have been logged out,\nplease log in again",
+                                    message: "You have been logged out.\nPlease log in again",
                                     configure: configureLogoutMessage(sender, source))
             } else {
                 complementionHandler(result)

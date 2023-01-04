@@ -162,7 +162,7 @@ extension ApplicationAuthenticate {
     }
 
     func logoutUI(_ sender: Any? = nil, _ source: UIViewController) {
-        foreground {
+        onForeground {
             /// XXX check that there is no issue with that, view controller cycle for instance
             if let destination = Main.instantiate() {
                 let identifier = "logout"
@@ -171,6 +171,7 @@ extension ApplicationAuthenticate {
                 // and present it
                 source.present(destination, animated: true) {
                     logger.debug("\(destination) presented by \(source)")
+                    self.didLogout()
                 }
             }
         }

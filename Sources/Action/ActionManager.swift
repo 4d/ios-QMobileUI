@@ -191,18 +191,20 @@ public class ActionManager: NSObject, ObservableObject {
             if let requests: [ActionRequest] = try store.decodable([ActionRequest].self, forKey: ActionManager.kStoreActionRequestsKey) {
                 self.requests.append(contentsOf: requests)
                 for request in requests where !request.state.isFinal && !request.action.isOnlineOnly {
-                        let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
-                        self.queue.addRequest(request, BackgroundActionUI(), request, noWait) { result in
-                            switch result {
-                            case .success(let result):
-                                logger.debug("Background action \(request) finish with result \(result)")
-                            case .failure(let error):
-                                logger.warning("Background action \(request) finish with error \(error)")
-                            }
-                            DispatchQueue.main.async {
-                                self.objectWillChange.send()
-                            }
+                    let noWait: ActionExecutor.WaitPresenter = Just<Void>(()).eraseToAnyPublisher()
+                    request.state = .ready
+                    request.result = nil
+                    self.queue.addRequest(request, BackgroundActionUI(), request, noWait) { result in
+                        switch result {
+                        case .success(let result):
+                            logger.debug("Background action \(request) finish with result \(result)")
+                        case .failure(let error):
+                            logger.warning("Background action \(request) finish with error \(error)")
                         }
+                        DispatchQueue.main.async {
+                            self.objectWillChange.send()
+                        }
+                    }
                 }
             }
             checkHistory()
@@ -571,6 +573,7 @@ extension ActionManager: ReachabilityListener, ServerStatusListener, Authenticat
     }
 
     public func didLogout() {
+        self.queue.reset()
         checkSuspend()
         if ApplicationAuthenticate.hasLogin {
             saveActionRequests()
