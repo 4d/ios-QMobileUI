@@ -613,6 +613,55 @@ public extension UILabel {
 
 import QMobileDataSync
 import Kingfisher
+
+extension UILabel {
+
+    @objc dynamic public var imageURL: String? {
+        get {
+            return nil
+        }
+        set {
+            guard let newValue = newValue, let url = URL(string: newValue) else {
+                self.text = nil
+                return
+            }
+            let imageResource = ImageResource(downloadURL: url)
+            self.text = imageResource.downloadURL.absoluteString
+
+            logger.verbose("Setting \(imageResource) to view \(self)")
+
+            // Setup placeHolder image or other options defined by custom builders
+            var options = ApplicationImageCache.options()
+            var placeHolderImage: UIImage?
+            if let builder = self as? ImageCacheOptionsBuilder {
+                options = builder.option(for: imageResource.downloadURL, currentOptions: options)
+                placeHolderImage = builder.placeHolderImage
+            }
+
+            // Do the request
+            let completionHandler: UIImageView.ImageCompletionHandler = { result in
+                switch result {
+                case .success(let value):
+                    self.setImage(value.image)
+                case .failure(let error):
+                    ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
+                }
+            }
+            cancelDownloadTask()
+            if let placeHolderImage = placeHolderImage {
+                setImage(placeHolderImage)
+            }
+            let imageDownloader = KingfisherManager.shared
+            let task = imageDownloader.retrieveImage(
+                with: imageResource,
+                options: options,
+                progressBlock: nil,
+                completionHandler: completionHandler)
+            setImageTask(task)
+        }
+    }
+}
+
 extension UILabel {
 
     @objc dynamic public var restImage: [String: Any]? {

@@ -78,21 +78,6 @@ import Kingfisher
 import QMobileAPI
 import QMobileDataSync
 
-extension UIImageView {
-
-    public var webURL: URL? {
-        get {
-            return nil
-        }
-        set {
-            if newValue != nil {
-                self.kf.indicatorType = .activity
-            }
-            self.kf.setImage(with: newValue, placeholder: nil, options: nil)
-        }
-    }
-
-}
 
 extension UIImageView {
 
@@ -106,13 +91,7 @@ extension UIImageView {
 
     @objc dynamic public var restImage: [String: Any]? {
         get {
-            guard let webURL =  self.webURL else {
-                return nil
-            }
-            var uri = webURL.absoluteString
-            uri = uri.replacingOccurrences(of: DataSync.instance.apiManager.base.baseURL.absoluteString, with: "") // remove the base url
-            let deffered = Deferred(uri: uri, image: true)
-            return deffered.dictionary
+            return nil
         }
         set {
             // Check if passed value is a compatible restImage dictionary
@@ -163,6 +142,54 @@ extension UIImageView {
         }
     }
 
+    @objc dynamic public var imageURL: String? {
+        get {
+            return nil
+        }
+        set {
+            guard let newValue = newValue, let url = URL(string: newValue) else {
+                unsetImage()
+                return
+            }
+            let imageResource = ImageResource(downloadURL: url)
+            logger.verbose("Setting \(imageResource) to view \(self)")
+
+            // Setup placeHolder image or other options defined by custom builders
+            var options = ApplicationImageCache.options()
+            var placeHolderImage: UIImage?
+            var indicatorType: IndicatorType = .activity
+            if let builder = self as? ImageCacheOptionsBuilder {
+                options = builder.option(for: imageResource.downloadURL, currentOptions: options)
+                placeHolderImage = builder.placeHolderImage
+                indicatorType = builder.indicatorType ?? .activity
+            }
+
+            // Do the request
+            let completionHandler: ImageCompletionHandler = { result in
+                switch result {
+                case .success:
+                    // self.setNeedsDisplay() // force refresh ??
+                    break
+                case .failure(let error):
+                    ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
+                    _ = self.kf.setImage(with: imageResource,
+                                         placeholder: placeHolderImage,
+                                         options: options,
+                                         progressBlock: nil,
+                                         completionHandler: nil)
+                }
+            }
+            self.kf.cancelDownloadTask()
+            self.kf.indicatorType = indicatorType
+            _ = self.kf.setImage(
+                with: imageResource,
+                placeholder: placeHolderImage,
+                options: options,
+                progressBlock: nil,
+                completionHandler: completionHandler)
+        }
+    }
+
     @objc dynamic public var imageData: Data? {
         get {
             guard let image = self.image else {
@@ -177,6 +204,6 @@ extension UIImageView {
                 self.image = nil
             }
         }
-     }
+    }
 
 }
