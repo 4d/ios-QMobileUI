@@ -71,6 +71,7 @@ extension DateFormatter {
     static func configureLocal(_ formatter: DateFormatter) {
         if let locale = preferredLocale {
             formatter.locale = locale
+            formatter.timeZone = .greenwichMeanTime
         } // else we use currentLocal
     }
 
