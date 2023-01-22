@@ -61,13 +61,32 @@ struct ChoiceListItem: Equatable, Hashable {
                 self.init(key: string.boolValue /* "1" or "0" */ || string == "true", value: value)
             case .integer:
                 self.init(key: Int(string) as Any, value: value)
-            case .number:
+            case .number, .real:
                 self.init(key: Double(string) as Any, value: value)
             default:
                 self.init(key: key, value: value)
             }
+        } else if let number = key as? NSNumber {
+            switch type {
+            case .bool, .boolean:
+                self.init(key: number.boolValue, value: value)
+            case .integer, .number, .real:
+                self.init(key: number, value: value)
+            case .string, .text:
+                self.init(key: "\(number)", value: value)
+            default:
+                self.init(key: key, value: value)
+            }
+        } else if let date = key as? Date {
+            switch type {
+            case .integer, .number, .real:
+                self.init(key: date.timeInterval, value: value)
+            case .string, .text:
+                self.init(key: date.iso8601, value: value)
+            default:
+                self.init(key: key, value: value)
+            }
         } else {
-            // could create other convertsion?
             self.init(key: key, value: value)
         }
     }
