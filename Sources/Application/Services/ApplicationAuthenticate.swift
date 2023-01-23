@@ -25,6 +25,7 @@ class ApplicationAuthenticate: NSObject {
 
     var observers: [AuthenticateListener] = []
     private var tryCount: Int = 0
+    private var lastCheck: TimeInterval = 0
     override init() {
     }
 
@@ -207,10 +208,9 @@ extension ApplicationAuthenticate {
             view.configureContent(title: title, body: message)
             view.button?.isHidden = true
             view.tapHandler = { _ in
-                ApplicationAuthenticate.instance.licenseCheck { isItOk in
-                    if isItOk {
-                        SwiftMessages.hide(id: view.id)
-                    }
+                SwiftMessages.hide(id: view.id)
+                DispatchQueue.background.after(2) {
+                    ApplicationAuthenticate.instance.licenseCheck()
                 }
             }  // do nothing
             view.bottomLayoutMarginAddition = UIApplication.shared.topWindow?.rootViewController?.tabBarController?.tabBar.height ?? 100
@@ -250,7 +250,16 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
             ApplicationReachability.instance.remove(serverStatusListener: ApplicationAuthenticate.instance)
         }
     }
-    fileprivate func licenseCheck(_ callback: ((Bool)->Void)? = nil) {
+
+    fileprivate func licenseCheck(_ callback: ((Bool) -> Void)? = nil) {
+        if (Date().timeIntervalSince1970 - lastCheck) > 10 {
+            if let callback = callback {
+                callback(false)
+                return
+            }
+        }
+
+        lastCheck = Date().timeIntervalSince1970
         _ = APIManager.instance.licenseCheck { result in
             print("\(result)")
             switch result {
