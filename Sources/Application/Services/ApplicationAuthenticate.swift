@@ -204,6 +204,8 @@ extension ApplicationAuthenticate {
                 view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
             } else {
                 view.configureTheme(.error)
+                view.iconImageView?.image = nil
+                view.iconImageView?.isHidden = true
             }
             view.configureContent(title: title, body: message)
             view.button?.isHidden = true
