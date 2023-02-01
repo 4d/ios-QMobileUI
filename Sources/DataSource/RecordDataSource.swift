@@ -11,6 +11,8 @@ import QMobileDataStore
 
 class RecordDataSource: DataSource {
 
+    var formContext: FormContext?
+
     convenience init?(record: RecordBase, dataStore: DataStore = DataStoreFactory.dataStore) {
         self.init(tableInfo: record.tableInfo, predicate: record.predicate, dataStore: dataStore)
     }

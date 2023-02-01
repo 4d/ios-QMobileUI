@@ -192,14 +192,14 @@ extension ApplicationCoordinator {
         return relationsInfo
     }
 
-    fileprivate static func prepare(from actionContextProvider: ActionContextProvider, to destination: ListForm, relationInfoUI: RelationInfoUI, record: Record) {
+    fileprivate static func prepare(from source: Form, to destination: ListForm, relationInfoUI: RelationInfoUI, record: Record, actionContext: ActionContext?) {
         guard destination.dataSource == nil else {
             logger.info("data source \(String(describing: destination.dataSource)), must not be filled yet")
             assertionFailure("data source must not be set yet to be able to inject predicate, if there is change in arch check predicate injection")
             return
         }
         guard let relationName = relationInfoUI.relationName else {
-            logger.error("No relation info to transition between in \(actionContextProvider) to  \(destination)")
+            logger.error("No relation info to transition between in \(source) to  \(destination)")
             return
         }
         let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
@@ -230,7 +230,7 @@ extension ApplicationCoordinator {
         let predicate = NSPredicate(format: predicatString, record.store.objectID)
 
         destination.formContext = FormContext(predicate: predicate,
-                                              actionContext: actionContextProvider.actionContext(),
+                                              actionContext: actionContext,
                                               previousTitle: previousTitle,
                                               relationName: relationOriginalName,
                                               inverseRelationName: inverseRelationName)
@@ -282,7 +282,7 @@ extension ApplicationCoordinator {
             logger.error("Cannot get source record in \(source) to display its relation \(String(describing: relationInfoUI.relationName))")
             return
         }
-        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record)
+        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record, actionContext: source.actionContext())
     }
 
     /// Prepare data for 1->N relation from `ListForm`
@@ -293,7 +293,7 @@ extension ApplicationCoordinator {
             logger.warning("No record to check database relation")
             return
         }
-        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record)
+        prepare(from: source, to: destination, relationInfoUI: relationInfoUI, record: record, actionContext: entry)
     }
 
     /// Prepare data for N->1 relation from ListForm
@@ -312,8 +312,13 @@ extension ApplicationCoordinator {
             logger.warning("Cannot display relation \(relationName) of record \(record)")
             return
         }
-        guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
+        guard let relationDataSource = RecordDataSource(record: relationRecord) else {
             logger.warning("Cannot get record attribute to make data source: \(relationRecord)")
+            return
+        }
+
+        guard let relationName = relationInfoUI.relationName else {
+            logger.error("No relation info to transition between in \(source) to \(destination)")
             return
         }
 
@@ -322,6 +327,16 @@ extension ApplicationCoordinator {
         destination.prepare(with: destinationEntry)
 
         logger.debug("Will display relation \(relationName) of record \(record)")
+
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
+        let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
+        let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
+
+        relationDataSource.formContext = FormContext(predicate: nil,
+                                                     actionContext: entry,
+                                                     previousTitle: nil,
+                                                     relationName: relationOriginalName,
+                                                     inverseRelationName: inverseRelationName)
     }
 
     /// Prepare data to display detail from ListForm
@@ -351,8 +366,12 @@ extension ApplicationCoordinator {
             logger.warning("Cannot display relation \(relationName) of record \(record) in \(source). Maybe no one is associated.")
             return
         }
-        guard let relationDataSource: DataSource = RecordDataSource(record: relationRecord) else {
+        guard let relationDataSource = RecordDataSource(record: relationRecord) else {
             logger.warning("Cannot get record attribute to make data source: \(relationRecord) from \(source)")
+            return
+        }
+        guard let relationName = relationInfoUI.relationName else {
+            logger.error("No relation info to transition between in \(source) to \(destination)")
             return
         }
 
@@ -360,6 +379,16 @@ extension ApplicationCoordinator {
         entry.indexPath = .zero
         destination.prepare(with: entry)
         logger.debug("Will display relation \(relationName) of record \(record)")
+
+        // get info after setting entry or tableInfo will be nil
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
+        let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
+        let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
+        relationDataSource.formContext = FormContext(predicate: nil,
+                                                     actionContext: source.actionContext(),
+                                                     previousTitle: nil,
+                                                     relationName: relationOriginalName,
+                                                     inverseRelationName: inverseRelationName)
     }
 }
 
@@ -459,11 +488,12 @@ extension ApplicationCoordinator {
                 return
             }
 
-            guard let recordDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore) else {
+            guard let recordDataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore) else {
                 logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
                 completion(false)
                 return
             }
+
             let entry = DataSourceEntry(dataSource: recordDataSource)
             entry.indexPath = .zero
 
@@ -506,7 +536,7 @@ extension ApplicationCoordinator {
                 return
             }
 
-            guard let recordDataSource: DataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore, context: context, fetchLimit: 1) else {
+            guard let recordDataSource = RecordDataSource(tableInfo: tableInfo, predicate: predicate, dataStore: dataStore, context: context, fetchLimit: 1) else {
                 logger.warning("Cannot get record attribute to make data source: \(primaryKeyValue) when presenting form \(tableName)")
                 completion(false)
                 return

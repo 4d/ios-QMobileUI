@@ -17,6 +17,16 @@ open class DetailsFormBare: UIViewController, DetailsForm {
     @objc dynamic open var hasPreviousRecord: Bool = false
     @objc dynamic open var hasNextRecord: Bool = false
 
+    /// The data source.
+    public var dataSource: DataSource? {
+        return self.view.table?.dataSource
+    }
+
+    /// The data source entry.
+    public var dataSourceEntry: DataSourceEntry? {
+        return self.view.table
+    }
+
     // MARK: override
     final public override func viewDidLoad() {
         super.viewDidLoad()

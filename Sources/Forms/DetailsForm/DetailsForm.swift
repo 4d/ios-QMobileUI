@@ -18,6 +18,12 @@ public protocol DetailsForm: AnyObject, ActionContextProvider, DataSourceEntryUI
     // the root view of form
     var view: UIView! {get set}
 
+    /// The data source.
+    var dataSource: DataSource? {get}
+
+    /// The data source entry.
+    var dataSourceEntry: DataSourceEntry? {get}
+
     /// @return: true if there is previous record
     var hasPreviousRecord: Bool {get set}
     /// @return: true if there is next record
@@ -65,7 +71,13 @@ extension DetailsForm {
     }
 
     var tableInfo: DataStoreTableInfo? {
-        return _record?.tableInfo
+        if let tableInfo = _record?.tableInfo {
+            return tableInfo
+        }
+        guard let tableName = self.tableName else {
+            return nil
+        }
+        return ApplicationDataStore.instance.dataStore.tableInfo(for: tableName)
     }
 
     /// The record in `dataSource` at the `indexPath`
@@ -223,7 +235,10 @@ class TransitionContainerView: UIView, TransitionContainerViewType {
 extension DetailsForm {
 
     public func actionContext() -> ActionContext? {
-        return self.view.table
+        /*if let formContext = self.formContext {
+            return DataSourceParentEntry(actionContext: self.dataSourceEntry, formContext: formContext)
+        }*/
+        return self.dataSourceEntry
     }
 
 }

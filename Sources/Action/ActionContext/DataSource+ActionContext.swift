@@ -14,8 +14,35 @@ import QMobileDataSync
 
 extension DataSource: ActionContext {
     /// DataSource provide table as context.
-    public func actionContextParameters() -> ActionParameters? {
+    @objc public func actionContextParameters() -> ActionParameters? {
         return [ActionParametersKey.table: tableName]
+    }
+}
+
+extension RecordDataSource/*: ActionContext*/ {
+    /// DataSource provide table as context.
+    @objc override public func actionContextParameters() -> ActionParameters? {
+        guard var parameters = super.actionContextParameters() else {
+            return nil
+        }
+        if let parentContext = self.formContext?.actionContext,
+            let parentContextParameters = parentContext.actionContextParameters(),
+            let record = parentContextParameters[ActionParametersKey.record] as? [String: Any] {
+
+            var parent: [String: Any] = record
+            if let relationName = self.formContext?.relationName {
+                parent[ActionParametersKey.relationName] = relationName
+            }
+            if let relationName = self.formContext?.inverseRelationName {
+                var entity: [String: Any] = parameters[ActionParametersKey.record] as? [String: Any] ?? [:]
+                entity[ActionParametersKey.relationName] = relationName
+                parameters[ActionParametersKey.record] = entity
+            }
+            parent[ActionParametersKey.table] = parentContextParameters[ActionParametersKey.table]
+            parameters[ActionParametersKey.parent] = parent
+        }
+
+        return parameters
     }
 }
 

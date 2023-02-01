@@ -99,7 +99,7 @@ extension UIView: Binded {
         return bindTo.record != nil
     }
 
-	open var table: DataSourceEntry? {
+    public var table: DataSourceEntry? {
 		get {
 			return self.bindTo.table
 		}
