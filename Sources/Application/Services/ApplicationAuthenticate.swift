@@ -195,10 +195,13 @@ extension ApplicationAuthenticate {
             }
             return
         }
+        let message = "The number of available licenses has been exceeded, please contact your server administrator."
+#if targetEnvironment(simulator)
+        logger.warning(message)
+        if true { return }
+#endif
         onForeground {
             let title = ""
-            let message = "The number of available licenses has been exceeded, please contact your server administrator."
-
             let view = MessageView.viewFromNib(layout: .cardView)
             if let backgroundColor = SwiftMessages.errorColor, let foregroundColor = SwiftMessages.errorForegroundColor {
                 view.configureTheme(backgroundColor: backgroundColor, foregroundColor: foregroundColor, iconImage: nil)
@@ -277,6 +280,7 @@ extension ApplicationAuthenticate: LoginFormDelegate, ServerStatusListener {
                     ApplicationAuthenticate.showGuestNolicenses()
                 } else if apiError.isNoNetworkError {
                     ApplicationReachability.instance.add(serverStatusListener: ApplicationAuthenticate.instance)
+                    // } else if apiError.isHTTPResponseWith(code: .unauthorized) { // retry later }
                 } else {
                     logger.warning("\(apiError): \(String(describing: apiError.restErrors)) \(String(describing: apiError.urlError))")
                 }
