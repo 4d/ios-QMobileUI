@@ -31,5 +31,28 @@ open class OpenURLForm: ActionWebAreaController {
         }
         super.viewDidLoad() // will launch all webview creation and URL loading
         webView?.allowsBackForwardNavigationGestures = true
+
+        applyScrollEdgeAppareance()
     }
+
+    @objc
+    open override func initReloadUI() {
+        logger.debug("initReloadUI \(String(describing: action.url))")
+       /* let dialog = DialogForm(nibName: "ReloadWebArea", bundle: Bundle(for: ActionWebAreaController.self))
+        dialog.delegate = self
+        dialog.cornerRadius = 12
+        dialog.dismissOnTap = false
+        dialog.modalPosition = .center
+        dialog.modalSize = (.threeQuarters, .custom(size: 128))
+        self.reloadDialog = dialog*/
+    }
+
+    @objc
+    open override func showReloadUI() {
+        logger.debug("showReloadUI \(String(describing: action.url))")
+    }
+
+    @objc
+    open override func hideReloadUI() { }
+
 }

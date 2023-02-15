@@ -33,12 +33,12 @@ extension UIViewController {
         }
     }
     #if TARGET_INTERFACE_BUILDER
-    open var actionSheet: QMobileAPI.ActionSheet? {
+    public var actionSheet: QMobileAPI.ActionSheet? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    open var actionSheet: QMobileAPI.ActionSheet? {
+    public var actionSheet: QMobileAPI.ActionSheet? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? QMobileAPI.ActionSheet
         }

@@ -99,7 +99,7 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
     }()
 
     func loadURL() {
-        logger.debug("loadURL \(String(describing: action.url))")
+       // logger.debug("loadURL \(action.url ?? "<no url?>")")
         webView?.configuration.websiteDataStore.httpCookieStore.injectSharedCookies()
         if let url = self.url {
             var request = URLRequest(url: url)
@@ -208,7 +208,7 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
 
     public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
 
-        var layout: MessageView.Layout = .centeredView
+        let layout: MessageView.Layout = .centeredView
         let view = MessageView.viewFromNib(layout: layout)
         view.configureTheme(.info)
         view.configureContent(body: message)
@@ -391,7 +391,7 @@ extension ActionWebAreaController {
     }
 
     func uninitReloadControl() {
-        logger.debug("uninitReloadControl \(String(describing: action.url))")
+        logger.debug("uninitReloadControl \(String(describing: action.url?.debugDescription))")
         guard let webView = webView else { return }
         for refresh in webView.scrollView.subviews.compactMap({ $0 as? UIRefreshControl}) {
             refresh.removeFromSuperview()
@@ -400,11 +400,16 @@ extension ActionWebAreaController {
 
     @objc
     func refreshWebView(_ sender: UIRefreshControl) {
-        self.webView?.reload()
+        if self.webView?.url == nil {
+            self.loadURL()
+        } else {
+            self.webView?.reload()
+        }
         sender.endRefreshing()
     }
 
-    func initReloadUI() {
+    @objc
+    open func initReloadUI() {
         logger.debug("initReloadUI \(String(describing: action.url))")
         let dialog = DialogForm(nibName: "ReloadWebArea", bundle: Bundle(for: ActionWebAreaController.self))
         dialog.delegate = self
@@ -412,18 +417,19 @@ extension ActionWebAreaController {
         dialog.dismissOnTap = false
         dialog.modalPosition = .center
         dialog.modalSize = (.threeQuarters, .custom(size: 128))
-
         self.reloadDialog = dialog
     }
 
-    func showReloadUI() {
+    @objc
+    open func showReloadUI() {
         logger.debug("showReloadUI \(String(describing: action.url))")
         self.reloadDialog?.show(self, animated: true) {
             logger.debug("Reload dialog shown")
         }
     }
 
-    func hideReloadUI() {
+    @objc
+    open func hideReloadUI() {
         logger.debug("hideReloadUI \(String(describing: action.url))")
         self.reloadDialog?.dismissAnimated()
     }
