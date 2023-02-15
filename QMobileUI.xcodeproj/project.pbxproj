@@ -86,6 +86,7 @@
 		4846C18825D2898F00BD459D /* MetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4846C18725D2898F00BD459D /* MetadataView.swift */; };
 		4848E0EF21B181E800DB65A2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4848E0ED21B181E700DB65A2 /* LoadingView.swift */; };
 		484FFE32213E66E3003F01B8 /* String+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484FFE31213E66E3003F01B8 /* String+Binding.swift */; };
+		48518844299BEA830078D54A /* OpenURLForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48518843299BEA830078D54A /* OpenURLForm.swift */; };
 		4853BD622105A948004B2467 /* NSAttributedString+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4853BD612105A948004B2467 /* NSAttributedString+QMobile.swift */; };
 		4853BD652105ACDC004B2467 /* FeedbackForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4853BD632105ACDB004B2467 /* FeedbackForm.storyboard */; };
 		4853BD662105ACDC004B2467 /* FeedbackForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4853BD642105ACDB004B2467 /* FeedbackForm.swift */; };
@@ -355,6 +356,7 @@
 		4846C18725D2898F00BD459D /* MetadataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetadataView.swift; sourceTree = "<group>"; };
 		4848E0ED21B181E700DB65A2 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		484FFE31213E66E3003F01B8 /* String+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Binding.swift"; sourceTree = "<group>"; };
+		48518843299BEA830078D54A /* OpenURLForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenURLForm.swift; sourceTree = "<group>"; };
 		4853BD612105A948004B2467 /* NSAttributedString+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+QMobile.swift"; sourceTree = "<group>"; };
 		4853BD632105ACDB004B2467 /* FeedbackForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = FeedbackForm.storyboard; sourceTree = "<group>"; };
 		4853BD642105ACDB004B2467 /* FeedbackForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbackForm.swift; sourceTree = "<group>"; };
@@ -968,6 +970,7 @@
 				C4844BF82535E16C00EEB131 /* ActionParameter+KeyboardType.swift */,
 				48B1E497272FF5EC00205721 /* ActionWebAreaController.swift */,
 				4825C0FE28AD0D6C00CBA78F /* ReloadWebArea.xib */,
+				48518843299BEA830078D54A /* OpenURLForm.swift */,
 			);
 			path = Action;
 			sourceTree = "<group>";
@@ -1663,6 +1666,7 @@
 				48ED34FC1EAE01C900AF3188 /* DataSource+UIPageViewControllerDataSource.swift in Sources */,
 				489489F224BEF1F600D6D0C6 /* MainNavigationForm.swift in Sources */,
 				48BC8574226F0C8D00D548B2 /* UIAlertController+Picker.swift in Sources */,
+				48518844299BEA830078D54A /* OpenURLForm.swift in Sources */,
 				48D584851E783447006F56B5 /* DataSourceDelegate.swift in Sources */,
 				48657A37203590A900000D45 /* UIButton+Binding.swift in Sources */,
 				48F5AA6F27B2C43D00358138 /* ActionsViewController.swift in Sources */,

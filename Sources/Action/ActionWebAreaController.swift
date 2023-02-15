@@ -35,12 +35,13 @@ private let kTagSuffix = "}}"
 
 private let kHeaderContext = "X-QMobile-Context"
 
-class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
+open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDelegate, UIScrollViewDelegate, WKScriptMessageHandler {
 
     var urlString: String!
     var action: Action!
     // var actionUI: ActionUI
     var context: ActionContext!
+    var changeNavTitleOnPageChange = true
 
     fileprivate var activityIndicator: ActivityIndicator?
     fileprivate var tapOutsideRecognizer: UITapGestureRecognizer!
@@ -67,7 +68,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
             urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)record\(kTagSuffix)", with: primaryKey)
         }
 
-        if urlString.starts(with: "/") || urlString.starts(with: "\(kTagPrefix)server\(kTagSuffix)") { // append server url
+        if urlString.starts(with: "/") || urlString.isEmpty || urlString.starts(with: "\(kTagPrefix)server\(kTagSuffix)") { // append server url
             urlString = urlString.replacingOccurrences(of: "\(kTagPrefix)server\(kTagSuffix)", with: "")
             if var components = URLComponents(url: .qmobile, resolvingAgainstBaseURL: true) { // XXX or APIManager.instance.base.url
                 components.path = urlString.hasPrefix("/") ? urlString: "/\(urlString)"
@@ -112,7 +113,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
         }
     }
 
-    @IBAction func shareURL(_ sender: Any) {
+    @IBAction public func shareURL(_ sender: Any) {
         if let url = self.url {
             let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
             activityViewController.checkPopUp(sender)
@@ -126,7 +127,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
     }
 
     // MARK: Events
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         if webView == nil {
@@ -142,7 +143,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
         self.initReloadUI()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         // Called when the view has been fully transitioned onto the screen. Default does nothing
 
@@ -154,7 +155,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         uninitCloseControl()
@@ -163,28 +164,30 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
 
     // MARK: WKNavigationDelegate
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        self.navigationItem.title = webView.title ?? ""
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if changeNavTitleOnPageChange {
+            self.navigationItem.title = webView.title ?? ""
+        }
         activityIndicator?.stopAnimating()
         self.uninitReloadControl()
         self.initReloadControl()
     }
 
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         activityIndicator?.stopAnimating()
     }
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicator?.startAnimating()
     }
 
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil { // open blank link too here
             webView.load(navigationAction.request)
         }
         return nil
     }
 
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         let code = URLError.Code(rawValue: (error as NSError).code)
         switch code {
         case .badURL, .unsupportedURL:
@@ -203,7 +206,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
         self.showReloadUI()
     }
 
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (() -> Void)) {
 
         var layout: MessageView.Layout = .centeredView
         let view = MessageView.viewFromNib(layout: layout)
@@ -235,7 +238,7 @@ class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigationDeleg
         SwiftMessages.show(config: config, view: view)
     }
 
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         manageScriptMessage(message)
     }
 
@@ -445,13 +448,13 @@ extension ActionWebAreaController {
 // MARK: reload and close using dialog
 extension ActionWebAreaController: DialogFormDelegate {
 
-    func onOK(dialog: DialogForm, sender: Any) {
+    public func onOK(dialog: DialogForm, sender: Any) {
         logger.verbose("try again \(String(describing: action.url))")
         assert(dialog == self.reloadDialog)
         reload(sender)
     }
 
-    func onCancel(dialog: DialogForm, sender: Any) {
+    public func onCancel(dialog: DialogForm, sender: Any) {
         logger.verbose("cancel \(String(describing: action.url))")
         assert(dialog == self.reloadDialog)
         hideReloadUI()
@@ -462,7 +465,7 @@ extension ActionWebAreaController: DialogFormDelegate {
 // MARK: close with tap gesture
 extension ActionWebAreaController: UIGestureRecognizerDelegate {
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 
