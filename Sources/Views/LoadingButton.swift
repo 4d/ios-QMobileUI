@@ -46,6 +46,7 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
     /// The layer to make activity indicator animation.
     private lazy var activityIndicator: SpinerLayer = {
         let spinLayer = SpinerLayer(frame: self.frame)
+        spinLayer.spinnerColor = .white
         self.layer.addSublayer(spinLayer)
         return spinLayer
     }()
@@ -63,7 +64,6 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
 
    private func configure() {
         self.clipsToBounds = true
-        activityIndicator.spinnerColor = activityIndicatorColor
         cachedBackgroundColor = self.backgroundColor
         configureBackgroundColor()
     }
@@ -122,6 +122,7 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
         self.layer.removeAllAnimations()
         self.setTitle(self.cachedTitle, for: .normal)
         self.activityIndicator.stopAnimation()
+        self.layer.cornerRadius = self.normalCornerRadius
     }
 
 }

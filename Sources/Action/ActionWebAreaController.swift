@@ -162,6 +162,8 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
         dismissHandler?()
     }
 
+    open func onNavigationEnd() {}
+
     // MARK: WKNavigationDelegate
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -171,10 +173,12 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
         activityIndicator?.stopAnimating()
         self.uninitReloadControl()
         self.initReloadControl()
+        onNavigationEnd()
     }
 
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         activityIndicator?.stopAnimating()
+        onNavigationEnd()
     }
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicator?.startAnimating()
@@ -203,6 +207,7 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
         }
         self.webView?.stopLoading()
         self.activityIndicator?.stopAnimating()
+        onNavigationEnd()
         self.showReloadUI()
     }
 

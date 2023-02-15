@@ -152,6 +152,14 @@ extension UIView {
             self.bottomAnchor.constraint(equalTo: guide.bottomAnchor)
             ])
     }
+
+    func center(to guide: LayoutGuide) {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
+            self.centerYAnchor.constraint(equalTo: guide.centerYAnchor)
+        ])
+    }
 }
 
 extension UIResponder {

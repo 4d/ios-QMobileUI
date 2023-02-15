@@ -15,6 +15,10 @@ open class SpinerLayer: CAShapeLayer {
         }
     }
 
+    override init() {
+        super.init()
+    }
+
     public init(frame: CGRect) {
         super.init()
 
