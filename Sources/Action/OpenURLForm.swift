@@ -57,9 +57,13 @@ open class OpenURLForm: ActionWebAreaController {
         reloadButton.center(to: self.view)
         reloadButton.sizeToFit()
         reloadButton.activityIndicatorColor = .foreground // set color only after size, to let fit view
+        reloadButton.isHidden = true
     }
 
     @IBAction func reloadAnimated(_ sender: Any) {
+        if self.webView?.url != nil {
+            return
+        }
         reloadButton.isEnabled = false
         reloadButton.startAnimation()
         foreground {
