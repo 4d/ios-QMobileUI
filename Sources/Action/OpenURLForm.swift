@@ -10,11 +10,26 @@ import Foundation
 import QMobileAPI
 
 /// A form to open an url defined by the first injected action. This form coulbe added for instance on the tab bar.
-open class OpenURLForm: ActionWebAreaController {
+open class OpenURLForm: ActionWebAreaController, FixedForm {
 
+    public var originalParent: UIViewController?
+
+    public var scrollView: UIScrollView?
     public var reloadButton: LoadingButton!
 
-    open override func viewDidLoad() {
+    // MARK: - event
+    /// Called after the view has been loaded. Default does nothing
+    open func onLoad() {}
+    /// Called when the view is about to made visible. Default transition to next controller.
+    open func onWillAppear(_ animated: Bool) {}
+    /// Called when the view has been fully transitioned onto the screen. Default does nothing
+    open func onDidAppear(_ animated: Bool) {}
+    /// Called when the view is dismissed, covered or otherwise hidden. Default does nothing
+    open func onWillDisappear(_ animated: Bool) {}
+    /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
+    open func onDidDisappear(_ animated: Bool) {}
+
+    final public override func viewDidLoad() {
         // get from injected tag: could be list but we need only one action here
         self.action = self.actionSheet?.actions.first
         if action == nil {
@@ -34,9 +49,38 @@ open class OpenURLForm: ActionWebAreaController {
         super.viewDidLoad() // will launch all webview creation and URL loading
         webView?.allowsBackForwardNavigationGestures = true
 
-        applyScrollEdgeAppareance()
+        fixNavigationBarColorFromAsset()
+
+        onLoad()
     }
 
+    override open func willMove(toParent parent: UIViewController?) {
+        manageMoreNavigationControllerStyle(parent)
+        super.willMove(toParent: parent)
+    }
+
+    /// Main view will appear.
+    final public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        onWillAppear(animated)
+    }
+
+    final public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        onDidAppear(animated)
+    }
+
+    final public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onWillDisappear(animated)
+    }
+
+    final public override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        onDidDisappear(animated)
+    }
+
+    // MARK: - reload
     @objc
     open override func initReloadUI() {
         logger.debug("initReloadUI \(String(describing: action.url))")

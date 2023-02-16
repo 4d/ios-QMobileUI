@@ -25,7 +25,7 @@ public struct FormContext {
 }
 
 /// A List form display a list of table data
-public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObserver, ActionContextProvider, Form, Storyboardable, DeepLinkable, TableOwner {
+public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObserver, ActionContextProvider, FixedForm, Storyboardable, DeepLinkable, TableOwner {
 
     /// The table name displayed by this form.
     var tableName: String { get }
@@ -34,14 +34,18 @@ public protocol ListForm: DataSourceDelegate, DataSourceSortable, IndexPathObser
     /// A context that could change the for behaviour.
     var formContext: FormContext? { get set }
 
+    var inDataSync: Bool { get set }
+    var isViewVisible: Bool { get set }
+    var isScrolling: Bool { get set }
+
+}
+
+public protocol FixedForm: NSObjectProtocol, Form {
+
     /// A parent controller. (used to fix issue with more view controller).
     var originalParent: UIViewController? { get set }
     /// A scroll view used to fix navigation bar scrolling position..
     var scrollView: UIScrollView? { get }
-
-    var inDataSync: Bool { get set }
-    var isViewVisible: Bool { get set }
-    var isScrolling: Bool { get set }
 
 }
 
@@ -112,18 +116,9 @@ extension ListForm {
 
 }
 
-extension ListForm where Self: UIViewController {
+extension UIViewController {
 
-    func fixNavigationBarColor() {
-        fixNavigationBarLargeTitlePosition() // redmine #110851: try to show large title always and make status bar color active when starting
-        fixNavigationBarColorFromAsset()
-    }
-
-    fileprivate func fixNavigationBarLargeTitlePosition() {
-        self.scrollView?.setContentOffset(CGPoint(x: 0, y: -10), animated: false)
-    }
-
-    fileprivate func fixNavigationBarColorFromAsset() {
+    func fixNavigationBarColorFromAsset() {
         guard let navigationBar = self.navigationController?.navigationBar else {
             return }
         guard let namedColor = UIColor(named: "ForegroundColor") else { return } // cannot fix
@@ -144,8 +139,26 @@ extension ListForm where Self: UIViewController {
                 navigationBar.largeTitleTextAttributes?[.foregroundColor] = namedColor
             }
         }
+        if navigationBar.titleTextAttributes?[.foregroundColor] == nil {
+            navigationBar.titleTextAttributes?[.foregroundColor] = namedColor
+        } else if let oldColor = navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor, oldColor.rgba.alpha < 0.5 {
+            navigationBar.titleTextAttributes?[.foregroundColor] = namedColor
+        }
 
         applyScrollEdgeAppareance()
+    }
+
+}
+
+extension FixedForm where Self: UIViewController {
+
+    func fixNavigationBarColor() {
+        fixNavigationBarLargeTitlePosition() // redmine #110851: try to show large title always and make status bar color active when starting
+        fixNavigationBarColorFromAsset()
+    }
+
+    fileprivate func fixNavigationBarLargeTitlePosition() {
+        self.scrollView?.setContentOffset(CGPoint(x: 0, y: -10), animated: false)
     }
 
     func manageMoreNavigationControllerStyle(_ parent: UIViewController?) {
