@@ -42,6 +42,7 @@ open class ActionWebAreaController: UIViewController, WKUIDelegate, WKNavigation
     // var actionUI: ActionUI
     var context: ActionContext!
     var changeNavTitleOnPageChange = true
+    var hideReloadUIWwhenReload = true
 
     fileprivate var activityIndicator: ActivityIndicator?
     fileprivate var tapOutsideRecognizer: UITapGestureRecognizer!
@@ -442,7 +443,9 @@ extension ActionWebAreaController {
     @IBAction func reload(_ sender: Any) {
         logger.debug("reload \(String(describing: action.url))")
         guard let webView = webView else { return }
-        hideReloadUI()
+        if hideReloadUIWwhenReload {
+            hideReloadUI()
+        }
         if webView.isLoading {
             webView.stopLoading()
         } else {

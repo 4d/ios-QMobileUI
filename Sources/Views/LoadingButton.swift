@@ -8,7 +8,7 @@
 import UIKit
 
 public protocol QAnimatable {
-    func startAnimation()
+    func startAnimation(completionHandler: (() -> Void)?)
     func stopAnimation(completionHandler: (() -> Void)?)
 }
 public typealias QAnimatableButton = QAnimatable & UIButton
@@ -42,6 +42,9 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
 
     /// Cache for background color (changed when disabled)
     private var cachedBackgroundColor: UIColor?
+
+    // Has started on animation
+    var hasStartedAnimation: Bool = false
 
     /// The layer to make activity indicator animation.
     private lazy var activityIndicator: SpinerLayer = {
@@ -85,7 +88,8 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
 
     // MARK: animation
 
-    open func startAnimation() {
+    open func startAnimation(completionHandler: (() -> Void)? = nil) {
+        self.hasStartedAnimation = true
         // Remove the title
         let state: UIControl.State = .normal
         let titleForState = title(for: state)
@@ -103,26 +107,30 @@ open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelega
             Timer.schedule(delay: shrinkDuration - 0.25) { _ in
                 // And show activity indicator
                 self.activityIndicator.startAnimation()
+                completionHandler?()
             }
         })
     }
 
     open func stopAnimation(completionHandler: (() -> Void)? = nil) {
-        /*self.expand { // Maybe let transition do this animation*/
-        completionHandler?()
-        // Reset
-        Timer.schedule(delay: 1) { _ in
-            self.reset()
+        if !self.hasStartedAnimation {
+            completionHandler?()
+            return
         }
-        /*}*/
-        self.activityIndicator.stopAnimation()
+
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+            self.layer.cornerRadius = self.normalCornerRadius
+        }, completion: { _ in
+            self.reset()
+            self.hasStartedAnimation = false
+            completionHandler?()
+        })
     }
 
     open func reset() {
+        self.activityIndicator.stopAnimation()
         self.layer.removeAllAnimations()
         self.setTitle(self.cachedTitle, for: .normal)
-        self.activityIndicator.stopAnimation()
-        self.layer.cornerRadius = self.normalCornerRadius
     }
 
 }

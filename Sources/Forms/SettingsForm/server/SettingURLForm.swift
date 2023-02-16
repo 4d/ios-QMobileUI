@@ -199,7 +199,7 @@ open class SettingURLForm: UIViewController, Storyboardable {
 
     // MARK: 
     fileprivate func startLoginUI() {
-        (connectButton as? QAnimatableButton)?.startAnimation()
+        (connectButton as? QAnimatableButton)?.startAnimation(completionHandler: nil)
         serverURLTextField.isEnabled = false
     }
 

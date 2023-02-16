@@ -45,6 +45,7 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
             self.navigationItem.title = action.label
             self.navigationItem.setItems(where: .right, items: nil)
             self.changeNavTitleOnPageChange = false
+            self.hideReloadUIWwhenReload = false
         }
         super.viewDidLoad() // will launch all webview creation and URL loading
         webView?.allowsBackForwardNavigationGestures = true
@@ -67,6 +68,7 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        //reloadButton?.setTitle("Reload", for: .normal) // some weird is
         onDidAppear(animated)
     }
 
@@ -108,15 +110,15 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
         if self.webView?.url != nil {
             return
         }
-        reloadButton.isEnabled = false
         reloadButton.startAnimation()
+        reloadButton.isEnabled = false
         foreground {
             self.reload(sender)
         }
     }
 
     open override func onNavigationEnd() {
-        guard let button = self.reloadButton else {
+        guard let button = self.reloadButton, !button.isHidden else {
             return
         }
         DispatchQueue.main.after(2) {
@@ -127,8 +129,12 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
 
     @objc
     open override func showReloadUI() {
-        logger.debug("showReloadUI \(String(describing: action.url))")
+        logger.debug("showReloadUI \(String(describing: action.url)) \(String(describing: self.webView?.url))")
+        if self.webView?.url != nil {
+            return
+        }
         self.reloadButton?.isHidden = false
+
     }
 
     @objc
