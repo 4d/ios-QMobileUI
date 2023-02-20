@@ -13,6 +13,15 @@ public protocol QAnimatable {
 }
 public typealias QAnimatableButton = QAnimatable & UIButton
 
+extension QAnimatable {
+    public func startAnimation() {
+        self.startAnimation(completionHandler: nil)
+    }
+    public func stopAnimation() {
+        self.stopAnimation(completionHandler: nil)
+    }
+}
+
 @IBDesignable
 open class LoadingButton: QAnimatableButton, UIViewControllerTransitioningDelegate {
 
