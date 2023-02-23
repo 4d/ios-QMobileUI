@@ -68,11 +68,11 @@ extension UIApplication {
         }
     }
 
-    open class var isLandscapeOrientation: Bool {
+    public class var isLandscapeOrientation: Bool {
         return UIApplication.shared.topWindowScene?.interfaceOrientation.isLandscape ?? false
     }
 
-    open class var isUserRegisteredForRemoteNotifications: Bool {
+    public class var isUserRegisteredForRemoteNotifications: Bool {
         if #available(iOS 8.0, *) {
             return UIApplication.shared.isRegisteredForRemoteNotifications
         } else {

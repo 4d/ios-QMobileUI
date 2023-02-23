@@ -49,7 +49,7 @@ extension ApplicationValueTransformers: ApplicationService {
 
 extension ValueTransformer {
 
-    open class func setValueTransformer(_ transformer: ValueTransformerRegisterable, for name: String) {
+    public class func setValueTransformer(_ transformer: ValueTransformerRegisterable, for name: String) {
         let transformer = transformer.transformer
         self.setValueTransformer(transformer, forName: NSValueTransformerName(name))
     }

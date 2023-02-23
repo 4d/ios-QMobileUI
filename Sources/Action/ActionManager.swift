@@ -31,7 +31,7 @@ import QMobileDataSync
 ///
 /// To inject custom action result handler you have two way. Make your `AppDelegate` implement `ActionResultHandler` or inject an app service which implement `ActionResultHandler`
 ///
-public class ActionManager: NSObject, ObservableObject {
+public class ActionManager: NSObject, ObservableObject { // swiftlint:disable:this type_body_length
 
     /// Singleton for the app.
     public static let instance = ActionManager()
@@ -668,4 +668,4 @@ fileprivate extension UIModalPresentationStyle {
         }
     }
 
-}
+}// swiftlint:disable:this file_length

@@ -121,9 +121,11 @@ extension ImagePickerViewController: UICollectionViewDelegate {
             action?(images[indexPath.row])
 
         case .multiple(let action)?:
-            selectedImages.contains(image)
-                ? selectedImages.removeAll(where: { return $0 == image})
-                : selectedImages.append(image)
+            if selectedImages.contains(image) {
+                selectedImages.removeAll(where: { return $0 == image})
+            } else {
+                selectedImages.append(image)
+            }
             action?(selectedImages)
 
         case .none: break }
@@ -133,9 +135,11 @@ extension ImagePickerViewController: UICollectionViewDelegate {
         let image = images[indexPath.item]
         switch selection {
         case .multiple(let action)?:
-            selectedImages.contains(image)
-                ? selectedImages.removeAll(where: { return $0 == image})
-                : selectedImages.append(image)
+            if selectedImages.contains(image) {
+                selectedImages.removeAll(where: { return $0 == image})
+            } else {
+                selectedImages.append(image)
+            }
             action?(selectedImages)
         default: break }
     }

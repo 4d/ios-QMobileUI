@@ -129,7 +129,7 @@ extension UILabel: RelationInfoUI {
 
     #endif
 
-    open var relationDisplayedValue: String? {
+    @objc open var relationDisplayedValue: String? {
         get {
             return self.text
         }

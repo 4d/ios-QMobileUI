@@ -13,7 +13,7 @@ extension LoginForm: Storyboardable {}
 
 extension LoginForm {
 
-    open func performTransition(_ sender: Any? = nil) {
+    @objc open func performTransition(_ sender: Any? = nil) {
         foreground { [weak self] in
             guard let source = self else { return }
             ApplicationCoordinator.instance.loginTransition(source, sender) // try here to cut segue model, and use coordinator
