@@ -604,7 +604,7 @@ extension Eureka.BaseRow {
         // XXX multiple errors?
     }
 
-    open var remoteErrorsString: [String] {
+    public var remoteErrorsString: [String] {
         get {
             return objc_getAssociatedObject(self, &xoAssociationKey) as? [String] ?? []
         } set {
@@ -612,7 +612,7 @@ extension Eureka.BaseRow {
         }
     }
 
-    open var remoteErrors: [ValidationError] {
+    public var remoteErrors: [ValidationError] {
         return remoteErrorsString.map { ValidationError(msg: $0) }
     }
 

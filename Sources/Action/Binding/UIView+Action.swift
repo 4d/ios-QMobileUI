@@ -41,7 +41,7 @@ extension UIView {
     }
 
     #if TARGET_INTERFACE_BUILDER
-    open var actionSheet: QMobileAPI.ActionSheet? {
+    public var actionSheet: QMobileAPI.ActionSheet? {
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
@@ -54,7 +54,7 @@ extension UIView {
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    open var actionHasDeferred: Bool {
+    public var actionHasDeferred: Bool {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionHasDeferred) as? Bool ?? true
         }
@@ -71,7 +71,7 @@ extension UIView {
             objc_setAssociatedObject(self, &AssociatedKeys.actionIndex, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    open var actionSheet: QMobileAPI.ActionSheet? {
+    public var actionSheet: QMobileAPI.ActionSheet? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionSheetKey) as? QMobileAPI.ActionSheet
         }
@@ -286,12 +286,12 @@ extension UIView {
     }
 
     #if TARGET_INTERFACE_BUILDER
-    open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
+    public var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
         get { return nil }
         set {} // swiftlint:disable:this unused_setter_value
     }
     #else
-    open var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
+    public var _action: Action? { // swiftlint:disable:this identifier_name // use as internal like IBAnimatable
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.actionKey) as? Action
         }

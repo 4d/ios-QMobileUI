@@ -56,26 +56,26 @@ extension UINibable {
 
 extension UITableView {
     // Used by the delegate to acquire an already allocated cell, in lieu of allocating a new one.
-    open func dequeueReusableCell<T: ReusableView>(_: T.Type) -> T? {
+    public func dequeueReusableCell<T: ReusableView>(_: T.Type) -> T? {
         return dequeueReusableCell(withIdentifier: T.reuseIdentifier) as? T
     }
 
     // like dequeueReusableCellWithIdentifier:, but for headers/footers
-    open func dequeueReusableHeaderFooterView<T: ReusableView>(_: T.Type) -> T? {
+    public func dequeueReusableHeaderFooterView<T: ReusableView>(_: T.Type) -> T? {
         return dequeueReusableHeaderFooterView(withIdentifier: T.reuseIdentifier) as? T
     }
 
     // Instances returned from the new dequeue method will also be properly sized when they are returned.
 
-    open func registerCell<T: ReusableView>(_ nib: UINib?, for: T.Type) {
+    public func registerCell<T: ReusableView>(_ nib: UINib?, for: T.Type) {
         self.register(nib, forCellReuseIdentifier: T.reuseIdentifier)
     }
 
-    open func registerHeaderFooter<T: ReusableView>(_ nib: UINib?, for: T.Type) {
+    public func registerHeaderFooter<T: ReusableView>(_ nib: UINib?, for: T.Type) {
         self.register(nib, forHeaderFooterViewReuseIdentifier: T.reuseIdentifier)
     }
 
-    open func registerHeaderFooter<T>(_ view: T) where T: ReusableView, T: UINibable {
+    public func registerHeaderFooter<T>(_ view: T) where T: ReusableView, T: UINibable {
         if let nib = view.nib {
             self.register(nib, forHeaderFooterViewReuseIdentifier: T.reuseIdentifier)
         }

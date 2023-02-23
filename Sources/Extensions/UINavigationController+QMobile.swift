@@ -12,7 +12,7 @@ import UIKit
 extension UINavigationController {
 
     /// Return true if its `moreNavigationController` of `tabBarController`.
-    open var isMoreNavigationController: Bool {
+    public var isMoreNavigationController: Bool {
         return self.tabBarController?.moreNavigationController == self
     }
 

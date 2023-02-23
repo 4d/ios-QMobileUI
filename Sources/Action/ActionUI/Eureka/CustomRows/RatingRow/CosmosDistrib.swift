@@ -893,7 +893,7 @@ struct CosmosRating {
             return Double(round(starFillLevel))
         case .half:
             return Double(round(starFillLevel * 2) / 2)
-        case .precise :
+        case .precise:
             return starFillLevel
         }
     }

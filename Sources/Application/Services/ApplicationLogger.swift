@@ -193,7 +193,7 @@ extension ApplicationLogger: ApplicationService {
         return logs
     }
 
-    open func logAppDetails() {
+    public func logAppDetails() {
         logger.logAppDetails()
         logger.info("IDE \(Bundle.main["4D"] ?? [:])")
     }

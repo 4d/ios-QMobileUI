@@ -78,7 +78,6 @@ import Kingfisher
 import QMobileAPI
 import QMobileDataSync
 
-
 extension UIImageView {
 
     public typealias ImageCompletionHandler = ((Result<RetrieveImageResult, KingfisherError>) -> Void)

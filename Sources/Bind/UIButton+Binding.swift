@@ -226,7 +226,7 @@ public extension UIButton {
         }
     }
 
-    @available(iOS, deprecated:1.0)
+    @available(iOS, deprecated: 1.0)
     @objc dynamic var boolean: NSNumber? {
         get {
             return integer

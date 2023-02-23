@@ -130,12 +130,12 @@ extension UIControl: RelationInfoUI {
         }
     }
 
-    open func setRelationDisclosure() {
+    public func setRelationDisclosure() {
         self.relationDisplayedValue = ""
         (self as? UIButton)?.setImage(UIImage.disclosureRelationImage, for: .normal)
     }
 
-    open func addRelationSegue() {
+    public func addRelationSegue() {
         self.isEnabled = true
         if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
             self.addTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)
@@ -146,7 +146,7 @@ extension UIControl: RelationInfoUI {
         }
     }
 
-    open func removeRelationSegue() {
+    public func removeRelationSegue() {
         self.isEnabled = false
         if addRelationSegueAction { // to deactivate set addRelationSegueAction before relationName
             self.removeTarget(self, action: #selector(self.relationSegue(sender:)), for: .touchUpInside)

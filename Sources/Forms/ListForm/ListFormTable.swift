@@ -582,7 +582,7 @@ import Kingfisher
 
 extension ListFormTable: UITableViewDataSourcePrefetching {
 
-    open func installDataSourcePrefetching() {
+    public func installDataSourcePrefetching() {
         self.tableView.prefetchDataSource = self
 
         // get all image urls from records
@@ -599,9 +599,9 @@ extension ListFormTable: UITableViewDataSourcePrefetching {
 // MARK: IndexPathObserver 
 extension ListFormTable {
 
-    open func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    public func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
     }
-    open func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    public func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
         if let indexPath = indexPath {
             self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         }

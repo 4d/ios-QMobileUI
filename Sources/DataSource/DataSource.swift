@@ -11,6 +11,34 @@ import QMobileDataStore
 import XCGLogger
 import ValueTransformerKit
 
+class TextToDateValueTransformer: ValueTransformer {
+
+    var key: String
+    var formatter: DateFormatter
+    init(key: String) {
+        self.key = key
+        switch self.key {
+        case "mediumDate":
+            self.formatter = DateFormatter.mediumDate
+        case "fullDate":
+            self.formatter = DateFormatter.fullDate
+        case "longDate":
+            self.formatter = DateFormatter.longDate
+        default:
+            self.formatter = DateFormatter.mediumDate
+        }
+    }
+
+    open override func transformedValue(_ value: Any?) -> Any? {
+        guard  let text = value as? String, let date = text.dateFromRFC3339  else { return nil } // decode from to string done by api (but maybe find a way to do better?
+        return self.formatter.string(from: date)
+    }
+
+    open override func reverseTransformedValue(_ value: Any?) -> Any? {
+        return nil
+    }
+}
+
 /// Class to present data to table or collection views
 open class DataSource: NSObject, TableOwner {
 

@@ -404,7 +404,7 @@ private class KeyPathParser {
     var function: String
     var block: (_ view: Binded?, _ keyPathComponent: String) -> Binded?
 
-    init(function: String, block :@escaping (_ view: Binded?, _ keyPathComponent: String) -> Binded?) {
+    init(function: String, block: @escaping (_ view: Binded?, _ keyPathComponent: String) -> Binded?) {
         self.function = function
         self.block = block
     }
@@ -418,7 +418,7 @@ private class KeyPathParser {
     }
 
     // allow to extract int argument from <function>[<arg>]
-    static func intParser(function: String, block :@escaping (_ view: Binded?, _ parameter: Int?) -> Binded?) -> KeyPathParser {
+    static func intParser(function: String, block: @escaping (_ view: Binded?, _ parameter: Int?) -> Binded?) -> KeyPathParser {
         return KeyPathParser(function: function) { view, keyPathComponent in
             let result = scan(keyPathComponent: keyPathComponent, function: function)
             return block(view, result)

@@ -102,7 +102,7 @@ extension ApplicationCrashManager {
     }
 
     // MARK: Actions
-    open func deleteCrashFile() {
+    public func deleteCrashFile() {
         let crashDirectory = ApplicationCrashManager.parentCrashDirectory
         self.deleteCrashFile(pathCrash: crashDirectory, zipPath: crashDirectory)
     }

@@ -23,7 +23,7 @@ extension UISwipeGestureRecognizer.Direction: Hashable {
 
 extension UIGestureRecognizer {
 
-    open func addTarget(_ view: UIView, closure: @escaping (Cancellable) -> Void) -> Cancellable {
+    public func addTarget(_ view: UIView, closure: @escaping (Cancellable) -> Void) -> Cancellable {
         return UIGestureRecognizerWithClosure(view, self, closure)
     }
 

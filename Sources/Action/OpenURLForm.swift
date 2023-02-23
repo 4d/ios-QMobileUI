@@ -28,7 +28,7 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
     open func onWillDisappear(_ animated: Bool) {}
     /// Called after the view was dismissed, covered or otherwise hidden. Default does nothing
     open func onDidDisappear(_ animated: Bool) {}
-
+ 
     final public override func viewDidLoad() {
         // get from injected tag: could be list but we need only one action here
         self.action = self.actionSheet?.actions.first
@@ -68,7 +68,7 @@ open class OpenURLForm: ActionWebAreaController, FixedForm {
 
     final public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //reloadButton?.setTitle("Reload", for: .normal) // some weird is
+        // reloadButton?.setTitle("Reload", for: .normal) // some weird is
         onDidAppear(animated)
     }
 

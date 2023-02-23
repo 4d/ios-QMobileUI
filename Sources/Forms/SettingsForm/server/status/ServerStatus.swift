@@ -61,7 +61,7 @@ extension ServerStatus {
 
     public var isFailure: Bool {
         switch self {
-        case .done(let result) :
+        case .done(let result):
             switch result {
             case .failure:
                 return true

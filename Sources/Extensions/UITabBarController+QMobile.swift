@@ -11,13 +11,13 @@ import UIKit
 
 extension UITabBarController {
 
-    open func enable(atindex index: Int = 0, _ status: Bool = true) {
+    public func enable(atindex index: Int = 0, _ status: Bool = true) {
         if let item = self.tabBar.items?[index] {
             item.isEnabled = status
         }
     }
 
-    open func renderOriginalImages() {
+    public func renderOriginalImages() {
         guard let items = tabBar.items, !items.isEmpty else { return }
 
         for item in items {

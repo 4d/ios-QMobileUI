@@ -512,9 +512,9 @@ extension ListFormCollection {
 // MARK: IndexPathObserver
 extension ListFormCollection {
 
-    open func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    public func willChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
     }
-    open func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
+    public func didChangeIndexPath(from previous: IndexPath?, to indexPath: IndexPath?) {
         if let indexPath = indexPath {
             self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: false)
         }
@@ -525,7 +525,7 @@ extension ListFormCollection {
 import Kingfisher
 extension ListFormCollection: UICollectionViewDataSourcePrefetching {
 
-    open func installDataSourcePrefetching() {
+    public func installDataSourcePrefetching() {
         self.collectionView?.prefetchDataSource = self
     }
 

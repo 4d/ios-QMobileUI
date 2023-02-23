@@ -81,7 +81,7 @@ extension UIView: Binded {
 
     // MARK: - data
 
-    open var settings: PreferencesType? {
+    public var settings: PreferencesType? {
         get {
             return Prephirences.sharedInstance
         }

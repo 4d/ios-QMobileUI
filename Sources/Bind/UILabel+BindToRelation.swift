@@ -138,7 +138,7 @@ extension UILabel: RelationInfoUI {
         }
     }
 
-    open func setRelationDisclosure() {
+    public func setRelationDisclosure() {
         let attachmentImage = NSTextAttachment()
         attachmentImage.image = UIImage.disclosureRelationImage
         self.attributedText = NSAttributedString(attachment: attachmentImage)
@@ -157,7 +157,7 @@ extension UILabel: RelationInfoUI {
         currentViewController.performSegue(withIdentifier: relationName, sender: self)
     }
 
-    open func addRelationSegue() {
+    public func addRelationSegue() {
         if addRelationSegueAction && self.relationTapGesture == nil { // to deactivate set addRelationSegueAction before relationName
             self.isUserInteractionEnabled = true
             let gesture = UITapGestureRecognizer(target: self, action: #selector(self.relationTapped(_:)))
@@ -167,7 +167,7 @@ extension UILabel: RelationInfoUI {
         }
     }
 
-    open func removeRelationSegue() {
+    public func removeRelationSegue() {
         if let relationTapGesture = self.relationTapGesture {
             self.removeGestureRecognizer(relationTapGesture)
         }
