@@ -5,7 +5,7 @@
 //  Created by phimage on 05/11/2020.
 //
 
-import Foundation
+import UIKit
 
 import QMobileAPI
 import Moya

@@ -6,7 +6,7 @@
 //  Copyright © 2023 Eric Marchand. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import QMobileAPI
 
 /// A form to open an url defined by the first injected action. This form coulbe added for instance on the tab bar.
