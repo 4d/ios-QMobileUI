@@ -24,6 +24,16 @@ let fetchedResultsController = dataStore.fetchedResultsController(tableName: "ta
 let dataSource = DataSource(tableView: self.tableView, fetchedResultsController: fetchedResultsController)
 ```
 
+### Application services
+
+A service listen to application lifecycle event and execute events. For instance at start of application, database, logging, preferences, etc... are configured.
+
+The [`QApplication`](Sources/Application/QApplication.Swift) instance replace the default application instance and allow to initialize a set of services.
+
+See [Sources/Application/Services](Sources/Application/Services) for a list of installed services.
+
+New one could be created and injected, see [tutorial](https://github.com/4d-go-mobile/sdk/blob/master/docs/ApplicationService.md)
+
 ## Dependencies
 
 | Name | License | Usefulness |
