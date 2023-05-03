@@ -1,6 +1,6 @@
 # QMobileUI
 
-This iOS framework belong to [iOS SDK](https://github.com/4d/ios-sdk) and it contaitns :
+This iOS framework belong to [iOS SDK](https://github.com/4d/ios-sdk) and it contains :
 - graphical views ie. the navigation, list, details and action forms
  - code to bind database to views
  - code to send actions and retry according to network status
