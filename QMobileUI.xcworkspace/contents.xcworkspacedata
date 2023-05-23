@@ -23,10 +23,6 @@
          location = "group:Carthage/Checkouts/SwiftMessages/SwiftMessages.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj">
-      </FileRef>
-
-      <FileRef
          location = "group:Carthage/Checkouts/FileKit/FileKit.xcodeproj">
       </FileRef>
       <FileRef
@@ -42,13 +38,13 @@
          location = "group:Carthage/Checkouts/ValueTransformerKit/ValueTransformerKit.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:../QMobileAPI/QMobileAPI.xcodeproj">
+         location = "group:Carthage/Checkouts/ios-QMobileAPI/QMobileAPI.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:../QMobileDataStore/QMobileDataStore.xcodeproj">
+         location = "group:Carthage/Checkouts/ios-QMobileDataStore/QMobileDataStore.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:../QMobileDataSync/QMobileDataSync.xcodeproj">
+         location = "group:Carthage/Checkouts/ios-QMobileDataSync/QMobileDataSync.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Carthage/Checkouts/CallbackURLKit/CallbackURLKit.xcodeproj">

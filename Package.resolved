@@ -1,0 +1,167 @@
+{
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "bc268c28fb170f494de9e9927c371b8342979ece",
+        "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "callbackurlkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/phimage/CallbackURLKit.git",
+      "state" : {
+        "branch" : "HEAD",
+        "revision" : "5411bfc17cd0787ac80c46f312c7235783ff9421"
+      }
+    },
+    {
+      "identity" : "eureka",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xmartlabs/Eureka.git",
+      "state" : {
+        "revision" : "b6e35acf77a5551070afa6248935ec68e71f22af",
+        "version" : "5.4.0"
+      }
+    },
+    {
+      "identity" : "filekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nvzqz/FileKit.git",
+      "state" : {
+        "revision" : "9006d2888025fbe893c3c396327b2fe45a8c177b",
+        "version" : "6.1.0"
+      }
+    },
+    {
+      "identity" : "ibanimatable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/IBAnimatable/IBAnimatable.git",
+      "state" : {
+        "revision" : "e4f5d93c626839abb11cf1441397e93feb584e93",
+        "version" : "6.1.0"
+      }
+    },
+    {
+      "identity" : "ios-qmobileapi",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/4d/ios-QMobileAPI.git",
+      "state" : {
+        "branch" : "HEAD",
+        "revision" : "89c5b8794ef838551bb65b9f761cf953d8b6781e"
+      }
+    },
+    {
+      "identity" : "ios-qmobiledatastore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/4d/ios-QMobileDataStore.git",
+      "state" : {
+        "branch" : "HEAD",
+        "revision" : "6afaf001e78ec13f7f71795039d33440b2835238"
+      }
+    },
+    {
+      "identity" : "ios-qmobiledatasync",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/4d/ios-QMobileDataSync.git",
+      "state" : {
+        "branch" : "HEAD",
+        "revision" : "45a679386abe361967d6825177b54ec3218190d6"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "d06df9adf50ed8cde5786d935836a5f445f780ba",
+        "version" : "6.3.1"
+      }
+    },
+    {
+      "identity" : "moya",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Moya/Moya.git",
+      "state" : {
+        "revision" : "c263811c1f3dbf002be9bd83107f7cdc38992b26",
+        "version" : "15.0.3"
+      }
+    },
+    {
+      "identity" : "prephirences",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/phimage/Prephirences.git",
+      "state" : {
+        "revision" : "333728f812c30e6e06519b06ed34cea75d9fc701",
+        "version" : "5.4.0"
+      }
+    },
+    {
+      "identity" : "reactiveswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveCocoa/ReactiveSwift.git",
+      "state" : {
+        "revision" : "c43bae3dac73fdd3cb906bd5a1914686ca71ed3c",
+        "version" : "6.7.0"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "9dcaa4b333db437b0fbfaf453fad29069044a8b4",
+        "version" : "6.6.0"
+      }
+    },
+    {
+      "identity" : "swiftmessages",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/phimage/SwiftMessages.git",
+      "state" : {
+        "branch" : "HEAD",
+        "revision" : "6fe4f6af76ad4503e3e1f976a9aff6abd193387e"
+      }
+    },
+    {
+      "identity" : "swiftyjson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftyJSON/SwiftyJSON.git",
+      "state" : {
+        "revision" : "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
+        "version" : "5.0.1"
+      }
+    },
+    {
+      "identity" : "valuetransformerkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/phimage/ValueTransformerKit.git",
+      "state" : {
+        "revision" : "8f40b14dd2d243898970141bb7d3d97d0026951d",
+        "version" : "1.2.4"
+      }
+    },
+    {
+      "identity" : "xcglogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DaveWoodCom/XCGLogger.git",
+      "state" : {
+        "revision" : "a9c4667b247928a29bdd41be2ec2c8d304215a54",
+        "version" : "7.0.1"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "43ec568034b3731101dbf7670765d671c30f54f3",
+        "version" : "0.9.16"
+      }
+    }
+  ],
+  "version" : 2
+}

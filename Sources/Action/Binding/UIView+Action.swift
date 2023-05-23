@@ -104,13 +104,13 @@ extension UIView {
                     if let button = self as? UIButton, ActionFormSettings.useMenu {
                         let actionContext: ActionContext = self
 
-                        var moreActions: [ActionUI]? = nil
+                        var moreActions: [ActionUI]?
                         if actionHasDeferred  && /*has action with pending feature*/!actionSheet.actions.filter({ !($0.preset?.couldNotBePending ?? false)}).isEmpty {
                             let actionUI = UIAction(
                                 title: "Pending task",
                                 image: UIImage(systemName: "ellipsis.rectangle"),
                                 identifier: UIAction.Identifier(rawValue: "action.log"),
-                                attributes: []) { actionUI in
+                                attributes: []) { _ in
                                     let view = ActionRequestFormUI(actionContext: actionContext)
                                     let hostController = UIHostingController(rootView: view.environmentObject(ActionManager.instance))
                                     let presentedController = UINavigationController(rootViewController: hostController)

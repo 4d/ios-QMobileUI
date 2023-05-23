@@ -106,6 +106,7 @@
 		4869D60D223BA47F0042379F /* UIView+ActionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4869D60C223BA47F0042379F /* UIView+ActionContext.swift */; };
 		486B918226DE1623009C5AA1 /* UITableViewCell+QMobile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486B918126DE1623009C5AA1 /* UITableViewCell+QMobile.swift */; };
 		486BC3CA231935710059B66C /* RecordFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486BC3C9231935710059B66C /* RecordFormatter.swift */; };
+		486DAC242A1D1CED0033CE6D /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 486DAC232A1D1CED0033CE6D /* ZIPFoundation.framework */; };
 		48708B5D2195B36E005C9C4A /* MainForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48708B5C2195B36E005C9C4A /* MainForm.swift */; };
 		4872590A20528C23000D416B /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590920528C23000D416B /* LoginForm.swift */; };
 		4872590C20528CAD000D416B /* LoginPasscodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4872590B20528CAD000D416B /* LoginPasscodeForm.swift */; };
@@ -377,6 +378,7 @@
 		4869D60C223BA47F0042379F /* UIView+ActionContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ActionContext.swift"; sourceTree = "<group>"; };
 		486B918126DE1623009C5AA1 /* UITableViewCell+QMobile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+QMobile.swift"; sourceTree = "<group>"; };
 		486BC3C9231935710059B66C /* RecordFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFormatter.swift; path = Sources/Bind/RecordFormatter.swift; sourceTree = SOURCE_ROOT; };
+		486DAC232A1D1CED0033CE6D /* ZIPFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIPFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48708B5C2195B36E005C9C4A /* MainForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainForm.swift; sourceTree = "<group>"; };
 		4872590920528C23000D416B /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
 		4872590B20528CAD000D416B /* LoginPasscodeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasscodeForm.swift; sourceTree = "<group>"; };
@@ -540,6 +542,7 @@
 				48E49CF81EB9DC33002B60AF /* Alamofire.framework in Frameworks */,
 				48FB2CD71E93A22600F4F685 /* Prephirences.framework in Frameworks */,
 				4807DD3F1F67DFA200DA924B /* CallbackURLKit.framework in Frameworks */,
+				486DAC242A1D1CED0033CE6D /* ZIPFoundation.framework in Frameworks */,
 				48FB2CE01E93A25E00F4F685 /* ObjcExceptionBridging.framework in Frameworks */,
 				48FB2CD51E93A22600F4F685 /* Kingfisher.framework in Frameworks */,
 			);
@@ -1275,6 +1278,7 @@
 		57B8E23CC459C05AFF97D6F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				486DAC232A1D1CED0033CE6D /* ZIPFoundation.framework */,
 				48AE2C5F1F45754D0013FDEE /* Cartfile */,
 				48AE2C601F4575590013FDEE /* Cartfile.resolved */,
 				48D3F98E1F7D16E600B96947 /* iOS */,
@@ -1441,7 +1445,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Eric Marchand";
 				TargetAttributes = {
 					489C15C41F39AEAB004844F3 = {
@@ -1909,6 +1913,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1971,6 +1976,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

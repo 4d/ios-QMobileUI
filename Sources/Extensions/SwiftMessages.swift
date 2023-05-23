@@ -247,7 +247,7 @@ extension SwiftMessages {
 }
 
 extension SwiftMessages.Config {
-    func viewController(_ viewController: UIViewController)-> SwiftMessages.Config {
+    func viewController(_ viewController: UIViewController) -> SwiftMessages.Config {
         var config = self
         config.presentationContext = .viewController(viewController)
         return config
