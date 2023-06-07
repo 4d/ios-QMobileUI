@@ -48,7 +48,6 @@ extension ApplicationLogger: ApplicationService {
         let maxTimeInterval = logPref["maxTimeInterval"] as? TimeInterval
 
         // debug conf
-        let appleSystem = logPref["appleSystem"] as? Bool ?? false
         let immediate = logPref["immediate"] as? Bool ?? false // if true, debug is easiest, but app perf will discrease
 
         // level
@@ -74,7 +73,16 @@ extension ApplicationLogger: ApplicationService {
         #endif
 
         // MARK: output log
-        if let destination = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination {
+        let consoleDestination: BaseQueuedDestination?
+#if canImport(os.log)
+        logger.remove(destinationWithIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier)
+        let osLogDestination = OSLogDestination()
+        logger.add(destination: osLogDestination)
+        consoleDestination = osLogDestination
+#else
+        consoleDestination = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) as? ConsoleDestination
+#endif
+        if let destination = consoleDestination {
             destination.showLogIdentifier = showLogIdentifier
             destination.showFunctionName = showFunctionName
             destination.showThreadName = showThreadName
@@ -134,11 +142,6 @@ extension ApplicationLogger: ApplicationService {
             destination.logQueue = XCGLogger.logQueue
         }
         logger.add(destination: destination)
-
-        // MARK: appleSystem destination
-        if appleSystem {
-            logger.add(destination: AppleSystemLogDestination())
-        }
 
         // Apply level to all destination. (no level by destination currently)
         logger.outputLevel = level
@@ -294,3 +297,54 @@ extension Path {
         return (fileName as NSString).deletingPathExtension
     }
 }
+
+#if canImport(os.log)
+import os.log
+
+extension XCGLogger.Level {
+
+    var osType: OSLogType {
+        switch self {
+        case .info:
+            return OSLogType.info
+        case .debug:
+            return OSLogType.debug
+        case .error:
+            return OSLogType.fault
+        case .warning:
+            return OSLogType.error
+        case .verbose:
+            return OSLogType.debug
+        default:
+            return OSLogType.default
+        }
+    }
+}
+
+public class OSLogDestination: BaseQueuedDestination {
+
+    let logger = os.Logger()
+
+    open override func output(logDetails: LogDetails, message: String) {
+        let outputClosure = {
+            // Create mutable versions of our parameters
+            var logDetails = logDetails
+            var message = message
+
+            // Apply filters, if any indicate we should drop the message, we abort before doing the actual logging
+            guard !self.shouldExclude(logDetails: &logDetails, message: &message) else { return }
+
+            self.applyFormatters(logDetails: &logDetails, message: &message)
+
+            self.logger.log(level: logDetails.level.osType, "\(message)")
+        }
+
+        if let logQueue = logQueue {
+            logQueue.async(execute: outputClosure)
+        } else {
+            outputClosure()
+        }
+    }
+
+}
+#endif
