@@ -154,6 +154,30 @@ public class ActionManager: NSObject, ObservableObject { // swiftlint:disable:th
                 control = UIAlertController.build(action, actionUI, context, self) // could return nil if not managed
             }
 
+            if action.isUnique {
+                let similarRequests = ActionManager.instance.requests.filter { request in
+                    return request.action.name == action.name
+                    && request.action.tableName == action.tableName
+                    && request.action.scope == action.scope
+                    && !request.isCompleted
+                    && matchContext(contextParameters: request.contextParameters, context: context)
+                }
+                if let similarRequest = similarRequests.first {
+                    let control = ActionFormViewController(builder: similarRequest.builder)
+                    if let topController = UIApplication.topViewController {
+                        let navigation = UINavigationController(rootViewController: control)
+                        if  let navigationParent = topController as? UINavigationController ?? topController.navigationController {
+                            navigation.navigationBar.copyAppearance(from: navigationParent.navigationBar )
+                        }
+                        topController.present(navigation, animated: true)
+                    }
+                    // else ? control.showActionParameters() no button with nav bar
+                    // else if topview is nav? just push? no, cancel will close all window to launch screen
+
+                    return
+                }
+            }
+
             if control == nil {
                 let type: ActionParametersUI.Type = ActionFormViewController.self // ActionParametersController.self
                 control = type.build(action, actionUI, context, self)
@@ -164,6 +188,12 @@ public class ActionManager: NSObject, ObservableObject { // swiftlint:disable:th
                 logger.debug("Failed to build action for \(action)")
             }
         }
+    }
+
+    fileprivate func matchContext(contextParameters: ActionParameters?, context: ActionContext) -> Bool {
+        let current = context.actionContextParameters()
+        return (contextParameters?[ActionParametersKey.table] as? String) == (current?[ActionParametersKey.table] as? String)
+        && (((contextParameters?[ActionParametersKey.record] as? [String: Any])?[ActionParametersKey.primaryKey] as? String) == ((current?[ActionParametersKey.record] as? [String: Any])?[ActionParametersKey.primaryKey] as? String))
     }
 
     func openUI(_ request: ActionRequest, _ actionUI: ActionUI) {
