@@ -139,7 +139,10 @@ struct ChoiceList {
 
             var fetchedRequest = DataStoreFactory.dataStore.fetchRequest(tableName: dataClass, sortDescriptors: sortDescriptors)
             if let filter = dataSource["filter"] as? String {
-                fetchedRequest.predicate = NSPredicate(format: filter) // must be coredata but if orda?
+                fetchedRequest.predicate = NSPredicate(format: filter) // must be coredata but if orda? (need a converter)
+            }
+            else if let filters = dataSource["filter"] as? [String: Any], let filter = (filters["ios"] ?? filters["iOS"]) as? String {
+                fetchedRequest.predicate = NSPredicate(format: filter) // must be coredata
             }
             var records: [Record] = []
             var optionsFromRecords: [ChoiceListItem] = []
