@@ -282,6 +282,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
     }
 
     var hasValidateForm: Bool = false // has validate one time
+    var doneHijack: ((Result<ActionParameters, ActionFormError>) -> Void)?
     var noErrorSectionColor: UIColor? // cache default color of header to reset it
     var rowHasBeenEdited: Set<Int> = [] // has validate one time
 
@@ -339,6 +340,20 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         clearErrors()
 
         sender.isEnabled = false // TODO maybe add activity indicator if not already don
+
+        if let doneHandler = doneHijack {
+            self.externalDone { result in
+                sender.isEnabled = true
+                if case .failure(let error) = result, self.fillErrors(error) {
+                    // keep UI open
+                } else {
+                    doneHandler(result)
+                    self.dismiss()
+                }
+
+            }
+            return
+        }
 
         sendActionRequest()
             .receiveOnForeground()

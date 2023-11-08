@@ -169,6 +169,14 @@ public class ActionManager: NSObject, ObservableObject { // swiftlint:disable:th
                         if  let navigationParent = topController as? UINavigationController ?? topController.navigationController {
                             navigation.navigationBar.copyAppearance(from: navigationParent.navigationBar )
                         }
+                        control.doneHijack = { result in
+                            //self.pause = false
+                            if case .success(let parameters) = result {
+                                similarRequest.actionParameters = parameters
+                                similarRequest.encodeParameters()
+                            }
+                        }
+                        //self.pause = true // pause if could remove pause when dismiss too
                         topController.present(navigation, animated: true)
                     }
                     // else ? control.showActionParameters() no button with nav bar
