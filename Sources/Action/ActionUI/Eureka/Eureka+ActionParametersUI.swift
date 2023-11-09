@@ -95,7 +95,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
             var section = Section()
             self.form.append(section)
             for parameter in parameters {
-                let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
+                let row = parameter.formRow(context: builder.context, onRowEvent: self.onRowEvent(cell:row:event:))
                 if settings.sectionForTextArea && row is TextAreaRow {
                     // add section to have title for text area (alternatively find a way to display title)
                     section = Section(parameter.preferredLongLabelMandatory)
@@ -108,7 +108,7 @@ class ActionFormViewController: FormViewController { // swiftlint:disable:this t
         } else {
             for parameter in parameters {
                 let section = Section(parameter.preferredLongLabelMandatory)
-                let row = parameter.formRow(onRowEvent: self.onRowEvent(cell:row:event:))
+                let row = parameter.formRow(context: builder.context, onRowEvent: self.onRowEvent(cell:row:event:))
                 row.title = nil
                 section.append(row)
                 self.form.append(section)

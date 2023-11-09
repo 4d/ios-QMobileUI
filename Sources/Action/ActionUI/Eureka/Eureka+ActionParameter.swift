@@ -27,8 +27,8 @@ extension ActionParameter {
     }
 
     /// Create a row, fill value, add rules
-    func formRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
-        let row: BaseRow = self.baseRow(onRowEvent: eventCallback)
+    func formRow(context: ActionContext, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow {
+        let row: BaseRow = self.baseRow(context: context, onRowEvent: eventCallback)
         row.title = self.preferredLongLabelMandatory
         row.tag = self.name
         if row is DecimalRow {
@@ -81,8 +81,8 @@ extension ActionParameter {
 
     // Create a row according to format and type
     // params: onChange dirty way to pass action on change on all row, cannot be done on BaseRow or casted...
-    private func baseRow(onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
-        if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+    private func baseRow(context: ActionContext, onRowEvent eventCallback: @escaping OnRowEventCallback) -> BaseRow { // swiftlint:disable:this function_body_length
+        if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type, context: context) {
 
             switch defaultChoiceFormat(format) {
             case .popover:

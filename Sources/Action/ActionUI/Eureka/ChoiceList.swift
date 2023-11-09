@@ -25,12 +25,12 @@ struct ChoiceList {
     static var isSearchableActionCount: Int = 10
 
     /// Create a choice list frm decoded data and parameter type.
-    init?(choiceList: AnyCodable, type: ActionParameterType) {
+    init?(choiceList: AnyCodable, type: ActionParameterType, context: ActionContext) {
         if let choiceArray = choiceList.value as? [Any] {
             options = choiceArray.enumerated().map { ChoiceListItem(index: $0.0, value: $0.1, type: type) }
             isSearchable = options.count > ChoiceList.isSearchableActionCount
         } else if let choiceDictionary = choiceList.value as? [AnyHashable: Any] {
-            if ActionManager.customFormat, let optionsFromDataSource = ChoiceList.fromDataSource(choiceDictionary: choiceDictionary, type: type) {
+            if ActionManager.customFormat, let optionsFromDataSource = ChoiceList.fromDataSource(choiceDictionary: choiceDictionary, type: type, context: context) {
                 options = optionsFromDataSource
                 if let dataSource = choiceDictionary["dataSource"] as? [String: Any], let searchValue = dataSource["search"] as? Bool {
                     isSearchable = searchValue
@@ -116,7 +116,7 @@ struct ChoiceList {
     }*/
 
     /// Create choice list from data Source
-    fileprivate static func fromDataSource(choiceDictionary: [AnyHashable: Any], type: ActionParameterType) -> [ChoiceListItem]? {
+    fileprivate static func fromDataSource(choiceDictionary: [AnyHashable: Any], type: ActionParameterType, context: ActionContext) -> [ChoiceListItem]? {
         guard let dataSource = choiceDictionary["dataSource"] as? [String: Any] else {
             return nil // no data source defined, skip
         }
@@ -126,6 +126,23 @@ struct ChoiceList {
            let tableInfo = DataStoreFactory.dataStore.tableInfo(forOriginalName: dataClass),
            let dataField = tableInfo.fieldInfo(forOriginalName: dataFieldOriginal)?.name {
             // Well defined data source from database
+
+            if let currentEntity = dataSource["currentEntity"] as? Bool, currentEntity {
+                let fieldValue = context.actionParameterValue(for: dataField)
+                if let choiceDictionary = fieldValue as? [AnyHashable: Any] {
+                    if let choiceArray = choiceDictionary["choiceList"] as? [Any] {
+                        return choiceArray.enumerated().map { ChoiceListItem(index: $0.0, value: $0.1, type: type) }
+                    }
+                    var choiceDictionary0 = choiceDictionary
+                    if let choiceDictionary = choiceDictionary["choiceList"] as? [AnyHashable: Any] {
+                        choiceDictionary0 = choiceDictionary
+                    }
+                    return choiceDictionary0.map { ChoiceListItem(key: $0.0, value: $0.1, type: type) }
+                } else if let choiceArray = fieldValue as? [Any] {
+                    return choiceArray.enumerated().map { ChoiceListItem(index: $0.0, value: $0.1, type: type) }
+                }
+                return []
+            }
 
             var recordFormatter: RecordFormatter?
             if let dataFormat = dataSource["entityFormat"] as? String ?? dataSource["format"] as? String {

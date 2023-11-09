@@ -33,7 +33,7 @@ extension ActionRequest {
                 }
                 if let format = parameter.format, case .password = format {
                     values.append("***")
-                } else if let definition = definitionsMap[key], let value = definition.sumary(for: value) {
+                } else if let definition = definitionsMap[key], let value = definition.sumary(for: value, context: self) {
                     values.append(value)
                 } else {
                     values.append(value)
@@ -72,8 +72,8 @@ extension ActionRequest {
 
 extension ActionParameter {
 
-    fileprivate func sumary(for value: Any) -> String? {
-        if let choiceList = self.choiceList, let choice = ChoiceList(choiceList: choiceList, type: self.type) {
+    fileprivate func sumary(for value: Any, context: ActionContext) -> String? {
+        if let choiceList = self.choiceList, let choice = ChoiceList(choiceList: choiceList, type: self.type, context: context) {
             if let value = choice.choice(for: AnyCodable(castData(value))) {  // find value in list
                 return "\(value.value)"
             }

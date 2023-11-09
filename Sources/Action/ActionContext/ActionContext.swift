@@ -125,7 +125,7 @@ extension ActionParameter {
                 default:
                     break
                 }
-                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type, context: context) {
                     if let value = choice.choice(for: AnyCodable(value)) { // find value in list
                         return value
                     }
@@ -134,7 +134,7 @@ extension ActionParameter {
             }
         } else if let value = self.default?.value {
             let castedData = castData(value)
-            if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+            if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type, context: context) {
                 if let value = choice.choice(for: AnyCodable(castedData)) {  // find value in list
                     return value
                 }
@@ -158,7 +158,7 @@ extension ActionParameter {
                 default:
                     break
                 }
-                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type) {
+                if let choiceList = choiceList, let choice = ChoiceList(choiceList: choiceList, type: type, context: context) {
                     if let value = choice.choice(for: AnyCodable(value)) { // find value in list
                         return value
                     }
