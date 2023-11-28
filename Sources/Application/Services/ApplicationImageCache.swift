@@ -21,7 +21,7 @@ class ApplicationImageCache: NSObject {
 
     static var instance: ApplicationService = ApplicationImageCache()
 
-    fileprivate static var instanceCached: ApplicationImageCache {
+    static var instanceCached: ApplicationImageCache {
         // swiftlint:disable:next force_cast
         return instance as! ApplicationImageCache
     }
@@ -78,7 +78,23 @@ class ApplicationImageCache: NSObject {
             pref.set(newValue, forKey: "atLaunchDone")
         }
     }
+    private lazy var backgroundDecode: Bool = {
+        return pref["backgroundDecode"] as? Bool ?? false
+    }()
+    private lazy var onlyLoadFirstFrame: Bool = {
+        return pref["onlyLoadFirstFrame"] as? Bool ?? true
+    }()
+    private lazy var scaleFactor: Double? = {
+            return pref["scaleFactor"] as? Double
+    }()
 
+    public lazy var debugURL: Bool = {
+#if DEBUG
+        return pref["debugURL"] as? Bool ?? true
+#else
+        return pref["debugURL"] as? Bool ?? false
+#endif
+    }()
 }
 enum ImageCacheError: Error {
     case cannotRead
@@ -146,6 +162,15 @@ extension ApplicationImageCache {
         }
         if instanceCached.pdfProcessor {
             options.append(.processor(PDFProcessor.instance))
+        }
+        if instanceCached.backgroundDecode {
+            options.append(.backgroundDecode)
+        }
+        if instanceCached.onlyLoadFirstFrame {
+            options.append(.onlyLoadFirstFrame)
+        }
+        if let scaleFactor = instanceCached.scaleFactor {
+            options.append(.scaleFactor(CGFloat(scaleFactor)))
         }
         options.append(.downloader(getImageDownloader()))
         return options

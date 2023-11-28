@@ -676,7 +676,7 @@ extension UILabel {
                 self.text = nil
                 return
             }
-            self.text = imageResource.downloadURL.absoluteString
+            self.text = ""
 
             logger.verbose("Setting \(imageResource) to view \(self)")
 
@@ -698,6 +698,7 @@ extension UILabel {
                     self.setImage(value.image)
                 case .failure(let error):
                     ApplicationImageCache.log(error: error, for: imageResource.downloadURL)
+                    self.text = ApplicationImageCache.instanceCached.debugURL ? imageResource.downloadURL.absoluteString: ""
                 }
             }
             cancelDownloadTask()
