@@ -175,15 +175,25 @@ extension ApplicationCoordinator {
 
 extension ApplicationCoordinator {
 
-    fileprivate static func getRelationInfos(_ firstTableInfo: DataStoreTableInfo?, _ relationName: String) -> [DataStoreRelationInfo] {
+    fileprivate static func getRelationInfos(_ firstTableInfo: DataStoreTableInfo?, _ relationName: String, _ sourceTableInfo: DataStoreTableInfo?) -> [DataStoreRelationInfo] {
         var tableInfo = firstTableInfo
         var relationsInfo: [DataStoreRelationInfo] = []
         let relationsToSearch = relationName.split(separator: ".").reversed()
         for relationToSearch in relationsToSearch {
-            if let inverseRelationInfo = tableInfo?.relationships.first(where: { $0.inverseRelationship?.name == String(relationToSearch) }) {
-
-                relationsInfo.append(inverseRelationInfo)
-                tableInfo = inverseRelationInfo.destinationTable
+            if var inverseRelationInfos = tableInfo?.relationships.filter({ $0.inverseRelationship?.name == String(relationToSearch) }) {
+                if let inverseRelationInfo = inverseRelationInfos.first, inverseRelationInfos.count == 1 {
+                    relationsInfo.append(inverseRelationInfo)
+                    tableInfo = inverseRelationInfo.destinationTable
+                } else {
+                    inverseRelationInfos = inverseRelationInfos.filter({ $0.destinationTable?.name == sourceTableInfo?.name })
+                    if let inverseRelationInfo = inverseRelationInfos.first {
+                        relationsInfo.append(inverseRelationInfo)
+                        tableInfo = inverseRelationInfo.destinationTable
+                    }
+                    if inverseRelationInfos.count != 1 {
+                        logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation: \(relationToSearch) with source \(sourceTableInfo?.name ?? "NULL")")
+                    }
+                }
             } else {
                 logger.warning("No information about the inverse of relation \(relationName) in data model to find inverse relation: \(relationToSearch)")
                 // return
@@ -202,7 +212,14 @@ extension ApplicationCoordinator {
             logger.error("No relation info to transition between in \(source) to  \(destination)")
             return
         }
-        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
+        var sourceTableInfo: DataStoreTableInfo?
+        if let tableOwner = source as? TableOwner {
+            sourceTableInfo = tableOwner.tableInfo
+        }
+        else if let tableOwner = source as? DetailsForm { // not clean
+            sourceTableInfo = tableOwner.tableInfo
+        }
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName, sourceTableInfo)
 
         let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
         let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
@@ -328,7 +345,7 @@ extension ApplicationCoordinator {
 
         logger.debug("Will display relation \(relationName) of record \(record)")
 
-        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName, source.tableInfo)
         let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
         let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
 
@@ -381,7 +398,7 @@ extension ApplicationCoordinator {
         logger.debug("Will display relation \(relationName) of record \(record)")
 
         // get info after setting entry or tableInfo will be nil
-        let relationsInfo = getRelationInfos(destination.tableInfo, relationName)
+        let relationsInfo = getRelationInfos(destination.tableInfo, relationName, source.tableInfo)
         let relationOriginalName = relationsInfo.reversed().compactMap({$0.inverseRelationship?.originalName}).joined(separator: ".")
         let inverseRelationName = relationsInfo.map({$0.originalName}).joined(separator: ".")
         relationDataSource.formContext = FormContext(predicate: nil,
