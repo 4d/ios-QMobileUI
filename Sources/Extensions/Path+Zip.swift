@@ -57,8 +57,8 @@ extension Path {
 extension Path {
 
     /// Get a zip archive from path.
-    public func archive(mode: Archive.AccessMode) -> Archive? {
-        return Archive(path: self, mode: mode)
+    public func archive(mode: Archive.AccessMode) throws -> Archive {
+        return try Archive(path: self, mode: mode)
     }
 
 }
@@ -66,8 +66,8 @@ extension Path {
 extension Archive {
 
     /// Init an archive from `Path`.
-    public convenience init?(path: Path, mode: Archive.AccessMode) {
-        self.init(url: path.url, accessMode: mode)
+    public convenience init(path: Path, mode: Archive.AccessMode) throws {
+        try self.init(url: path.url, accessMode: mode)
     }
 
     /// Extract an entry to `path`
@@ -111,7 +111,7 @@ extension Sequence where Element == Path {
         var iterator = makeIterator()
         var path = iterator.next()
 
-        guard let archive = destination.archive(mode: mode) else {
+		guard let archive = try? destination.archive(mode: mode) else { // TODO: let it throw
             return nil
         }
         while path != nil {
