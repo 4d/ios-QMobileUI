@@ -211,7 +211,10 @@ extension FeedbackForm: IdentifiableProtocol { // XXX could be generic ?
 
     static func instantiate() -> FeedbackForm? {
         if let navigationController = FeedbackForm.instantiateNavigationControllerFromType() {
-            if let logForm = navigationController.rootViewController as? FeedbackForm {
+			let navigationBar = navigationController.navigationBar
+			navigationBar.tintColor = .foreground
+			navigationBar.barTintColor = .background
+			if let logForm = navigationController.rootViewController as? FeedbackForm {
                 return logForm
             }
             if let logForm = FeedbackForm.instantiateViewController(ofType: FeedbackForm.self) {
