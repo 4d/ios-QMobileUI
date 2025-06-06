@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/phimage/CallbackURLKit.git",
       "state" : {
-        "branch" : "HEAD",
-        "revision" : "5411bfc17cd0787ac80c46f312c7235783ff9421"
+        "revision" : "28664b3d4f37bb359d5ed729aa463cbedfba5d82",
+        "version" : "2.3.2"
       }
     },
     {
@@ -120,10 +120,10 @@
     {
       "identity" : "swiftmessages",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/phimage/SwiftMessages.git",
+      "location" : "https://github.com/SwiftKickMobile/SwiftMessages.git",
       "state" : {
-        "branch" : "HEAD",
-        "revision" : "6fe4f6af76ad4503e3e1f976a9aff6abd193387e"
+        "revision" : "62e12e138fc3eedf88c7553dd5d98712aa119f40",
+        "version" : "9.0.9"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/phimage/ValueTransformerKit.git",
       "state" : {
-        "revision" : "8f40b14dd2d243898970141bb7d3d97d0026951d",
-        "version" : "1.2.4"
+        "revision" : "95f1bdb1ffb678da3700df9374b746df14dc43f9",
+        "version" : "1.2.5"
       }
     },
     {
